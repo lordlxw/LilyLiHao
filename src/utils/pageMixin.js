@@ -1,0 +1,160 @@
+import copy from 'clipboard-copy'
+import moment from 'moment'
+import { mapGetters } from 'vuex'
+export const pageMixin = {
+  data() {
+    return {
+      /* 分页参数 */
+      page: 1,
+      pageSize: 10,
+      totalCount: 0,
+    }
+  },
+  created() {
+  },
+  computed: {
+    ...mapGetters({
+      menus_ids: 'getMenus',
+      roleId: 'getRoleId'
+    })
+  },
+  methods: {
+    setAuth(index) {
+      return this.roleId === '1' || this.menus_ids.indexOf(index) !== -1
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    handleSizeChange(val) {
+      Promise.all([
+        this.pageSize = val
+      ]).then(() => {
+        this.loadInitData()
+      })
+    },
+    handleCurrentChange(val) {
+      Promise.all([
+        this.page = val
+      ]).then(() => {
+        this.loadInitData()
+      })
+    },
+    // 分页列表
+    funcList(response) {
+      if (response && response.data) {
+        if (response.data.list) {
+          this.tableData = response.data.list
+        } else {
+          this.tableData = []
+        }
+        if (response.data.page) {
+          this.totalCount = response.data.page["Total-Count"]
+        }
+      } else {
+        this.totalCount = 0
+        this.tableData = []
+      }
+    },
+    handleEdit(row, url) {
+      this.$store.commit('SET_URLPARAMS', row)
+      this.$router.push(url)
+    },
+    // 时间格式化
+    funcFormatTime(row, column) {
+      switch (column.property) {
+        case 'created_time':
+          if (row.created_time) {
+            return moment.unix(row.created_time).format('YYYY-MM-DD HH:mm:ss')
+          }
+          break
+        case 'login_time':
+          if (row.login_time) {
+            return moment.unix(row.login_time).format('YYYY-MM-DD HH:mm:ss')
+          }
+          break
+        case 'start_sell_date':
+          if (row.start_sell_date) {
+            return moment.unix(row.start_sell_date).format('YYYY-MM-DD HH:mm:ss')
+          }
+          break
+        case 'pay_time':
+          if (row.pay_time) {
+            return moment.unix(row.pay_time).format('YYYY-MM-DD HH:mm:ss');
+          }
+          break
+        case 'change_time':
+          if (row.change_time) {
+            return moment.unix(row.change_time).format('YYYY-MM-DD HH:mm:ss');
+          }
+          break
+        case 'start_time':
+          if (row.start_time) {
+            return moment.unix(row.start_time).format('YYYY-MM-DD HH:mm:ss');
+          }
+          break
+        case 'end_time':
+          if (row.end_time) {
+            return moment.unix(row.end_time).format('YYYY-MM-DD HH:mm:ss');
+          }
+          break
+        case 'update_time':
+          if (row.update_time) {
+            return moment.unix(row.update_time).format('YYYY-MM-DD HH:mm:ss');
+          }
+          break
+        case 'receive_time':
+          if (row.receive_time) {
+            return moment.unix(row.receive_time).format('YYYY-MM-DD HH:mm:ss');
+          }
+          break
+      }
+    },
+    typeIndex(index) {
+      return (this.page - 1) * this.pageSize + index + 1
+    },
+    funcZtranStatusFormatter(row) {
+      switch (row.ztran_status) {
+        case 'W':
+          return '处理中'
+        case 'Y':
+          return '已处理'
+        case 'N':
+          return '失败'
+      }
+    },
+    // 复制内容
+    copyContent(content) {
+      try {
+        copy(content);
+        this.$message({
+          message: '复制成功',
+          type: 'success'
+        })
+      } catch (error) {
+        this.$message({
+          message: '复制失败',
+          type: 'warning'
+        })
+      }
+    },
+    handleNavigator(val1, val2, val3) {
+      const params = {
+        val1,
+        val2,
+        val3
+      }
+      this.$store.commit('SET_NAVIGATOR', params)
+    },
+    convertEmptyToNull(data) {
+      let result = {}
+      if (typeof data === 'object') {
+        Object.entries(data).forEach(([key, val]) => {
+          if (val !== "") {
+            result[key] = val
+          }
+        })
+      }
+      return result
+    },
+  }
+}

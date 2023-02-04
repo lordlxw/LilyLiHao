@@ -1,0 +1,79 @@
+import axios from 'axios'
+import Router from '@/router'
+import { Message } from 'element-ui'
+import configUtil from '@/utils/config.js'
+
+// 创建axios实例
+const service = axios.create({
+  // baseURL: process.env.BASE_API,
+  // baseURL: Vue.prototype.$apiUrl,
+  timeout: 30000
+})
+
+service.interceptors.request.use(config => {
+  try {
+    console.log('get:' + sessionStorage.getItem(configUtil.keys.tokenKey))
+    if (sessionStorage.getItem(configUtil.keys.tokenKey) && config.url.substring(config.url.lastIndexOf('/')) !== '/login') {
+      config.headers['Authorization'] = sessionStorage.getItem(configUtil.keys.tokenKey)
+    }
+  } catch (error) {
+
+  }
+  return config
+})
+
+service.interceptors.response.use(response => {
+  console.log(response.config.url)
+  console.log(response.data)
+  // if (response.data === 'OK') {
+  //   return true
+  // }
+  const resp = response.data
+  switch (resp.code) {
+    case 200:
+    case '00000':
+      return resp
+    case 401:
+      Message({
+        message: '登录超时，请重新登录',
+        type: 'warning',
+        durations: 3 * 1000
+      })
+      Router.push({ path: '/login' })
+      break;
+    default:
+      // if (response.request && response.request.responseType === 'arraybuffer') {
+      //   return resp
+      // }
+      Message({
+        message: `${resp.msg}`,
+        type: 'warning',
+        durations: 3 * 1000
+      })
+      break
+  }
+}, error => {
+  if (error.toString().indexOf('401') !== -1) {
+    Router.push({ path: '/login' })
+    Message({
+      message: '登录超时，请重新登录',
+      type: 'warning',
+      durations: 3 * 1000
+    })
+  } else if (error.toString().indexOf('500') !== -1) {
+    Message({
+      message: '服务器异常（500）',
+      type: 'warning',
+      durations: 3 * 1000
+    })
+  } else if (error.toString().indexOf('400') !== -1) {
+    Message({
+      message: `${error.response.data.message}`,
+      type: 'warning',
+      durations: 3 * 1000
+    })
+  }
+  return Promise.reject(error)
+})
+
+export default service
