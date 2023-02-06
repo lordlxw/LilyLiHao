@@ -1,4 +1,4 @@
 {
   "apiUrl": "http://180.184.173.35:8004",
-  "imgUrl": "http://frp.cd-hst.com:18082/file/download?file="
+  "wsUrl": "ws://180.184.173.35:8004/websocket"
 }

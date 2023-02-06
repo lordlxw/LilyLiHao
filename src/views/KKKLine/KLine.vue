@@ -160,7 +160,7 @@
         <!-- 关闭和打开右侧面板 -->
         <div class="open-colse" :class="fold" @click="handleOpenOrClose"></div>
         <!-- 卖出 -->
-        <div class="r-out" v-if="businessOutList.length > 0">
+        <div class="r-out" v-if="businessOutList && businessOutList.length > 0">
           <el-scrollbar>
             <ul>
               <li
@@ -183,7 +183,7 @@
           </el-scrollbar>
         </div>
         <!-- 买入 -->
-        <div class="r-in" v-if="businessInList.length > 0">
+        <div class="r-in" v-if="businessInList && businessInList.length > 0">
           <el-scrollbar>
             <ul>
               <li
@@ -255,12 +255,14 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapGetters } from 'vuex'
 import api from '@/api/kk_bond_pool'
 import apiKLine from '@/api/kk_kline'
 import ComTscodeSelect from '@/components/ComTscodeSelect.vue'
 import * as echarts from 'echarts'
 import configUtil from '@/utils/config.js'
+import * as util from '@/utils/util'
 let socket
 let lockReconnect = false
 export default {
@@ -444,6 +446,7 @@ export default {
               tscode: this.activeTscode,
               bidtype: 1
             })
+            socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
           })
         }
       })
@@ -1121,7 +1124,7 @@ export default {
         this.calcFavoriteIcon()
         this.klinemethods[this.klineactive]()
         this.$store.commit('SET_TSCODE_GLOBAL', { tscodeGlobal: this.activeTscode })
-        socket.send({ "dataKey": this.activeTscode, "dataType": "tscode" })
+        socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
       })
     },
     handlerTscode(item) {
@@ -1147,7 +1150,7 @@ export default {
         // 初始化实时交易数据
         this.initRightTransactionList()
         // socket
-        socket.send({ "dataKey": this.activeTscode, "dataType": "tscode" })
+        socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
       })
     },
     // 图表数据分类方法
@@ -1174,7 +1177,7 @@ export default {
         for (var j = 0; j < dayCount; j++) {
           sum += +data0.values[i - j][1];
         }
-        result.push(sum / dayCount);
+        result.push(util.moneyFormat(sum / dayCount, 3));
       }
       return result;
     },
@@ -1309,7 +1312,7 @@ export default {
       } else {
         console.log("您的浏览器支持WebSocket");
         let socketUrl =
-          `ws://180.184.173.35:8004/websocket/${sessionStorage.getItem(configUtil.keys.tokenKey)}`;
+          `${Vue.prototype.$wsUrl}/${sessionStorage.getItem(configUtil.keys.tokenKey)}`;
         if (socket != null) {
           socket.close();
           socket = null;
@@ -1327,12 +1330,14 @@ export default {
           if (msgJson && msgJson.dataKey === self.activeTscode) {
             switch (msgJson.dataType) {
               case 'bid_0':
-                self.businessInList.pop()
-                self.businessInList.unshift(msgJson.data)
+                // self.businessInList.pop()
+                // self.businessInList.unshift(msgJson.data)
+                self.businessInList = msgJson.data
                 break
               case 'bid_1':
-                self.businessOutList.pop()
-                self.businessOutList.unshift(msgJson.data)
+                // self.businessOutList.pop()
+                // self.businessOutList.unshift(msgJson.data)
+                self.businessOutList = msgJson.data
                 break
               case 'trade':
                 self.transactionAllList.pop()

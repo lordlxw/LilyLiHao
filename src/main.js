@@ -22,7 +22,7 @@ Vue.use(ElementUI, {
 // Vue.component(Layout.name, Layout)
 axios.get('./static/config.json').then(result => {
   Vue.prototype.$apiUrl = result.data.apiUrl
-  Vue.prototype.$imgUrl = result.data.imgUrl
+  Vue.prototype.$wsUrl = result.data.wsUrl
   /* eslint-disable no-new */
   new Vue({
     el: '#app',
