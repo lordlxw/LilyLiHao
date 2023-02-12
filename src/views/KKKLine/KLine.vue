@@ -63,7 +63,7 @@
         >
           <span class="i-text">
             <i :class="favoriteTscodeIconList[0]"></i>
-            <span class="icon-name">收藏</span>
+            <!-- <span class="icon-name">收藏</span> -->
           </span>
         </li>
         <li
@@ -73,7 +73,18 @@
         >
           <span class="i-text" style="color: yellow">
             <i :class="favoriteTscodeIconList[1]"></i>
-            <span class="icon-name">取消</span>
+            <!-- <span class="icon-name">取消</span> -->
+          </span>
+        </li>
+        <li class="nav-right">
+          <span class="i-text" style="color: white">
+            <el-badge is-dot class="item">
+              <i
+                class="el-icon-message-solid"
+                @click="dialogTableVisible = true"
+              ></i>
+            </el-badge>
+            <!-- <span class="icon-name">取消</span> -->
           </span>
         </li>
       </ul>
@@ -245,17 +256,34 @@
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button type="warning">发送</el-button>
+              <el-button type="warning" @click="sendTransation">发送</el-button>
             </el-form-item>
           </el-form>
         </div>
       </div>
     </div>
+
+    <el-dialog title="消息框" :visible.sync="dialogTableVisible">
+      <el-table :data="gridDataMsg">
+        <el-table-column
+          property="date"
+          label="日期"
+          width="150"
+        ></el-table-column>
+        <el-table-column
+          property="name"
+          label="姓名"
+          width="200"
+        ></el-table-column>
+        <el-table-column property="address" label="地址"></el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
+import Router from '@/router'
 import { mapGetters } from 'vuex'
 import api from '@/api/kk_bond_pool'
 import apiKLine from '@/api/kk_kline'
@@ -399,7 +427,25 @@ export default {
       }, {
         value: '10000',
         label: '10000'
-      }]
+      }],
+      gridDataMsg: [{
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }],
+      dialogTableVisible: false
     }
   },
   computed: {
@@ -1343,6 +1389,11 @@ export default {
                 self.transactionAllList.pop()
                 self.transactionAllList.unshift(msgJson.data)
                 break
+              case 'error':
+                if (msgJson.data.errorCode === '0001') {
+                  Router.push({ path: '/login' })
+                }
+                break
             }
           }
         }
@@ -1381,6 +1432,37 @@ export default {
     handleTransationSet(chartType, chartPrice) {
       this.chartType = chartType
       this.chartPrice = chartPrice
+    },
+    // 发送交易
+    sendTransation() {
+      let dataType = ''
+      if (this.chartType === '卖') {
+        dataType = 'bond_1'
+      } else if (this.chartType === '买') {
+        dataType = 'bond_0'
+      }
+
+      console.log(JSON.stringify({
+        "dataKey": this.activeTscode,
+        "dataType": dataType,
+        "data": {
+          "tscode": this.activeTscode,
+          "volume": this.chartAmount,
+          "price": this.chartPrice,
+          "createtime": "2023-2-2 12:31:27"
+        }
+      }))
+      const result = socket.send(JSON.stringify({
+        "dataKey": this.activeTscode,
+        "dataType": dataType,
+        "data": {
+          "tscode": this.activeTscode,
+          "volume": this.chartAmount,
+          "price": this.chartPrice,
+          "createtime": "2023-2-2 12:31:27"
+        }
+      }))
+      console.log(result)
     }
   },
   mounted() {
@@ -1436,6 +1518,9 @@ export default {
         justify-content: center;
         text-align: center;
         line-height: 20px;
+        i {
+          font-size: 18px;
+        }
       }
     }
   }

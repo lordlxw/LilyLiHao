@@ -6,7 +6,7 @@
         class="logo"
         :src="require('@/assets/images/logo.png')"
       ></el-image> -->
-      <h3>宽客量化管理系统</h3>
+      <h3>Lily系统</h3>
 
       <transition appear @before-enter="handleFormBeforeEnter" @enter="handleFormEnter">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="login-form">
