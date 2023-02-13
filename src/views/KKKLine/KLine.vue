@@ -266,16 +266,55 @@
     <el-dialog title="消息框" :visible.sync="dialogTableVisible">
       <el-table :data="gridDataMsg">
         <el-table-column
-          property="date"
-          label="日期"
+          property="tscode"
+          label="债券编号"
           width="150"
         ></el-table-column>
+        <el-table-column property="status" label="状态" width="150">
+          <template slot-scope="scope">
+            <span
+              v-if="
+                scope.row.status === 'start_bond' ||
+                scope.row.status === 'delegate_bond'
+              "
+              >待接收</span
+            >
+            <span
+              v-if="
+                ['accept_bond_0', 'accept_bond_1'].indexOf(scope.row.status) !==
+                -1
+              "
+              >已接收</span
+            >
+          </template>
+        </el-table-column>
+        <el-table-column property="direction" label="方向" width="150">
+          <template slot-scope="scope">
+            <span v-if="scope.row.direction === 'bond_0'">买入</span>
+            <span v-if="scope.row.direction === 'bond_1'">卖出</span>
+          </template>
+        </el-table-column>
         <el-table-column
-          property="name"
-          label="姓名"
+          property="price"
+          label="价格"
           width="200"
         ></el-table-column>
-        <el-table-column property="address" label="地址"></el-table-column>
+        <el-table-column property="volume" label="交易量"></el-table-column>
+        <el-table-column fixed="right" label="操作" width="100">
+          <template slot-scope="scope">
+            <el-button
+              @click="handleReceiveClick(scope.row)"
+              type="text"
+              size="small"
+              v-if="
+                ['delegate_bond_0', 'delegate_bond_1'].indexOf(
+                  scope.row.status
+                ) !== -1
+              "
+              >接收</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
     </el-dialog>
   </div>
@@ -428,23 +467,7 @@ export default {
         value: '10000',
         label: '10000'
       }],
-      gridDataMsg: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }],
+      gridDataMsg: [],
       dialogTableVisible: false
     }
   },
@@ -482,17 +505,7 @@ export default {
               this.activeTscode = this.tscode = this.tscodeList.length > 0 ? this.tscodeList[0].tscode : ''
             }
             this.klinemethods[this.klineactive]()
-            // 初始化买卖数据,bidtype:0，买单；1，卖单
-            // 初始化买卖数据
-            this.initRightBusinessList({
-              tscode: this.activeTscode,
-              bidtype: 0
-            })
-            this.initRightBusinessList({
-              tscode: this.activeTscode,
-              bidtype: 1
-            })
-            socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
+            this.initCommonData()
           })
         }
       })
@@ -511,6 +524,7 @@ export default {
 
       })
     },
+    // 一分钟线
     getKLineMinute(klinekey) {
       Promise.all([
         this.data0 = [],
@@ -670,6 +684,7 @@ export default {
         })
       })
     },
+    // 5分钟线
     getKLineFiveMinute(klinekey) {
       this.data0 = []
       this.klineactive = klinekey
@@ -822,6 +837,7 @@ export default {
         }
       })
     },
+    // 日线
     getKLineDay(klinekey) {
       Promise.all([
         this.data0 = [],
@@ -1114,6 +1130,7 @@ export default {
         }
       })
     },
+    // 计算收藏按钮样式
     calcFavoriteIcon() {
       for (let i = 0; i < this.tscodeListFavorite.length; i++) {
         if (this.tscodeListFavorite[i].tscode === this.activeTscode) {
@@ -1127,7 +1144,7 @@ export default {
         this.favoriteTscodeIcon = this.favoriteTscodeIconList[0]
       }
     },
-    // 收藏
+    // 收藏事件
     handleFavorite() {
       if (this.activeTscode !== '') {
         api.favoriteAdd({
@@ -1145,7 +1162,7 @@ export default {
         this.$message('请选择一条收藏项');
       }
     },
-    // 取消收藏
+    // 取消收藏事件
     handleFavoriteCancel() {
       if (this.activeTscode !== '') {
         api.favoriteDelete({
@@ -1163,6 +1180,7 @@ export default {
         this.$message('请选择一条取消收藏项');
       }
     },
+    // 下拉框选择债券
     handlerTscodeSelect(obj) {
       Promise.all([
         this.activeTscode = this.tscode = obj.value
@@ -1173,6 +1191,7 @@ export default {
         socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
       })
     },
+    // 债券点击事件
     handlerTscode(item) {
       Promise.all([
         this.activeId = item.id,
@@ -1183,20 +1202,7 @@ export default {
         this.$store.commit('SET_TSCODE_GLOBAL', { tscodeGlobal: this.activeTscode })
         this.klinemethods[this.klineactive]()
         this.calcFavoriteIcon()
-        // 初始化买卖数据
-        this.initRightBusinessList({
-          tscode: this.activeTscode,
-          bidtype: 0
-        })
-        // 初始化买卖数据
-        this.initRightBusinessList({
-          tscode: this.activeTscode,
-          bidtype: 1
-        })
-        // 初始化实时交易数据
-        this.initRightTransactionList()
-        // socket
-        socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
+        this.initCommonData()
       })
     },
     // 图表数据分类方法
@@ -1227,6 +1233,7 @@ export default {
       }
       return result;
     },
+    // 键盘监听
     keyDown() {
       const self = this
       // 监听键盘按钮
@@ -1258,6 +1265,7 @@ export default {
         e.returnValue = true
       }
     },
+    // 右侧面板关闭打开
     handleOpenOrClose() {
       if (this.fold === 'el-icon-s-unfold') {
         this.fold = 'el-icon-s-fold'
@@ -1282,6 +1290,7 @@ export default {
         })
       })
     },
+    // 债券类型
     handleTSType(array) {
       const tsType = []
       array.forEach(element => {
@@ -1314,6 +1323,7 @@ export default {
         }
       })
     },
+    // 左侧tab切换
     handleClickTab(tab) {
       this.activeTab = tab;
       if (tab === this.tabList[2]) {
@@ -1349,6 +1359,22 @@ export default {
         }
       })
     },
+    // 初始化公共数据
+    initCommonData() {
+      // 初始化买卖数据,bidtype:0，买单；1，卖单
+      // 初始化买卖数据
+      this.initRightBusinessList({
+        tscode: this.activeTscode,
+        bidtype: 0
+      })
+      this.initRightBusinessList({
+        tscode: this.activeTscode,
+        bidtype: 1
+      })
+      // 初始化实时交易数据
+      this.initRightTransactionList()
+      socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
+    },
     // ************websocket start**************************
     // 初始化
     initSocket() {
@@ -1368,11 +1394,13 @@ export default {
         // 打开事件
         socket.onopen = function () {
           console.log("websocket已打开");
+          socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
         }
         // 浏览器端收消息，获得从服务端发送过来的文本消息
         socket.onmessage = function (msg) {
           console.log("收到数据====" + msg.data);
           let msgJson = JSON.parse(msg.data)
+          console.log(msgJson.dataType)
           if (msgJson && msgJson.dataKey === self.activeTscode) {
             switch (msgJson.dataType) {
               case 'bid_0':
@@ -1393,6 +1421,46 @@ export default {
                 if (msgJson.data.errorCode === '0001') {
                   Router.push({ path: '/login' })
                 }
+                break
+            }
+          } else {
+            switch (msgJson.dataType) {
+              // 返回研究员待接收询价单（买）
+              case 'start_bond_0':
+                console.log('周佳洪：' + msgJson.data)
+                console.log(msgJson.data)
+                msgJson.data.status = 'start_bond'
+                self.gridDataMsg.unshift(msgJson.data)
+                self.dialogTableVisible = true
+                break
+              case 'start_bond_1':
+                msgJson.data.status = 'start_bond'
+                self.gridDataMsg.unshift(msgJson.data)
+                self.dialogTableVisible = true
+                break
+              // 交易员待接收询价单（买）
+              case 'delegate_bond_0':
+                msgJson.data.status = 'delegate_bond_0'
+                self.gridDataMsg.unshift(msgJson.data)
+                self.dialogTableVisible = true
+                break
+              // 交易员待接收询价单（卖）
+              case 'delegate_bond_1':
+                msgJson.data.status = 'delegate_bond_1'
+                self.gridDataMsg.unshift(msgJson.data)
+                self.dialogTableVisible = true
+                break
+              // 通知研究员确认接收(买)
+              case 'accept_bond_0':
+                msgJson.data.status = 'accept_bond_0'
+                self.gridDataMsg.unshift(msgJson.data)
+                self.dialogTableVisible = true
+                break
+              // 通知研究员确认接收（卖）
+              case 'accept_bond_1':
+                msgJson.data.status = 'accept_bond_1'
+                self.gridDataMsg.unshift(msgJson.data)
+                self.dialogTableVisible = true
                 break
             }
           }
@@ -1442,7 +1510,7 @@ export default {
         dataType = 'bond_0'
       }
 
-      console.log(JSON.stringify({
+      console.log('发送的交易询价单数据：' + JSON.stringify({
         "dataKey": this.activeTscode,
         "dataType": dataType,
         "data": {
@@ -1452,7 +1520,7 @@ export default {
           "createtime": "2023-2-2 12:31:27"
         }
       }))
-      const result = socket.send(JSON.stringify({
+      socket.send(JSON.stringify({
         "dataKey": this.activeTscode,
         "dataType": dataType,
         "data": {
@@ -1462,7 +1530,18 @@ export default {
           "createtime": "2023-2-2 12:31:27"
         }
       }))
-      console.log(result)
+    },
+    // 接收单据
+    handleReceiveClick(row) {
+      console.log(111)
+      if (row.status === 'delegate_bond_0') {
+        console.log(JSON.stringify({ "dataKey": row.userTradeId, "dataType": 'accept_bond_0' }))
+        socket.send(JSON.stringify({ "dataKey": row.userTradeId, "dataType": 'accept_bond_0' }))
+      } else if (row.status === 'delegate_bond_1') {
+        console.log(JSON.stringify({ "dataKey": row.userTradeId, "dataType": 'accept_bond_1' }))
+        socket.send(JSON.stringify({ "dataKey": row.userTradeId, "dataType": 'accept_bond_1' }))
+      }
+      this.dialogTableVisible = false
     }
   },
   mounted() {
