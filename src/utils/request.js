@@ -34,11 +34,11 @@ service.interceptors.response.use(response => {
     case '00000':
       return resp
     case 401:
-      Message({
-        message: '登录超时，请重新登录',
-        type: 'warning',
-        durations: 3 * 1000
-      })
+      // Message({
+      //   message: '登录超时，请重新登录',
+      //   type: 'warning',
+      //   durations: 3 * 1000
+      // })
       Router.push({ path: '/login' })
       break;
     default:

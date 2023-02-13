@@ -1383,6 +1383,10 @@ export default {
         console.log("您的浏览器不支持WebSocket");
       } else {
         console.log("您的浏览器支持WebSocket");
+        if (sessionStorage.getItem(configUtil.keys.tokenKey) === null || sessionStorage.getItem(configUtil.keys.tokenKey) === '') {
+          Router.push('/login')
+          return;
+        }
         let socketUrl =
           `${Vue.prototype.$wsUrl}/${sessionStorage.getItem(configUtil.keys.tokenKey)}`;
         if (socket != null) {
@@ -1391,6 +1395,7 @@ export default {
         }
         // 开启一个websocket服务
         socket = new WebSocket(socketUrl);
+        console.log('socket链接：' + socketUrl)
         // 打开事件
         socket.onopen = function () {
           console.log("websocket已打开");
@@ -1509,15 +1514,13 @@ export default {
       } else if (this.chartType === '买') {
         dataType = 'bond_0'
       }
-
       console.log('发送的交易询价单数据：' + JSON.stringify({
         "dataKey": this.activeTscode,
         "dataType": dataType,
         "data": {
           "tscode": this.activeTscode,
           "volume": this.chartAmount,
-          "price": this.chartPrice,
-          "createtime": "2023-2-2 12:31:27"
+          "price": this.chartPrice
         }
       }))
       socket.send(JSON.stringify({
@@ -1526,20 +1529,18 @@ export default {
         "data": {
           "tscode": this.activeTscode,
           "volume": this.chartAmount,
-          "price": this.chartPrice,
-          "createtime": "2023-2-2 12:31:27"
+          "price": this.chartPrice
         }
       }))
     },
     // 接收单据
     handleReceiveClick(row) {
       console.log(111)
+      console.log(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_0' }))
       if (row.status === 'delegate_bond_0') {
-        console.log(JSON.stringify({ "dataKey": row.userTradeId, "dataType": 'accept_bond_0' }))
-        socket.send(JSON.stringify({ "dataKey": row.userTradeId, "dataType": 'accept_bond_0' }))
+        socket.send(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_0' }))
       } else if (row.status === 'delegate_bond_1') {
-        console.log(JSON.stringify({ "dataKey": row.userTradeId, "dataType": 'accept_bond_1' }))
-        socket.send(JSON.stringify({ "dataKey": row.userTradeId, "dataType": 'accept_bond_1' }))
+        socket.send(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_1' }))
       }
       this.dialogTableVisible = false
     }
