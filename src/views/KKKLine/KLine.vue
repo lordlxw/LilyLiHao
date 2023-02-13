@@ -1384,7 +1384,7 @@ export default {
       } else {
         console.log("您的浏览器支持WebSocket");
         if (sessionStorage.getItem(configUtil.keys.tokenKey) === null || sessionStorage.getItem(configUtil.keys.tokenKey) === '') {
-          Router.push('/login')
+          Router.push({ path: '/login' })
           return;
         }
         let socketUrl =
