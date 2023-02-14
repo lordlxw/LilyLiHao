@@ -161,11 +161,7 @@
       <div
         class="right-group"
         :style="{
-          position: 'relative',
           width: rightWith,
-          'border-top': '1px solid red',
-          'border-left': '1px solid red',
-          transition: 'width 0.5s',
         }"
       >
         <!-- 关闭和打开右侧面板 -->
@@ -180,13 +176,11 @@
                 :title="item.volume"
                 @click="handleTransationSet('买', item.price)"
               >
-                <span style="flex: 1"
-                  >{{
-                    item.volume.length > 20
-                      ? item.volume.substring(0, 20)
-                      : item.volume
-                  }}【<span style="color: green">卖</span>】</span
-                >
+                <span style="flex: 1">{{
+                  item.volume.length > 40
+                    ? item.volume.substring(0, 40)
+                    : item.volume
+                }}</span>
                 <span style="width: 50px">{{ item.price }}</span>
                 <span style="width: 50px">{{ item.updatetime }}</span>
               </li>
@@ -205,10 +199,10 @@
               >
                 <span style="flex: 1">
                   {{
-                    item.volume.length > 20
-                      ? item.volume.substring(0, 20)
+                    item.volume.length > 40
+                      ? item.volume.substring(0, 40)
                       : item.volume
-                  }}【<span style="color: green">买</span>】</span
+                  }}</span
                 >
                 <span style="width: 50px">{{ item.price }}</span>
                 <span style="width: 50px">{{ item.updatetime }}</span>
@@ -236,24 +230,69 @@
           </el-scrollbar>
         </div>
         <!-- 交易聊天框 -->
-        <div class="chatbox" v-if="chartType !== ''">
-          <el-form ref="form" label-width="80px" size="mini">
+        <div class="chatbox">
+          <el-form
+            ref="saleForm"
+            :model="saleForm"
+            label-width="70px"
+            size="mini"
+            class="sale-form"
+          >
             <el-form-item label="交易类型">
-              <span class="secondClr">{{ chartType }}</span>
+              <span class="secondClr">{{ saleForm.chartType }}</span>
             </el-form-item>
             <el-form-item label="价格">
-              <span class="secondClr">{{ chartPrice }}</span>
+              <span class="secondClr">{{ saleForm.chartPrice }}</span>
             </el-form-item>
-            <el-form-item label="交易量">
-              <el-select v-model="chartAmount" placeholder="请选择交易量">
-                <el-option
-                  v-for="item in chartAmountOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
+            <el-form-item label="交易量(万)">
+              <el-input
+                v-model="saleForm.chartAmount"
+                placeholder="请输入内容"
+              ></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button-group>
+                <el-button type="primary">清零</el-button>
+                <el-button type="primary">1</el-button>
+                <el-button type="primary">2</el-button>
+                <el-button type="primary">3</el-button>
+                <el-button type="primary">5</el-button>
+                <el-button type="primary">10</el-button>
+              </el-button-group>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="warning" @click="sendTransation">发送</el-button>
+            </el-form-item>
+          </el-form>
+
+          <el-form
+            ref="form"
+            :model="buyForm"
+            label-width="0px"
+            size="mini"
+            class="buy-form"
+          >
+            <el-form-item label="">
+              <span class="secondClr">{{ buyForm.chartType }}</span>
+            </el-form-item>
+            <el-form-item label="">
+              <span class="secondClr">{{ buyForm.chartPrice }}</span>
+            </el-form-item>
+            <el-form-item label="">
+              <el-input
+                v-model="buyForm.chartAmount"
+                placeholder="请输入内容"
+              ></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button-group>
+                <el-button type="primary">清零</el-button>
+                <el-button type="primary">1</el-button>
+                <el-button type="primary">2</el-button>
+                <el-button type="primary">3</el-button>
+                <el-button type="primary">5</el-button>
+                <el-button type="primary">10</el-button>
+              </el-button-group>
             </el-form-item>
             <el-form-item>
               <el-button type="warning" @click="sendTransation">发送</el-button>
@@ -376,7 +415,7 @@ export default {
       data0: [],
       myChart: '',
       fold: 'el-icon-s-unfold',
-      rightWith: '300px',
+      rightWith: '500px',
       optionTSType: [],
       optionYear: [
         {
@@ -444,12 +483,22 @@ export default {
       createSocketIO: null,
       createSocketEmitter: null,
       // chart
-      // 交易类型
-      chartType: '',
-      // 价格
-      chartPrice: '',
-      // 交易量
-      chartAmount: '',
+      saleForm: {
+        // 交易类型
+        chartType: '卖',
+        // 价格
+        chartPrice: '3.05',
+        // 交易量
+        chartAmount: '5000'
+      },
+      buyForm: {
+        // 交易类型
+        chartType: '买',
+        // 价格
+        chartPrice: '3.05',
+        // 交易量
+        chartAmount: '5000'
+      },
       // 交易量下拉选项
       chartAmountOptions: [{
         value: '1000',
@@ -1272,7 +1321,7 @@ export default {
         this.rightWith = '0px'
       } else {
         this.fold = 'el-icon-s-unfold'
-        this.rightWith = '300px'
+        this.rightWith = '500px'
       }
       setTimeout(() => {
         this.myChart.resize()
@@ -1688,6 +1737,12 @@ export default {
   }
 
   .right-group {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border-top: 1px solid red;
+    border-left: 1px solid red;
+    transition: width 0.5s;
     .open-colse {
       position: absolute;
       width: 16px;
@@ -1697,6 +1752,30 @@ export default {
       color: #54ffff;
       font-size: 16px;
       cursor: pointer;
+    }
+    .r-in,
+    .r-out {
+      position: relative;
+    }
+    .r-in:after {
+      content: "买单";
+      color: green;
+    }
+    .r-out:after {
+      content: "卖单";
+      color: red;
+    }
+    .r-in:after,
+    .r-out:after {
+      position: absolute;
+      top: 30px;
+      left: 200px;
+      font-size: 40px;
+      line-height: 40px;
+      z-index: -1;
+      opacity: 0.2;
+      transform: rotate(320deg);
+      -webkit-transform: rotate(320deg);
     }
     .r-in,
     .r-out,
@@ -1733,8 +1812,17 @@ export default {
         }
       }
     }
+    .r-in {
+      .el-scrollbar {
+        .el-scrollbar__wrap {
+          ul li {
+            color: green;
+          }
+        }
+      }
+    }
     .r-trans {
-      height: 300px;
+      flex: 1;
       .el-scrollbar {
         width: 100%;
         height: calc(100% - 20px);
@@ -1761,17 +1849,57 @@ export default {
 
     .chatbox {
       width: 100%;
-      height: 150px;
-      position: absolute;
+      height: 200px;
+      display: flex;
+      flex-direction: row;
+      // position: absolute;
       bottom: 0;
       color: red;
-      border-top: 1px solid red;
       box-sizing: border-box;
-      padding: 10px 5px;
+      padding: 0px;
       background: #202020;
+
+      .sale-form {
+        flex: 4;
+        padding: 10px 5px;
+      }
+      .buy-form {
+        flex: 3;
+        padding: 10px 5px;
+        // border-left: 1px solid red;
+      }
       .secondClr {
         color: $hover-color;
       }
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+.chatbox {
+  .el-button--mini,
+  .el-button--mini.is-round {
+    padding: 6px 10px;
+  }
+  .sale-form {
+    .el-button--primary {
+      background-color: red;
+      border-color: red;
+    }
+    .el-button--primary:hover {
+      background-color: rgb(221, 28, 28);
+      border-color: rgb(221, 28, 28);
+    }
+  }
+  .buy-form {
+    .el-button--primary {
+      background-color: green;
+      border-color: green;
+    }
+    .el-button--primary:hover {
+      background-color: rgb(6, 156, 6);
+      border-color: rgb(6, 156, 6);
     }
   }
 }
