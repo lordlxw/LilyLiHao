@@ -1875,7 +1875,6 @@ export default {
   }
 }
 </style>
-
 <style lang="scss">
 .chatbox {
   .el-button--mini,
