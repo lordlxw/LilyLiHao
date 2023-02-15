@@ -231,73 +231,82 @@
         </div>
         <!-- 交易聊天框 -->
         <div class="chatbox">
-          <el-form
-            ref="saleForm"
-            :model="saleForm"
-            label-width="70px"
-            size="mini"
-            class="sale-form"
-          >
-            <el-form-item label="交易类型">
-              <span class="secondClr">{{ saleForm.chartType }}</span>
-            </el-form-item>
-            <el-form-item label="价格">
-              <span class="secondClr">{{ saleForm.chartPrice }}</span>
-            </el-form-item>
-            <el-form-item label="交易量(万)">
-              <el-input
-                v-model="saleForm.chartAmount"
-                placeholder="请输入内容"
-              ></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button-group>
-                <el-button type="primary">清零</el-button>
-                <el-button type="primary">1</el-button>
-                <el-button type="primary">2</el-button>
-                <el-button type="primary">3</el-button>
-                <el-button type="primary">5</el-button>
-                <el-button type="primary">10</el-button>
-              </el-button-group>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="warning" @click="sendTransation">发送</el-button>
-            </el-form-item>
-          </el-form>
-
-          <el-form
-            ref="form"
-            :model="buyForm"
-            label-width="0px"
-            size="mini"
-            class="buy-form"
-          >
-            <el-form-item label="">
-              <span class="secondClr">{{ buyForm.chartType }}</span>
-            </el-form-item>
-            <el-form-item label="">
-              <span class="secondClr">{{ buyForm.chartPrice }}</span>
-            </el-form-item>
-            <el-form-item label="">
-              <el-input
-                v-model="buyForm.chartAmount"
-                placeholder="请输入内容"
-              ></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button-group>
-                <el-button type="primary">清零</el-button>
-                <el-button type="primary">1</el-button>
-                <el-button type="primary">2</el-button>
-                <el-button type="primary">3</el-button>
-                <el-button type="primary">5</el-button>
-                <el-button type="primary">10</el-button>
-              </el-button-group>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="warning" @click="sendTransation">发送</el-button>
-            </el-form-item>
-          </el-form>
+          <el-tabs>
+            <el-tab-pane label="买(F1)">
+              <el-form
+                ref="form"
+                :model="buyForm"
+                label-width="70px"
+                size="mini"
+                class="buy-form"
+              >
+                <el-form-item label="交易类型">
+                  <span class="secondClr">{{ buyForm.chartType }}</span>
+                </el-form-item>
+                <el-form-item label="价格">
+                  <span class="secondClr">{{ buyForm.chartPrice }}</span>
+                </el-form-item>
+                <el-form-item label="交易量(万)">
+                  <el-input
+                    v-model="buyForm.chartAmount"
+                    placeholder="请输入内容"
+                  ></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button-group>
+                    <el-button type="primary">清零</el-button>
+                    <el-button type="primary">1</el-button>
+                    <el-button type="primary">2</el-button>
+                    <el-button type="primary">3</el-button>
+                    <el-button type="primary">5</el-button>
+                    <el-button type="primary">10</el-button>
+                  </el-button-group>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="warning" @click="sendTransation"
+                    >发送</el-button
+                  >
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="卖(F2)">
+              <el-form
+                ref="saleForm"
+                :model="saleForm"
+                label-width="70px"
+                size="mini"
+                class="sale-form"
+              >
+                <el-form-item label="交易类型">
+                  <span class="secondClr">{{ saleForm.chartType }}</span>
+                </el-form-item>
+                <el-form-item label="价格">
+                  <span class="secondClr">{{ saleForm.chartPrice }}</span>
+                </el-form-item>
+                <el-form-item label="交易量(万)">
+                  <el-input
+                    v-model="saleForm.chartAmount"
+                    placeholder="请输入内容"
+                  ></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button-group>
+                    <el-button type="primary">清零</el-button>
+                    <el-button type="primary">1</el-button>
+                    <el-button type="primary">2</el-button>
+                    <el-button type="primary">3</el-button>
+                    <el-button type="primary">5</el-button>
+                    <el-button type="primary">10</el-button>
+                  </el-button-group>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="warning" @click="sendTransation"
+                    >发送</el-button
+                  >
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+          </el-tabs>
         </div>
       </div>
     </div>
@@ -415,7 +424,7 @@ export default {
       data0: [],
       myChart: '',
       fold: 'el-icon-s-unfold',
-      rightWith: '500px',
+      rightWith: '360px',
       optionTSType: [],
       optionYear: [
         {
@@ -1321,7 +1330,7 @@ export default {
         this.rightWith = '0px'
       } else {
         this.fold = 'el-icon-s-unfold'
-        this.rightWith = '500px'
+        this.rightWith = '360px'
       }
       setTimeout(() => {
         this.myChart.resize()
@@ -1471,11 +1480,6 @@ export default {
                 self.transactionAllList.pop()
                 self.transactionAllList.unshift(msgJson.data)
                 break
-              case 'error':
-                if (msgJson.data.errorCode === '0001') {
-                  Router.push({ path: '/login' })
-                }
-                break
             }
           } else {
             switch (msgJson.dataType) {
@@ -1515,6 +1519,11 @@ export default {
                 msgJson.data.status = 'accept_bond_1'
                 self.gridDataMsg.unshift(msgJson.data)
                 self.dialogTableVisible = true
+                break
+              case 'error':
+                if (msgJson.data.errorCode === '0001') {
+                  Router.push({ path: '/login' })
+                }
                 break
             }
           }
@@ -1849,25 +1858,13 @@ export default {
 
     .chatbox {
       width: 100%;
-      height: 200px;
-      display: flex;
-      flex-direction: row;
+      height: 500px;
       // position: absolute;
       bottom: 0;
       color: red;
       box-sizing: border-box;
       padding: 0px;
       background: #202020;
-
-      .sale-form {
-        flex: 4;
-        padding: 10px 5px;
-      }
-      .buy-form {
-        flex: 3;
-        padding: 10px 5px;
-        // border-left: 1px solid red;
-      }
       .secondClr {
         color: $hover-color;
       }
@@ -1900,6 +1897,22 @@ export default {
       background-color: rgb(6, 156, 6);
       border-color: rgb(6, 156, 6);
     }
+  }
+  .el-tabs__item {
+    color: red;
+  }
+  .el-tabs__item.is-active {
+    color: white;
+  }
+  .el-tabs__nav-wrap::after {
+    background-color: red;
+    height: 1px;
+  }
+  .el-tabs__active-bar {
+    background-color: white;
+  }
+  .el-tabs__nav-scroll {
+    padding: 0 10px;
   }
 }
 </style>
