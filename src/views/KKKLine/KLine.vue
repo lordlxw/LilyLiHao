@@ -214,10 +214,10 @@
             <ul style="margin-top: 20px">
               <li class="li-first">
                 <span style="width: 60px">主动方</span>
-                <span style="width: 80px; text-align: right">价格</span>
+                <span style="width: 80px">价格</span>
                 <span style="width: 80px">中介名称</span>
                 <span style="width: 80px">交易时间</span>
-                <span style="width: 60px; text-align: right">净价</span>
+                <span style="width: 60px">净价</span>
               </li>
               <li
                 v-for="(item, index) in transactionAllList"
@@ -225,14 +225,10 @@
                 :class="funcSelectColor(item.dealtype)"
               >
                 <span style="width: 60px">{{ item.dealtype }}</span>
-                <span style="width: 80px; text-align: right">{{
-                  item.tradeprice
-                }}</span>
+                <span style="width: 80px">{{ item.tradeprice }}</span>
                 <span style="width: 80px">{{ item.brokerName }}</span>
                 <span style="width: 80px">{{ item.tradetime }}</span>
-                <span style="width: 60px; text-align: right">{{
-                  item.netprice
-                }}</span>
+                <span style="width: 60px">{{ item.netprice }}</span>
               </li>
             </ul>
           </el-scrollbar>
@@ -266,12 +262,36 @@
                 </el-form-item>
                 <el-form-item>
                   <el-button-group>
-                    <el-button type="primary">清零</el-button>
-                    <el-button type="primary">1</el-button>
-                    <el-button type="primary">2</el-button>
-                    <el-button type="primary">3</el-button>
-                    <el-button type="primary">5</el-button>
-                    <el-button type="primary">10</el-button>
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 0)"
+                      >清零</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 1000)"
+                      >1</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 2000)"
+                      >2</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 3000)"
+                      >3</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 5000)"
+                      >5</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 10000)"
+                      >10</el-button
+                    >
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="交易速度">
@@ -326,12 +346,36 @@
                 </el-form-item>
                 <el-form-item>
                   <el-button-group>
-                    <el-button type="primary">清零</el-button>
-                    <el-button type="primary">1</el-button>
-                    <el-button type="primary">2</el-button>
-                    <el-button type="primary">3</el-button>
-                    <el-button type="primary">5</el-button>
-                    <el-button type="primary">10</el-button>
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 0)"
+                      >清零</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 1000)"
+                      >1</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 2000)"
+                      >2</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 3000)"
+                      >3</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 5000)"
+                      >5</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 10000)"
+                      >10</el-button
+                    >
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="交易速度">
@@ -1556,6 +1600,14 @@ export default {
           return Math.max.apply(Math, arr.map(item => { return item.price }))
       }
     },
+    // 交易量加法函数
+    funcVolumeAdd(formType, val) {
+      if (val === 0) {
+        this[formType].volume = 0
+      } else {
+        this[formType].volume += val
+      }
+    },
     // ************websocket start**************************
     // 初始化
     initSocket() {
@@ -1728,6 +1780,11 @@ export default {
     this.getAllBondPool()
     this.getByCodeBondPool()
     this.favoriteList()
+    // 创建询价单默认日期
+    const date = new Date();
+    date.setTime(date.getTime() + 3600 * 1000 * 24);
+    this.buyForm.deliveryTime = date
+    this.saleForm.deliveryTime = date
     window.onresize = () => {
       if (this.myChart) {
         this.myChart.resize()
@@ -1972,7 +2029,7 @@ export default {
 
     .chatbox {
       width: 100%;
-      height: 400px;
+      height: 340px;
       position: relative;
       bottom: 0;
       color: red;
