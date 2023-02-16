@@ -174,11 +174,10 @@
                 v-for="(item, index) in businessOutList"
                 :key="index"
                 :title="item.volume"
-                @click="handleTransationSet('买', item.price)"
               >
                 <span style="flex: 1">{{
-                  item.volume.length > 40
-                    ? item.volume.substring(0, 40)
+                  item.volume.length > inOutLength
+                    ? item.volume.substring(0, inOutLength)
                     : item.volume
                 }}</span>
                 <span style="width: 50px">{{ item.price }}</span>
@@ -195,12 +194,11 @@
                 v-for="(item, index) in businessInList"
                 :key="index"
                 :title="item.volume"
-                @click="handleTransationSet('卖', item.price)"
               >
                 <span style="flex: 1">
                   {{
-                    item.volume.length > 40
-                      ? item.volume.substring(0, 40)
+                    item.volume.length > inOutLength
+                      ? item.volume.substring(0, inOutLength)
                       : item.volume
                   }}</span
                 >
@@ -212,19 +210,29 @@
         </div>
         <!-- 交易 -->
         <div class="r-trans" v-if="transactionAllList.length > 0">
-          <ul class="tit">
-            <li class="li-first">
-              <span style="flex: 1">收益</span>
-              <span style="width: 100px">净价</span>
-              <span style="width: 50px">交易时间</span>
-            </li>
-          </ul>
           <el-scrollbar>
-            <ul>
-              <li v-for="(item, index) in transactionAllList" :key="index">
-                <span style="flex: 1">{{ item.tradeprice }}</span>
-                <span style="width: 100px">{{ item.netprice }}</span>
-                <span style="width: 50px">{{ item.tradetime }}</span>
+            <ul style="margin-top: 20px">
+              <li class="li-first">
+                <span style="width: 60px">主动方</span>
+                <span style="width: 80px; text-align: right">价格</span>
+                <span style="width: 80px">中介名称</span>
+                <span style="width: 80px">交易时间</span>
+                <span style="width: 60px; text-align: right">净价</span>
+              </li>
+              <li
+                v-for="(item, index) in transactionAllList"
+                :key="index"
+                :class="funcSelectColor(item.dealtype)"
+              >
+                <span style="width: 60px">{{ item.dealtype }}</span>
+                <span style="width: 80px; text-align: right">{{
+                  item.tradeprice
+                }}</span>
+                <span style="width: 80px">{{ item.brokerName }}</span>
+                <span style="width: 80px">{{ item.tradetime }}</span>
+                <span style="width: 60px; text-align: right">{{
+                  item.netprice
+                }}</span>
               </li>
             </ul>
           </el-scrollbar>
@@ -232,11 +240,11 @@
         <!-- 交易聊天框 -->
         <div class="chatbox">
           <ul class="best-price-wapper">
-            <li class="txt-red">卖 54.98</li>
-            <li class="txt-green">买 54.98</li>
+            <li class="txt-red">卖 {{ saleForm.price }}</li>
+            <li class="txt-green">买 {{ buyForm.price }}</li>
           </ul>
-          <el-tabs>
-            <el-tab-pane label="买(F1)">
+          <el-tabs v-model="activeName">
+            <el-tab-pane label="买(F1)" name="buy">
               <el-form
                 ref="form"
                 :model="buyForm"
@@ -244,16 +252,16 @@
                 size="mini"
                 class="buy-form"
               >
-                <el-form-item label="交易类型">
-                  <span class="txt-green">{{ buyForm.chartType }}</span>
+                <el-form-item label="债券代码">
+                  <span class="txt-green">{{ buyForm.tscode }}</span>
                 </el-form-item>
                 <el-form-item label="价格">
-                  <span class="txt-green">{{ buyForm.chartPrice }}</span>
+                  <span class="txt-green">{{ buyForm.price }}</span>
                 </el-form-item>
                 <el-form-item label="交易量(万)">
                   <el-input
-                    v-model="buyForm.chartAmount"
-                    placeholder="请输入内容"
+                    v-model="buyForm.volume"
+                    placeholder="请输入交易量"
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -265,6 +273,29 @@
                     <el-button type="primary">5</el-button>
                     <el-button type="primary">10</el-button>
                   </el-button-group>
+                </el-form-item>
+                <el-form-item label="交易速度">
+                  <el-date-picker
+                    v-model="buyForm.deliveryTime"
+                    type="date"
+                    placeholder="选择日期"
+                    style="width: 130px"
+                    :clearable="false"
+                  >
+                  </el-date-picker>
+                  <el-button-group>
+                    <el-button type="primary" icon="el-icon-plus">0</el-button>
+                    <el-button type="primary" icon="el-icon-plus">1</el-button>
+                  </el-button-group>
+                </el-form-item>
+                <el-form-item label="备注">
+                  <el-input
+                    type="textarea"
+                    v-model="buyForm.remark"
+                    placeholder="请输入内容"
+                    resize="none"
+                    rows="2"
+                  ></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-button class="btn-green" @click="sendTransation"
@@ -273,7 +304,7 @@
                 </el-form-item>
               </el-form>
             </el-tab-pane>
-            <el-tab-pane label="卖(F2)">
+            <el-tab-pane label="卖(F2)" name="sale">
               <el-form
                 ref="saleForm"
                 :model="saleForm"
@@ -281,16 +312,16 @@
                 size="mini"
                 class="sale-form"
               >
-                <el-form-item label="交易类型">
-                  <span class="txt-red">{{ saleForm.chartType }}</span>
+                <el-form-item label="债券代码">
+                  <span class="txt-red">{{ buyForm.tscode }}</span>
                 </el-form-item>
                 <el-form-item label="价格">
-                  <span class="txt-red">{{ saleForm.chartPrice }}</span>
+                  <span class="txt-red">{{ saleForm.price }}</span>
                 </el-form-item>
                 <el-form-item label="交易量(万)">
                   <el-input
-                    v-model="saleForm.chartAmount"
-                    placeholder="请输入内容"
+                    v-model="saleForm.volume"
+                    placeholder="请输入交易量"
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -302,6 +333,29 @@
                     <el-button type="primary">5</el-button>
                     <el-button type="primary">10</el-button>
                   </el-button-group>
+                </el-form-item>
+                <el-form-item label="交易速度">
+                  <el-date-picker
+                    v-model="saleForm.deliveryTime"
+                    type="date"
+                    placeholder="选择日期"
+                    style="width: 130px"
+                    :clearable="false"
+                  >
+                  </el-date-picker>
+                  <el-button-group>
+                    <el-button type="primary" icon="el-icon-plus">0</el-button>
+                    <el-button type="primary" icon="el-icon-plus">1</el-button>
+                  </el-button-group>
+                </el-form-item>
+                <el-form-item label="备注">
+                  <el-input
+                    type="textarea"
+                    v-model="saleForm.remark"
+                    placeholder="请输入内容"
+                    resize="none"
+                    rows="2"
+                  ></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-button class="btn-red" @click="sendTransation"
@@ -428,7 +482,7 @@ export default {
       data0: [],
       myChart: '',
       fold: 'el-icon-s-unfold',
-      rightWith: '320px',
+      rightWith: '360px',
       optionTSType: [],
       optionYear: [
         {
@@ -461,6 +515,8 @@ export default {
       businessInList: [],
       // 卖
       businessOutList: [],
+      // 买卖成交长度
+      inOutLength: 26,
       // 所有
       businessAllList: [],
       // {
@@ -495,22 +551,39 @@ export default {
       //   },
       createSocketIO: null,
       createSocketEmitter: null,
+      activeName: 'buy',
       // chart
       saleForm: {
         // 交易类型
-        chartType: '卖',
+        direction: '卖',
         // 价格
-        chartPrice: '3.05',
+        price: '',
         // 交易量
-        chartAmount: '5000'
+        volume: 5000,
+        // 债券号
+        tscode: '',
+        // 交割速度
+        deliverySpeed: 0,
+        // 交割时间
+        deliveryTime: '',
+        // 备注
+        remark: ''
       },
       buyForm: {
         // 交易类型
-        chartType: '买',
+        direction: '买',
         // 价格
-        chartPrice: '3.05',
+        price: '',
         // 交易量
-        chartAmount: '5000'
+        volume: 5000,
+        // 债券号
+        tscode: '',
+        // 交割速度
+        deliverySpeed: 0,
+        // 交割时间
+        deliveryTime: '',
+        // 备注
+        remark: ''
       },
       // 交易量下拉选项
       chartAmountOptions: [{
@@ -1300,6 +1373,7 @@ export default {
       document.onkeydown = function (event) {
         var e = event || window.event
         var keyCode = e.keyCode || e.which
+        console.log(keyCode)
         switch (keyCode) {
           case 13:
             // 检查K线轮询个数
@@ -1316,6 +1390,22 @@ export default {
               window.event.returnValue = false
             }
             break
+          case 112:
+            self.activeName = 'buy'
+            if (e && e.preventDefault) {
+              e.preventDefault()
+            } else {
+              window.event.returnValue = false
+            }
+            break;
+          case 113:
+            self.activeName = 'sale'
+            if (e && e.preventDefault) {
+              e.preventDefault()
+            } else {
+              window.event.returnValue = false
+            }
+            break;
         }
       }
     },
@@ -1332,7 +1422,7 @@ export default {
         this.rightWith = '0px'
       } else {
         this.fold = 'el-icon-s-unfold'
-        this.rightWith = '320px'
+        this.rightWith = '360px'
       }
       setTimeout(() => {
         this.myChart.resize()
@@ -1393,17 +1483,22 @@ export default {
     // 右侧
     // 卖出，买入数据
     initRightBusinessList(params) {
+      const self = this
       api.businessList(params).then(res => {
+        console.log(2222)
+        console.log(JSON.stringify(res.value))
         if (res.code === '00000') {
           switch (params.bidtype) {
             case 0:
-              this.businessInList = res.value
+              self.businessInList = res.value
+              self.saleForm.price = self.funcGetBestPrice('max', res.value)
               break;
             case 1:
-              this.businessOutList = res.value
+              self.businessOutList = res.value
+              self.buyForm.price = self.funcGetBestPrice('min', res.value)
               break;
             default:
-              this.businessAllList = res.value
+              self.businessAllList = res.value
           }
         }
       })
@@ -1414,6 +1509,8 @@ export default {
       api.transactionList({
         tscode: this.activeTscode
       }).then(res => {
+        console.log(11111)
+        console.log(JSON.stringify(res.value))
         if (res.code === '00000') {
           this.transactionAllList = res.value
         }
@@ -1431,10 +1528,33 @@ export default {
         tscode: this.activeTscode,
         bidtype: 1
       })
+      // 初始化表单数据
+      this.buyForm.tscode = this.activeTscode
+      this.saleForm.tscode = this.activeTscode
       // 初始化实时交易数据
       this.initRightTransactionList()
       this.$store.commit('SET_TSCODE_GLOBAL', { tscodeGlobal: this.activeTscode })
       socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
+    },
+    // 根据主动方显示颜色
+    funcSelectColor(dealtype) {
+      switch (dealtype) {
+        case 'GVN':
+          return 'txt-red'
+        case 'TKN':
+          return 'txt-green'
+        case 'TRD':
+          return 'txt-yellow'
+      }
+    },
+    // 买卖最优值(type:min最小，type:max最大;arr:初始数组;)
+    funcGetBestPrice(type, arr) {
+      switch (type) {
+        case 'min':
+          return Math.min.apply(Math, arr.map(item => { return item.price }))
+        case 'max':
+          return Math.max.apply(Math, arr.map(item => { return item.price }))
+      }
     },
     // ************websocket start**************************
     // 初始化
@@ -1473,11 +1593,13 @@ export default {
                 // self.businessInList.pop()
                 // self.businessInList.unshift(msgJson.data)
                 self.businessInList = msgJson.data
+                self.saleForm.price = self.funcGetBestPrice('max', msgJson.data)
                 break
               case 'bid_1':
                 // self.businessOutList.pop()
                 // self.businessOutList.unshift(msgJson.data)
                 self.businessOutList = msgJson.data
+                self.buyForm.price = self.funcGetBestPrice('min', msgJson.data)
                 break
               case 'trade':
                 self.transactionAllList.pop()
@@ -1562,11 +1684,6 @@ export default {
       }, 5000)
     },
     // ***************websocket end***************************
-    // 交易框
-    handleTransationSet(chartType, chartPrice) {
-      this.chartType = chartType
-      this.chartPrice = chartPrice
-    },
     // 发送交易
     sendTransation() {
       let dataType = ''
@@ -1808,11 +1925,12 @@ export default {
             box-sizing: border-box;
             font-size: 12px;
             display: flex;
-            padding: 0 10px;
+            padding: 0 5px;
             cursor: pointer;
             border-bottom: 1px dashed rgb(51, 51, 51);
             span {
               justify-content: flex-start;
+              padding: 0 5px;
             }
           }
           ul li:hover {
@@ -1835,33 +1953,26 @@ export default {
     }
     .r-trans {
       flex: 1;
+      transform: scale(1);
       .el-scrollbar {
         width: 100%;
-        height: calc(100% - 20px);
       }
-      ul.tit {
-        width: 100%;
+      ul {
         .li-first {
           font-weight: bold;
           background: #202020;
-          height: 20px;
-          line-height: 20px;
-          color: red;
-          box-sizing: border-box;
-          font-size: 12px;
-          display: flex;
-          padding: 0 10px;
-          border-bottom: 1px dashed rgb(51, 51, 51);
-          span {
-            justify-content: flex-start;
-          }
+          border-bottom: 1px solid rgb(51, 51, 51);
+          position: fixed;
+          top: 0px;
+          right: 0;
+          left: 0;
         }
       }
     }
 
     .chatbox {
       width: 100%;
-      height: 500px;
+      height: 400px;
       position: relative;
       bottom: 0;
       color: red;
@@ -1878,17 +1989,20 @@ export default {
           line-height: 40px;
         }
       }
-      .txt-red {
-        color: red;
-      }
-      .txt-green {
-        color: green;
-      }
     }
   }
 }
 </style>
 <style lang="scss">
+.txt-red {
+  color: red !important;
+}
+.txt-green {
+  color: green !important;
+}
+.txt-yellow {
+  color: yellow !important;
+}
 .chatbox {
   .el-button--mini,
   .el-button--mini.is-round {
@@ -1902,6 +2016,9 @@ export default {
     .el-button--primary:hover {
       background-color: rgb(221, 28, 28);
       border-color: rgb(221, 28, 28);
+    }
+    .el-button--primary:last-child {
+      border-left-color: rgba(255, 255, 255, 0.5);
     }
     .btn-red {
       background: red !important;
@@ -1927,6 +2044,9 @@ export default {
       background-color: rgb(6, 156, 6);
       border-color: rgb(6, 156, 6);
     }
+    .el-button--primary:last-child {
+      border-left-color: rgba(255, 255, 255, 0.5);
+    }
     .btn-green {
       background: green !important;
       color: white;
@@ -1949,10 +2069,10 @@ export default {
     padding: 0 10px;
     font-weight: bold;
   }
-  #tab-0.el-tabs__item.is-active {
+  #tab-buy.el-tabs__item.is-active {
     color: green;
   }
-  #tab-1.el-tabs__item.is-active {
+  #tab-sale.el-tabs__item.is-active {
     color: red;
   }
   .el-tabs__nav-wrap::after {
