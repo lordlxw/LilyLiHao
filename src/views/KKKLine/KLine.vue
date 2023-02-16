@@ -231,6 +231,10 @@
         </div>
         <!-- 交易聊天框 -->
         <div class="chatbox">
+          <ul class="best-price-wapper">
+            <li class="txt-red">卖 54.98</li>
+            <li class="txt-green">买 54.98</li>
+          </ul>
           <el-tabs>
             <el-tab-pane label="买(F1)">
               <el-form
@@ -241,10 +245,10 @@
                 class="buy-form"
               >
                 <el-form-item label="交易类型">
-                  <span class="secondClr">{{ buyForm.chartType }}</span>
+                  <span class="txt-green">{{ buyForm.chartType }}</span>
                 </el-form-item>
                 <el-form-item label="价格">
-                  <span class="secondClr">{{ buyForm.chartPrice }}</span>
+                  <span class="txt-green">{{ buyForm.chartPrice }}</span>
                 </el-form-item>
                 <el-form-item label="交易量(万)">
                   <el-input
@@ -263,7 +267,7 @@
                   </el-button-group>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="warning" @click="sendTransation"
+                  <el-button class="btn-green" @click="sendTransation"
                     >发送</el-button
                   >
                 </el-form-item>
@@ -278,10 +282,10 @@
                 class="sale-form"
               >
                 <el-form-item label="交易类型">
-                  <span class="secondClr">{{ saleForm.chartType }}</span>
+                  <span class="txt-red">{{ saleForm.chartType }}</span>
                 </el-form-item>
                 <el-form-item label="价格">
-                  <span class="secondClr">{{ saleForm.chartPrice }}</span>
+                  <span class="txt-red">{{ saleForm.chartPrice }}</span>
                 </el-form-item>
                 <el-form-item label="交易量(万)">
                   <el-input
@@ -300,7 +304,7 @@
                   </el-button-group>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="warning" @click="sendTransation"
+                  <el-button class="btn-red" @click="sendTransation"
                     >发送</el-button
                   >
                 </el-form-item>
@@ -424,7 +428,7 @@ export default {
       data0: [],
       myChart: '',
       fold: 'el-icon-s-unfold',
-      rightWith: '360px',
+      rightWith: '320px',
       optionTSType: [],
       optionYear: [
         {
@@ -1245,8 +1249,7 @@ export default {
       ]).then(res => {
         this.calcFavoriteIcon()
         this.klinemethods[this.klineactive]()
-        this.$store.commit('SET_TSCODE_GLOBAL', { tscodeGlobal: this.activeTscode })
-        socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
+        this.initCommonData()
       })
     },
     // 债券点击事件
@@ -1257,7 +1260,6 @@ export default {
         this.activeTscode = item.tscode,
         this.activeTab === this.tabList[0] ? this.$refs.refComTscodeSelect.value = '' : ''
       ]).then(() => {
-        this.$store.commit('SET_TSCODE_GLOBAL', { tscodeGlobal: this.activeTscode })
         this.klinemethods[this.klineactive]()
         this.calcFavoriteIcon()
         this.initCommonData()
@@ -1330,7 +1332,7 @@ export default {
         this.rightWith = '0px'
       } else {
         this.fold = 'el-icon-s-unfold'
-        this.rightWith = '360px'
+        this.rightWith = '320px'
       }
       setTimeout(() => {
         this.myChart.resize()
@@ -1431,6 +1433,7 @@ export default {
       })
       // 初始化实时交易数据
       this.initRightTransactionList()
+      this.$store.commit('SET_TSCODE_GLOBAL', { tscodeGlobal: this.activeTscode })
       socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
     },
     // ************websocket start**************************
@@ -1778,7 +1781,7 @@ export default {
     .r-out:after {
       position: absolute;
       top: 30px;
-      left: 200px;
+      left: 120px;
       font-size: 40px;
       line-height: 40px;
       z-index: -1;
@@ -1859,14 +1862,27 @@ export default {
     .chatbox {
       width: 100%;
       height: 500px;
-      // position: absolute;
+      position: relative;
       bottom: 0;
       color: red;
       box-sizing: border-box;
       padding: 0px;
       background: #202020;
-      .secondClr {
-        color: $hover-color;
+      .best-price-wapper {
+        position: absolute;
+        overflow: hidden;
+        right: 0;
+        li {
+          float: right;
+          padding: 0 10px;
+          line-height: 40px;
+        }
+      }
+      .txt-red {
+        color: red;
+      }
+      .txt-green {
+        color: green;
       }
     }
   }
@@ -1887,6 +1903,20 @@ export default {
       background-color: rgb(221, 28, 28);
       border-color: rgb(221, 28, 28);
     }
+    .btn-red {
+      background: red !important;
+      color: white;
+      border: 1px solid rgb(238, 3, 3);
+    }
+    .btn-red:hover {
+      background: rgb(250, 64, 64) !important;
+      color: white;
+    }
+    .el-form-item__label {
+      font-size: 12px;
+      font-weight: normal;
+      color: red !important;
+    }
   }
   .buy-form {
     .el-button--primary {
@@ -1897,12 +1927,33 @@ export default {
       background-color: rgb(6, 156, 6);
       border-color: rgb(6, 156, 6);
     }
+    .btn-green {
+      background: green !important;
+      color: white;
+      border: 1px solid rgb(1, 105, 1);
+    }
+    .btn-green:hover {
+      background: rgb(8, 145, 8) !important;
+      color: white;
+      border: 1px solid rgb(1, 105, 1);
+    }
+    .el-form-item__label {
+      font-size: 12px;
+      font-weight: normal;
+      color: green !important;
+    }
   }
   .el-tabs__item {
-    color: red;
-  }
-  .el-tabs__item.is-active {
     color: white;
+    font-size: 12px;
+    padding: 0 10px;
+    font-weight: bold;
+  }
+  #tab-0.el-tabs__item.is-active {
+    color: green;
+  }
+  #tab-1.el-tabs__item.is-active {
+    color: red;
   }
   .el-tabs__nav-wrap::after {
     background-color: red;
@@ -1912,6 +1963,9 @@ export default {
     background-color: white;
   }
   .el-tabs__nav-scroll {
+    padding: 0 10px;
+  }
+  .el-tabs__content {
     padding: 0 10px;
   }
 }
