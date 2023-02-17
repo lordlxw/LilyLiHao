@@ -304,8 +304,18 @@
                   >
                   </el-date-picker>
                   <el-button-group>
-                    <el-button type="primary" icon="el-icon-plus">0</el-button>
-                    <el-button type="primary" icon="el-icon-plus">1</el-button>
+                    <el-button
+                      icon="el-icon-plus"
+                      :class="funcDeliverySpeed('buyForm', 0)"
+                      @click="handleDelivertySpeed('buyForm', 0)"
+                      >0</el-button
+                    >
+                    <el-button
+                      icon="el-icon-plus"
+                      :class="funcDeliverySpeed('buyForm', 1)"
+                      @click="handleDelivertySpeed('buyForm', 1)"
+                      >1</el-button
+                    >
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="备注">
@@ -388,8 +398,18 @@
                   >
                   </el-date-picker>
                   <el-button-group>
-                    <el-button type="primary" icon="el-icon-plus">0</el-button>
-                    <el-button type="primary" icon="el-icon-plus">1</el-button>
+                    <el-button
+                      icon="el-icon-plus"
+                      :class="funcDeliverySpeed('saleForm', 0)"
+                      @click="handleDelivertySpeed('saleForm', 0)"
+                      >0</el-button
+                    >
+                    <el-button
+                      icon="el-icon-plus"
+                      :class="funcDeliverySpeed('saleForm', 1)"
+                      @click="handleDelivertySpeed('saleForm', 1)"
+                      >1</el-button
+                    >
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="备注">
@@ -1529,17 +1549,15 @@ export default {
     initRightBusinessList(params) {
       const self = this
       api.businessList(params).then(res => {
-        console.log(2222)
-        console.log(JSON.stringify(res.value))
         if (res.code === '00000') {
           switch (params.bidtype) {
-            case 0:
-              self.businessInList = res.value
-              self.saleForm.price = self.funcGetBestPrice('max', res.value)
-              break;
             case 1:
               self.businessOutList = res.value
-              self.buyForm.price = self.funcGetBestPrice('min', res.value)
+              self.buyForm.price = self.funcGetBestPrice('max', res.value)
+              break;
+            case 0:
+              self.businessInList = res.value
+              self.saleForm.price = self.funcGetBestPrice('min', res.value)
               break;
             default:
               self.businessAllList = res.value
@@ -1553,8 +1571,8 @@ export default {
       api.transactionList({
         tscode: this.activeTscode
       }).then(res => {
-        console.log(11111)
-        console.log(JSON.stringify(res.value))
+        console.log('成交返回')
+        console.log(res.value)
         if (res.code === '00000') {
           this.transactionAllList = res.value
         }
@@ -1566,11 +1584,11 @@ export default {
       // 初始化买卖数据
       this.initRightBusinessList({
         tscode: this.activeTscode,
-        bidtype: 0
+        bidtype: 1
       })
       this.initRightBusinessList({
         tscode: this.activeTscode,
-        bidtype: 1
+        bidtype: 0
       })
       // 初始化表单数据
       this.buyForm.tscode = this.activeTscode
@@ -1608,6 +1626,16 @@ export default {
         this[formType].volume += val
       }
     },
+    // 交割速度方法
+    funcDeliverySpeed(formType, val) {
+      if (this[formType].deliverySpeed === val) {
+        return 'btn-active'
+      }
+      return ''
+    },
+    handleDelivertySpeed(formType, val) {
+      this[formType].deliverySpeed = val
+    },
     // ************websocket start**************************
     // 初始化
     initSocket() {
@@ -1641,17 +1669,17 @@ export default {
           console.log(msgJson.dataType)
           if (msgJson && msgJson.dataKey === self.activeTscode) {
             switch (msgJson.dataType) {
-              case 'bid_0':
-                // self.businessInList.pop()
-                // self.businessInList.unshift(msgJson.data)
-                self.businessInList = msgJson.data
-                self.saleForm.price = self.funcGetBestPrice('max', msgJson.data)
-                break
               case 'bid_1':
                 // self.businessOutList.pop()
                 // self.businessOutList.unshift(msgJson.data)
                 self.businessOutList = msgJson.data
-                self.buyForm.price = self.funcGetBestPrice('min', msgJson.data)
+                self.buyForm.price = self.funcGetBestPrice('max', msgJson.data)
+                break
+              case 'bid_0':
+                // self.businessInList.pop()
+                // self.businessInList.unshift(msgJson.data)
+                self.businessInList = msgJson.data
+                self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
                 break
               case 'trade':
                 self.transactionAllList.pop()
@@ -2018,7 +2046,7 @@ export default {
         .li-first {
           font-weight: bold;
           background: #202020;
-          border-bottom: 1px solid rgb(51, 51, 51);
+          border-bottom: 1px solid rgb(51, 51, 51) !important;
           position: fixed;
           top: 0px;
           right: 0;
@@ -2077,7 +2105,8 @@ export default {
     .el-button--primary:last-child {
       border-left-color: rgba(255, 255, 255, 0.5);
     }
-    .btn-red {
+    .btn-red,
+    .btn-active {
       background: red !important;
       color: white;
       border: 1px solid rgb(238, 3, 3);
@@ -2104,7 +2133,8 @@ export default {
     .el-button--primary:last-child {
       border-left-color: rgba(255, 255, 255, 0.5);
     }
-    .btn-green {
+    .btn-green,
+    .btn-active {
       background: green !important;
       color: white;
       border: 1px solid rgb(1, 105, 1);
