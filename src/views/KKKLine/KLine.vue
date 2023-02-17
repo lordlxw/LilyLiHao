@@ -173,13 +173,12 @@
               <li
                 v-for="(item, index) in businessOutList"
                 :key="index"
-                :title="item.volume"
+                :title="item.volumecomment ? item.volumecomment : item.volume"
               >
-                <span style="flex: 1">{{
-                  item.volume.length > inOutLength
-                    ? item.volume.substring(0, inOutLength)
-                    : item.volume
-                }}</span>
+                <span style="width: 50px">{{ item.brokerName }}</span>
+                <span style="flex: 1" class="ellipsis">
+                  {{ item.volumecomment ? item.volumecomment : item.volume }}
+                </span>
                 <span style="width: 50px">{{ item.price }}</span>
                 <span style="width: 50px">{{ item.updatetime }}</span>
               </li>
@@ -193,15 +192,12 @@
               <li
                 v-for="(item, index) in businessInList"
                 :key="index"
-                :title="item.volume"
+                :title="item.volumecomment ? item.volumecomment : item.volume"
               >
-                <span style="flex: 1">
-                  {{
-                    item.volume.length > inOutLength
-                      ? item.volume.substring(0, inOutLength)
-                      : item.volume
-                  }}</span
-                >
+                <span style="width: 50px">{{ item.brokerName }}</span>
+                <span class="ellipsis" style="flex: 1">
+                  {{ item.volumecomment ? item.volumecomment : item.volume }}
+                </span>
                 <span style="width: 50px">{{ item.price }}</span>
                 <span style="width: 50px">{{ item.updatetime }}</span>
               </li>
@@ -214,10 +210,10 @@
             <ul style="margin-top: 20px">
               <li class="li-first">
                 <span style="width: 60px">主动方</span>
-                <span style="width: 80px">价格</span>
-                <span style="width: 80px">中介名称</span>
+                <span style="width: 120px">价格</span>
+                <span style="width: 100px">中介名称</span>
                 <span style="width: 80px">交易时间</span>
-                <span style="width: 60px">净价</span>
+                <!-- <span style="width: 60px">净价</span> -->
               </li>
               <li
                 v-for="(item, index) in transactionAllList"
@@ -225,10 +221,10 @@
                 :class="funcSelectColor(item.dealtype)"
               >
                 <span style="width: 60px">{{ item.dealtype }}</span>
-                <span style="width: 80px">{{ item.tradeprice }}</span>
-                <span style="width: 80px">{{ item.brokerName }}</span>
+                <span style="width: 120px">{{ item.tradeprice }}</span>
+                <span style="width: 100px">{{ item.brokerName }}</span>
                 <span style="width: 80px">{{ item.tradetime }}</span>
-                <span style="width: 60px">{{ item.netprice }}</span>
+                <!-- <span style="width: 60px">{{ item.netprice }}</span> -->
               </li>
             </ul>
           </el-scrollbar>
@@ -236,13 +232,47 @@
         <!-- 交易聊天框 -->
         <div class="chatbox">
           <ul class="best-price-wapper">
+            <el-popover
+              placement="bottom-end"
+              width="300"
+              trigger="click"
+              ref="popover-set"
+            >
+              <div class="default-set-wrapper">
+                <el-form
+                  ref="setForm"
+                  :model="setForm"
+                  :rules="setFormRules"
+                  label-width="100px"
+                >
+                  <el-form-item label="交易量（万）" prop="volume">
+                    <el-input v-model="setForm.volume"></el-input>
+                  </el-form-item>
+                  <el-form-item label="快速提交">
+                    <el-checkbox
+                      label="是"
+                      v-model="setForm.quickSubmit"
+                      name="quickSubmit"
+                    ></el-checkbox>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" @click="submitForm('setForm')"
+                      >保存默认设置</el-button
+                    >
+                  </el-form-item>
+                </el-form>
+              </div>
+              <li slot="reference" class="txt-white chat-set">
+                <i class="el-icon-setting"></i>
+              </li>
+            </el-popover>
             <li class="txt-red">卖 {{ saleForm.price }}</li>
             <li class="txt-green">买 {{ buyForm.price }}</li>
           </ul>
           <el-tabs v-model="activeName">
             <el-tab-pane label="买(F1)" name="buy">
               <el-form
-                ref="form"
+                ref="buyForm"
                 :model="buyForm"
                 label-width="70px"
                 size="mini"
@@ -631,8 +661,11 @@ export default {
         // 交割时间
         deliveryTime: '',
         // 备注
-        remark: ''
+        remark: '',
+        // 快速交易
+        quickSubmit: false,
       },
+      saleFormRules: [],
       buyForm: {
         // 交易类型
         direction: '买',
@@ -647,32 +680,24 @@ export default {
         // 交割时间
         deliveryTime: '',
         // 备注
-        remark: ''
+        remark: '',
+        // 快速交易
+        quickSubmit: false,
       },
-      // 交易量下拉选项
-      chartAmountOptions: [{
-        value: '1000',
-        label: '1000'
-      }, {
-        value: '2000',
-        label: '2000'
-      }, {
-        value: '3000',
-        label: '3000'
-      }, {
-        value: '5000',
-        label: '5000'
-      }, {
-        value: '10000',
-        label: '10000'
-      }],
+      buyFormRules: [],
+      setForm: {
+        volume: '',
+        quickSubmit: false
+      },
+      setFormRules: [],
       gridDataMsg: [],
       dialogTableVisible: false
     }
   },
   computed: {
     ...mapGetters({
-      tscodeGlobal: 'getTscodeGlobal'
+      tscodeGlobal: 'getTscodeGlobal',
+      defaultSet: 'getDefaultSet'
     })
   },
   created() {
@@ -1633,8 +1658,25 @@ export default {
       }
       return ''
     },
+    // 点击交易速度
     handleDelivertySpeed(formType, val) {
       this[formType].deliverySpeed = val
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          switch (formName) {
+            case 'setForm':
+              this.$store.commit('SET_DEFAULT_SET', JSON.stringify(this[formName]))
+              this.buyForm.volume = this[formName].volume
+              this.saleForm.volume = this[formName].volume
+              this.buyForm.quickSubmit = this[formName].quickSubmit
+              this.saleForm.quickSubmit = this[formName].quickSubmit
+              this.$refs['popover-set'].doClose()
+              break
+          }
+        }
+      })
     },
     // ************websocket start**************************
     // 初始化
@@ -1813,6 +1855,14 @@ export default {
     date.setTime(date.getTime() + 3600 * 1000 * 24);
     this.buyForm.deliveryTime = date
     this.saleForm.deliveryTime = date
+    console.log(88888)
+    console.log(this.defaultSet)
+    this.setForm.volume = this.defaultSet.volume
+    this.setForm.quickSubmit = this.defaultSet.quickSubmit
+    this.buyForm.volume = this.setForm.volume
+    this.saleForm.volume = this.setForm.volume
+    this.buyForm.quickSubmit = this.setForm.quickSubmit
+    this.saleForm.quickSubmit = this.setForm.quickSubmit
     window.onresize = () => {
       if (this.myChart) {
         this.myChart.resize()
@@ -2068,14 +2118,27 @@ export default {
         position: absolute;
         overflow: hidden;
         right: 0;
+        z-index: 1;
         li {
+          height: 40px;
+          line-height: 40px;
           float: right;
           padding: 0 10px;
           line-height: 40px;
         }
+        li.chat-set:hover {
+          cursor: pointer;
+          background: #333131;
+        }
       }
     }
   }
+}
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
 }
 </style>
 <style lang="scss">
@@ -2087,6 +2150,15 @@ export default {
 }
 .txt-yellow {
   color: yellow !important;
+}
+.txt-white {
+  color: white !important;
+}
+.default-set-wrapper {
+  .el-form-item__label {
+    font-size: 12px;
+    font-weight: normal;
+  }
 }
 .chatbox {
   .el-button--mini,

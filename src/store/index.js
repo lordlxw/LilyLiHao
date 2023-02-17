@@ -24,7 +24,9 @@ const store = new Vuex.Store({
     },
     curMenuIndex: '',
     // url 连接传参
-    urlParams: {}
+    urlParams: {},
+    // 询价单的一些默认设置默认设置
+    defaultSet: {}
   },
   getters: {
     getMenus(state) {
@@ -90,6 +92,20 @@ const store = new Vuex.Store({
         state.tscodeGlobal = sessionStorage.getItem(config.keys.currentTscode)
       }
       return state.tscodeGlobal || ''
+    },
+    // 获取默认设置
+    getDefaultSet(state) {
+      if (localStorage.getItem(config.keys.defaultSet)) {
+        state.defaultSet = JSON.parse(localStorage.getItem(config.keys.defaultSet))
+      } else {
+        state.defaultSet = {
+          // 默认交易量
+          volume: 0,
+          // 是否快速提交
+          quickSubmit: false,
+        }
+      }
+      return state.defaultSet
     }
   },
   actions: {},
@@ -160,6 +176,11 @@ const store = new Vuex.Store({
     SET_TSCODE_GLOBAL(state, params) {
       state.tscodeGlobal = params.tscodeGlobal
       sessionStorage.setItem(config.keys.currentTscode, params.tscodeGlobal)
+    },
+    // 设置默认设置
+    SET_DEFAULT_SET(state, params) {
+      state.defaultSet = params
+      localStorage.setItem(config.keys.defaultSet, params)
     }
   }
 })

@@ -9,7 +9,8 @@ export default {
     'navigatorIdKey': 'navigatorId',
     'routersKey': 'routers',
     'urlParams': 'urlParams',
-    'currentTscode': 'currentTscode'
+    'currentTscode': 'currentTscode',
+    'defaultSet': 'defaultSet'
   },
   // 正则
   regExpSet: {
