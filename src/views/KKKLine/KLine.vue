@@ -235,8 +235,9 @@
             <el-popover
               placement="bottom-end"
               width="300"
-              trigger="click"
+              trigger="manual"
               ref="popover-set"
+              v-model="popoverSetVisible"
             >
               <div class="default-set-wrapper">
                 <el-form
@@ -259,10 +260,17 @@
                     <el-button type="primary" @click="submitForm('setForm')"
                       >保存默认设置</el-button
                     >
+                    <el-button type="default" @click="popoverSetVisible = false"
+                      >取消</el-button
+                    >
                   </el-form-item>
                 </el-form>
               </div>
-              <li slot="reference" class="txt-white chat-set">
+              <li
+                slot="reference"
+                class="txt-white chat-set"
+                @click="popoverSetVisible = !popoverSetVisible"
+              >
                 <i class="el-icon-setting"></i>
               </li>
             </el-popover>
@@ -686,10 +694,11 @@ export default {
       },
       buyFormRules: [],
       setForm: {
-        volume: '',
+        volume: 0,
         quickSubmit: false
       },
       setFormRules: [],
+      popoverSetVisible: false,
       gridDataMsg: [],
       dialogTableVisible: false
     }
@@ -1668,8 +1677,8 @@ export default {
           switch (formName) {
             case 'setForm':
               this.$store.commit('SET_DEFAULT_SET', JSON.stringify(this[formName]))
-              this.buyForm.volume = this[formName].volume
-              this.saleForm.volume = this[formName].volume
+              this.buyForm.volume = parseInt(this[formName].volume)
+              this.saleForm.volume = parseInt(this[formName].volume)
               this.buyForm.quickSubmit = this[formName].quickSubmit
               this.saleForm.quickSubmit = this[formName].quickSubmit
               this.$refs['popover-set'].doClose()
@@ -1855,12 +1864,11 @@ export default {
     date.setTime(date.getTime() + 3600 * 1000 * 24);
     this.buyForm.deliveryTime = date
     this.saleForm.deliveryTime = date
-    console.log(88888)
-    console.log(this.defaultSet)
+    // 初始化默认设置和询价单表格默认设置
     this.setForm.volume = this.defaultSet.volume
     this.setForm.quickSubmit = this.defaultSet.quickSubmit
-    this.buyForm.volume = this.setForm.volume
-    this.saleForm.volume = this.setForm.volume
+    this.buyForm.volume = parseInt(this.setForm.volume)
+    this.saleForm.volume = parseInt(this.setForm.volume)
     this.buyForm.quickSubmit = this.setForm.quickSubmit
     this.saleForm.quickSubmit = this.setForm.quickSubmit
     window.onresize = () => {
