@@ -274,8 +274,8 @@
                 <i class="el-icon-setting"></i>
               </li>
             </el-popover>
-            <li class="txt-red">卖 {{ saleForm.price }}</li>
-            <li class="txt-green">买 {{ buyForm.price }}</li>
+            <li class="txt-red txt-bold">卖 {{ saleForm.price }}</li>
+            <li class="txt-green txt-bold">买 {{ buyForm.price }}</li>
           </ul>
           <el-tabs v-model="activeName">
             <el-tab-pane label="买(F1)" name="buy">
@@ -366,7 +366,7 @@
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button class="btn-green" @click="sendTransation"
+                  <el-button class="btn-green" @click="submitForm('buyForm')"
                     >发送</el-button
                   >
                 </el-form-item>
@@ -460,7 +460,7 @@
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button class="btn-red" @click="sendTransation"
+                  <el-button class="btn-red" @click="submitForm('saleForm')"
                     >发送</el-button
                   >
                 </el-form-item>
@@ -668,6 +668,8 @@ export default {
         deliverySpeed: 0,
         // 交割时间
         deliveryTime: '',
+        // 交易员
+        tradeuserId: 2,
         // 备注
         remark: '',
         // 快速交易
@@ -687,6 +689,8 @@ export default {
         deliverySpeed: 0,
         // 交割时间
         deliveryTime: '',
+        // 交易员
+        tradeuserId: 2,
         // 备注
         remark: '',
         // 快速交易
@@ -1688,6 +1692,28 @@ export default {
               this.saleForm.quickSubmit = this[formName].quickSubmit
               this.$refs['popover-set'].doClose()
               break
+            case 'buyForm':
+            case 'saleForm':
+              api.inquirySheetAdd({
+                // 交割速度
+                deliverySpeed: this[formName].deliverySpeed,
+                // 交割日期
+                deliveryTime: util.dateFormat(this[formName].deliveryTime, "yyyy-MM-dd"),
+                // 买还是卖
+                direction: this[formName].direction,
+                // 成交价格
+                price: this[formName].price,
+                // 交易员
+                tradeuserId: this[formName].tradeuserId,
+                // 债券编号
+                tscode: this[formName].tscode,
+                // 成交量
+                volume: this[formName].volume
+              }).then(res => {
+                console.log(123456)
+                console.log(res)
+              })
+              break
           }
         }
       })
@@ -2166,6 +2192,9 @@ export default {
 }
 .txt-white {
   color: white !important;
+}
+.txt-bold {
+  font-weight: bold;
 }
 .default-set-wrapper {
   .el-form-item__label {
