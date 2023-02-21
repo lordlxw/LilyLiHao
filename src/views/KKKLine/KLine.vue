@@ -305,7 +305,7 @@
                       @click="funcVolumeAdd('buyForm', 0)"
                       >清零</el-button
                     >
-                    <el-button
+                    <!-- <el-button
                       type="primary"
                       @click="funcVolumeAdd('buyForm', 1000)"
                       >1</el-button
@@ -314,7 +314,7 @@
                       type="primary"
                       @click="funcVolumeAdd('buyForm', 2000)"
                       >2</el-button
-                    >
+                    > -->
                     <el-button
                       type="primary"
                       @click="funcVolumeAdd('buyForm', 3000)"
@@ -328,7 +328,7 @@
                     <el-button
                       type="primary"
                       @click="funcVolumeAdd('buyForm', 10000)"
-                      >10</el-button
+                      >5+5</el-button
                     >
                   </el-button-group>
                 </el-form-item>
@@ -348,12 +348,12 @@
                       @click="handleDelivertySpeed('buyForm', 0)"
                       >0</el-button
                     >
-                    <el-button
+                    <!-- <el-button
                       icon="el-icon-plus"
                       :class="funcDeliverySpeed('buyForm', 1)"
                       @click="handleDelivertySpeed('buyForm', 1)"
                       >1</el-button
-                    >
+                    > -->
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="备注">
@@ -399,7 +399,7 @@
                       @click="funcVolumeAdd('saleForm', 0)"
                       >清零</el-button
                     >
-                    <el-button
+                    <!-- <el-button
                       type="primary"
                       @click="funcVolumeAdd('saleForm', 1000)"
                       >1</el-button
@@ -408,7 +408,7 @@
                       type="primary"
                       @click="funcVolumeAdd('saleForm', 2000)"
                       >2</el-button
-                    >
+                    > -->
                     <el-button
                       type="primary"
                       @click="funcVolumeAdd('saleForm', 3000)"
@@ -422,7 +422,7 @@
                     <el-button
                       type="primary"
                       @click="funcVolumeAdd('saleForm', 10000)"
-                      >10</el-button
+                      >5+5</el-button
                     >
                   </el-button-group>
                 </el-form-item>
@@ -442,12 +442,12 @@
                       @click="handleDelivertySpeed('saleForm', 0)"
                       >0</el-button
                     >
-                    <el-button
+                    <!-- <el-button
                       icon="el-icon-plus"
                       :class="funcDeliverySpeed('saleForm', 1)"
                       @click="handleDelivertySpeed('saleForm', 1)"
                       >1</el-button
-                    >
+                    > -->
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="备注">
@@ -1700,7 +1700,7 @@ export default {
                 // 交割日期
                 deliveryTime: util.dateFormat(this[formName].deliveryTime, "yyyy-MM-dd"),
                 // 买还是卖
-                direction: this[formName].direction,
+                direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
                 // 成交价格
                 price: this[formName].price,
                 // 交易员
