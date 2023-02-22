@@ -1,8 +1,5 @@
 <template>
   <el-container class="form-container height100percent">
-    <el-header>
-      <topbar></topbar>
-    </el-header>
     <el-container class="height100percent">
       <el-aside width="auto" class="height100percent">
         <div class="aside-left" ref="animateAsideLeft">
@@ -17,6 +14,7 @@
           ref="animateContent"
           :style="'padding-left:' + asideLeftWidth + ';'"
         >
+          <topbar></topbar>
           <el-scrollbar class="scrollbar-content height100percent">
             <main-content>
               <slot></slot>
@@ -70,12 +68,12 @@ export default {
 .form-container {
   .el-aside {
     position: fixed;
-    top: 60px;
     z-index: 100;
+    overflow: hidden;
   }
   .aside-left {
-    height: calc(100% - 60px);
-    background-color: $main-color;
+    height: 100%;
+    background-color: #202020;
     box-sizing: border-box;
     .scrollbar-aside {
       height: 100%;
@@ -84,12 +82,11 @@ export default {
   }
   .main-content {
     width: 100%;
-    height: calc(100% - 60px);
+    height: 100%;
     box-sizing: border-box;
     position: relative;
     .scrollbar-content {
-      height: 100%;
-      margin-top: 60px;
+      height: calc(100% - 40px);
     }
   }
 }

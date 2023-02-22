@@ -35,6 +35,47 @@ const router = new Router({
           component: () => import('@/views/KKKLine/KLine.vue')
         }
       ]
+    },
+    {
+      path: '/main',
+      component: () => import('@/views/Index.vue'),
+      redirect: '/dashboard',
+      children: [
+        {
+          path: '/dashboard',
+          component: () => import('@/views/Dashboard/Dashboard.vue')
+        },
+        // 菜单管理
+        {
+          path: '/power/menu',
+          component: () => import('@/views/KKPower/Menu.vue'),
+        },
+        // 菜单管理 - 添加
+        {
+          path: '/power/menu/add',
+          component: () => import('@/views/KKPower/Menu/Add.vue')
+        },
+        // 菜单管理 - 编辑
+        {
+          path: '/power/menu/edit',
+          component: () => import('@/views/KKPower/Menu/Edit.vue')
+        },
+        // 角色管理
+        {
+          path: '/power/role',
+          component: () => import('@/views/KKPower/Role.vue'),
+        },
+        // 角色管理 - 添加
+        {
+          path: '/power/role/add',
+          component: () => import('@/views/KKPower/Role/Add.vue')
+        },
+        // 角色管理 - 编辑
+        {
+          path: '/power/role/edit',
+          component: () => import('@/views/KKPower/Role/Edit.vue')
+        }
+      ]
     }
   ],
   // 导航激活样式

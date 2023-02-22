@@ -12,6 +12,16 @@ export default {
     'currentTscode': 'currentTscode',
     'defaultSet': 'defaultSet'
   },
+  // 菜单功能类型
+  menuFunType: {
+    'M': '菜单',
+    'C': '叶节点',
+    'F': '功能',
+  },
+  // 处理键值对信息转换
+  funcKeyValue(key, type) {
+    return this[`${type}`][`${key}`]
+  },
   // 正则
   regExpSet: {
     // 11位手机号

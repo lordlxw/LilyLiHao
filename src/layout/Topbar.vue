@@ -1,63 +1,23 @@
 <template>
   <div class="topbar">
-    <div
-      class="topbar-left"
-      ref="animateLogo"
-      :style="'width:' + asideLeftWidth + ';'"
-    >
-      <el-image :src="require('../assets/images/logo.png')" class="logo" />
-    </div>
-    <div class="topbar-right">
-      <div class="l">
-        <i
-          :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"
-          @click="changeFoldState"
-        ></i>
-        <el-menu
-          :default-active="activeIndex"
-          mode="horizontal"
-          @select="handleSelect"
-          background-color="#1678B0"
-          text-color="#fff"
-          active-text-color="#ffd04b"
-          router
+    <div class="navigator">
+      <i
+        class="collapse"
+        :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"
+        @click="changeFoldState"
+      ></i>
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <!-- <el-breadcrumb-item :to="{ path: '/main' }">仪表盘</el-breadcrumb-item> -->
+        <el-breadcrumb-item
+          v-for="(item, index) in navigator"
+          :key="item + index"
+          >{{ item }}</el-breadcrumb-item
         >
-          <template v-for="item in menus">
-            <el-menu-item
-              v-if="setAuth(item.index)"
-              :route="item.url"
-              :index="item.index"
-              :key="item.name"
-              style="font-size: 15px; font-weight: bold"
-              >{{ item.name }}</el-menu-item
-            >
-          </template>
-        </el-menu>
-      </div>
-      <div class="r">
-        <i
-          class="fa mr10"
-          :class="screenfullClass"
-          @click="handleScreenfull"
-        ></i>
-        <el-dropdown @command="handleCommand">
-          <span class="el-dropdown-link">
-            {{ loginName }}
-            <i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="updatePassword"
-              >修改密码</el-dropdown-item
-            >
-            <el-dropdown-item divided command="logout">退出</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </div>
+      </el-breadcrumb>
     </div>
   </div>
 </template>
 <script>
-import apiLogin from "@/api/login_login";
 import { mapMutations, mapState, mapGetters } from "vuex";
 import Velocity from "velocity-animate";
 import screenfull from "screenfull";
@@ -91,7 +51,8 @@ export default {
     }),
     ...mapGetters({
       menus_ids: 'getMenus',
-      roleId: 'getRoleId'
+      roleId: 'getRoleId',
+      navigator: 'getNavigator'
     })
   },
   methods: {
@@ -137,12 +98,12 @@ export default {
     },
     /* 用户登出 */
     fetchLogout() {
-      apiLogin.logout({}).then((response) => {
-        sessionStorage.removeItem(config.keys.tokenKey);
-        sessionStorage.removeItem(config.keys.menusKey);
-        sessionStorage.removeItem(config.keys.loginNameKey);
-        this.$router.push({ path: "/login" });
-      });
+      // apiLogin.logout({}).then((response) => {
+      //   sessionStorage.removeItem(config.keys.tokenKey);
+      //   sessionStorage.removeItem(config.keys.menusKey);
+      //   sessionStorage.removeItem(config.keys.loginNameKey);
+      //   this.$router.push({ path: "/login" });
+      // });
     },
     handleSelect(key, keyPath) {
       this["SET_CRUMENUSINDEX"](key)
@@ -181,53 +142,22 @@ export default {
 <style lang="scss" scoped>
 @import "../assets/css/style.scss";
 .topbar {
-  background-color: $main-color;
-  height: 60px;
-  display: flex;
-  .topbar-left {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    .logo {
-      padding: 10px;
-      width: 40px;
-    }
+  background-color: #e9e6e6;
+  height: 40px;
+  .collapse {
+    font-size: 20px;
   }
-  .topbar-right {
-    padding-right: 15px;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    i:hover {
-      cursor: pointer;
-      color: $hover-color;
-    }
-    .l {
-      flex: 1;
-      display: flex;
-      align-items: center;
-    }
-    .r {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      .el-icon-full-screen {
-        font-size: 26px;
-        font-weight: bold;
-        margin: 0 10px;
-      }
-      .el-dropdown-link {
-        cursor: pointer;
-        color: white;
-      }
-      .el-dropdown-link:hover {
-        color: $hover-color;
-      }
-      .el-icon-arrow-down {
-        font-size: 12px;
-      }
+  i:hover {
+    cursor: pointer;
+    color: $hover-color;
+  }
+  .navigator {
+    line-height: 40px;
+    padding: 0 15px;
+    .el-breadcrumb {
+      height: 40px;
+      line-height: 40px;
+      float: left;
     }
   }
 }

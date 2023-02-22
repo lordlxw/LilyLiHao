@@ -63,7 +63,6 @@
         >
           <span class="i-text">
             <i :class="favoriteTscodeIconList[0]"></i>
-            <!-- <span class="icon-name">收藏</span> -->
           </span>
         </li>
         <li
@@ -73,7 +72,6 @@
         >
           <span class="i-text" style="color: yellow">
             <i :class="favoriteTscodeIconList[1]"></i>
-            <!-- <span class="icon-name">取消</span> -->
           </span>
         </li>
         <li class="nav-right">
@@ -84,8 +82,16 @@
                 @click="dialogTableVisible = true"
               ></i>
             </el-badge>
-            <!-- <span class="icon-name">取消</span> -->
           </span>
+        </li>
+        <li class="nav-right">
+          <router-link
+            target="_blank"
+            :to="{ path: '/main' }"
+            class="i-text"
+            style="color: white"
+            ><i class="el-icon-s-home"></i
+          ></router-link>
         </li>
       </ul>
     </div>
@@ -209,9 +215,9 @@
           <el-scrollbar>
             <ul style="margin-top: 20px">
               <li class="li-first">
-                <span style="width: 60px">主动方</span>
+                <span style="width: 60px">方向</span>
                 <span style="width: 120px">价格</span>
-                <span style="width: 100px">中介名称</span>
+                <span style="width: 100px">中介</span>
                 <span style="width: 80px">交易时间</span>
                 <!-- <span style="width: 60px">净价</span> -->
               </li>
@@ -2181,6 +2187,9 @@ export default {
 }
 </style>
 <style lang="scss">
+body {
+  background-color: #202020;
+}
 .txt-red {
   color: red !important;
 }

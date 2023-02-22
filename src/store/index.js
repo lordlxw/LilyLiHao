@@ -31,22 +31,22 @@ const store = new Vuex.Store({
   getters: {
     getMenus(state) {
       if (state.menus.length > 0) {
-        sessionStorage.setItem(config.keys.menusKey, state.menus)
+        localStorage.setItem(config.keys.menusKey, state.menus)
       } else {
-        state.menus = sessionStorage.getItem(config.keys.menusKey)
+        state.menus = localStorage.getItem(config.keys.menusKey)
       }
       return JSON.parse(state.menus)
     },
     getRoleId(state) {
       if (state.roleId === '') {
-        state.roleId = sessionStorage.getItem(config.keys.roleIdKey)
+        state.roleId = localStorage.getItem(config.keys.roleIdKey)
       }
       return state.roleId
     },
     getNavigator(state) {
       if (state.navigator.length > 0) {
       } else {
-        const navigator = sessionStorage.getItem(config.keys.navigatorKey)
+        const navigator = localStorage.getItem(config.keys.navigatorKey)
         if (navigator) {
           state.navigator = navigator.split(',')
         }
@@ -57,7 +57,7 @@ const store = new Vuex.Store({
       if (state.navigatorId.length > 0) {
 
       } else {
-        const navigatorId = sessionStorage.getItem(config.keys.navigatorIdKey)
+        const navigatorId = localStorage.getItem(config.keys.navigatorIdKey)
         if (navigatorId) {
           state.navigatorId = navigatorId.split(',')
         }
@@ -68,7 +68,7 @@ const store = new Vuex.Store({
       if (Object.keys(state.routers).length > 0) {
 
       } else {
-        const routers = JSON.parse(sessionStorage.getItem(config.keys.routersKey))
+        const routers = JSON.parse(localStorage.getItem(config.keys.routersKey))
         if (routers) {
           state.routers = routers
         }
@@ -79,7 +79,7 @@ const store = new Vuex.Store({
       if (Object.keys(state.urlParams).length > 0) {
 
       } else {
-        const urlParams = JSON.parse(sessionStorage.getItem(config.keys.urlParams))
+        const urlParams = JSON.parse(localStorage.getItem(config.keys.urlParams))
         if (urlParams) {
           state.urlParams = urlParams
         }
@@ -89,7 +89,7 @@ const store = new Vuex.Store({
     // 获取当前tscode
     getTscodeGlobal(state) {
       if (state.tscodeGlobal === '') {
-        state.tscodeGlobal = sessionStorage.getItem(config.keys.currentTscode)
+        state.tscodeGlobal = localStorage.getItem(config.keys.currentTscode)
       }
       return state.tscodeGlobal || ''
     },
@@ -118,17 +118,17 @@ const store = new Vuex.Store({
     // 设置登录名
     SET_LOGINNAME(state, loginName) {
       state.loginName = loginName
-      sessionStorage.setItem(config.keys.loginNameKey, loginName)
+      localStorage.setItem(config.keys.loginNameKey, loginName)
     },
     // 设置token
     SET_TOKEN(state, token) {
       state.token = token
-      sessionStorage.setItem(config.keys.tokenKey, token)
+      localStorage.setItem(config.keys.tokenKey, token)
     },
     // 设置角色id
     SET_ROLEID(state, roleId) {
       state.roleId = roleId.toString()
-      sessionStorage.setItem(config.keys.roleIdKey, roleId.toString())
+      localStorage.setItem(config.keys.roleIdKey, roleId.toString())
     },
     // 设置menus
     SET_MENUS(state, menus) {
@@ -150,7 +150,7 @@ const store = new Vuex.Store({
         }
       });
       state.menus = JSON.stringify(util.mergeArray(JSON.parse(menus), lazyMenuIds))
-      sessionStorage.setItem(config.keys.menusKey, state.menus)
+      localStorage.setItem(config.keys.menusKey, state.menus)
     },
     // 设置导航
     SET_NAVIGATOR(state, params) {
@@ -160,22 +160,22 @@ const store = new Vuex.Store({
         navigator: params.val1,
         navigatorId: params.val2
       }
-      sessionStorage.setItem(config.keys.navigatorKey, params.val1)
-      sessionStorage.setItem(config.keys.navigatorIdKey, params.val2)
-      sessionStorage.setItem(config.keys.routersKey, JSON.stringify(state.routers))
+      localStorage.setItem(config.keys.navigatorKey, params.val1)
+      localStorage.setItem(config.keys.navigatorIdKey, params.val2)
+      localStorage.setItem(config.keys.routersKey, JSON.stringify(state.routers))
     },
     // 设置当前导航索引
     SET_CRUMENUSINDEX(state, index) {
       state.curMenuIndex = index
     },
     SET_URLPARAMS(state, params) {
-      sessionStorage.setItem(config.keys.urlParams, JSON.stringify(params))
+      localStorage.setItem(config.keys.urlParams, JSON.stringify(params))
       state.urlParams = params
     },
     // 设置当前选中的tscode（刷新恢复使用）
     SET_TSCODE_GLOBAL(state, params) {
       state.tscodeGlobal = params.tscodeGlobal
-      sessionStorage.setItem(config.keys.currentTscode, params.tscodeGlobal)
+      localStorage.setItem(config.keys.currentTscode, params.tscodeGlobal)
     },
     // 设置默认设置
     SET_DEFAULT_SET(state, params) {

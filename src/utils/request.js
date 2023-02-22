@@ -12,9 +12,9 @@ const service = axios.create({
 
 service.interceptors.request.use(config => {
   try {
-    console.log('get:' + sessionStorage.getItem(configUtil.keys.tokenKey))
-    if (sessionStorage.getItem(configUtil.keys.tokenKey) && config.url.substring(config.url.lastIndexOf('/')) !== '/login') {
-      config.headers['Authorization'] = sessionStorage.getItem(configUtil.keys.tokenKey)
+    console.log('get:' + localStorage.getItem(configUtil.keys.tokenKey))
+    if (localStorage.getItem(configUtil.keys.tokenKey) && config.url.substring(config.url.lastIndexOf('/')) !== '/login') {
+      config.headers['Authorization'] = localStorage.getItem(configUtil.keys.tokenKey)
     }
   } catch (error) {
 

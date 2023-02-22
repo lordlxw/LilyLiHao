@@ -1,10 +1,39 @@
 <template>
   <div>
     <el-menu
+      default-active="1"
+      background-color="#202020"
+      text-color="#fff"
+      active-text-color="#fff"
+      class="el-menu-vertical-demo"
+      @open="handleOpen"
+      @close="handleClose"
+      router
+    >
+      <el-submenu index="1">
+        <template slot="title">
+          <i class="el-icon-location"></i>
+          <span>导航一</span>
+        </template>
+        <el-menu-item-group>
+          <el-menu-item index="1-1" route="/power/menu">菜单管理</el-menu-item>
+          <el-menu-item index="1-2" route="/power/role">角色管理</el-menu-item>
+        </el-menu-item-group>
+        <el-menu-item-group>
+          <el-menu-item index="1-3">选项3</el-menu-item>
+        </el-menu-item-group>
+        <el-submenu index="1-4">
+          <template slot="title">选项4</template>
+          <el-menu-item index="1-4-1">选项1</el-menu-item>
+        </el-submenu>
+      </el-submenu>
+    </el-menu>
+
+    <!-- <el-menu
       :default-active="this.$route.path"
       @open="handleOpen"
       @close="handleClose"
-      background-color="#1678B0"
+      background-color="#202020"
       text-color="#fff"
       active-text-color="#fff"
       router
@@ -49,23 +78,6 @@
               >
             </div>
           </el-menu-item-group>
-          <!-- <div v-for="item2 in item.children" :key="item2.name">
-              <el-menu-item
-                v-if="menus_ids.indexOf(item2.index) !== -1"
-                :route="item2.url"
-                :index="item2.url"
-                :key="item2.url"
-                @click="
-                  handleNavigator(
-                    [`${item.name}`, `${item2.name}`],
-                    [item.id, item2.id],
-                    `${item2.url}`
-                  )
-                "
-                ><i :class="item2.icon" class="mr10"></i
-                >{{ item2.name }}</el-menu-item
-              >
-            </div> -->
         </el-submenu>
         <el-menu-item
           v-else-if="setAuth(item.index)"
@@ -82,7 +94,7 @@
           }}</span>
         </el-menu-item>
       </template>
-    </el-menu>
+    </el-menu> -->
   </div>
 </template>
 
