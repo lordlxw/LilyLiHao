@@ -1732,12 +1732,12 @@ export default {
         console.log("您的浏览器不支持WebSocket");
       } else {
         console.log("您的浏览器支持WebSocket");
-        if (sessionStorage.getItem(configUtil.keys.tokenKey) === null || sessionStorage.getItem(configUtil.keys.tokenKey) === '') {
+        if (localStorage.getItem(configUtil.keys.tokenKey) === null || localStorage.getItem(configUtil.keys.tokenKey) === '') {
           Router.push({ path: '/login' })
           return;
         }
         let socketUrl =
-          `${Vue.prototype.$wsUrl}/${sessionStorage.getItem(configUtil.keys.tokenKey)}`;
+          `${Vue.prototype.$wsUrl}/${localStorage.getItem(configUtil.keys.tokenKey)}`;
         if (socket != null) {
           socket.close();
           socket = null;

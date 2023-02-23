@@ -118,8 +118,8 @@ export default {
   },
   mounted() {
     Promise.all([
-      (this.ruleForm.parentId = this.urlParams.menuId),
-      (this.ruleForm.parentName = this.urlParams.menuName),
+      (this.ruleForm.parentId = this.urlParams.menuId ? this.urlParams.menuId : 0),
+      (this.ruleForm.parentName = this.urlParams.menuName ? this.urlParams.menuName : '顶级菜单'),
     ]).then(() => { });
   },
 };

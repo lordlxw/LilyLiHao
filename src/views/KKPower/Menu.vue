@@ -17,7 +17,7 @@
           style="width: 100%"
           max-height="600"
           border
-          row-key="id"
+          row-key="menuId"
           @selection-change="handleSelectionChange"
           default-expand-all
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"

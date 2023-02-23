@@ -5,7 +5,7 @@ export default {
     // 系统菜单列表查询
     get() {
         return request({
-            url: `${Vue.prototype.$apiUrl}/system/menu/list`,
+            url: `${Vue.prototype.$apiUrl}/system/menu/treelist`,
             method: 'get'
         })
     },

@@ -39,7 +39,7 @@ service.interceptors.response.use(response => {
       //   type: 'warning',
       //   durations: 3 * 1000
       // })
-      Router.push({ path: '/login' })
+      // Router.push({ path: '/login' })
       break;
     default:
       // if (response.request && response.request.responseType === 'arraybuffer') {

@@ -1,42 +1,11 @@
 <!--角色管理-->
 <template>
   <div class="content">
-    <navigator></navigator>
-    <div class="filter-condition">
-      <div class="item mr30">
-        <label>角色名</label>
-        <el-input
-          v-model="roleName"
-          placeholder="请输入角色名"
-          clearable
-          style="width: 200px"
-        ></el-input>
-      </div>
-      <div class="item btn-box">
-        <el-button type="primary" @click="handleSearch">搜索</el-button>
-        <el-button type="default" @click="handleClearCondition">重置</el-button>
-        <!-- <el-button type="primary" @click="handleExport">导出</el-button> -->
-      </div>
-      <div class="clearboth"></div>
-    </div>
     <div class="list">
       <div class="do">
-        <router-link to="/power/role/add" v-if="authValid('role:insert')">
+        <router-link to="/power/role/add">
           <el-button type="default">添加</el-button>
         </router-link>
-        <div class="pagination mt10">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="page"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size="pageSize"
-            layout="prev, next"
-            :total="totalCount"
-            background
-          >
-          </el-pagination>
-        </div>
       </div>
       <div class="table mt10">
         <el-table
@@ -82,13 +51,11 @@
             <template slot-scope="scope">
               <el-button
                 type="text"
-                v-if="authValid('rolemenu:edit')"
                 @click="handleEdit(scope.row, '/power/role/rolemenu')"
                 >授权</el-button
               >
               <el-button
                 type="text"
-                v-if="authValid('role:update')"
                 @click="handleEdit(scope.row, '/power/role/edit')"
                 >编辑</el-button
               >
@@ -125,18 +92,6 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="pagination mt10">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="page"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalCount"
-        >
-        </el-pagination>
-      </div>
     </div>
   </div>
 </template>
@@ -154,8 +109,8 @@ export default {
       // 表头
       tableHead: [
         {
-          label: "id",
-          prop: "id",
+          label: "roleId",
+          prop: "roleId",
           width: "200",
           align: "left",
           show: false,
@@ -168,69 +123,25 @@ export default {
           show: true,
         },
         {
-          label: "创建人",
-          prop: "createdUserName",
+          label: "角色关键字",
+          prop: "roleKey",
           width: "120",
           align: "left",
           show: true,
         },
         {
-          label: "创建时间",
-          prop: "createdAt",
-          formatter: this.funcFormatTime,
-          width: "140",
-          align: "center",
-          show: true,
-        },
-        {
-          label: "创建人id",
-          prop: "createdAdminId",
-          width: "120",
-          align: "left",
-          show: false,
-        },
-        {
-          label: "修改人",
-          prop: "updatedUserName",
+          label: "数据权限",
+          prop: "dataScope",
           width: "120",
           align: "left",
           show: true,
-        },
-        {
-          label: "修改时间",
-          prop: "updatedAt",
-          formatter: this.funcFormatTime,
-          width: "140",
-          align: "left",
-          show: true,
-        },
-        {
-          label: "修改人id",
-          prop: "updatedAdminId",
-          width: "120",
-          align: "left",
-          show: false,
-        },
+        }
       ],
       tableData: [],
       loading: true,
     };
   },
   methods: {
-    // 搜索事件
-    handleSearch() {
-      Promise.all([(this.page = 1)]).then(() => {
-        this.loadInitData();
-      });
-    },
-    // 清除事件
-    handleClearCondition() {
-      Promise.all([(this.roleName = "")]).then(() => {
-        this.handleSearch();
-      });
-    },
-    // 导出
-    handleExport() {},
     // 删除
     handleDelete(scope) {
       api.delete({ id: scope.row.id }).then((response) => {
@@ -247,16 +158,14 @@ export default {
     // 初始化数据
     loadInitData() {
       this.loading = true;
-      api
-        .get({
-          roleName: this.roleName,
-          page: this.page,
-          pageSize: this.pageSize,
-        })
-        .then((response) => {
-          this.funcList(response);
-          this.loading = false;
-        });
+      api.get().then((response) => {
+        if (response && response.code === 200 && response.rows) {
+          this.tableData = response.rows;
+        } else {
+          this.tableData = [];
+        }
+        this.loading = false;
+      });
     },
   },
   mounted() {
