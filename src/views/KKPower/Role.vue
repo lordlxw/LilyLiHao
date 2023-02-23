@@ -134,6 +134,13 @@ export default {
           width: "120",
           align: "left",
           show: true,
+        },
+        {
+          label: "菜单",
+          prop: "menuIds",
+          width: "120",
+          align: "left",
+          show: true,
         }
       ],
       tableData: [],

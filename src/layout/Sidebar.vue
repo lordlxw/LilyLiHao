@@ -21,7 +21,7 @@
       </el-submenu>
       <el-submenu index="2">
         <template slot="title">
-          <i class="fa fa-superpowers"></i>
+          <i class="fa fa-rmb"></i>
           <span>交易管理</span>
         </template>
         <el-menu-item index="2-1" route="/trade/enquiry">询价单</el-menu-item>

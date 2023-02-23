@@ -117,29 +117,35 @@ export default {
       })
     },
     getAllMenu() {
+      const self = this
       apiMenu.getSystemMenuTree().then(response => {
         if (response && response.code === "00000" && response.value) {
-          this.menus = response.value;
+          self.menus = response.value;
+          console.log(1111)
+          console.log(self.ruleForm.menuIds)
+          self.$refs.tree.setCheckedKeys(self.ruleForm.menuIds);
+        }
+      })
+    },
+    detail() {
+      api.detail({ roleId: this.ruleForm.roleId }).then(response => {
+        if (response && response.code === "00000" && response.value) {
+          // 需要编辑的字段
+          this.ruleForm.roleId = response.value.roleId
+          this.ruleForm.roleName = response.value.roleName
+          this.ruleForm.dataScope = response.value.dataScope
+          this.ruleForm.roleKey = response.value.roleKey
+          this.ruleForm.menuIds = response.value.menuIds
+          this.ruleForm.roleSort = response.value.roleSort
+          // 其他详情字段
+          this.getAllMenu()
         }
       })
     }
   },
   mounted() {
-    Promise.all([
-      (this.ruleForm.roleId = this.urlParams.roleId),
-      (this.ruleForm.roleName = this.urlParams.roleName),
-      (this.ruleForm.dataScope = this.urlParams.dataScope),
-      (this.ruleForm.menuIds = this.urlParams.menuIds),
-      (this.ruleForm.roleKey = this.urlParams.roleKey),
-      (this.ruleForm.roleSort = this.urlParams.roleSort),
-      this.getAllMenu(),
-    ]).then(() => {
-      console.log(this.urlParams)
-      console.log(12121)
-      console.log(this.ruleForm.menuIds)
-      console.log(this.menus)
-      this.$refs.tree.setCheckedNodes(this.ruleForm.menuIds);
-    });
+    this.ruleForm.roleId = this.urlParams.roleId
+    this.detail()
   },
 };
 </script>
