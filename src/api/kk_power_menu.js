@@ -1,4 +1,4 @@
-// 登录
+// 菜单
 import Vue from 'vue'
 import request from '@/utils/request'
 export default {

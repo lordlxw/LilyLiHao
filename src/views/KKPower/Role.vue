@@ -49,18 +49,17 @@
             width="140"
           >
             <template slot-scope="scope">
-              <el-button
+              <!-- <el-button
                 type="text"
                 @click="handleEdit(scope.row, '/power/role/rolemenu')"
                 >授权</el-button
-              >
+              > -->
               <el-button
                 type="text"
                 @click="handleEdit(scope.row, '/power/role/edit')"
                 >编辑</el-button
               >
               <el-popover
-                v-if="authValid('role:delete')"
                 placement="bottom-end"
                 :ref="`popover-delete-${scope.$index}`"
               >
@@ -144,8 +143,8 @@ export default {
   methods: {
     // 删除
     handleDelete(scope) {
-      api.delete({ id: scope.row.id }).then((response) => {
-        if (response && response.code === "200") {
+      api.delete({ roleIds: scope.row.roleId }).then((response) => {
+        if (response && response.code === "00000") {
           this.$message({
             message: "删除成功",
             type: "success",

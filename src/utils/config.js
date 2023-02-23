@@ -18,6 +18,12 @@ export default {
     'C': '叶节点',
     'F': '功能',
   },
+  // 数据权限
+  dataScopeType: {
+    '0': '查看所有',
+    '1': '查看自己',
+    '2': '查看委派'
+  },
   // 处理键值对信息转换
   funcKeyValue(key, type) {
     return this[`${type}`][`${key}`]

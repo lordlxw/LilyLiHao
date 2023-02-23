@@ -46,7 +46,7 @@ service.interceptors.response.use(response => {
       //   return resp
       // }
       Message({
-        message: `${resp.msg}`,
+        message: `${resp.message}`,
         type: 'warning',
         durations: 3 * 1000
       })

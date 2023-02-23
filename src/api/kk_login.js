@@ -15,5 +15,12 @@ export default {
         code: params.code
       }
     })
-  }
+  },
+  // 权限
+  auth() {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/getUserInfo`,
+      method: 'get',
+    })
+  },
 }

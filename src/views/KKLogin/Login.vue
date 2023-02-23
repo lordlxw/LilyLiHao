@@ -1,6 +1,12 @@
 <!--登录页面-->
 <template>
-  <transition appear name="fade" @before-enter="handleBeforeEnter" @enter="handleEnter" @after-enter="handleAfterEnter">
+  <transition
+    appear
+    name="fade"
+    @before-enter="handleBeforeEnter"
+    @enter="handleEnter"
+    @after-enter="handleAfterEnter"
+  >
     <div class="login-wrapper">
       <!-- <el-image
         class="logo"
@@ -8,21 +14,44 @@
       ></el-image> -->
       <h3>Lily系统</h3>
 
-      <transition appear @before-enter="handleFormBeforeEnter" @enter="handleFormEnter">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="login-form">
+      <transition
+        appear
+        @before-enter="handleFormBeforeEnter"
+        @enter="handleFormEnter"
+      >
+        <el-form
+          :model="ruleForm"
+          :rules="rules"
+          ref="ruleForm"
+          class="login-form"
+        >
           <div class="tit">登录</div>
           <el-form-item prop="username">
-            <el-input placeholder="请输入账号" prefix-icon="el-icon-user" v-model="ruleForm.username"
-              @keyup.enter.native="submitForm('ruleForm')">
+            <el-input
+              placeholder="请输入账号"
+              prefix-icon="el-icon-user"
+              v-model="ruleForm.username"
+              @keyup.enter.native="submitForm('ruleForm')"
+            >
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input placeholder="请输入密码" prefix-icon="el-icon-lock" v-model="ruleForm.password" show-password
-              @keyup.enter.native="submitForm('ruleForm')">
+            <el-input
+              placeholder="请输入密码"
+              prefix-icon="el-icon-lock"
+              v-model="ruleForm.password"
+              show-password
+              @keyup.enter.native="submitForm('ruleForm')"
+            >
             </el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" class="btn-login" @click="submitForm('ruleForm')">进入系统</el-button>
+            <el-button
+              type="primary"
+              class="btn-login"
+              @click="submitForm('ruleForm')"
+              >进入系统</el-button
+            >
           </el-form-item>
         </el-form>
       </transition>
@@ -61,8 +90,14 @@ export default {
           }).then(response => {
             if (response && response.code === 200) {
               // 保存token信息
-              this.$store.commit('SET_TOKEN', response.token)
-              this.$router.push({ path: '/kline' })
+              Promise.all([
+                this.$store.commit('SET_TOKEN', response.token)
+              ]).then(() => {
+                api.auth().then(response => {
+                  console.log(response)
+                  this.$router.push({ path: '/kline' })
+                })
+              })
             }
           })
         } else {

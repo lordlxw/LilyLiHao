@@ -74,6 +74,21 @@ const router = new Router({
         {
           path: '/power/role/edit',
           component: () => import('@/views/KKPower/Role/Edit.vue')
+        },
+        // 交易管理 - 询价单
+        {
+          path: '/trade/enquiry',
+          component: () => import('@/views/KKTrade/Enquiry.vue')
+        },
+        // 交易管理 - 当前持仓单
+        {
+          path: '/trade/bonds',
+          component: () => import('@/views/KKTrade/Bonds.vue')
+        },
+        // 交易管理 - 成交回报
+        {
+          path: '/trade/reward',
+          component: () => import('@/views/KKTrade/Reward.vue')
         }
       ]
     }

@@ -311,7 +311,7 @@
                       @click="funcVolumeAdd('buyForm', 0)"
                       >清零</el-button
                     >
-                    <!-- <el-button
+                    <el-button
                       type="primary"
                       @click="funcVolumeAdd('buyForm', 1000)"
                       >1</el-button
@@ -320,7 +320,7 @@
                       type="primary"
                       @click="funcVolumeAdd('buyForm', 2000)"
                       >2</el-button
-                    > -->
+                    >
                     <el-button
                       type="primary"
                       @click="funcVolumeAdd('buyForm', 3000)"
@@ -334,7 +334,7 @@
                     <el-button
                       type="primary"
                       @click="funcVolumeAdd('buyForm', 10000)"
-                      >5+5</el-button
+                      >10</el-button
                     >
                   </el-button-group>
                 </el-form-item>
@@ -354,12 +354,12 @@
                       @click="handleDelivertySpeed('buyForm', 0)"
                       >0</el-button
                     >
-                    <!-- <el-button
+                    <el-button
                       icon="el-icon-plus"
                       :class="funcDeliverySpeed('buyForm', 1)"
                       @click="handleDelivertySpeed('buyForm', 1)"
                       >1</el-button
-                    > -->
+                    >
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="备注">
@@ -405,7 +405,7 @@
                       @click="funcVolumeAdd('saleForm', 0)"
                       >清零</el-button
                     >
-                    <!-- <el-button
+                    <el-button
                       type="primary"
                       @click="funcVolumeAdd('saleForm', 1000)"
                       >1</el-button
@@ -414,7 +414,7 @@
                       type="primary"
                       @click="funcVolumeAdd('saleForm', 2000)"
                       >2</el-button
-                    > -->
+                    >
                     <el-button
                       type="primary"
                       @click="funcVolumeAdd('saleForm', 3000)"
@@ -428,7 +428,7 @@
                     <el-button
                       type="primary"
                       @click="funcVolumeAdd('saleForm', 10000)"
-                      >5+5</el-button
+                      >10</el-button
                     >
                   </el-button-group>
                 </el-form-item>
@@ -448,12 +448,12 @@
                       @click="handleDelivertySpeed('saleForm', 0)"
                       >0</el-button
                     >
-                    <!-- <el-button
+                    <el-button
                       icon="el-icon-plus"
                       :class="funcDeliverySpeed('saleForm', 1)"
                       @click="handleDelivertySpeed('saleForm', 1)"
                       >1</el-button
-                    > -->
+                    >
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="备注">
@@ -539,6 +539,7 @@ import Vue from 'vue'
 import Router from '@/router'
 import { mapGetters } from 'vuex'
 import api from '@/api/kk_bond_pool'
+import apiTrade from '@/api/kk_trade'
 import apiKLine from '@/api/kk_kline'
 import ComTscodeSelect from '@/components/ComTscodeSelect.vue'
 import * as echarts from 'echarts'
@@ -718,6 +719,17 @@ export default {
       tscodeGlobal: 'getTscodeGlobal',
       defaultSet: 'getDefaultSet'
     })
+  },
+  watch: {
+    activeTscode(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        if (newVal && socket != null) {
+          console.log(JSON.stringify({ "dataKey": newVal, "dataType": "tscode" }))
+          socket.send(JSON.stringify({ "dataKey": newVal, "dataType": "tscode" }))
+          this.calcFavoriteIcon()
+        }
+      }
+    }
   },
   created() {
     this.keyDown()
@@ -1645,7 +1657,6 @@ export default {
       // 初始化实时交易数据
       this.initRightTransactionList()
       this.$store.commit('SET_TSCODE_GLOBAL', { tscodeGlobal: this.activeTscode })
-      socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
     },
     // 根据主动方显示颜色
     funcSelectColor(dealtype) {
@@ -1700,7 +1711,7 @@ export default {
               break
             case 'buyForm':
             case 'saleForm':
-              api.inquirySheetAdd({
+              apiTrade.inquirySheetAdd({
                 // 交割速度
                 deliverySpeed: this[formName].deliverySpeed,
                 // 交割日期
@@ -1748,7 +1759,6 @@ export default {
         // 打开事件
         socket.onopen = function () {
           console.log("websocket已打开");
-          socket.send(JSON.stringify({ "dataKey": this.activeTscode, "dataType": "tscode" }))
         }
         // 浏览器端收消息，获得从服务端发送过来的文本消息
         socket.onmessage = function (msg) {

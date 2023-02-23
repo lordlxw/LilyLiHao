@@ -72,11 +72,8 @@ export default {
     // 删除
     delete(params) {
         return request({
-            url: `${Vue.prototype.$apiUrl}/system/role`,
-            method: 'delete',
-            data: {
-                roleIds: params.roleIds
-            }
+            url: `${Vue.prototype.$apiUrl}/system/role/${params.roleIds}`,
+            method: 'delete'
         })
     },
     // 系统角色明细查询
