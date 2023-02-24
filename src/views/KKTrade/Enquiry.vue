@@ -54,7 +54,12 @@
             >
             </el-table-column>
           </template>
-          <el-table-column fixed="right" align="center" label="操作" width="80">
+          <el-table-column
+            fixed="right"
+            align="center"
+            label="操作"
+            width="120"
+          >
             <template slot-scope="scope">
               <el-button
                 @click="handleAcceptClick(scope.row)"
@@ -130,11 +135,7 @@ export default {
   methods: {
     // 搜索事件
     handleSearch() {
-      Promise.all([
-        this.page = 1
-      ]).then(() => {
-        this.loadInitData()
-      })
+      this.loadInitData()
     },
     // 清除事件
     handleClearCondition() {
@@ -147,14 +148,13 @@ export default {
     // 导出
     handleExport() {
     },
-    // 点击详情
-    handleDetailClick(row) {
-
-    },
     // 初始化数据
     loadInitData() {
       this.loading = true;
-      api.inquiryQuery({}).then((response) => {
+      api.inquiryQuery({
+        pageNum: this.pageNum,
+        pageSize: this.pageSize
+      }).then((response) => {
         if (response && response.code === 200 && response.rows) {
           this.tableData = response.rows;
           this.totalCount = response.total;
@@ -164,6 +164,18 @@ export default {
         }
         this.loading = false;
       });
+    },
+    // 接受
+    handleAcceptClick(row) {
+      api.inquiryAccept({ usertradeId: row.userTradeId }).then(response => {
+
+      })
+    },
+    // 绝收
+    handleNotAcceptClick(row) {
+      api.inquiryRejection({ usertradeId: row.userTradeId }).then(response => {
+
+      })
     },
     funcFormat(row, column) {
       switch (column.property) {

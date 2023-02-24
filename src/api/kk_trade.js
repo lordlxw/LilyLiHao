@@ -49,12 +49,12 @@ export default {
    */
   inquiryRejection(params) {
     return request({
-      url: `${Vue.prototype.$apiUrl}/usertrade/deny`,
-      method: 'post',
-      data: {
-        // 询价单id
-        usertradeId: params.usertradeId
-      }
+      url: `${Vue.prototype.$apiUrl}/usertrade/deny?usertradeId=${params.usertradeId}`,
+      method: 'post'
+      // data: {
+      //   // 询价单id
+      //   usertradeId: params.usertradeId
+      // }
     })
   },
   /**
