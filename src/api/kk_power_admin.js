@@ -65,6 +65,13 @@ export default {
       url: `${Vue.prototype.$apiUrl}/system/user/${params.userId}`,
       method: 'get'
     })
-  }
+  },
   // 重置用户密码
+  // 交易员选择列表
+  tradeUserList() {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/system/user/listTraders`,
+      method: 'get'
+    })
+  }
 }

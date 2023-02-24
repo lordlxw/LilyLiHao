@@ -362,6 +362,20 @@
                     >
                   </el-button-group>
                 </el-form-item>
+                <el-form-item>
+                  <el-select
+                    v-model="buyForm.tradeuserId"
+                    placeholder="请选择交易员"
+                  >
+                    <el-option
+                      v-for="item in tradeUsersOption"
+                      :key="item.userId"
+                      :label="item.userName"
+                      :value="item.userId"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
                 <el-form-item label="备注">
                   <el-input
                     type="textarea"
@@ -387,7 +401,7 @@
                 class="sale-form"
               >
                 <el-form-item label="债券代码">
-                  <span class="txt-red">{{ buyForm.tscode }}</span>
+                  <span class="txt-red">{{ saleForm.tscode }}</span>
                 </el-form-item>
                 <el-form-item label="价格">
                   <span class="txt-red">{{ saleForm.price }}</span>
@@ -456,6 +470,18 @@
                     >
                   </el-button-group>
                 </el-form-item>
+                <el-select
+                  v-model="saleForm.tradeuserId"
+                  placeholder="请选择交易员"
+                >
+                  <el-option
+                    v-for="item in tradeUsersOption"
+                    :key="item.userId"
+                    :label="item.userName"
+                    :value="item.userId"
+                  >
+                  </el-option>
+                </el-select>
                 <el-form-item label="备注">
                   <el-input
                     type="textarea"
@@ -541,6 +567,7 @@ import { mapGetters } from 'vuex'
 import api from '@/api/kk_bond_pool'
 import apiTrade from '@/api/kk_trade'
 import apiKLine from '@/api/kk_kline'
+import apiAdmin from '@/api/kk_power_admin'
 import ComTscodeSelect from '@/components/ComTscodeSelect.vue'
 import * as echarts from 'echarts'
 import configUtil from '@/utils/config.js'
@@ -676,7 +703,7 @@ export default {
         // 交割时间
         deliveryTime: '',
         // 交易员
-        tradeuserId: 2,
+        tradeuserId: '',
         // 备注
         remark: '',
         // 快速交易
@@ -697,11 +724,11 @@ export default {
         // 交割时间
         deliveryTime: '',
         // 交易员
-        tradeuserId: 2,
+        tradeuserId: '',
         // 备注
         remark: '',
         // 快速交易
-        quickSubmit: false,
+        quickSubmit: false
       },
       buyFormRules: [],
       setForm: {
@@ -711,7 +738,8 @@ export default {
       setFormRules: [],
       popoverSetVisible: false,
       gridDataMsg: [],
-      dialogTableVisible: false
+      dialogTableVisible: false,
+      tradeUsersOption: []
     }
   },
   computed: {
@@ -1671,11 +1699,44 @@ export default {
     },
     // 买卖最优值(type:min最小，type:max最大;arr:初始数组;)
     funcGetBestPrice(type, arr) {
+      const self = this
       switch (type) {
         case 'min':
-          return Math.min.apply(Math, arr.map(item => { return item.price }))
+          let minVal = ''
+          for (let i = 0; i < arr.length; i++) {
+            if (i === 0) {
+              minVal = arr[i].price
+              self.saleForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
+            } else {
+              if (arr[i].price < minVal) {
+                minVal = arr[i].price
+                self.saleForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
+              }
+            }
+          }
+          return minVal
+        // return Math.min.apply(Math, arr.map(item => {
+        //   self.saleForm.remark = item.tscode + " " + item.brokerName + " " + (item.volumecomment ? item.volumecomment : item.volume)
+        //   return item.price
+        // }))
         case 'max':
-          return Math.max.apply(Math, arr.map(item => { return item.price }))
+          let maxVal = ''
+          for (let i = 0; i < arr.length; i++) {
+            if (i === 0) {
+              maxVal = arr[i].price
+              self.buyForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
+            } else {
+              if (arr[i].price > maxVal) {
+                maxVal = arr[i].price
+                self.buyForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
+              }
+            }
+          }
+          return maxVal
+        // return Math.max.apply(Math, arr.map(item => {
+        //   self.buyForm.remark = item.tscode + " " + item.brokerName + " " + (item.volumecomment ? item.volumecomment : item.volume)
+        //   return item.price
+        // }))
       }
     },
     // 交易量加法函数
@@ -1729,6 +1790,13 @@ export default {
               }).then(res => {
                 console.log(123456)
                 console.log(res)
+                if (res && res.code === '00000' && res.value) {
+                  const h = this.$createElement;
+                  this.$notify({
+                    title: '提醒',
+                    message: h('i', { style: 'color: teal' }, '询价单发送成功')
+                  });
+                }
               })
               break
           }
@@ -1857,6 +1925,7 @@ export default {
       lockReconnect = true
       setTimeout(() => {
         console.log("尝试重连")
+        self.initRightTransactionList()
         this.initSocket()
         lockReconnect = false
       }, 5000)
@@ -1899,6 +1968,14 @@ export default {
         socket.send(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_1' }))
       }
       this.dialogTableVisible = false
+    },
+    // 获取交易员列表
+    gitTradeUserList() {
+      apiAdmin.tradeUserList().then(response => {
+        if (response && response.code === '00000' && response.value) {
+          this.tradeUsersOption = response.value
+        }
+      })
     }
   },
   mounted() {
@@ -1906,6 +1983,7 @@ export default {
     this.getAllBondPool()
     this.getByCodeBondPool()
     this.favoriteList()
+    this.gitTradeUserList()
     // 创建询价单默认日期
     const date = new Date();
     date.setTime(date.getTime() + 3600 * 1000 * 24);
@@ -2162,7 +2240,7 @@ export default {
 
     .chatbox {
       width: 100%;
-      height: 340px;
+      height: 380px;
       position: relative;
       bottom: 0;
       color: red;
