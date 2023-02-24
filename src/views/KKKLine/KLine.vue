@@ -2198,7 +2198,7 @@ export default {
 </style>
 <style lang="scss">
 body {
-  background-color: #202020;
+  background-color: #202020 !important;
 }
 .txt-red {
   color: red !important;
