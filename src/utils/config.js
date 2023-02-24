@@ -24,6 +24,20 @@ export default {
     '1': '查看自己',
     '2': '查看委派'
   },
+  // 询价单状态
+  inquiryStatus: {
+    '0': '待接收',
+    '1': '已接收',
+    '2': '已拒绝',
+    '3': '已成交',
+    '4': '部分成交',
+    '5': '已撤单',
+    '6': '部分撤单'
+  },
+  directionMeta: {
+    'bond_0': '买入',
+    'bond_1': '卖出'
+  },
   // 处理键值对信息转换
   funcKeyValue(key, type) {
     return this[`${type}`][`${key}`]

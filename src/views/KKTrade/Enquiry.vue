@@ -1,14 +1,14 @@
 <!-- 询价单 -->
 <template>
   <div class="content">
-    <div class="filter-condition"></div>
+    <!-- <div class="filter-condition"></div> -->
     <div class="list">
       <div class="do">
         <div class="pagination mt10">
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page="page"
+            :current-page="pageNum"
             :page-sizes="[10, 20, 50, 100]"
             :page-size="pageSize"
             layout="prev, next"
@@ -34,7 +34,7 @@
             :index="typeIndex"
             label="序号"
             align="center"
-            width="100"
+            width="50"
           ></el-table-column>
           <template v-for="itemHead in tableHead">
             <el-table-column
@@ -57,10 +57,16 @@
           <el-table-column fixed="right" align="center" label="操作" width="80">
             <template slot-scope="scope">
               <el-button
-                @click="handleDetailClick(scope.row)"
+                @click="handleAcceptClick(scope.row)"
                 type="text"
                 size="small"
-                >详情</el-button
+                >接收</el-button
+              >
+              <el-button
+                @click="handleNotAcceptClick(scope.row)"
+                type="text"
+                size="small"
+                >拒收</el-button
               >
             </template>
           </el-table-column>
@@ -70,7 +76,7 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="page"
+          :current-page="pageNum"
           :page-sizes="[10, 20, 50, 100]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
@@ -86,30 +92,37 @@
 import api from "@/api/kk_trade";
 import { pageMixin } from '@/utils/pageMixin'
 import { animationMixin } from '@/utils/animationMixin'
+import config from '@/utils/config'
 export default {
   mixins: [animationMixin, pageMixin],
+  props: {
+    status: ''
+  },
   data() {
     return {
+      config,
       loading: false,
       // 表头
       tableHead: [
-        { label: '研究员', prop: 'createBy', width: 'auto', align: 'left', show: true },
+        { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
+        { label: '交易员id', prop: 'userId', width: '120', align: 'left', show: false },
+        { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
+        { label: '单据号', prop: 'tradeNum', width: '140', align: 'left', show: true },
+        { label: '交易方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
+        { label: '状态', prop: 'status', formatter: this.funcFormat, width: '120', align: 'left', show: true },
+        { label: '债券代码', prop: 'tscode', width: '100', align: 'left', show: true },
+        { label: '询面额', prop: 'volume', width: '100', align: 'left', show: true },
+        { label: '交割时间', prop: 'deliveryTime', formatter: this.funcFormatTime, width: '120', align: 'left', show: true },
+        { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: true },
+        { label: '研究员', prop: 'createuser', width: 'auto', align: 'left', show: true },
         { label: '询价时间', prop: 'createTime', width: '140', align: 'right', show: true },
-        { label: '交割速度', prop: 'deliverySpeed', width: '120', align: 'left', show: true },
-        { label: '交割时间', prop: 'deliveryTime', width: '120', align: 'left', show: true },
-        { label: '交易方向', prop: 'direction', width: '120', align: 'left', show: true },
         { label: '是否远期', prop: 'forward', width: '120', align: 'left', show: true },
         { label: '相关单号', prop: 'parentId', width: '140', align: 'left', show: true },
         { label: '询价', prop: 'price', width: '120', align: 'left', show: true },
         { label: '备注', prop: 'remark', width: '120', align: 'left', show: true },
-        { label: '状态', prop: 'status', width: '120', align: 'left', show: true },
-        { label: '已成交', prop: 'tradeNum', width: '120', align: 'left', show: true },
-        { label: '债券代码', prop: 'tscode', width: '120', align: 'left', show: true },
         { label: '修改人', prop: 'updateBy', width: '120', align: 'left', show: true },
         { label: '修改时间', prop: 'updateTime', width: '120', align: 'left', show: true },
-        { label: '交易员', prop: 'userId', width: '120', align: 'left', show: true },
-        { label: '交易员', prop: 'userTradeId', width: '120', align: 'left', show: true },
-        { label: '询面额', prop: 'volume', width: '120', align: 'left', show: true }
+        { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: true }
       ],
       tableData: []
     }
@@ -142,13 +155,23 @@ export default {
     loadInitData() {
       this.loading = true;
       api.inquiryQuery({}).then((response) => {
-        if (response && response.code === '00000' && response.value) {
-          this.tableData = response.value;
+        if (response && response.code === 200 && response.rows) {
+          this.tableData = response.rows;
+          this.totalCount = response.total;
         } else {
           this.tableData = [];
+          this.totalCount = 0;
         }
         this.loading = false;
       });
+    },
+    funcFormat(row, column) {
+      switch (column.property) {
+        case "status":
+          return config.funcKeyValue(row.status.toString(), "inquiryStatus");
+        case "direction":
+          return config.funcKeyValue(row.direction, "directionMeta")
+      }
     },
   },
   mounted() {

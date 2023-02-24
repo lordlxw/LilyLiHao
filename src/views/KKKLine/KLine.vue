@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="background-color: #202020">
     <div
       class="head"
       :style="{ height: `${headH}px`, lineHeight: `${headH}px` }"
@@ -77,10 +77,7 @@
         <li class="nav-right">
           <span class="i-text" style="color: white">
             <el-badge is-dot class="item">
-              <i
-                class="el-icon-message-solid"
-                @click="dialogTableVisible = true"
-              ></i>
+              <i class="el-icon-message-solid" @click="showMsg()"></i>
             </el-badge>
           </span>
         </li>
@@ -95,7 +92,7 @@
         </li>
       </ul>
     </div>
-    <div class="container">
+    <div class="container" style="background-color: #202020">
       <!-- 左侧 -->
       <div class="left-group">
         <ul class="left-tabs">
@@ -362,7 +359,7 @@
                     >
                   </el-button-group>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item label="交易员">
                   <el-select
                     v-model="buyForm.tradeuserId"
                     placeholder="请选择交易员"
@@ -470,18 +467,20 @@
                     >
                   </el-button-group>
                 </el-form-item>
-                <el-select
-                  v-model="saleForm.tradeuserId"
-                  placeholder="请选择交易员"
-                >
-                  <el-option
-                    v-for="item in tradeUsersOption"
-                    :key="item.userId"
-                    :label="item.userName"
-                    :value="item.userId"
+                <el-form-item label="交易员">
+                  <el-select
+                    v-model="saleForm.tradeuserId"
+                    placeholder="请选择交易员"
                   >
-                  </el-option>
-                </el-select>
+                    <el-option
+                      v-for="item in tradeUsersOption"
+                      :key="item.userId"
+                      :label="item.userName"
+                      :value="item.userId"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
                 <el-form-item label="备注">
                   <el-input
                     type="textarea"
@@ -503,7 +502,7 @@
       </div>
     </div>
 
-    <el-dialog title="消息框" :visible.sync="dialogTableVisible">
+    <!-- <el-dialog title="消息框" :visible.sync="dialogTableVisible">
       <el-table :data="gridDataMsg">
         <el-table-column
           property="tscode"
@@ -556,6 +555,11 @@
           </template>
         </el-table-column>
       </el-table>
+    </el-dialog> -->
+
+    <el-dialog title="消息框" width="80%" :visible.sync="dialogTableVisible">
+      <trade-enquiry ref="tradeEnquiry"></trade-enquiry>
+      <div class="both-clear"></div>
     </el-dialog>
   </div>
 </template>
@@ -572,11 +576,13 @@ import ComTscodeSelect from '@/components/ComTscodeSelect.vue'
 import * as echarts from 'echarts'
 import configUtil from '@/utils/config.js'
 import * as util from '@/utils/util'
+import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
 let socket
 let lockReconnect = false
 export default {
   components: {
-    ComTscodeSelect
+    ComTscodeSelect,
+    TradeEnquiry
   },
   data() {
     return {
@@ -1970,20 +1976,38 @@ export default {
       this.dialogTableVisible = false
     },
     // 获取交易员列表
-    gitTradeUserList() {
+    getTradeUserList() {
       apiAdmin.tradeUserList().then(response => {
         if (response && response.code === '00000' && response.value) {
           this.tradeUsersOption = response.value
         }
       })
+    },
+    // 获取询价单列表信息
+    getInquiryList() {
+      apiTrade.inquiryQuery({
+        pageNum: this.pageNum,
+        pageSize: this.pageSize
+      }).then(response => {
+
+      })
+    },
+    // 消息
+    showMsg() {
+      Promise.all([
+        this.dialogTableVisible = true
+      ]).then(() => {
+        this.$refs.tradeEnquiry.loadInitData()
+      })
     }
   },
   mounted() {
+    this.getInquiryList()
     this.initTSType()
     this.getAllBondPool()
     this.getByCodeBondPool()
     this.favoriteList()
-    this.gitTradeUserList()
+    this.getTradeUserList()
     // 创建询价单默认日期
     const date = new Date();
     date.setTime(date.getTime() + 3600 * 1000 * 24);

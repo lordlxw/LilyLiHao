@@ -81,7 +81,11 @@ export default {
         // 用户名称
         userName: params.userName,
         // 交易ID
-        userTradeId: params.userTradeId
+        userTradeId: params.userTradeId,
+        // 当前页
+        pageNum: params.pageNum,
+        // 显示条数
+        pageSize: params.pageSize
       }
     })
   }

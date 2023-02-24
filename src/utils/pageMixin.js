@@ -5,7 +5,7 @@ export const pageMixin = {
   data() {
     return {
       /* 分页参数 */
-      page: 1,
+      pageNum: 1,
       pageSize: 10,
       totalCount: 0,
     }
@@ -34,7 +34,7 @@ export const pageMixin = {
     },
     handleCurrentChange(val) {
       Promise.all([
-        this.page = val
+        this.pageNum = val
       ]).then(() => {
         this.loadInitData()
       })
@@ -47,7 +47,7 @@ export const pageMixin = {
         } else {
           this.tableData = []
         }
-        if (response.data.page) {
+        if (response.data.pageNum) {
           this.totalCount = response.data.page["Total-Count"]
         }
       } else {
@@ -62,9 +62,10 @@ export const pageMixin = {
     // 时间格式化
     funcFormatTime(row, column) {
       switch (column.property) {
-        case 'created_time':
-          if (row.created_time) {
-            return moment.unix(row.created_time).format('YYYY-MM-DD HH:mm:ss')
+        // 交割时间
+        case 'deliveryTime':
+          if (row.deliveryTime) {
+            return moment(row.deliveryTime).format('YYYY-MM-DD')
           }
           break
         case 'login_time':
@@ -110,7 +111,7 @@ export const pageMixin = {
       }
     },
     typeIndex(index) {
-      return (this.page - 1) * this.pageSize + index + 1
+      return (this.pageNum - 1) * this.pageSize + index + 1
     },
     funcZtranStatusFormatter(row) {
       switch (row.ztran_status) {
