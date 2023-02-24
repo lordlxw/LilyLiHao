@@ -1931,7 +1931,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/css/style.scss";
+// @import "@/assets/css/kline.scss";
 .head {
   border-bottom: 1px solid red;
 
@@ -2197,9 +2197,6 @@ export default {
 }
 </style>
 <style lang="scss">
-body {
-  background-color: #202020 !important;
-}
 .txt-red {
   color: red !important;
 }

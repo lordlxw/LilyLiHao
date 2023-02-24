@@ -57,7 +57,7 @@
               <el-button
                 type="text"
                 @click="handleEdit(scope.row, '/power/role/edit')"
-                >编辑</el-button
+                >修改</el-button
               >
               <el-popover
                 placement="bottom-end"
@@ -107,41 +107,10 @@ export default {
       roleName: "",
       // 表头
       tableHead: [
-        {
-          label: "roleId",
-          prop: "roleId",
-          width: "200",
-          align: "left",
-          show: false,
-        },
-        {
-          label: "角色名",
-          prop: "roleName",
-          width: "auto",
-          align: "left",
-          show: true,
-        },
-        {
-          label: "角色关键字",
-          prop: "roleKey",
-          width: "120",
-          align: "left",
-          show: true,
-        },
-        {
-          label: "数据权限",
-          prop: "dataScope",
-          width: "120",
-          align: "left",
-          show: true,
-        },
-        {
-          label: "菜单",
-          prop: "menuIds",
-          width: "120",
-          align: "left",
-          show: true,
-        }
+        { label: "roleId", prop: "roleId", width: "200", align: "left", show: false },
+        { label: "角色名", prop: "roleName", width: "auto", align: "left", show: true },
+        { label: "角色关键字", prop: "roleKey", width: "120", align: "left", show: true },
+        { label: "数据权限", prop: "dataScope", width: "120", align: "left", show: true }
       ],
       tableData: [],
       loading: true,

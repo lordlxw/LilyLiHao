@@ -132,3 +132,8 @@ export default {
   }
 }
 </style>
+<style lang="scss">
+body {
+  background-color: #f8f8f8;
+}
+</style>

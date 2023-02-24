@@ -88,7 +88,7 @@ export default {
       });
     },
   },
-  mounted() {},
+  mounted() { },
 };
 </script>
 <style lang="scss" scoped>
@@ -111,5 +111,10 @@ export default {
   .my-ruleForm {
     margin: 30px 15px 30px;
   }
+}
+</style>
+<style lang="scss">
+body {
+  background-color: #f8f8f8;
 }
 </style>

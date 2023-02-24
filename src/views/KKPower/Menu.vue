@@ -68,7 +68,7 @@
               <el-button
                 type="text"
                 @click="handleEdit(scope.row, '/power/menu/edit')"
-                >编辑</el-button
+                >修改</el-button
               >
               <el-popover
                 placement="bottom-end"
@@ -201,5 +201,11 @@ export default {
       }
     }
   }
+}
+</style>
+
+<style lang="scss">
+body {
+  background-color: #f8f8f8;
 }
 </style>
