@@ -53,7 +53,7 @@
         >
           {{ item }}
         </li>
-        <li style="font-weight: bold; font-size: 20px; color: red">
+        <li style="font-weight: bold; font-size: 20px; color: #ec0000">
           {{ tscode }}
         </li>
         <li
@@ -124,7 +124,7 @@
             >
             </com-tscode-select>
           </div>
-          <hr color="red" size="1" style="margin: 0" />
+          <hr color="#ec0000" size="1" style="margin: 0" />
           <el-scrollbar>
             <ul>
               <li
@@ -141,7 +141,7 @@
           </el-scrollbar>
         </div>
         <div class="tab-common tab-2" v-if="activeTab == tabList[2]">
-          <hr color="red" size="1" style="margin: 0" />
+          <hr color="#ec0000" size="1" style="margin: 0" />
           <el-scrollbar>
             <ul>
               <li
@@ -878,7 +878,7 @@ export default {
                 top: 10,
                 containLabel: true,
                 show: true,
-                borderColor: 'red'
+                borderColor: '#ec0000'
               },
               xAxis: {
                 type: 'category',
@@ -887,7 +887,7 @@ export default {
                 axisLine: {
                   onZero: false,
                   lineStyle: {
-                    color: 'red',
+                    color: '#ec0000',
                     width: 1,
                     type: 'dotted'
                   }
@@ -905,7 +905,7 @@ export default {
                 axisLine: {
                   onZero: false,
                   lineStyle: {
-                    color: 'red',
+                    color: '#ec0000',
                     width: 1,
                     type: 'dotted'
                   }
@@ -1032,7 +1032,7 @@ export default {
               top: 10,
               containLabel: true,
               show: true,
-              borderColor: 'red'
+              borderColor: '#ec0000'
             },
             xAxis: {
               type: 'category',
@@ -1041,7 +1041,7 @@ export default {
               axisLine: {
                 onZero: false,
                 lineStyle: {
-                  color: 'red',
+                  color: '#ec0000',
                   width: 1,
                   type: 'dotted'
                 }
@@ -1059,7 +1059,7 @@ export default {
               axisLine: {
                 onZero: false,
                 lineStyle: {
-                  color: 'red',
+                  color: '#ec0000',
                   width: 1,
                   type: 'dotted'
                 }
@@ -1193,7 +1193,7 @@ export default {
                 data: ['日线', 'MA5', 'MA10', 'MA20', 'MA30'],
                 show: true,
                 textStyle: {
-                  color: 'red'
+                  color: '#ec0000'
                 },
                 selected: {
                   'MA10': false,
@@ -1208,7 +1208,7 @@ export default {
                 top: 50,
                 containLabel: true,
                 show: true,
-                borderColor: 'red'
+                borderColor: '#ec0000'
               },
               xAxis: {
                 type: 'category',
@@ -1218,7 +1218,7 @@ export default {
                   show: false,
                   onZero: false,
                   lineStyle: {
-                    color: 'red',
+                    color: '#ec0000',
                     width: 1,
                     type: 'dotted'
                   }
@@ -1236,7 +1236,7 @@ export default {
                 axisLine: {
                   onZero: false,
                   lineStyle: {
-                    color: 'red',
+                    color: '#ec0000',
                     width: 1,
                     type: 'dashed'
                   }
@@ -2035,7 +2035,7 @@ export default {
 <style lang="scss" scoped>
 // @import "@/assets/css/kline.scss";
 .head {
-  border-bottom: 1px solid red;
+  border-bottom: 1px solid #ec0000;
 
   .k-nav {
     overflow: hidden;
@@ -2085,7 +2085,7 @@ export default {
 
   .left-group {
     width: 200px;
-    border-right: 1px solid red;
+    border-right: 1px solid #ec0000;
 
     .left-tabs {
       overflow: hidden;
@@ -2132,7 +2132,7 @@ export default {
           box-sizing: border-box;
           padding: 10px 20px;
           font-size: 12px;
-          border-bottom: 1px solid red;
+          border-bottom: 1px solid #ec0000;
           cursor: pointer;
         }
 
@@ -2161,8 +2161,8 @@ export default {
     display: flex;
     flex-direction: column;
     position: relative;
-    border-top: 1px solid red;
-    border-left: 1px solid red;
+    border-top: 1px solid #ec0000;
+    border-left: 1px solid #ec0000;
     transition: width 0.5s;
     .open-colse {
       position: absolute;
@@ -2184,7 +2184,7 @@ export default {
     }
     .r-out:after {
       content: "卖单";
-      color: red;
+      color: #ec0000;
     }
     .r-in:after,
     .r-out:after {
@@ -2202,7 +2202,7 @@ export default {
     .r-out,
     .r-trans {
       height: 100px;
-      border-bottom: 1px solid red;
+      border-bottom: 1px solid #ec0000;
       .el-scrollbar {
         width: 100%;
         height: 100%;
@@ -2213,7 +2213,7 @@ export default {
           ul li {
             height: 20px;
             line-height: 20px;
-            color: red;
+            color: #ec0000;
             box-sizing: border-box;
             font-size: 12px;
             display: flex;
@@ -2267,7 +2267,7 @@ export default {
       height: 380px;
       position: relative;
       bottom: 0;
-      color: red;
+      color: #ec0000;
       box-sizing: border-box;
       padding: 0px;
       background: #202020;
@@ -2301,7 +2301,7 @@ export default {
 </style>
 <style lang="scss">
 .txt-red {
-  color: red !important;
+  color: #ec0000 !important;
 }
 .txt-green {
   color: #00da3c !important;
@@ -2328,8 +2328,8 @@ export default {
   }
   .sale-form {
     .el-button--primary {
-      background-color: red;
-      border-color: red;
+      background-color: #ec0000;
+      border-color: #ec0000;
     }
     .el-button--primary:hover {
       background-color: rgb(221, 28, 28);
@@ -2340,7 +2340,7 @@ export default {
     }
     .btn-red,
     .btn-active {
-      background: red !important;
+      background: #ec0000 !important;
       color: white;
       border: 1px solid rgb(238, 3, 3);
     }
@@ -2351,7 +2351,7 @@ export default {
     .el-form-item__label {
       font-size: 12px;
       font-weight: normal;
-      color: red !important;
+      color: #ec0000 !important;
     }
   }
   .buy-form {
@@ -2393,10 +2393,10 @@ export default {
     color: #00da3c;
   }
   #tab-sale.el-tabs__item.is-active {
-    color: red;
+    color: #ec0000;
   }
   .el-tabs__nav-wrap::after {
-    background-color: red;
+    background-color: #ec0000;
     height: 1px;
   }
   .el-tabs__active-bar {

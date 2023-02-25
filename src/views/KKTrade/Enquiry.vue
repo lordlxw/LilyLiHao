@@ -61,20 +61,87 @@
             width="120"
           >
             <template slot-scope="scope">
-              <el-button
+              <!-- <el-button
                 @click="handleAcceptClick(scope.row)"
                 v-if="scope.row.status === 0"
                 type="text"
                 size="small"
                 >接收</el-button
+              > -->
+              <el-popover
+                placement="bottom-end"
+                :ref="`popover-accept-${scope.$index}`"
               >
-              <el-button
+                <p>
+                  确认要<span class="color-red">接收</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-accept-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button type="text" @click="handleAcceptClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button
+                  type="text"
+                  v-if="scope.row.status === 0"
+                  slot="reference"
+                  class="ml10"
+                  >接收</el-button
+                >
+              </el-popover>
+              <!-- <el-button
                 @click="handleNotAcceptClick(scope.row)"
                 v-if="scope.row.status === 0"
                 type="text"
                 size="small"
                 >拒收</el-button
+              > -->
+              <el-popover
+                placement="bottom-end"
+                :ref="`popover-notaccept-${scope.$index}`"
               >
+                <p>
+                  确认要<span class="color-red">拒收</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-notaccept-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    v-if="scope.row.status === 0"
+                    @click="handleNotAcceptClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button
+                  type="text"
+                  v-if="scope.row.status === 0"
+                  slot="reference"
+                  class="ml10"
+                  >拒收</el-button
+                >
+              </el-popover>
             </template>
           </el-table-column>
         </el-table>
@@ -100,6 +167,7 @@ import api from "@/api/kk_trade";
 import { pageMixin } from '@/utils/pageMixin'
 import { animationMixin } from '@/utils/animationMixin'
 import config from '@/utils/config'
+import moment from 'moment'
 export default {
   mixins: [animationMixin, pageMixin],
   props: {
@@ -119,8 +187,8 @@ export default {
         { label: '状态', prop: 'status', formatter: this.funcFormat, width: '120', align: 'left', show: true },
         { label: '债券代码', prop: 'tscode', width: '100', align: 'left', show: true },
         { label: '询面额', prop: 'volume', width: '100', align: 'left', show: true },
-        { label: '交割时间', prop: 'deliveryTime', formatter: this.funcFormatTime, width: '120', align: 'left', show: true },
-        { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: true },
+        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '140', align: 'left', show: true },
+        { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
         { label: '研究员', prop: 'createuser', width: 'auto', align: 'left', show: true },
         { label: '询价时间', prop: 'createTime', width: '140', align: 'right', show: true },
         { label: '是否远期', prop: 'forward', width: '120', align: 'left', show: true },
@@ -168,13 +236,15 @@ export default {
       });
     },
     // 接受
-    handleAcceptClick(row) {
-      api.inquiryAccept({ usertradeId: row.userTradeId }).then(response => {
+    handleAcceptClick(scope) {
+      api.inquiryAccept({ usertradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
             message: '已接受',
             type: 'success'
           })
+          scope._self.$refs[`popover-accept-${scope.$index}`].doClose();
+          this.loadInitData()
         } else {
           this.$message({
             message: response.message,
@@ -184,13 +254,15 @@ export default {
       })
     },
     // 绝收
-    handleNotAcceptClick(row) {
-      api.inquiryRejection({ usertradeId: row.userTradeId }).then(response => {
+    handleNotAcceptClick(scope) {
+      api.inquiryRejection({ usertradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
             message: '已拒收',
             type: 'info'
           })
+          scope._self.$refs[`popover-notaccept-${scope.$index}`].doClose();
+          this.loadInitData()
         } else {
           this.$message({
             message: response.message,
@@ -205,6 +277,8 @@ export default {
           return config.funcKeyValue(row.status.toString(), "inquiryStatus");
         case "direction":
           return config.funcKeyValue(row.direction, "directionMeta")
+        case "deliveryTime":
+          return moment(row.deliveryTime).format('YYYY-MM-DD') + `（T+${row.deliverySpeed}）`
       }
     },
   },
