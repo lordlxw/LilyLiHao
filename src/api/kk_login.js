@@ -23,4 +23,11 @@ export default {
       method: 'get',
     })
   },
+  // 退出登录
+  logout() {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/logout`,
+      method: 'get',
+    })
+  }
 }

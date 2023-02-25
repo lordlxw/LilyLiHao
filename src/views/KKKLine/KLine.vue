@@ -586,6 +586,7 @@ import api from '@/api/kk_bond_pool'
 import apiTrade from '@/api/kk_trade'
 import apiKLine from '@/api/kk_kline'
 import apiAdmin from '@/api/kk_power_admin'
+import apiLogin from '@/api/kk_login'
 import ComTscodeSelect from '@/components/ComTscodeSelect.vue'
 import * as echarts from 'echarts'
 import configUtil from '@/utils/config.js'
@@ -2019,7 +2020,18 @@ export default {
     handleCommand(command) {
       switch (command) {
         case "logout":
-          this.$router.push({ path: '/' })
+          apiLogin.logout().then(response => {
+            if (response && response.code === 200) {
+              this.$store.commit('SET_TOKEN', null)
+              this.$store.commit('SET_USER_INFO', null)
+              this.$router.push({ path: '/' })
+            } else {
+              this.$message({
+                message: '退出失败',
+                type: 'error'
+              })
+            }
+          })
           break;
       }
     },
