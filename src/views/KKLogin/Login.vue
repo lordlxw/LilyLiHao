@@ -94,7 +94,12 @@ export default {
                 this.$store.commit('SET_TOKEN', response.token)
               ]).then(() => {
                 api.auth().then(response => {
-                  console.log(response)
+                  if (response && response.code === 200) {
+                    this.$store.commit('SET_USER_INFO', {
+                      permissions: response.permissions,
+                      userName: response.user.userName
+                    })
+                  }
                   this.$router.push({ path: '/kline' })
                 })
               })

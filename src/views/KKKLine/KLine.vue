@@ -56,6 +56,20 @@
         <li style="font-weight: bold; font-size: 20px; color: #ec0000">
           {{ tscode }}
         </li>
+        <li class="nav-right">
+          <el-dropdown @command="handleCommand">
+            <span class="el-dropdown-link">
+              {{ userInfo.userName }}
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <!-- <el-dropdown-item command="updatePassword"
+                >修改密码</el-dropdown-item
+              > -->
+              <el-dropdown-item divided command="logout">退出</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </li>
         <li
           class="nav-right"
           v-if="favoriteTscodeIcon == favoriteTscodeIconList[0]"
@@ -751,7 +765,8 @@ export default {
   computed: {
     ...mapGetters({
       tscodeGlobal: 'getTscodeGlobal',
-      defaultSet: 'getDefaultSet'
+      defaultSet: 'getDefaultSet',
+      userInfo: 'getUserInfo'
     })
   },
   watch: {
@@ -1999,7 +2014,15 @@ export default {
       ]).then(() => {
         this.$refs.tradeEnquiry.loadInitData()
       })
-    }
+    },
+    /* 下拉指令 */
+    handleCommand(command) {
+      switch (command) {
+        case "logout":
+          this.$router.push({ path: '/' })
+          break;
+      }
+    },
   },
   mounted() {
     this.getInquiryList()
@@ -2071,6 +2094,9 @@ export default {
         i {
           font-size: 18px;
         }
+      }
+      .el-dropdown {
+        color: white;
       }
     }
   }

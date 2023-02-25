@@ -10,7 +10,8 @@ export default {
     'routersKey': 'routers',
     'urlParams': 'urlParams',
     'currentTscode': 'currentTscode',
-    'defaultSet': 'defaultSet'
+    'defaultSet': 'defaultSet',
+    'userInfo': 'userInfo'
   },
   // 菜单功能类型
   menuFunType: {

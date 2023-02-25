@@ -26,7 +26,8 @@ const store = new Vuex.Store({
     // url 连接传参
     urlParams: {},
     // 询价单的一些默认设置默认设置
-    defaultSet: {}
+    defaultSet: {},
+    userInfo: {}
   },
   getters: {
     getMenus(state) {
@@ -106,6 +107,20 @@ const store = new Vuex.Store({
         }
       }
       return state.defaultSet
+    },
+    // 获取用户信息
+    getUserInfo(state) {
+      if (localStorage.getItem(config.keys.userInfo)) {
+        state.userInfo = JSON.parse(localStorage.getItem(config.keys.userInfo))
+      } else {
+        state.userInfo = {
+          // 权限
+          permissions: [],
+          // 用户名
+          userName: '',
+        }
+      }
+      return state.userInfo
     }
   },
   actions: {},
@@ -124,6 +139,11 @@ const store = new Vuex.Store({
     SET_TOKEN(state, token) {
       state.token = token
       localStorage.setItem(config.keys.tokenKey, token)
+    },
+    // 设置用户信息
+    SET_USER_INFO(state, userInfo) {
+      state.userInfo = JSON.stringify(userInfo)
+      localStorage.setItem(config.keys.userInfo, JSON.stringify(userInfo))
     },
     // 设置角色id
     SET_ROLEID(state, roleId) {
