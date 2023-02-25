@@ -14,6 +14,27 @@
           >{{ item }}</el-breadcrumb-item
         >
       </el-breadcrumb>
+      <ul class="k-nav">
+        <li class="nav-right">
+          <router-link target="_blank" :to="{ path: '/kline' }" class="i-text"
+            ><i class="fa fa-line-chart"></i
+          ></router-link>
+        </li>
+        <li class="nav-right">
+          <el-dropdown @command="handleCommand">
+            <span class="el-dropdown-link">
+              {{ userInfo.userName }}
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <!-- <el-dropdown-item command="updatePassword"
+                >修改密码</el-dropdown-item
+              > -->
+              <el-dropdown-item divided command="logout">退出</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -21,6 +42,7 @@
 import { mapMutations, mapState, mapGetters } from "vuex";
 import Velocity from "velocity-animate";
 import screenfull from "screenfull";
+import apiLogin from '@/api/kk_login'
 import config from "@/utils/config.js";
 export default {
   data() {
@@ -50,9 +72,7 @@ export default {
       activeIndex: (state) => state.curMenuIndex
     }),
     ...mapGetters({
-      menus_ids: 'getMenus',
-      roleId: 'getRoleId',
-      navigator: 'getNavigator'
+      userInfo: 'getUserInfo'
     })
   },
   methods: {
@@ -83,16 +103,19 @@ export default {
     /* 下拉指令 */
     handleCommand(command) {
       switch (command) {
-        case "updatePassword":
-          this.$store.commit("SET_NAVIGATOR", {
-            val1: ["修改密码"],
-            val2: [0],
-            val3: ["/update"],
-          });
-          this.$router.push({ path: "/update" });
-          break;
         case "logout":
-          this.fetchLogout();
+          apiLogin.logout().then(response => {
+            if (response && response.code === 200) {
+              this.$store.commit('SET_TOKEN', null)
+              this.$store.commit('SET_USER_INFO', null)
+              this.$router.push({ path: '/' })
+            } else {
+              this.$message({
+                message: '退出失败',
+                type: 'error'
+              })
+            }
+          })
           break;
       }
     },
@@ -158,6 +181,23 @@ export default {
       height: 40px;
       line-height: 40px;
       float: left;
+    }
+    .k-nav {
+      overflow: hidden;
+      float: right;
+      .i-text {
+        color: #333333;
+        i {
+          font-size: 18px;
+        }
+      }
+      li {
+        padding: 0px 5px;
+        font-size: 12px;
+        cursor: pointer;
+        line-height: 40px;
+        float: left;
+      }
     }
   }
 }
