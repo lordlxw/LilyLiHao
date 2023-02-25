@@ -1,8 +1,7 @@
-<!--管理员管理-->
+<!--用户管理-->
 <template>
   <div class="content">
-    <navigator></navigator>
-    <div class="filter-condition">
+    <!-- <div class="filter-condition">
       <div class="item mr30">
         <label>用户名</label>
         <el-input
@@ -32,20 +31,20 @@
       <div class="item btn-box">
         <el-button type="primary" @click="handleSearch">搜索</el-button>
         <el-button type="default" @click="handleClearCondition">重置</el-button>
-        <!-- <el-button type="primary" @click="handleExport">导出</el-button> -->
+        <el-button type="primary" @click="handleExport">导出</el-button>
       </div>
       <div class="clearboth"></div>
-    </div>
+    </div> -->
     <div class="list">
       <div class="do">
-        <router-link to="/power/admin/add" v-if="authValid('admin:add')">
+        <router-link to="/power/admin/add">
           <el-button type="default">添加</el-button>
         </router-link>
         <div class="pagination mt10">
           <el-pagination
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
-            :current-page="page"
+            :current-page="pageNum"
             :page-sizes="[10, 20, 50, 100]"
             :page-size="pageSize"
             layout="prev, next"
@@ -97,16 +96,9 @@
             width="170"
           >
             <template slot-scope="scope">
-              <el-button
-                v-if="authValid('admin:view')"
-                @click="handleDetailClick(scope.row)"
-                type="text"
-                >详情</el-button
-              >
               <el-popover
                 placement="bottom-end"
                 :ref="`popover-disabled-${scope.$index}`"
-                v-if="authValid('admin:disabling')"
               >
                 <p>
                   确认<span class="color-red">{{
@@ -130,44 +122,15 @@
                   >
                 </div>
                 <el-button type="text" slot="reference">{{
-                  scope.row.disabled ? "启用" : "禁用"
+                  scope.row.status === "1" ? "启用" : "禁用"
                 }}</el-button>
-              </el-popover>
-              <el-popover
-                placement="bottom-end"
-                :ref="`popover-unlock-${scope.$index}`"
-                v-if="scope.row.errorCount > 5 && authValid('admin:unlock')"
-              >
-                <p>
-                  账号被锁，确认<span class="color-red">解锁</span>“<span
-                    class="color-main"
-                    >{{ scope.row.userName }}</span
-                  >”？
-                </p>
-                <div style="text-align: right">
-                  <el-button
-                    type="text"
-                    @click="
-                      scope._self.$refs[
-                        `popover-unlock-${scope.$index}`
-                      ].doClose()
-                    "
-                    >取消</el-button
-                  >
-                  <el-button type="text" @click="handleUnlock(scope)"
-                    >确认</el-button
-                  >
-                </div>
-                <el-button type="text" slot="reference">解锁</el-button>
               </el-popover>
               <el-button
                 type="text"
-                v-if="authValid('admin:add')"
                 @click="handleEdit(scope.row, '/power/admin/edit')"
                 >编辑</el-button
               >
               <el-popover
-                v-if="authValid('admin:delete')"
                 placement="bottom-end"
                 :ref="`popover-delete-${scope.$index}`"
               >
@@ -225,214 +188,50 @@
 
 <script>
 import api from "@/api/kk_power_admin";
-import Navigator from "@/components/Navigator.vue";
-import SelectRole from "@/components/SelectRole.vue";
-import Detail from "./Admin/Detail.vue";
 import { pageMixin } from "@/utils/pageMixin";
 import { authMixin } from "@/utils/authMixin";
 import config from "@/utils/config";
 export default {
   mixins: [pageMixin, authMixin],
-  components: {
-    Navigator,
-    SelectRole,
-    Detail,
-  },
   data() {
     return {
-      // 详情
-      id: "",
-      drawer: false,
-      drawerSize: 40,
-      direction: "rtl",
       // 公共配置
       config,
-      // 用户名
-      userName: "",
-      // 角色
-      selectRoleId: "",
-      // 禁用状态
-      disabled: "",
       // 表头
       tableHead: [
-        {
-          label: "id",
-          prop: "id",
-          width: "200",
-          align: "left",
-          show: false,
-        },
-        {
-          label: "用户名",
-          prop: "userName",
-          width: "auto",
-          align: "left",
-          show: true,
-        },
-        {
-          label: "登录次数",
-          prop: "loginCount",
-          width: "80",
-          align: "right",
-          show: false,
-        },
-        {
-          label: "锁定状态",
-          prop: "errorCount",
-          formatter: this.funcFormat,
-          width: "80",
-          align: "right",
-          show: true,
-        },
-        {
-          label: "管理员类型",
-          prop: "userType",
-          formatter: this.funcFormat,
-          width: "100",
-          align: "center",
-          show: true,
-        },
-        {
-          label: "禁用状态",
-          prop: "disabled",
-          formatter: this.funcFormat,
-          width: "80",
-          align: "center",
-          show: true,
-        },
-        {
-          label: "角色id",
-          prop: "roleId",
-          width: "100",
-          align: "left",
-          show: false,
-        },
-        {
-          label: "角色",
-          prop: "roleName",
-          width: "100",
-          align: "left",
-          show: true,
-        },
-        {
-          label: "创建人id",
-          prop: "createdAdminId",
-          width: "120",
-          align: "left",
-          show: false,
-        },
-        {
-          label: "创建人",
-          prop: "createdUserName",
-          width: "120",
-          align: "left",
-          show: false,
-        },
-        {
-          label: "创建时间",
-          prop: "createdAt",
-          formatter: this.funcFormatTime,
-          width: "140",
-          align: "center",
-          show: false,
-        },
-        {
-          label: "修改人id",
-          prop: "updatedAdminId",
-          width: "120",
-          align: "left",
-          show: false,
-        },
-        {
-          label: "修改人",
-          prop: "updatedUserName",
-          width: "120",
-          align: "left",
-          show: false,
-        },
-        {
-          label: "修改时间",
-          prop: "updatedAt",
-          formatter: this.funcFormatTime,
-          width: "140",
-          align: "left",
-          show: false,
-        },
-        {
-          label: "权限层级",
-          prop: "powerLayer",
-          width: "140",
-          align: "left",
-          show: false,
-        },
+        { label: "userId", prop: "userId", width: "200", align: "left", show: false },
+        { label: "用户名", prop: "userName", width: "150", align: "left", show: true },
+        { label: "昵称", prop: "nickName", width: "120", align: "left", show: true },
+        { label: "手机号", prop: "phonenumber", width: "120", align: "left", show: true },
+        { label: "状态", prop: "status", formatter: this.funcFormat, width: "100", align: "left", show: true },
+        { label: "备注", prop: "remark", width: "auto", align: "left", show: true },
+        { label: "创建时间", prop: "createTime", width: "140", align: "left", show: true }
       ],
       tableData: [],
       loading: true,
     };
   },
   methods: {
-    // 关闭抽屉
-    closedDrawer() {
-      this.$refs.multipleTable.setCurrentRow();
-      this.id = "";
-    },
-    // 角色选择
-    handleSelectRole(obj) {
-      this.selectRoleId = obj.value;
-    },
-    // 搜索事件
-    handleSearch() {
-      Promise.all([(this.page = 1)]).then(() => {
-        this.loadInitData();
-      });
-    },
-    // 清除事件
-    handleClearCondition() {
-      Promise.all([
-        (this.userName = ""),
-        (this.selectRoleId = ""),
-        (this.$refs.selectRole.value = ""),
-        (this.disabled = ""),
-      ]).then(() => {
-        this.handleSearch();
-      });
-    },
-    // 导出
-    handleExport() { },
     // 禁用与启用
     handleDisabling(scope) {
-      api
-        .disabling({
-          id: scope.row.id,
-          disabled: scope.row.disabled ? false : true,
-        })
-        .then((response) => {
-          if (response && response.code === "200") {
-            this.$message({
-              message: `${scope.row.disabled ? "启用" : "禁用"}成功`,
-              type: "success",
-            });
-            scope._self.$refs[`popover-disabled-${scope.$index}`].doClose();
-            this.loadInitData();
-          }
-        });
-    },
-    handleUnlock(scope) {
-      api.unLock({ id: scope.row.id }).then((response) => {
-        if (response && response.code === "200") {
+      api.updateStatus({
+        userId: scope.row.userId,
+        status: scope.row.status === '1' ? '0' : '1',
+      }).then((response) => {
+        if (response && response.code === "00000") {
           this.$message({
-            message: "解锁成功",
+            message: `${scope.row.status === 0 ? "启用" : "禁用"}成功`,
             type: "success",
           });
-          scope._self.$refs[`popover-unlock-${scope.$index}`].doClose();
+          scope._self.$refs[`popover-disabled-${scope.$index}`].doClose();
           this.loadInitData();
         }
       });
     },
     // 删除
     handleDelete(scope) {
-      api.delete({ id: scope.row.id }).then((response) => {
-        if (response && response.code === "200") {
+      api.delete({ userIds: scope.row.userId }).then((response) => {
+        if (response && response.code === "00000") {
           this.$message({
             message: "删除成功",
             type: "success",
@@ -452,27 +251,19 @@ export default {
     // 初始化数据
     loadInitData() {
       this.loading = true;
-      api
-        .get({
-          userName: this.userName,
-          disabled: this.disabled,
-          roleId: this.selectRoleId,
-          page: this.page,
-          pageSize: this.pageSize,
-        })
-        .then((response) => {
-          this.funcList(response);
-          this.loading = false;
-        });
+      api.get({
+        pageNum: this.pageNum,
+        pageSize: this.pageSize
+      }).then((response) => {
+        this.funcList(response);
+        this.loading = false;
+      });
     },
+    // 格式化
     funcFormat(row, column) {
       switch (column.property) {
-        case "userType":
-          return config.funcKeyValue(row.userType, "manageUserType");
-        case "disabled":
-          return config.funcKeyValue(row.disabled.toString(), "disabledStatus");
-        case "errorCount":
-          return row.errorCount > 5 ? "锁定" : "正常";
+        case "status":
+          return config.funcKeyValue(row.status.toString(), "userStatus")
       }
     },
   },

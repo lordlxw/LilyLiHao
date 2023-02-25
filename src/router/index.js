@@ -75,6 +75,21 @@ const router = new Router({
           path: '/power/role/edit',
           component: () => import('@/views/KKPower/Role/Edit.vue')
         },
+        // 用户管理
+        {
+          path: '/power/admin',
+          component: () => import('@/views/KKPower/Admin.vue'),
+        },
+        // 用户管理 - 添加
+        {
+          path: '/power/admin/add',
+          component: () => import('@/views/KKPower/Admin/Add.vue'),
+        },
+        // 用户管理 - 编辑
+        {
+          path: '/power/admin/edit',
+          component: () => import('@/views/KKPower/Admin/Edit.vue'),
+        },
         // 交易管理 - 询价单
         {
           path: '/trade/enquiry',

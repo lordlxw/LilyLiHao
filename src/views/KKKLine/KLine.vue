@@ -2180,7 +2180,7 @@ export default {
     }
     .r-in:after {
       content: "买单";
-      color: green;
+      color: #00da3c;
     }
     .r-out:after {
       content: "卖单";
@@ -2238,7 +2238,7 @@ export default {
       .el-scrollbar {
         .el-scrollbar__wrap {
           ul li {
-            color: green;
+            color: #00da3c;
           }
         }
       }
@@ -2271,6 +2271,7 @@ export default {
       box-sizing: border-box;
       padding: 0px;
       background: #202020;
+      overflow: hidden;
       .best-price-wapper {
         position: absolute;
         overflow: hidden;
@@ -2303,7 +2304,7 @@ export default {
   color: red !important;
 }
 .txt-green {
-  color: green !important;
+  color: #00da3c !important;
 }
 .txt-yellow {
   color: yellow !important;
@@ -2355,8 +2356,8 @@ export default {
   }
   .buy-form {
     .el-button--primary {
-      background-color: green;
-      border-color: green;
+      background-color: #00da3c;
+      border-color: #00da3c;
     }
     .el-button--primary:hover {
       background-color: rgb(6, 156, 6);
@@ -2367,19 +2368,19 @@ export default {
     }
     .btn-green,
     .btn-active {
-      background: green !important;
+      background: #00da3c !important;
       color: white;
-      border: 1px solid rgb(1, 105, 1);
+      border: 1px solid #00da3c;
     }
     .btn-green:hover {
       background: rgb(8, 145, 8) !important;
       color: white;
-      border: 1px solid rgb(1, 105, 1);
+      border: 1px solid #00da3c;
     }
     .el-form-item__label {
       font-size: 12px;
       font-weight: normal;
-      color: green !important;
+      color: #00da3c !important;
     }
   }
   .el-tabs__item {
@@ -2389,7 +2390,7 @@ export default {
     font-weight: bold;
   }
   #tab-buy.el-tabs__item.is-active {
-    color: green;
+    color: #00da3c;
   }
   #tab-sale.el-tabs__item.is-active {
     color: red;

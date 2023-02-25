@@ -8,12 +8,8 @@ export default {
    */
   inquiryAccept(params) {
     return request({
-      url: `${Vue.prototype.$apiUrl}/usertrade/accept`,
-      method: 'post',
-      data: {
-        // 询价单id
-        usertradeId: params.usertradeId
-      }
+      url: `${Vue.prototype.$apiUrl}/usertrade/accept?usertradeId=${params.usertradeId}`,
+      method: 'post'
     })
   },
   /**
@@ -51,10 +47,6 @@ export default {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/deny?usertradeId=${params.usertradeId}`,
       method: 'post'
-      // data: {
-      //   // 询价单id
-      //   usertradeId: params.usertradeId
-      // }
     })
   },
   /**

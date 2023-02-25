@@ -17,7 +17,7 @@
         </template>
         <el-menu-item index="1-1" route="/power/menu">菜单管理</el-menu-item>
         <el-menu-item index="1-2" route="/power/role">角色管理</el-menu-item>
-        <!-- <el-menu-item index="1-3" route="/power/admin">用户管理</el-menu-item> -->
+        <el-menu-item index="1-3" route="/power/admin">用户管理</el-menu-item>
       </el-submenu>
       <el-submenu index="2">
         <template slot="title">

@@ -34,9 +34,15 @@ export default {
     '5': '已撤单',
     '6': '部分撤单'
   },
+  // 交易方向
   directionMeta: {
     'bond_0': '买入',
     'bond_1': '卖出'
+  },
+  // 用户状态
+  userStatus: {
+    '0': '正常',
+    '1': '已禁用'
   },
   // 处理键值对信息转换
   funcKeyValue(key, type) {

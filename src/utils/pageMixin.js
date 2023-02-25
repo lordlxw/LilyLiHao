@@ -41,14 +41,16 @@ export const pageMixin = {
     },
     // 分页列表
     funcList(response) {
-      if (response && response.data) {
-        if (response.data.list) {
-          this.tableData = response.data.list
+      if (response && response.code === 200 && response.rows) {
+        if (response.rows) {
+          this.tableData = response.rows
         } else {
           this.tableData = []
         }
-        if (response.data.pageNum) {
-          this.totalCount = response.data.page["Total-Count"]
+        if (response.total) {
+          this.totalCount = response.total
+        } else {
+          this.totalCount = 0
         }
       } else {
         this.totalCount = 0

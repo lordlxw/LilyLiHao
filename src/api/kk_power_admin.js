@@ -3,10 +3,14 @@ import Vue from 'vue'
 import request from '@/utils/request'
 export default {
   // 系统用户列表查询
-  get() {
+  get(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/system/user/list`,
-      method: 'get'
+      method: 'get',
+      params: {
+        pageNum: params.pageNum,
+        pageSize: params.pageSize
+      }
     })
   },
   // 角色全量查询
@@ -24,7 +28,10 @@ export default {
       data: {
         userName: params.userName,
         roleIds: params.roleIds,
-        password: params.password
+        password: params.password,
+        nickName: params.nickName,
+        phonenumber: params.phonenumber,
+        remark: params.remark
       }
     })
   },
@@ -35,7 +42,11 @@ export default {
       method: 'put',
       data: {
         userId: params.userId,
-        roleIds: params.roleIds
+        userName: params.userName,
+        roleIds: params.roleIds,
+        nickName: params.nickName,
+        phonenumber: params.phonenumber,
+        remark: params.remark
       }
     })
   },
@@ -55,7 +66,7 @@ export default {
   // 删除
   delete(params) {
     return request({
-      url: `${Vue.prototype.$apiUrl}/system/user${params.userIds}`,
+      url: `${Vue.prototype.$apiUrl}/system/user/${params.userIds}`,
       method: 'delete'
     })
   },

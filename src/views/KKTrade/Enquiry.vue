@@ -63,12 +63,14 @@
             <template slot-scope="scope">
               <el-button
                 @click="handleAcceptClick(scope.row)"
+                v-if="scope.row.status === 0"
                 type="text"
                 size="small"
                 >接收</el-button
               >
               <el-button
                 @click="handleNotAcceptClick(scope.row)"
+                v-if="scope.row.status === 0"
                 type="text"
                 size="small"
                 >拒收</el-button
@@ -168,13 +170,33 @@ export default {
     // 接受
     handleAcceptClick(row) {
       api.inquiryAccept({ usertradeId: row.userTradeId }).then(response => {
-
+        if (response && response.code === '00000') {
+          this.$message({
+            message: '已接受',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: response.message,
+            type: 'error'
+          })
+        }
       })
     },
     // 绝收
     handleNotAcceptClick(row) {
       api.inquiryRejection({ usertradeId: row.userTradeId }).then(response => {
-
+        if (response && response.code === '00000') {
+          this.$message({
+            message: '已拒收',
+            type: 'info'
+          })
+        } else {
+          this.$message({
+            message: response.message,
+            type: 'error'
+          })
+        }
       })
     },
     funcFormat(row, column) {
