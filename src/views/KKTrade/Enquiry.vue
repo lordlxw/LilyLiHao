@@ -179,25 +179,27 @@ export default {
       loading: false,
       // 表头
       tableHead: [
+        // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
         { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
         { label: '交易员id', prop: 'userId', width: '120', align: 'left', show: false },
         { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
-        { label: '单据号', prop: 'tradeNum', width: '140', align: 'left', show: true },
-        { label: '交易方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
-        { label: '状态', prop: 'status', formatter: this.funcFormat, width: '120', align: 'left', show: true },
         { label: '债券代码', prop: 'tscode', width: '100', align: 'left', show: true },
+        { label: '交易方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
+        { label: '询价', prop: 'price', width: '120', align: 'left', show: true },
         { label: '询面额', prop: 'volume', width: '100', align: 'left', show: true },
         { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '140', align: 'left', show: true },
+        { label: '状态', prop: 'status', formatter: this.funcFormat, width: '120', align: 'left', show: true },
+        { label: '单据号', prop: 'tradeNum', width: '140', align: 'left', show: true },
         { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
         { label: '研究员', prop: 'createuser', width: 'auto', align: 'left', show: true },
         { label: '询价时间', prop: 'createTime', width: '140', align: 'right', show: true },
         { label: '是否远期', prop: 'forward', width: '120', align: 'left', show: true },
         { label: '相关单号', prop: 'parentId', width: '140', align: 'left', show: true },
-        { label: '询价', prop: 'price', width: '120', align: 'left', show: true },
         { label: '备注', prop: 'remark', width: '120', align: 'left', show: true },
         { label: '修改人', prop: 'updateBy', width: '120', align: 'left', show: true },
         { label: '修改时间', prop: 'updateTime', width: '120', align: 'left', show: true },
         { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: true }
+        // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
       ],
       tableData: []
     }
