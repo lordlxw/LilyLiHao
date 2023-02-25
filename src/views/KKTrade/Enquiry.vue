@@ -69,6 +69,7 @@
                 >接收</el-button
               > -->
               <el-popover
+                v-if="setAuth('inquery:accept')"
                 placement="bottom-end"
                 :ref="`popover-accept-${scope.$index}`"
               >
@@ -100,14 +101,8 @@
                   >接收</el-button
                 >
               </el-popover>
-              <!-- <el-button
-                @click="handleNotAcceptClick(scope.row)"
-                v-if="scope.row.status === 0"
-                type="text"
-                size="small"
-                >拒收</el-button
-              > -->
               <el-popover
+                v-if="setAuth('inquery:rejection')"
                 placement="bottom-end"
                 :ref="`popover-notaccept-${scope.$index}`"
               >

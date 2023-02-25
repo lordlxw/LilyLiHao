@@ -4,6 +4,7 @@
     <div class="list mt20 mb20">
       <div class="do">
         <el-button
+          v-if="setAuth('menu:insert')"
           @click="handleEdit({ id: 0, name: '顶级菜单' }, '/power/menu/add')"
           >添加顶级菜单</el-button
         >
@@ -60,17 +61,20 @@
           >
             <template slot-scope="scope">
               <el-button
+                v-if="setAuth('menu:insert')"
                 type="text"
                 :disabled="scope.row.type === 2"
                 @click="handleEdit(scope.row, '/power/menu/add')"
                 >添加子菜单</el-button
               >
               <el-button
+                v-if="setAuth('menu:update')"
                 type="text"
                 @click="handleEdit(scope.row, '/power/menu/edit')"
                 >修改</el-button
               >
               <el-popover
+                v-if="setAuth('menu:delete')"
                 placement="bottom-end"
                 :ref="`popover-delete-${scope.$index}`"
               >

@@ -15,12 +15,13 @@ export const pageMixin = {
   computed: {
     ...mapGetters({
       menus_ids: 'getMenus',
-      roleId: 'getRoleId'
+      roleId: 'getRoleId',
+      userInfo: 'getUserInfo'
     })
   },
   methods: {
-    setAuth(index) {
-      return this.roleId === '1' || this.menus_ids.indexOf(index) !== -1
+    setAuth(permis) {
+      return (this.userInfo.permissions && this.userInfo.permissions[0] === "*:*:*") || this.userInfo.permissions.indexOf(permis) !== -1
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

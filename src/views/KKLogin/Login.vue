@@ -97,10 +97,11 @@ export default {
                   if (response && response.code === 200) {
                     this.$store.commit('SET_USER_INFO', {
                       permissions: response.permissions,
-                      userName: response.user.userName
+                      userName: response.user.userName,
+                      menutree: response.menutree
                     })
                   }
-                  this.$router.push({ path: '/kline' })
+                  this.$router.push({ path: '/main' })
                 })
               })
             }

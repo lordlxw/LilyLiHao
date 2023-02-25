@@ -3,7 +3,7 @@
   <div class="content">
     <div class="list">
       <div class="do">
-        <router-link to="/power/role/add">
+        <router-link v-if="setAuth('role:insert')" to="/power/role/add">
           <el-button type="default">添加</el-button>
         </router-link>
       </div>
@@ -55,11 +55,13 @@
                 >授权</el-button
               > -->
               <el-button
+                v-if="setAuth('role:update')"
                 type="text"
                 @click="handleEdit(scope.row, '/power/role/edit')"
                 >修改</el-button
               >
               <el-popover
+                v-if="setAuth('role:delete')"
                 placement="bottom-end"
                 :ref="`popover-delete-${scope.$index}`"
               >
