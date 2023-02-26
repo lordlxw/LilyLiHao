@@ -37,7 +37,7 @@
     </div> -->
     <div class="list">
       <div class="do">
-        <router-link v-if="setAuth('user:add')" to="/power/admin/add">
+        <router-link v-if="setAuth('system:user:add')" to="/power/admin/add">
           <el-button type="default">添加</el-button>
         </router-link>
         <div class="pagination mt10">
@@ -127,13 +127,13 @@
                 }}</el-button>
               </el-popover>
               <el-button
-                v-if="setAuth('user:update')"
+                v-if="setAuth('system:user:edit')"
                 type="text"
                 @click="handleEdit(scope.row, '/power/admin/edit')"
                 >修改</el-button
               >
               <el-popover
-                v-if="setAuth('user:delete')"
+                v-if="setAuth('system:user:remove')"
                 placement="bottom-end"
                 :ref="`popover-delete-${scope.$index}`"
               >

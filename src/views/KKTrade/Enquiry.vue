@@ -61,15 +61,8 @@
             width="120"
           >
             <template slot-scope="scope">
-              <!-- <el-button
-                @click="handleAcceptClick(scope.row)"
-                v-if="scope.row.status === 0"
-                type="text"
-                size="small"
-                >接收</el-button
-              > -->
               <el-popover
-                v-if="setAuth('inquery:accept')"
+                v-if="setAuth('inquiry:accept')"
                 placement="bottom-end"
                 :ref="`popover-accept-${scope.$index}`"
               >
@@ -102,7 +95,7 @@
                 >
               </el-popover>
               <el-popover
-                v-if="setAuth('inquery:rejection')"
+                v-if="setAuth('inquiry:rejection')"
                 placement="bottom-end"
                 :ref="`popover-notaccept-${scope.$index}`"
               >
@@ -137,6 +130,46 @@
                   >拒收</el-button
                 >
               </el-popover>
+              <el-button
+                @click="handleDealClick(scope.row)"
+                type="text"
+                size="small"
+                v-if="['1', '4'].indexOf(scope.row.status.toString()) !== -1"
+                >成交</el-button
+              >
+
+              <el-popover
+                v-if="
+                  ['0', '1', '2', '4'].indexOf(scope.row.status.toString()) !==
+                  -1
+                "
+                placement="bottom-end"
+                :ref="`popover-cancel-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">撤销</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”{{ scope.row.tscode }}？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-cancel-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button type="text" @click="handleCancelClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >撤单</el-button
+                >
+              </el-popover>
             </template>
           </el-table-column>
         </el-table>
@@ -154,6 +187,53 @@
         </el-pagination>
       </div>
     </div>
+    <el-dialog
+      title="成交信息"
+      width="500px"
+      :visible.sync="dialogDealFormVisible"
+    >
+      <ul class="mb20">
+        <li>债券代码：{{ dealRows.tscode }}</li>
+        <li>
+          交易方向：{{ dealRows.direction === "bond_0" ? "买入" : "卖出" }}
+        </li>
+        <li>询价：{{ dealRows.price }}</li>
+        <li>询面额：{{ dealRows.volume }}</li>
+        <li>
+          交割日期：{{ dealRows.deliveryTime }}（T+{{
+            dealRows.deliverySpeed
+          }}）
+        </li>
+      </ul>
+      <el-form
+        :model="dealForm"
+        :rules="rulesDealForm"
+        ref="dealForm"
+        label-width="100px"
+      >
+        <el-form-item label="成交价格" prop="price">
+          <el-input v-model="dealForm.price" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="成交量" prop="volume">
+          <el-input v-model="dealForm.volume" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input
+            type="textarea"
+            row="2"
+            resize="none"
+            v-model="dealForm.remark"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDealFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('dealForm')"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -192,11 +272,23 @@ export default {
         { label: '相关单号', prop: 'parentId', width: '140', align: 'left', show: true },
         { label: '备注', prop: 'remark', width: '120', align: 'left', show: true },
         { label: '修改人', prop: 'updateBy', width: '120', align: 'left', show: true },
-        { label: '修改时间', prop: 'updateTime', width: '120', align: 'left', show: true },
-        { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: true }
+        { label: '修改时间', prop: 'updateTime', width: '120', align: 'left', show: true }
         // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
       ],
-      tableData: []
+      tableData: [],
+      dialogDealFormVisible: false,
+      dealForm: {
+        // 询价单号
+        usertradeId: '',
+        // 成交价格
+        price: '',
+        // 成交量
+        volume: '',
+        // 备注
+        remark: ''
+      },
+      rulesDealForm: {},
+      dealRows: {}
     }
   },
   methods: {
@@ -268,6 +360,46 @@ export default {
         }
       })
     },
+    // 点击成交
+    handleDealClick(row) {
+      Promise.all([
+        this.dialogDealFormVisible = true
+      ]).then(() => {
+        this.dealRows = row
+        this.dealForm.usertradeId = row.userTradeId
+        this.dealForm.remark = row.remark
+      })
+    },
+    // 表单提交
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          console.log(this.ruleForm)
+          api.inquiryDeal({
+            usertradeId: this.dealForm.usertradeId,
+            price: this.dealForm.price,
+            volume: this.dealForm.volume,
+            remark: this.dealForm.remark
+          }).then((response) => {
+            if (response && response.code === "00000") {
+              this.$message({
+                message: "操作成功",
+                type: "success",
+              });
+              this.dialogDealFormVisible = false
+              this.loadInitData()
+            }
+          });
+        }
+      })
+    },
+    // 撤单
+    handleCancelClick(scope) {
+      api.inquiryCancel({ usertradeId: scope.row.userTradeId }).then(response => {
+
+      })
+    },
+    // 数据格式化
     funcFormat(row, column) {
       switch (column.property) {
         case "status":

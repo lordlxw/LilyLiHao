@@ -3,16 +3,6 @@ import Vue from 'vue'
 import request from '@/utils/request'
 export default {
   /**
-   * 询价单接受
-   * @param {*} params
-   */
-  inquiryAccept(params) {
-    return request({
-      url: `${Vue.prototype.$apiUrl}/usertrade/accept?usertradeId=${params.usertradeId}`,
-      method: 'post'
-    })
-  },
-  /**
    * 新增询价单
    * @param {*} params
    * @returns
@@ -40,12 +30,54 @@ export default {
     })
   },
   /**
-   * 询价单拒绝接收
+   * 询价单接收
+   * @param {*} params
+   */
+  inquiryAccept(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/accept?usertradeId=${params.usertradeId}`,
+      method: 'post'
+    })
+  },
+  /**
+   * 询价单拒绝
    * @param {*} params
    */
   inquiryRejection(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/deny?usertradeId=${params.usertradeId}`,
+      method: 'post'
+    })
+  },
+  /**
+   * 成交
+   * @param {*} params
+   * @returns
+   */
+  inquiryDeal(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/deal`,
+      method: 'post',
+      data: {
+        // 询价单单号ID
+        usertradeId: params.usertradeId,
+        // 成交价格
+        price: params.price,
+        // 成交量
+        volume: params.volume,
+        // 备注
+        remark: params.remark
+      }
+    })
+  },
+  /**
+   * 撤单
+   * @param {*} params
+   * @returns
+   */
+  inquiryCancel(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/cancel?usertradeId=${params.usertradeId}`,
       method: 'post'
     })
   },
