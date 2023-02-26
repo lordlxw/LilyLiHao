@@ -31,7 +31,6 @@
           <el-table-column
             fixed
             type="index"
-            :index="typeIndex"
             label="序号"
             align="center"
             width="50"
@@ -62,7 +61,7 @@
           >
             <template slot-scope="scope">
               <el-popover
-                v-if="setAuth('inquiry:accept')"
+                v-if="setAuth('inquiry:accept') && scope.row.status === 0"
                 placement="bottom-end"
                 :ref="`popover-accept-${scope.$index}`"
               >
@@ -86,16 +85,12 @@
                     >确认</el-button
                   >
                 </div>
-                <el-button
-                  type="text"
-                  v-if="scope.row.status === 0"
-                  slot="reference"
-                  class="ml10"
+                <el-button type="text" slot="reference" class="ml10"
                   >接收</el-button
                 >
               </el-popover>
               <el-popover
-                v-if="setAuth('inquiry:rejection')"
+                v-if="setAuth('inquiry:rejection') && scope.row.status === 0"
                 placement="bottom-end"
                 :ref="`popover-notaccept-${scope.$index}`"
               >
@@ -115,18 +110,11 @@
                     "
                     >取消</el-button
                   >
-                  <el-button
-                    type="text"
-                    v-if="scope.row.status === 0"
-                    @click="handleNotAcceptClick(scope)"
+                  <el-button type="text" @click="handleNotAcceptClick(scope)"
                     >确认</el-button
                   >
                 </div>
-                <el-button
-                  type="text"
-                  v-if="scope.row.status === 0"
-                  slot="reference"
-                  class="ml10"
+                <el-button type="text" slot="reference" class="ml10"
                   >拒收</el-button
                 >
               </el-popover>
@@ -134,13 +122,16 @@
                 @click="handleDealClick(scope.row)"
                 type="text"
                 size="small"
-                v-if="['1', '4'].indexOf(scope.row.status.toString()) !== -1 && setAuth('inquiry:deal')"
+                v-if="
+                  ['1', '4'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:deal')
+                "
                 >成交</el-button
               >
               <el-popover
                 v-if="
                   ['0', '1', '2', '4'].indexOf(scope.row.status.toString()) !==
-                  -1 && setAuth('inquiry:cancel')
+                    -1 && setAuth('inquiry:cancel')
                 "
                 placement="bottom-end"
                 :ref="`popover-cancel-${scope.$index}`"
