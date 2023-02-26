@@ -23,7 +23,7 @@
         <li class="nav-right">
           <el-dropdown @command="handleCommand">
             <span class="el-dropdown-link">
-              {{ userInfo.userName }}
+              {{ userInfo ? userInfo.userName : "" }}
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
@@ -36,6 +36,7 @@
         </li>
       </ul>
     </div>
+    <main-socket></main-socket>
   </div>
 </template>
 <script>
@@ -43,8 +44,12 @@ import { mapMutations, mapState, mapGetters } from "vuex";
 import Velocity from "velocity-animate";
 import screenfull from "screenfull";
 import apiLogin from '@/api/kk_login'
+import MainSocket from '@/components/Socket.vue'
 import config from "@/utils/config.js";
 export default {
+  components: {
+    MainSocket
+  },
   data() {
     return {
       memus: [],
@@ -106,9 +111,12 @@ export default {
         case "logout":
           apiLogin.logout().then(response => {
             if (response && response.code === 200) {
-              this.$store.commit('SET_TOKEN', null)
-              this.$store.commit('SET_USER_INFO', null)
-              this.$router.push({ path: '/' })
+              Promise.all([
+                this.$store.commit('SET_TOKEN', null),
+                this.$store.commit('SET_USER_INFO', null)
+              ]).then(() => {
+                this.$router.push({ path: '/' })
+              })
             } else {
               this.$message({
                 message: '退出失败',

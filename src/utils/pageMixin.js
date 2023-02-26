@@ -21,7 +21,7 @@ export const pageMixin = {
   },
   methods: {
     setAuth(permis) {
-      return (this.userInfo.permissions && this.userInfo.permissions[0] === "*:*:*") || this.userInfo.permissions.indexOf(permis) !== -1
+      return this.userInfo && ((this.userInfo.permissions && this.userInfo.permissions[0] === "*:*:*") || this.userInfo.permissions.indexOf(permis) !== -1)
     },
     handleSelectionChange(val) {
       this.multipleSelection = val

@@ -9,6 +9,7 @@
       active-text-color="#fff"
       router
       :collapse="isCollapse"
+      v-if="userInfo"
     >
       <template v-for="(item, index) in userInfo.menutree">
         <el-submenu

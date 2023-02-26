@@ -179,13 +179,20 @@
     </div>
     <el-dialog
       title="成交信息"
-      width="500px"
+      width="500px;"
       :visible.sync="dialogDealFormVisible"
+      append-to-body
     >
       <ul class="mb20">
         <li>债券代码：{{ dealRows.tscode }}</li>
         <li>
-          交易方向：{{ dealRows.direction === "bond_0" ? "买入" : "卖出" }}
+          交易方向：{{
+            dealRows.direction === "bond_0"
+              ? "买入"
+              : dealRows.direction === "bond_1"
+              ? "卖出"
+              : ""
+          }}
         </li>
         <li>询价：{{ dealRows.price }}</li>
         <li>询面额：{{ dealRows.volume }}</li>

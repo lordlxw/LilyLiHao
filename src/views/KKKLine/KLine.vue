@@ -59,7 +59,7 @@
         <li class="nav-right">
           <el-dropdown @command="handleCommand">
             <span class="el-dropdown-link">
-              {{ userInfo.userName }}
+              {{ userInfo ? userInfo.userName : "" }}
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
@@ -1812,8 +1812,6 @@ export default {
                 // 成交量
                 volume: this[formName].volume
               }).then(res => {
-                console.log(123456)
-                console.log(res)
                 if (res && res.code === '00000' && res.value) {
                   const h = this.$createElement;
                   this.$notify({
@@ -1857,6 +1855,7 @@ export default {
           console.log("收到数据====" + msg.data);
           let msgJson = JSON.parse(msg.data)
           console.log(msgJson.dataType)
+          const h = self.$createElement;
           if (msgJson && msgJson.dataKey === self.activeTscode) {
             switch (msgJson.dataType) {
               case 'bid_1':
@@ -1875,6 +1874,23 @@ export default {
                 self.transactionAllList.pop()
                 self.transactionAllList.unshift(msgJson.data)
                 break
+              case 'deal_bond_0':
+              case 'deal_bond_1':
+              case 'deal_null':
+                self.$notify({
+                  title: '交易提醒',
+                  message: h('i', { style: 'color: teal' }, `交易员：${msgJson.data.tradeuser}；债券码：${msgJson.data.tscode}；成交量（万）：${msgJson.data.volume}；成交价：${msgJson.data.price}；方向：${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`),
+                  duration: 0
+                });
+                break
+              case 'deny_bond_0':
+              case 'deny_bond_1':
+                self.$notify({
+                  title: '拒收提醒',
+                  message: h('i', { style: 'color: teal' }, `单据号：${msgJson.data.tradeNum}；债券码：${msgJson.data.tscode}；成交量（万）：${msgJson.data.volume}；成交价：${msgJson.data.price}；方向：${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`),
+                  duration: 0
+                });
+                break
             }
           } else {
             switch (msgJson.dataType) {
@@ -1884,41 +1900,58 @@ export default {
                 console.log(msgJson.data)
                 msgJson.data.status = 'start_bond'
                 self.gridDataMsg.unshift(msgJson.data)
-                self.dialogTableVisible = true
+                self.showMsg()
                 break
               case 'start_bond_1':
                 msgJson.data.status = 'start_bond'
                 self.gridDataMsg.unshift(msgJson.data)
-                self.dialogTableVisible = true
+                self.showMsg()
                 break
               // 交易员待接收询价单（买）
               case 'delegate_bond_0':
                 msgJson.data.status = 'delegate_bond_0'
                 self.gridDataMsg.unshift(msgJson.data)
-                self.dialogTableVisible = true
+                self.showMsg()
                 break
               // 交易员待接收询价单（卖）
               case 'delegate_bond_1':
                 msgJson.data.status = 'delegate_bond_1'
                 self.gridDataMsg.unshift(msgJson.data)
-                self.dialogTableVisible = true
+                self.showMsg()
                 break
               // 通知研究员确认接收(买)
               case 'accept_bond_0':
                 msgJson.data.status = 'accept_bond_0'
                 self.gridDataMsg.unshift(msgJson.data)
-                self.dialogTableVisible = true
+                self.showMsg()
                 break
               // 通知研究员确认接收（卖）
               case 'accept_bond_1':
                 msgJson.data.status = 'accept_bond_1'
                 self.gridDataMsg.unshift(msgJson.data)
-                self.dialogTableVisible = true
+                self.showMsg()
                 break
               case 'error':
                 if (msgJson.data.errorCode === '0001') {
                   Router.push({ path: '/login' })
                 }
+                break
+              case 'deal_bond_0':
+              case 'deal_bond_1':
+              case 'deal_null':
+                self.$notify({
+                  title: '交易提醒',
+                  message: h('i', { style: 'color: teal' }, `交易员：${msgJson.data.tradeuser}；债券码：${msgJson.data.tscode}；成交量（万）：${msgJson.data.volume}；成交价：${msgJson.data.price}；方向：${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`),
+                  duration: 0
+                });
+                break
+              case 'deny_bond_0':
+              case 'deny_bond_1':
+                self.$notify({
+                  title: '拒收提醒',
+                  message: h('i', { style: 'color: teal' }, `单据号：${msgJson.data.tradeNum}；债券码：${msgJson.data.tscode}；成交量（万）：${msgJson.data.volume}；成交价：${msgJson.data.price}；方向：${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`),
+                  duration: 0
+                });
                 break
             }
           }
@@ -2063,7 +2096,7 @@ export default {
       }
     }
   },
-  destroyed() {
+  unmounted() {
     socket.close()
   }
 }
