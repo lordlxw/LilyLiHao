@@ -134,14 +134,13 @@
                 @click="handleDealClick(scope.row)"
                 type="text"
                 size="small"
-                v-if="['1', '4'].indexOf(scope.row.status.toString()) !== -1"
+                v-if="['1', '4'].indexOf(scope.row.status.toString()) !== -1 && setAuth('inquiry:deal')"
                 >成交</el-button
               >
-
               <el-popover
                 v-if="
                   ['0', '1', '2', '4'].indexOf(scope.row.status.toString()) !==
-                  -1
+                  -1 && setAuth('inquiry:cancel')
                 "
                 placement="bottom-end"
                 :ref="`popover-cancel-${scope.$index}`"

@@ -396,7 +396,7 @@
                     rows="2"
                   ></el-input>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item v-if="setAuth('inquiry:insert')">
                   <el-button class="btn-green" @click="submitForm('buyForm')"
                     >发送</el-button
                   >
@@ -504,7 +504,7 @@
                     rows="2"
                   ></el-input>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item v-if="setAuth('inquiry:insert')">
                   <el-button class="btn-red" @click="submitForm('saleForm')"
                     >发送</el-button
                   >
@@ -592,9 +592,11 @@ import * as echarts from 'echarts'
 import configUtil from '@/utils/config.js'
 import * as util from '@/utils/util'
 import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
+import { pageMixin } from '@/utils/pageMixin'
 let socket
 let lockReconnect = false
 export default {
+  mixins: [pageMixin],
   components: {
     ComTscodeSelect,
     TradeEnquiry
