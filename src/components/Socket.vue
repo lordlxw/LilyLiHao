@@ -65,7 +65,6 @@ export default {
           console.log("收到数据====" + msg.data);
           let msgJson = JSON.parse(msg.data)
           console.log(msgJson.dataType)
-          const h = self.$createElement;
           if (msgJson) {
             switch (msgJson.dataType) {
               // 返回研究员待接收询价单（买）
@@ -109,7 +108,31 @@ export default {
               case 'deal_null':
                 self.$notify({
                   title: '交易提醒',
-                  message: h('i', { style: 'color: teal' }, `交易员：${msgJson.data.tradeuser}；债券码：${msgJson.data.tscode}；成交量（万）：${msgJson.data.volume}；成交价：${msgJson.data.price}；方向：${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`),
+                  dangerouslyUseHTMLString: true,
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>交易员</dt>
+                      <dd>${msgJson.data.tradeuser}</dd>
+                    </dl>
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量（万）</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${msgJson.data.price}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                  </div>
+                  `,
                   duration: 0
                 });
                 break
@@ -117,7 +140,31 @@ export default {
               case 'deny_bond_1':
                 self.$notify({
                   title: '拒收提醒',
-                  message: h('i', { style: 'color: teal' }, `单据号：${msgJson.data.tradeNum}；债券码：${msgJson.data.tscode}；成交量（万）：${msgJson.data.volume}；成交价：${msgJson.data.price}；方向：${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`),
+                  dangerouslyUseHTMLString: true,
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>单据号</dt>
+                      <dd>${msgJson.data.tradeNum}</dd>
+                    </dl>
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量（万）</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${msgJson.data.price}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                  </div>
+                  `,
                   duration: 0
                 });
                 break

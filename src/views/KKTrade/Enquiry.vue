@@ -152,7 +152,9 @@
                     "
                     >取消</el-button
                   >
-                  <el-button type="text" @click="handleCancelClick(scope)"
+                  <el-button
+                    type="text"
+                    @click="handleInquiryCancelPromptClick(scope)"
                     >确认</el-button
                   >
                 </div>
@@ -183,30 +185,46 @@
       :visible.sync="dialogDealFormVisible"
       append-to-body
     >
-      <ul class="mb20">
-        <li>债券代码：{{ dealRows.tscode }}</li>
-        <li>
-          交易方向：{{
-            dealRows.direction === "bond_0"
-              ? "买入"
-              : dealRows.direction === "bond_1"
-              ? "卖出"
-              : ""
-          }}
-        </li>
-        <li>询价：{{ dealRows.price }}</li>
-        <li>询面额：{{ dealRows.volume }}</li>
-        <li>
-          交割日期：{{ dealRows.deliveryTime }}（T+{{
-            dealRows.deliverySpeed
-          }}）
-        </li>
-      </ul>
+      <div class="notify" style="margin-bottom: 20px">
+        <dl>
+          <dt>债券代码</dt>
+          <dd>{{ dealRows.tscode }}</dd>
+        </dl>
+        <dl>
+          <dt>交易方向</dt>
+          <dd>
+            {{
+              dealRows.direction === "bond_0"
+                ? "买入"
+                : dealRows.direction === "bond_1"
+                ? "卖出"
+                : ""
+            }}
+          </dd>
+        </dl>
+        <dl>
+          <dt>询价</dt>
+          <dd>{{ dealRows.price }}</dd>
+        </dl>
+        <dl>
+          <dt>询面额</dt>
+          <dd>{{ dealRows.volume }}</dd>
+        </dl>
+        <dl>
+          <dt>交割日期</dt>
+          <dd>
+            {{ dealRows.deliveryTime | dateFormat("yyyy-MM-dd") }}（T+{{
+              dealRows.deliverySpeed
+            }}）
+          </dd>
+        </dl>
+      </div>
+
       <el-form
         :model="dealForm"
         :rules="rulesDealForm"
         ref="dealForm"
-        label-width="100px"
+        label-width="90px"
       >
         <el-form-item label="成交价格" prop="price">
           <el-input v-model="dealForm.price" autocomplete="off"></el-input>
@@ -391,9 +409,22 @@ export default {
       })
     },
     // 撤单
-    handleCancelClick(scope) {
+    handleInquiryCancelPromptClick(scope) {
+      // api.inquiryCancelPrompt({ usertradeId: scope.row.userTradeId }).then(response => {
+      //   if (response && response.code === '00000' && response.value === 1) {
+      //     this.$message({
+      //       message: `撤单已提交，等待交易员确认`,
+      //       type: 'success'
+      //     })
+      //   }
+      // })
       api.inquiryCancel({ usertradeId: scope.row.userTradeId }).then(response => {
-
+        if (response && response.code === '00000' && response.value === 1) {
+          this.$message({
+            message: `撤单已提交，等待交易员确认`,
+            type: 'success'
+          })
+        }
       })
     },
     // 数据格式化

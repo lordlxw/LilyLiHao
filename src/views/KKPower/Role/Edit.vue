@@ -121,11 +121,34 @@ export default {
       apiMenu.getSystemMenuTree().then(response => {
         if (response && response.code === "00000" && response.value) {
           self.menus = response.value;
-          console.log(1111)
-          console.log(self.ruleForm.menuIds)
-          self.$refs.tree.setCheckedKeys(self.ruleForm.menuIds);
+          // 获取当前角色树状权限
+          apiMenu.getRoleMenuTree({ roleId: self.ruleForm.roleId }).then(response => {
+            if (response && response.code === 200) {
+              const selectedMenuIds = self.funcHandleLeafMenuIds(response.checkedKeys, response.menus)
+              Promise.all([selectedMenuIds]).then(() => {
+                self.$refs.tree.setCheckedKeys(selectedMenuIds);
+              })
+            }
+          })
         }
       })
+    },
+    // 获取叶节点数组id
+    funcHandleLeafMenuIds(checkedKeys, menus) {
+      let selectedMenuIds = []
+      if (menus && menus.length > 0) {
+        for (let i = 0; i < menus.length; i++) {
+          if (menus[i].children && menus[i].children.length > 0) {
+            selectedMenuIds = selectedMenuIds.concat(this.funcHandleLeafMenuIds(checkedKeys, menus[i].children))
+          } else {
+            if (checkedKeys.indexOf(menus[i].id) !== -1) {
+              selectedMenuIds.push(menus[i].id)
+            }
+          }
+        }
+        return selectedMenuIds
+      }
+      return []
     },
     detail() {
       api.detail({ roleId: this.ruleForm.roleId }).then(response => {

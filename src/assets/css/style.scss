@@ -22,6 +22,26 @@ body {
     background-color: #f8f8f8;
     margin: 0;
 
+    .notify {
+        dl {
+            margin-block-start: 0;
+            margin-block-end: 0;
+        }
+        dt {
+            float: left;
+            width: 76px;
+            text-align: right;
+        }
+        dd {
+            color: teal;
+            font-weight: bold;
+            display: inline-block;
+            padding: 0;
+            padding-left: 10px;
+            margin: 0;
+        }
+    }
+
     .el-header,
     .el-main {
         padding: 0;

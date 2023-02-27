@@ -81,6 +81,13 @@ export default {
       method: 'post'
     })
   },
+  // 确认撤单
+  inquiryCancelPrompt(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/confirmcancel?usertradeId=${params.usertradeId}`,
+      method: 'post'
+    })
+  },
   /**
    * 询价单查询列表
    * @param {*} params
