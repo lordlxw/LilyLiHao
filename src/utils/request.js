@@ -24,7 +24,7 @@ service.interceptors.request.use(config => {
 
 service.interceptors.response.use(response => {
   console.log(response.config.url)
-  console.log(response.data)
+  console.log(response)
   // if (response.data === 'OK') {
   //   return true
   // }
@@ -53,6 +53,7 @@ service.interceptors.response.use(response => {
       break
   }
 }, error => {
+  console.log(error)
   if (error.toString().indexOf('401') !== -1) {
     Router.push({ path: '/login' })
     Message({

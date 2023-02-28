@@ -3,7 +3,7 @@
   <div class="content">
     <!-- <div class="filter-condition"></div> -->
     <div class="list">
-      <div class="do">
+      <!-- <div class="do">
         <div class="pagination mt10">
           <el-pagination
             @size-change="handleSizeChange"
@@ -17,7 +17,7 @@
           >
           </el-pagination>
         </div>
-      </div>
+      </div> -->
       <div class="table mt10">
         <el-table
           v-loading="loading"
@@ -25,6 +25,7 @@
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
+          height="600"
           border
         >
           <el-table-column type="selection" width="40"> </el-table-column>
@@ -130,8 +131,8 @@
               >
               <el-popover
                 v-if="
-                  ['0', '2', '4'].indexOf(scope.row.status.toString()) !== -1 &&
-                  setAuth('inquiry:cancel')
+                  ['0', '1', '2', '4'].indexOf(scope.row.status.toString()) !==
+                    -1 && setAuth('inquiry:cancel')
                 "
                 placement="bottom-end"
                 :ref="`popover-cancel-${scope.$index}`"
@@ -154,7 +155,7 @@
                   >
                   <el-button
                     type="text"
-                    @click="handleInquiryCancelPromptClick(scope)"
+                    @click="handleInquiryCancelClick(scope)"
                     >确认</el-button
                   >
                 </div>
@@ -166,7 +167,7 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="pagination mt10">
+      <!-- <div class="pagination mt10">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -177,7 +178,7 @@
           :total="totalCount"
         >
         </el-pagination>
-      </div>
+      </div> -->
     </div>
     <el-dialog
       title="成交信息"
@@ -408,8 +409,8 @@ export default {
         }
       })
     },
-    // 撤单
-    handleInquiryCancelPromptClick(scope) {
+    // 提交撤单申请
+    handleInquiryCancelClick(scope) {
       api.inquiryCancel({ usertradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({

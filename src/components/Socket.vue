@@ -4,6 +4,9 @@
       <trade-enquiry ref="tradeEnquiry"></trade-enquiry>
       <div class="both-clear"></div>
     </el-dialog>
+    <audio controls ref="playAudio" style="display: none">
+      <source src="@/assets/audio/1.wav" type="audio/wav" />
+    </audio>
   </div>
 </template>
 
@@ -12,6 +15,7 @@ import Vue from 'vue'
 import Router from '@/router'
 import configUtil from '@/utils/config.js'
 import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
+import api from "@/api/kk_trade";
 let socket
 let lockReconnect = false
 export default {
@@ -21,6 +25,7 @@ export default {
   data() {
     return {
       dialogTableVisible: false,
+      notifyRejection: {}
     }
   },
   created() {
@@ -135,6 +140,10 @@ export default {
                   `,
                   duration: 0
                 });
+                self.$refs.playAudio.play()
+                if (self.dialogTableVisible) {
+                  self.$refs.tradeEnquiry.loadInitData()
+                }
                 break
               case 'deny_bond_0':
               case 'deny_bond_1':
@@ -167,44 +176,72 @@ export default {
                   `,
                   duration: 0
                 });
+                self.$refs.playAudio.play()
+                if (self.dialogTableVisible) {
+                  self.$refs.tradeEnquiry.loadInitData()
+                }
                 break
               // 撤单确认
               case 'request_cancel_bond_0':
-                self.$notify({
+              case 'request_cancel_bond_1':
+                const h = self.$createElement
+                const notify = self.$notify({
                   title: '撤单提醒',
                   dangerouslyUseHTMLString: true,
-                  message: `
-                  <div class="notify">
-                    <dl>
-                      <dt>单据号</dt>
-                      <dd>${msgJson.data.tradeNum}</dd>
-                    </dl>
-                    <dl>
-                      <dt>债券码</dt>
-                      <dd>${msgJson.data.tscode}</dd>
-                    </dl>
-                    <dl>
-                      <dt>成交量（万）</dt>
-                      <dd>${msgJson.data.volume}</dd>
-                    </dl>
-                    <dl>
-                      <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
-                    </dl>
-                    <dl>
-                      <dt>方向</dt>
-                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
-                    </dl>
-                    <dl>
-                      <dt></dt>
-                      <dd>
-                        <el-button type="primary">同意</el-button>
-                      </dd>
-                    </dl>
-                  </div>
-                  `,
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "单据号"),
+                        h("dd", null, `${msgJson.data.tradeNum}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.tscode}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交量（万）"),
+                        h("dd", null, `${msgJson.data.volume}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交价"),
+                        h("dd", null, `${msgJson.data.price}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, ""),
+                        h("dd", { style: "padding-left:76px;" }, [
+                          h("button", {
+                            class: "notigy-agree",
+                            on: {
+                              click: function () {
+                                self.handleInquiryCancelConfirmClick(msgJson.data.userTradeId)
+                              }
+                            }
+                          }, "同意"),
+                          h("button", {
+                            class: "notigy-cancel",
+                            on: {
+                              click: function () {
+                                self.handleInquiryCancelRejectionClick(msgJson.data.userTradeId)
+                              }
+                            }
+                          }, "拒绝")
+                        ])
+                      ]),
+                    ],
+                  ),
                   duration: 0
                 });
+                self.$refs.playAudio.play()
+                self.notifyRejection[msgJson.data.userTradeId] = notify
+                if (self.dialogTableVisible) {
+                  self.$refs.tradeEnquiry.loadInitData()
+                }
                 break
             }
           }
@@ -235,10 +272,45 @@ export default {
       lockReconnect = true
       setTimeout(() => {
         console.log("尝试重连")
-        this.initSocket()
-        lockReconnect = false
+        Promise.all([
+          lockReconnect = false
+        ]).then(() => {
+          this.initSocket()
+        })
       }, 5000)
-    }
+    },
+    // 确认撤单
+    handleInquiryCancelConfirmClick(usertradeId) {
+      api.inquiryCancelConfirm({ usertradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已撤单",
+            type: 'success'
+          })
+          this.notifyRejection[parseInt(usertradeId)].close()
+          delete this.notifyRejection[parseInt(usertradeId)]
+          if (self.dialogTableVisible) {
+            self.$refs.tradeEnquiry.loadInitData()
+          }
+        }
+      })
+    },
+    // 拒绝撤单
+    handleInquiryCancelRejectionClick(usertradeId) {
+      api.inquiryCancelRejection({ usertradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已拒绝",
+            type: 'success'
+          })
+          this.notifyRejection[parseInt(usertradeId)].close()
+          delete this.notifyRejection[parseInt(usertradeId)]
+          if (self.dialogTableVisible) {
+            self.$refs.tradeEnquiry.loadInitData()
+          }
+        }
+      })
+    },
   },
   unmounted() {
     socket.close()

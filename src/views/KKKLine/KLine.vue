@@ -575,6 +575,9 @@
       <trade-enquiry ref="tradeEnquiry"></trade-enquiry>
       <div class="both-clear"></div>
     </el-dialog>
+    <audio controls ref="playAudio" style="display: none">
+      <source src="@/assets/audio/2.wav" type="audio/wav" />
+    </audio>
   </div>
 </template>
 
@@ -1906,6 +1909,7 @@ export default {
                   `,
                   duration: 0
                 });
+                self.$refs.playAudio.play()
                 break
               case 'deny_bond_0':
               case 'deny_bond_1':
@@ -1938,6 +1942,7 @@ export default {
                   `,
                   duration: 0
                 });
+                self.$refs.playAudio.play()
                 break
             }
           } else {
@@ -1967,28 +1972,22 @@ export default {
                 self.gridDataMsg.unshift(msgJson.data)
                 self.showMsg()
                 break
-              // 通知研究员确认接收(买)
+              // // 通知研究员确认接收(买)
+              // case 'accept_bond_0':
+              //   msgJson.data.status = 'accept_bond_0'
+              //   self.gridDataMsg.unshift(msgJson.data)
+              //   self.showMsg()
+              //   break
+              // // 通知研究员确认接收（卖）
+              // case 'accept_bond_1':
+              //   msgJson.data.status = 'accept_bond_1'
+              //   self.gridDataMsg.unshift(msgJson.data)
+              //   self.showMsg()
+              //   break
               case 'accept_bond_0':
-                msgJson.data.status = 'accept_bond_0'
-                self.gridDataMsg.unshift(msgJson.data)
-                self.showMsg()
-                break
-              // 通知研究员确认接收（卖）
               case 'accept_bond_1':
-                msgJson.data.status = 'accept_bond_1'
-                self.gridDataMsg.unshift(msgJson.data)
-                self.showMsg()
-                break
-              case 'error':
-                if (msgJson.data.errorCode === '0001') {
-                  Router.push({ path: '/login' })
-                }
-                break
-              case 'deal_bond_0':
-              case 'deal_bond_1':
-              case 'deal_null':
                 self.$notify({
-                  title: '交易提醒',
+                  title: '接收提醒',
                   dangerouslyUseHTMLString: true,
                   message: `
                   <div class="notify">
@@ -2016,6 +2015,46 @@ export default {
                   `,
                   duration: 0
                 });
+                self.$refs.playAudio.play()
+                break;
+              case 'error':
+                if (msgJson.data.errorCode === '0001') {
+                  Router.push({ path: '/login' })
+                }
+                break
+              case 'deal_bond_0':
+              case 'deal_bond_1':
+              case 'deal_null':
+                self.$notify({
+                  title: '交易提醒',
+                  dangerouslyUseHTMLString: true,
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>单据号</dt>
+                      <dd>${msgJson.data.tradeNum}</dd>
+                    </dl>
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量（万）</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${msgJson.data.price}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 0
+                });
+                self.$refs.playAudio.play()
                 break
               case 'deny_bond_0':
               case 'deny_bond_1':
@@ -2048,6 +2087,79 @@ export default {
                   `,
                   duration: 0
                 });
+                self.$refs.playAudio.play()
+                break
+              case 'deny_cancel_bond_0':
+              case 'deny_cancel_bond_1':
+                self.$notify({
+                  title: '拒绝撤单提醒',
+                  dangerouslyUseHTMLString: true,
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>单据号</dt>
+                      <dd>${msgJson.data.tradeNum}</dd>
+                    </dl>
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量（万）</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${msgJson.data.price}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 0
+                });
+                self.$refs.playAudio.play()
+                if (self.dialogTableVisible) {
+                  self.$refs.tradeEnquiry.loadInitData()
+                }
+                break
+              case 'confirm_cancel_bond_0':
+              case 'confirm_cancel_bond_1':
+                self.$notify({
+                  title: '接受撤单提醒',
+                  dangerouslyUseHTMLString: true,
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>单据号</dt>
+                      <dd>${msgJson.data.tradeNum}</dd>
+                    </dl>
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量（万）</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${msgJson.data.price}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 0
+                });
+                self.$refs.playAudio.play()
+                if (self.dialogTableVisible) {
+                  self.$refs.tradeEnquiry.loadInitData()
+                }
                 break
             }
           }
@@ -2067,6 +2179,7 @@ export default {
     },
     // 重连
     reconnect() {
+      const self = this
       if (socket.readyState === 1) {
         // 如果状态等于1代表websocket连接正常
         return
@@ -2078,9 +2191,12 @@ export default {
       lockReconnect = true
       setTimeout(() => {
         console.log("尝试重连")
-        self.initRightTransactionList()
-        this.initSocket()
-        lockReconnect = false
+        Promise.all([
+          lockReconnect = false
+        ]).then(() => {
+          self.initRightTransactionList()
+          self.initSocket()
+        })
       }, 5000)
     },
     // ***************websocket end***************************

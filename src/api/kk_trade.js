@@ -36,7 +36,7 @@ export default {
   inquiryAccept(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/accept?usertradeId=${params.usertradeId}`,
-      method: 'post'
+      method: 'POST'
     })
   },
   /**
@@ -60,7 +60,7 @@ export default {
       method: 'post',
       data: {
         // 询价单单号ID
-        usertradeId: params.usertradeId,
+        userTradeId: params.usertradeId,
         // 成交价格
         price: params.price,
         // 成交量
@@ -82,9 +82,16 @@ export default {
     })
   },
   // 确认撤单
-  inquiryCancelPrompt(params) {
+  inquiryCancelConfirm(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/confirmcancel?usertradeId=${params.usertradeId}`,
+      method: 'post'
+    })
+  },
+  // 拒绝撤单
+  inquiryCancelRejection(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/denycancel?usertradeId=${params.usertradeId}`,
       method: 'post'
     })
   },
@@ -107,16 +114,18 @@ export default {
         tradeDateEnd: params.tradeDateEnd,
         // 交易起始日期,示例值(2022-10-01)
         tradeDateStart: params.tradeDateStart,
+        // 单号
+        tradeNum: params.tradeNum,
         // 债券代码
         tscode: params.tscode,
         // 用户名称
         userName: params.userName,
         // 交易ID
-        userTradeId: params.userTradeId,
+        userTradeId: params.userTradeId
         // 当前页
-        pageNum: params.pageNum,
+        // pageNum: params.pageNum,
         // 显示条数
-        pageSize: params.pageSize
+        // pageSize: params.pageSize
       }
     })
   }
