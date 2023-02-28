@@ -212,7 +212,7 @@ export default {
                         h("dt", null, "方向"),
                         h("dd", null, `${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`)
                       ]),
-                      h("dl", null, [
+                      h("dl", { style: "margin-top:20px;" }, [
                         h("dt", null, ""),
                         h("dd", { style: "padding-left:76px;" }, [
                           h("button", {
@@ -318,5 +318,36 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import "@/assets/css/style.scss";
+.notigy-agree,
+.notigy-cancel {
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background: $main-color;
+  border: 1px solid $main-color;
+  color: white;
+  -webkit-appearance: none;
+  text-align: center;
+  box-sizing: border-box;
+  outline: none;
+  margin: 0;
+  transition: 0.1s;
+  font-weight: 500;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.notigy-cancel {
+  margin-left: 20px;
+  background: white;
+  border: 1px solid #dcdfe6;
+  color: #606266;
+}
 </style>

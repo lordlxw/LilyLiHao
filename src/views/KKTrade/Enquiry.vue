@@ -27,6 +27,9 @@
           style="width: 100%"
           height="600"
           border
+          row-key="userTradeId"
+          default-expand-all
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
           <el-table-column type="selection" width="40"> </el-table-column>
           <el-table-column
@@ -274,15 +277,15 @@ export default {
         { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
         { label: '交易员id', prop: 'userId', width: '120', align: 'left', show: false },
         { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
-        { label: '债券代码', prop: 'tscode', width: '100', align: 'left', show: true },
+        { label: '债券代码', prop: 'tscode', width: '130', align: 'left', show: true },
         { label: '交易方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
         { label: '询价', prop: 'price', width: '120', align: 'left', show: true },
         { label: '询面额', prop: 'volume', width: '100', align: 'left', show: true },
         { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '140', align: 'left', show: true },
         { label: '状态', prop: 'status', formatter: this.funcFormat, width: '120', align: 'left', show: true },
-        { label: '单据号', prop: 'tradeNum', width: '140', align: 'left', show: true },
+        { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
         { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
-        { label: '研究员', prop: 'createuser', width: 'auto', align: 'left', show: true },
+        { label: '研究员', prop: 'createuser', width: '160', align: 'left', show: true },
         { label: '询价时间', prop: 'createTime', width: '140', align: 'right', show: true },
         { label: '是否远期', prop: 'forward', width: '120', align: 'left', show: true },
         { label: '相关单号', prop: 'parentId', width: '140', align: 'left', show: true },
@@ -383,6 +386,8 @@ export default {
       ]).then(() => {
         this.dealRows = row
         this.dealForm.usertradeId = row.userTradeId
+        this.dealForm.price = row.price
+        this.dealForm.volume = row.volume
         this.dealForm.remark = row.remark
       })
     },
@@ -403,6 +408,9 @@ export default {
                 type: "success",
               });
               this.dialogDealFormVisible = false
+              this.dealForm.price = ''
+              this.dealForm.volume = ''
+              this.dealForm.remark = ''
               this.loadInitData()
             }
           });
