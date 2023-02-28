@@ -130,8 +130,8 @@
               >
               <el-popover
                 v-if="
-                  ['0', '1', '2', '4'].indexOf(scope.row.status.toString()) !==
-                    -1 && setAuth('inquiry:cancel')
+                  ['0', '2', '4'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:cancel')
                 "
                 placement="bottom-end"
                 :ref="`popover-cancel-${scope.$index}`"
@@ -410,20 +410,14 @@ export default {
     },
     // 撤单
     handleInquiryCancelPromptClick(scope) {
-      // api.inquiryCancelPrompt({ usertradeId: scope.row.userTradeId }).then(response => {
-      //   if (response && response.code === '00000' && response.value === 1) {
-      //     this.$message({
-      //       message: `撤单已提交，等待交易员确认`,
-      //       type: 'success'
-      //     })
-      //   }
-      // })
       api.inquiryCancel({ usertradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000' && response.value === 1) {
+        if (response && response.code === '00000') {
           this.$message({
-            message: `撤单已提交，等待交易员确认`,
+            message: `${response.message}`,
             type: 'success'
           })
+          scope._self.$refs[`popover-cancel-${scope.$index}`].doClose();
+          this.loadInitData()
         }
       })
     },
