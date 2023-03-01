@@ -1909,7 +1909,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$refs.playAudio.play()
+                self.tryPlay()
                 break
               case 'deny_bond_0':
               case 'deny_bond_1':
@@ -1942,7 +1942,12 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$refs.playAudio.play()
+                self.tryPlay()
+                break
+              case 'error':
+                if (msgJson.data.errorCode === '0001') {
+                  Router.push({ path: '/login' })
+                }
                 break
             }
           } else {
@@ -2015,7 +2020,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$refs.playAudio.play()
+                self.tryPlay()
                 break;
               case 'error':
                 if (msgJson.data.errorCode === '0001') {
@@ -2054,7 +2059,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$refs.playAudio.play()
+                self.tryPlay()
                 break
               case 'deny_bond_0':
               case 'deny_bond_1':
@@ -2087,7 +2092,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$refs.playAudio.play()
+                self.tryPlay()
                 break
               case 'deny_cancel_bond_0':
               case 'deny_cancel_bond_1':
@@ -2120,7 +2125,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$refs.playAudio.play()
+                self.tryPlay()
                 if (self.dialogTableVisible) {
                   self.$refs.tradeEnquiry.loadInitData()
                 }
@@ -2156,7 +2161,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$refs.playAudio.play()
+                self.tryPlay()
                 if (self.dialogTableVisible) {
                   self.$refs.tradeEnquiry.loadInitData()
                 }
@@ -2175,6 +2180,14 @@ export default {
           // 重连
           self.reconnect()
         }
+      }
+    },
+    // 播放提示音
+    tryPlay() {
+      try {
+        this.$refs.playAudio.play()
+      } catch (error) {
+        console.log(error)
       }
     },
     // 重连

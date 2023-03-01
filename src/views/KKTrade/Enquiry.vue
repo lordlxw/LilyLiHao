@@ -61,7 +61,7 @@
             fixed="right"
             align="center"
             label="操作"
-            width="120"
+            width="160"
           >
             <template slot-scope="scope">
               <el-popover
@@ -127,7 +127,7 @@
                 type="text"
                 size="small"
                 v-if="
-                  ['1', '4'].indexOf(scope.row.status.toString()) !== -1 &&
+                  ['1', '4', '8'].indexOf(scope.row.status.toString()) !== -1 &&
                   setAuth('inquiry:deal')
                 "
                 >成交</el-button
@@ -164,6 +164,74 @@
                 </div>
                 <el-button type="text" slot="reference" class="ml10"
                   >撤单</el-button
+                >
+              </el-popover>
+              <el-popover
+                v-if="
+                  ['7'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:agreecancel')
+                "
+                placement="bottom-end"
+                :ref="`popover-agreecancel-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">同意撤销</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”{{ scope.row.tscode }}？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-agreecancel-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="handleInquiryCancelConfirmClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >同意撤单</el-button
+                >
+              </el-popover>
+              <el-popover
+                v-if="
+                  ['7'].indexOf(scope.row.status.toString()) !==
+                    -1 && setAuth('inquiry:rejectioncancel')
+                "
+                placement="bottom-end"
+                :ref="`popover-rejectioncancel-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">拒绝撤销</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”{{ scope.row.tscode }}？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-rejectioncancel-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="handleInquiryCancelRejectionClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >拒绝撤单</el-button
                 >
               </el-popover>
             </template>
@@ -427,6 +495,34 @@ export default {
           })
           scope._self.$refs[`popover-cancel-${scope.$index}`].doClose();
           this.loadInitData()
+        }
+      })
+    },
+    // 确认撤单
+    handleInquiryCancelConfirmClick(scope) {
+      const self = this
+      api.inquiryCancelConfirm({ usertradeId: scope.row.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          self.$message({
+            message: "已撤单",
+            type: 'success'
+          })
+          scope._self.$refs[`popover-agreecancel-${scope.$index}`].doClose();
+          self.loadInitData()
+        }
+      })
+    },
+    // 拒绝撤单
+    handleInquiryCancelRejectionClick(scope) {
+      const self = this
+      api.inquiryCancelRejection({ usertradeId: scope.row.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          self.$message({
+            message: "已拒绝",
+            type: 'success'
+          })
+          scope._self.$refs[`popover-rejectioncancel-${scope.$index}`].doClose();
+          self.loadInitData()
         }
       })
     },

@@ -281,14 +281,15 @@ export default {
     },
     // 确认撤单
     handleInquiryCancelConfirmClick(usertradeId) {
+      const self = this
       api.inquiryCancelConfirm({ usertradeId }).then(response => {
         if (response && response.code === '00000') {
-          this.$message({
+          self.$message({
             message: "已撤单",
             type: 'success'
           })
-          this.notifyRejection[parseInt(usertradeId)].close()
-          delete this.notifyRejection[parseInt(usertradeId)]
+          self.notifyRejection[parseInt(usertradeId)].close()
+          delete self.notifyRejection[parseInt(usertradeId)]
           if (self.dialogTableVisible) {
             self.$refs.tradeEnquiry.loadInitData()
           }
@@ -297,14 +298,15 @@ export default {
     },
     // 拒绝撤单
     handleInquiryCancelRejectionClick(usertradeId) {
+      const self = this
       api.inquiryCancelRejection({ usertradeId }).then(response => {
         if (response && response.code === '00000') {
-          this.$message({
+          self.$message({
             message: "已拒绝",
             type: 'success'
           })
-          this.notifyRejection[parseInt(usertradeId)].close()
-          delete this.notifyRejection[parseInt(usertradeId)]
+          self.notifyRejection[parseInt(usertradeId)].close()
+          delete self.notifyRejection[parseInt(usertradeId)]
           if (self.dialogTableVisible) {
             self.$refs.tradeEnquiry.loadInitData()
           }
