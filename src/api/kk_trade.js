@@ -65,6 +65,10 @@ export default {
         price: params.price,
         // 成交量
         volume: params.volume,
+        // 交割速度
+        deliverySpeed: 0,
+        // 交割时间
+        deliveryTime: params.deliveryTime,
         // 备注
         remark: params.remark
       }
@@ -126,6 +130,32 @@ export default {
         // pageNum: params.pageNum,
         // 显示条数
         // pageSize: params.pageSize
+      }
+    })
+  },
+  /**
+   * 确认成交
+   * @param {*} params
+   */
+  inquiryDealConfirm(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/confirmdeal`,
+      method: 'post',
+      data: {
+        userTradeId: params.userTradeId
+      }
+    })
+  },
+  /**
+   * 拒绝成交
+   * @param {*} params
+   */
+  inquiryDealRejection(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/denydeal`,
+      method: 'post',
+      data: {
+        userTradeId: params.userTradeId
       }
     })
   }

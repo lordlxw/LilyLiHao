@@ -70,6 +70,7 @@ export default {
           console.log("收到数据====" + msg.data);
           let msgJson = JSON.parse(msg.data)
           console.log(msgJson.dataType)
+          const h = self.$createElement
           if (msgJson) {
             switch (msgJson.dataType) {
               // 返回研究员待接收询价单（买）
@@ -112,105 +113,102 @@ export default {
               case 'deal_bond_1':
               case 'deal_null':
                 self.$notify({
-                  title: '交易提醒',
+                  title: `${msgJson.data.tradeuser} 已成交`,
                   dangerouslyUseHTMLString: true,
                   message: `
                   <div class="notify">
-                    <dl>
-                      <dt>交易员</dt>
-                      <dd>${msgJson.data.tradeuser}</dd>
-                    </dl>
                     <dl>
                       <dt>债券码</dt>
                       <dd>${msgJson.data.tscode}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
-                      <dd>${msgJson.data.volume}</dd>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
                     </dl>
                     <dl>
                       <dt>成交价</dt>
                       <dd>${msgJson.data.price}</dd>
                     </dl>
                     <dl>
-                      <dt>方向</dt>
-                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                      <dt>成交量（万）</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
                     </dl>
                   </div>
                   `,
                   duration: 0
                 });
-                self.$refs.playAudio.play()
-                if (self.dialogTableVisible) {
-                  self.$refs.tradeEnquiry.loadInitData()
-                }
+                self.tryPlay()
                 break
               case 'deny_bond_0':
               case 'deny_bond_1':
                 self.$notify({
-                  title: '拒收提醒',
+                  title: `${msgJson.data.tradeuser} 已拒收`,
                   dangerouslyUseHTMLString: true,
                   message: `
                   <div class="notify">
-                    <dl>
-                      <dt>单据号</dt>
-                      <dd>${msgJson.data.tradeNum}</dd>
-                    </dl>
                     <dl>
                       <dt>债券码</dt>
                       <dd>${msgJson.data.tscode}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
-                      <dd>${msgJson.data.volume}</dd>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
                     </dl>
                     <dl>
                       <dt>成交价</dt>
                       <dd>${msgJson.data.price}</dd>
                     </dl>
                     <dl>
-                      <dt>方向</dt>
-                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                      <dt>成交量（万）</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
                     </dl>
                   </div>
                   `,
                   duration: 0
                 });
-                self.$refs.playAudio.play()
-                if (self.dialogTableVisible) {
-                  self.$refs.tradeEnquiry.loadInitData()
-                }
+                self.tryPlay()
                 break
               // 撤单确认
               case 'request_cancel_bond_0':
               case 'request_cancel_bond_1':
-                const h = self.$createElement
                 const notify = self.$notify({
-                  title: '撤单提醒',
+                  title: `${msgJson.data.tradeuser} 撤单`,
                   dangerouslyUseHTMLString: true,
                   message: h(
                     "div",
                     { class: "notify" },
                     [
                       h("dl", null, [
-                        h("dt", null, "单据号"),
-                        h("dd", null, `${msgJson.data.tradeNum}`)
+                        h("dt", null, "创建时间"),
+                        h("dd", null, `${msgJson.data.createTime}`)
                       ]),
                       h("dl", null, [
                         h("dt", null, "债券码"),
                         h("dd", null, `${msgJson.data.tscode}`)
                       ]),
                       h("dl", null, [
-                        h("dt", null, "成交量（万）"),
-                        h("dd", null, `${msgJson.data.volume}`)
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`)
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交价"),
                         h("dd", null, `${msgJson.data.price}`)
                       ]),
                       h("dl", null, [
-                        h("dt", null, "方向"),
-                        h("dd", null, `${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`)
+                        h("dt", null, "成交量（万）"),
+                        h("dd", null, `${msgJson.data.volume}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）`)
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
                         h("dt", null, ""),

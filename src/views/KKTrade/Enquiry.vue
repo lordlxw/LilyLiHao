@@ -304,6 +304,16 @@
         <el-form-item label="成交量" prop="volume">
           <el-input v-model="dealForm.volume" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item label="交割日期" prop="volume">
+          <el-date-picker
+            v-model="dealForm.deliveryTime"
+            type="date"
+            placeholder="选择日期"
+            style="width: 130px"
+            :clearable="false"
+          >
+          </el-date-picker>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input
             type="textarea"
@@ -329,6 +339,7 @@ import api from "@/api/kk_trade";
 import { pageMixin } from '@/utils/pageMixin'
 import { animationMixin } from '@/utils/animationMixin'
 import config from '@/utils/config'
+import * as util from '@/utils/util'
 import moment from 'moment'
 export default {
   mixins: [animationMixin, pageMixin],
@@ -372,7 +383,9 @@ export default {
         // 成交量
         volume: '',
         // 备注
-        remark: ''
+        remark: '',
+        // 交割时间
+        deliveryTime: '',
       },
       rulesDealForm: {},
       dealRows: {}
@@ -457,6 +470,7 @@ export default {
         this.dealForm.price = row.price
         this.dealForm.volume = row.volume
         this.dealForm.remark = row.remark
+        this.dealForm.deliveryTime = row.deliveryTime
       })
     },
     // 表单提交
@@ -468,7 +482,8 @@ export default {
             usertradeId: this.dealForm.usertradeId,
             price: this.dealForm.price,
             volume: this.dealForm.volume,
-            remark: this.dealForm.remark
+            remark: this.dealForm.remark,
+            deliveryTime: util.dateFormat(this.dealForm.deliveryTime, "yyyy-MM-dd 00:00:00"),
           }).then((response) => {
             if (response && response.code === "00000") {
               this.$message({
@@ -479,6 +494,7 @@ export default {
               this.dealForm.price = ''
               this.dealForm.volume = ''
               this.dealForm.remark = ''
+              this.dealForm.deliveryTime = ''
               this.loadInitData()
             }
           });

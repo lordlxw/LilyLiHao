@@ -365,12 +365,12 @@
                       @click="handleDelivertySpeed('buyForm', 0)"
                       >0</el-button
                     >
-                    <el-button
+                    <!-- <el-button
                       icon="el-icon-plus"
                       :class="funcDeliverySpeed('buyForm', 1)"
                       @click="handleDelivertySpeed('buyForm', 1)"
                       >1</el-button
-                    >
+                    > -->
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="交易员">
@@ -457,7 +457,7 @@
                     >
                   </el-button-group>
                 </el-form-item>
-                <el-form-item label="交易速度">
+                <el-form-item label="交割日期">
                   <el-date-picker
                     v-model="saleForm.deliveryTime"
                     type="date"
@@ -473,12 +473,12 @@
                       @click="handleDelivertySpeed('saleForm', 0)"
                       >0</el-button
                     >
-                    <el-button
+                    <!-- <el-button
                       icon="el-icon-plus"
                       :class="funcDeliverySpeed('saleForm', 1)"
                       @click="handleDelivertySpeed('saleForm', 1)"
                       >1</el-button
-                    >
+                    > -->
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="交易员">
@@ -765,7 +765,9 @@ export default {
       popoverSetVisible: false,
       gridDataMsg: [],
       dialogTableVisible: false,
-      tradeUsersOption: []
+      tradeUsersOption: [],
+      // 消息通知
+      notifyRejection: {}
     }
   },
   computed: {
@@ -1858,7 +1860,7 @@ export default {
           console.log("收到数据====" + msg.data);
           let msgJson = JSON.parse(msg.data)
           console.log(msgJson.dataType)
-          // const h = self.$createElement;
+          const h = self.$createElement;
           if (msgJson && msgJson.dataKey === self.activeTscode) {
             switch (msgJson.dataType) {
               case 'bid_1':
@@ -1876,73 +1878,6 @@ export default {
               case 'trade':
                 self.transactionAllList.pop()
                 self.transactionAllList.unshift(msgJson.data)
-                break
-              case 'deal_bond_0':
-              case 'deal_bond_1':
-              case 'deal_null':
-                self.$notify({
-                  title: '交易提醒',
-                  dangerouslyUseHTMLString: true,
-                  message: `
-                  <div class="notify">
-                    <dl>
-                      <dt>交易员</dt>
-                      <dd>${msgJson.data.tradeuser}</dd>
-                    </dl>
-                    <dl>
-                      <dt>债券码</dt>
-                      <dd>${msgJson.data.tscode}</dd>
-                    </dl>
-                    <dl>
-                      <dt>成交量（万）</dt>
-                      <dd>${msgJson.data.volume}</dd>
-                    </dl>
-                    <dl>
-                      <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
-                    </dl>
-                    <dl>
-                      <dt>方向</dt>
-                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
-                    </dl>
-                  </div>
-                  `,
-                  duration: 0
-                });
-                self.tryPlay()
-                break
-              case 'deny_bond_0':
-              case 'deny_bond_1':
-                self.$notify({
-                  title: '拒收提醒',
-                  dangerouslyUseHTMLString: true,
-                  message: `
-                  <div class="notify">
-                    <dl>
-                      <dt>单据号</dt>
-                      <dd>${msgJson.data.tradeNum}</dd>
-                    </dl>
-                    <dl>
-                      <dt>债券码</dt>
-                      <dd>${msgJson.data.tscode}</dd>
-                    </dl>
-                    <dl>
-                      <dt>成交量（万）</dt>
-                      <dd>${msgJson.data.volume}</dd>
-                    </dl>
-                    <dl>
-                      <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
-                    </dl>
-                    <dl>
-                      <dt>方向</dt>
-                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
-                    </dl>
-                  </div>
-                  `,
-                  duration: 0
-                });
-                self.tryPlay()
                 break
               case 'error':
                 if (msgJson.data.errorCode === '0001') {
@@ -1992,29 +1927,33 @@ export default {
               case 'accept_bond_0':
               case 'accept_bond_1':
                 self.$notify({
-                  title: '接收提醒',
+                  title: `${msgJson.data.tradeuser} 已接收`,
                   dangerouslyUseHTMLString: true,
                   message: `
                   <div class="notify">
                     <dl>
-                      <dt>交易员</dt>
-                      <dd>${msgJson.data.tradeuser}</dd>
+                      <dt>创建时间</dt>
+                      <dd>${msgJson.data.createTime}</dd>
                     </dl>
                     <dl>
                       <dt>债券码</dt>
                       <dd>${msgJson.data.tscode}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
-                      <dd>${msgJson.data.volume}</dd>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
                     </dl>
                     <dl>
                       <dt>成交价</dt>
                       <dd>${msgJson.data.price}</dd>
                     </dl>
                     <dl>
-                      <dt>方向</dt>
-                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                      <dt>成交量（万）</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
                     </dl>
                   </div>
                   `,
@@ -2031,29 +1970,34 @@ export default {
               case 'deal_bond_1':
               case 'deal_null':
                 self.$notify({
-                  title: '交易提醒',
+                  title: `${msgJson.data.tradeuser} 已成交`,
                   dangerouslyUseHTMLString: true,
                   message: `
                   <div class="notify">
                     <dl>
-                      <dt>单据号</dt>
-                      <dd>${msgJson.data.tradeNum}</dd>
+                      <dt>创建时间</dt>
+                      <dd>${msgJson.data.createTime}</dd>
                     </dl>
+                    <dl>
                     <dl>
                       <dt>债券码</dt>
                       <dd>${msgJson.data.tscode}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
-                      <dd>${msgJson.data.volume}</dd>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
                     </dl>
                     <dl>
                       <dt>成交价</dt>
                       <dd>${msgJson.data.price}</dd>
                     </dl>
                     <dl>
-                      <dt>方向</dt>
-                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                      <dt>成交量（万）</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
                     </dl>
                   </div>
                   `,
@@ -2064,29 +2008,34 @@ export default {
               case 'deny_bond_0':
               case 'deny_bond_1':
                 self.$notify({
-                  title: '拒收提醒',
+                  title: `${msgJson.data.tradeuser} 已拒收`,
                   dangerouslyUseHTMLString: true,
                   message: `
                   <div class="notify">
                     <dl>
-                      <dt>单据号</dt>
-                      <dd>${msgJson.data.tradeNum}</dd>
+                      <dt>创建时间</dt>
+                      <dd>${msgJson.data.createTime}</dd>
                     </dl>
+                    <dl>
                     <dl>
                       <dt>债券码</dt>
                       <dd>${msgJson.data.tscode}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
-                      <dd>${msgJson.data.volume}</dd>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
                     </dl>
                     <dl>
                       <dt>成交价</dt>
                       <dd>${msgJson.data.price}</dd>
                     </dl>
                     <dl>
-                      <dt>方向</dt>
-                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                      <dt>成交量（万）</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
                     </dl>
                   </div>
                   `,
@@ -2097,29 +2046,29 @@ export default {
               case 'deny_cancel_bond_0':
               case 'deny_cancel_bond_1':
                 self.$notify({
-                  title: '拒绝撤单提醒',
+                  title: `${msgJson.data.tradeuser} 拒绝撤单`,
                   dangerouslyUseHTMLString: true,
                   message: `
                   <div class="notify">
-                    <dl>
-                      <dt>单据号</dt>
-                      <dd>${msgJson.data.tradeNum}</dd>
-                    </dl>
                     <dl>
                       <dt>债券码</dt>
                       <dd>${msgJson.data.tscode}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
-                      <dd>${msgJson.data.volume}</dd>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
                     </dl>
                     <dl>
                       <dt>成交价</dt>
                       <dd>${msgJson.data.price}</dd>
                     </dl>
                     <dl>
-                      <dt>方向</dt>
-                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                      <dt>成交量（万）</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
                     </dl>
                   </div>
                   `,
@@ -2133,35 +2082,108 @@ export default {
               case 'confirm_cancel_bond_0':
               case 'confirm_cancel_bond_1':
                 self.$notify({
-                  title: '接受撤单提醒',
+                  title: `${msgJson.data.tradeuser} 已接受撤单`,
                   dangerouslyUseHTMLString: true,
                   message: `
                   <div class="notify">
-                    <dl>
-                      <dt>单据号</dt>
-                      <dd>${msgJson.data.tradeNum}</dd>
-                    </dl>
                     <dl>
                       <dt>债券码</dt>
                       <dd>${msgJson.data.tscode}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
-                      <dd>${msgJson.data.volume}</dd>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
                     </dl>
                     <dl>
                       <dt>成交价</dt>
                       <dd>${msgJson.data.price}</dd>
                     </dl>
                     <dl>
-                      <dt>方向</dt>
-                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                      <dt>成交量（万）</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
                     </dl>
                   </div>
                   `,
                   duration: 0
                 });
                 self.tryPlay()
+                if (self.dialogTableVisible) {
+                  self.$refs.tradeEnquiry.loadInitData()
+                }
+                break
+              case 'tradecompare_bond_0':
+              case 'tradecompare_bond_1':
+                const notify = self.$notify({
+                  title: `${msgJson.data.tradeuser} 等待确认成交`,
+                  dangerouslyUseHTMLString: true,
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "创建时间"),
+                        h("dd", null, `${msgJson.data.ut.createTime}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.ut.tscode}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.ut.direction === 'bond_0' ? '买入' : msgJson.data.ut.direction === 'bond_1' ? '卖出' : ''}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交价"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? msgJson.data.ut.price + ' ' : ''),
+                          h("span", null, msgJson.data.dto.price)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交量（万）"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.ut.volume + ' ' : ''),
+                          h("span", null, msgJson.data.dto.volume)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.substr(0, 10) + ' ' : ''),
+                          h("span", null, msgJson.data.dto.deliveryTime.substr(0, 10))
+                        ])
+                      ]),
+                      h("dl", { style: "margin-top:20px;" }, [
+                        h("dt", null, ""),
+                        h("dd", { style: "padding-left:76px;" }, [
+                          h("button", {
+                            class: "notigy-agree",
+                            on: {
+                              click: function () {
+                                self.handleInquiryDealConfirmClick(msgJson.data.ut.userTradeId)
+                              }
+                            }
+                          }, "同意"),
+                          h("button", {
+                            class: "notigy-cancel",
+                            on: {
+                              click: function () {
+                                self.handleInquiryDealRejectionClick(msgJson.data.ut.userTradeId)
+                              }
+                            }
+                          }, "拒绝")
+                        ])
+                      ]),
+                    ],
+                  ),
+                  duration: 0
+                });
+                self.tryPlay()
+                self.notifyRejection[msgJson.data.ut.userTradeId] = notify
                 if (self.dialogTableVisible) {
                   self.$refs.tradeEnquiry.loadInitData()
                 }
@@ -2185,7 +2207,7 @@ export default {
     // 播放提示音
     tryPlay() {
       try {
-        this.$refs.playAudio.play()
+        // this.$refs.playAudio.play()
       } catch (error) {
         console.log(error)
       }
@@ -2239,6 +2261,27 @@ export default {
           "price": this.chartPrice
         }
       }))
+    },
+    // 确认成交
+    handleInquiryDealConfirmClick(userTradeId) {
+      apiTrade.inquiryDealConfirm({ userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已成交",
+            type: 'success'
+          })
+        }
+      })
+    },
+    handleInquiryDealRejectionClick(userTradeId) {
+      apiTrade.inquiryDealConfirm({ userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已拒绝",
+            type: 'success'
+          })
+        }
+      })
     },
     // 接收单据
     handleReceiveClick(row) {
