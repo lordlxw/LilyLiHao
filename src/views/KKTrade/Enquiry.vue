@@ -134,8 +134,8 @@
               >
               <el-popover
                 v-if="
-                  ['0', '1', '2', '4'].indexOf(scope.row.status.toString()) !==
-                    -1 && setAuth('inquiry:cancel')
+                  ['0', '1', '4'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:cancel')
                 "
                 placement="bottom-end"
                 :ref="`popover-cancel-${scope.$index}`"
@@ -202,8 +202,8 @@
               </el-popover>
               <el-popover
                 v-if="
-                  ['7'].indexOf(scope.row.status.toString()) !==
-                    -1 && setAuth('inquiry:rejectioncancel')
+                  ['7'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:rejectioncancel')
                 "
                 placement="bottom-end"
                 :ref="`popover-rejectioncancel-${scope.$index}`"
