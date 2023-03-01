@@ -2264,22 +2264,34 @@ export default {
     },
     // 确认成交
     handleInquiryDealConfirmClick(userTradeId) {
+      const self = this
       apiTrade.inquiryDealConfirm({ userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
             message: "已成交",
             type: 'success'
           })
+          self.notifyRejection[parseInt(userTradeId)].close()
+          delete self.notifyRejection[parseInt(userTradeId)]
+          if (self.dialogTableVisible) {
+            self.$refs.tradeEnquiry.loadInitData()
+          }
         }
       })
     },
     handleInquiryDealRejectionClick(userTradeId) {
-      apiTrade.inquiryDealConfirm({ userTradeId }).then(response => {
+      const self = this
+      apiTrade.inquiryDealRejection({ userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
             message: "已拒绝",
             type: 'success'
           })
+          self.notifyRejection[parseInt(userTradeId)].close()
+          delete self.notifyRejection[parseInt(userTradeId)]
+          if (self.dialogTableVisible) {
+            self.$refs.tradeEnquiry.loadInitData()
+          }
         }
       })
     },
