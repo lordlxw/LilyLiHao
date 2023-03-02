@@ -196,7 +196,9 @@
                 <span style="flex: 1" class="ellipsis">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
-                <span style="width: 50px">{{ item.price }}</span>
+                <span style="width: 50px">{{
+                  item.price | moneyFormat(4)
+                }}</span>
                 <span style="width: 50px">{{ item.updatetime }}</span>
               </li>
             </ul>
@@ -215,7 +217,9 @@
                 <span class="ellipsis" style="flex: 1">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
-                <span style="width: 50px">{{ item.price }}</span>
+                <span style="width: 50px">{{
+                  item.price | moneyFormat(4)
+                }}</span>
                 <span style="width: 50px">{{ item.updatetime }}</span>
               </li>
             </ul>
@@ -238,7 +242,9 @@
                 :class="funcSelectColor(item.dealtype)"
               >
                 <span style="width: 60px">{{ item.dealtype }}</span>
-                <span style="width: 120px">{{ item.tradeprice }}</span>
+                <span style="width: 120px">{{
+                  item.tradeprice | moneyFormat(4)
+                }}</span>
                 <span style="width: 100px">{{ item.brokerName }}</span>
                 <span style="width: 80px">{{ item.tradetime }}</span>
                 <!-- <span style="width: 60px">{{ item.netprice }}</span> -->
@@ -291,8 +297,12 @@
                 <i class="el-icon-setting"></i>
               </li>
             </el-popover>
-            <li class="txt-red txt-bold">卖 {{ saleForm.price }}</li>
-            <li class="txt-green txt-bold">买 {{ buyForm.price }}</li>
+            <li class="txt-red txt-bold">
+              卖 {{ saleForm.price | moneyFormat(4) }}
+            </li>
+            <li class="txt-green txt-bold">
+              买 {{ buyForm.price | moneyFormat(4) }}
+            </li>
           </ul>
           <el-tabs v-model="activeName">
             <el-tab-pane label="买(F1)" name="buy">
@@ -307,7 +317,9 @@
                   <span class="txt-green">{{ buyForm.tscode }}</span>
                 </el-form-item>
                 <el-form-item label="价格">
-                  <span class="txt-green">{{ buyForm.price }}</span>
+                  <span class="txt-green">{{
+                    buyForm.price | moneyFormat(4)
+                  }}</span>
                 </el-form-item>
                 <el-form-item label="交易量(万)">
                   <el-input
@@ -415,7 +427,9 @@
                   <span class="txt-red">{{ saleForm.tscode }}</span>
                 </el-form-item>
                 <el-form-item label="价格">
-                  <span class="txt-red">{{ saleForm.price }}</span>
+                  <span class="txt-red">{{
+                    saleForm.price | moneyFormat(4)
+                  }}</span>
                 </el-form-item>
                 <el-form-item label="交易量(万)">
                   <el-input
@@ -1809,7 +1823,7 @@ export default {
                 // 买还是卖
                 direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
                 // 成交价格
-                price: this[formName].price,
+                price: util.moneyFormat(this[formName].price, 4),
                 // 交易员
                 tradeuserId: this[formName].tradeuserId,
                 // 债券编号
@@ -1933,7 +1947,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量（万）</dt>
@@ -1977,7 +1991,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量（万）</dt>
@@ -2015,7 +2029,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量（万）</dt>
@@ -2048,7 +2062,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量（万）</dt>
@@ -2084,7 +2098,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量（万）</dt>
@@ -2127,8 +2141,8 @@ export default {
                       h("dl", null, [
                         h("dt", null, "成交价"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red;padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? msgJson.data.ut.price + ' ' : ''),
-                          h("span", null, msgJson.data.dto.price)
+                          h("span", { style: "text-decoration: line-through; color:red;padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
+                          h("span", null, util.moneyFormat(msgJson.data.dto.price, 4))
                         ])
                       ]),
                       h("dl", null, [

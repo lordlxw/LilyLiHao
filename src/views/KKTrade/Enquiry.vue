@@ -344,7 +344,7 @@
         </dl>
         <dl>
           <dt>询价</dt>
-          <dd>{{ dealRows.price }}</dd>
+          <dd>{{ dealRows.price | moneyFormat(4) }}</dd>
         </dl>
         <dl>
           <dt>询面额</dt>
@@ -425,9 +425,9 @@ export default {
         { label: '交易员id', prop: 'userId', width: '120', align: 'left', show: false },
         { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
         { label: '询价时间', prop: 'createTime', width: '140', align: 'left', show: true },
-        { label: '询价', prop: 'price', width: '120', align: 'left', show: true },
-        { label: '询量（万）', prop: 'volume', width: '100', align: 'left', show: true },
-        { label: '成交额', prop: 'volume1', width: '100', align: 'left', show: true },
+        { label: '询价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
+        { label: '询量（万）', prop: 'volume', width: '100', align: 'right', show: true },
+        { label: '成交额', prop: 'volume1', width: '100', align: 'right', show: true },
         { label: '询价交割', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
         { label: '成交交割', prop: 'deliveryTime1', formatter: this.funcFormat, width: '100', align: 'left', show: true },
         { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
@@ -647,6 +647,8 @@ export default {
           return config.funcKeyValue(row.direction, "directionMeta")
         case "deliveryTime":
           return moment(row.deliveryTime).format('YYYY-MM-DD') // + `（T+${row.deliverySpeed}）`
+        case "price":
+          return util.moneyFormat(row.price, 4)
       }
     },
   },
