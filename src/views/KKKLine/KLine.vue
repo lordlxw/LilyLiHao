@@ -2106,7 +2106,7 @@ export default {
               case 'tradecompare_bond_0':
               case 'tradecompare_bond_1':
                 const notify = self.$notify({
-                  title: `${msgJson.data.tradeuser} 等待确认成交`,
+                  title: `${msgJson.data.ut.tradeuser} 等待确认成交`,
                   dangerouslyUseHTMLString: true,
                   message: h(
                     "div",
