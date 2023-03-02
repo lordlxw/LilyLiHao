@@ -1912,18 +1912,6 @@ export default {
                 self.gridDataMsg.unshift(msgJson.data)
                 self.showMsg()
                 break
-              // // 通知研究员确认接收(买)
-              // case 'accept_bond_0':
-              //   msgJson.data.status = 'accept_bond_0'
-              //   self.gridDataMsg.unshift(msgJson.data)
-              //   self.showMsg()
-              //   break
-              // // 通知研究员确认接收（卖）
-              // case 'accept_bond_1':
-              //   msgJson.data.status = 'accept_bond_1'
-              //   self.gridDataMsg.unshift(msgJson.data)
-              //   self.showMsg()
-              //   break
               case 'accept_bond_0':
               case 'accept_bond_1':
                 self.$notify({
@@ -2139,21 +2127,21 @@ export default {
                       h("dl", null, [
                         h("dt", null, "成交价"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? msgJson.data.ut.price + ' ' : ''),
+                          h("span", { style: "text-decoration: line-through; color:red;padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? msgJson.data.ut.price + ' ' : ''),
                           h("span", null, msgJson.data.dto.price)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交量（万）"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.ut.volume + ' ' : ''),
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.ut.volume + ' ' : ''),
                           h("span", null, msgJson.data.dto.volume)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割日期"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.substr(0, 10) + ' ' : ''),
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.substr(0, 10) + ' ' : ''),
                           h("span", null, msgJson.data.dto.deliveryTime.substr(0, 10))
                         ])
                       ]),
@@ -2207,7 +2195,7 @@ export default {
     // 播放提示音
     tryPlay() {
       try {
-        // this.$refs.playAudio.play()
+        this.$refs.playAudio.play()
       } catch (error) {
         console.log(error)
       }
@@ -2262,7 +2250,7 @@ export default {
         }
       }))
     },
-    // 确认成交
+    // 同意成交
     handleInquiryDealConfirmClick(userTradeId) {
       const self = this
       apiTrade.inquiryDealConfirm({ userTradeId }).then(response => {
@@ -2279,6 +2267,7 @@ export default {
         }
       })
     },
+    // 拒绝成交
     handleInquiryDealRejectionClick(userTradeId) {
       const self = this
       apiTrade.inquiryDealRejection({ userTradeId }).then(response => {

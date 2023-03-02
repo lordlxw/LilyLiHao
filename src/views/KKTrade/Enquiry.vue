@@ -32,13 +32,13 @@
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
           <el-table-column type="selection" width="40"> </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             fixed
             type="index"
             label="序号"
             align="center"
             width="50"
-          ></el-table-column>
+          ></el-table-column> -->
           <template v-for="itemHead in tableHead">
             <el-table-column
               v-if="itemHead.show"
@@ -234,6 +234,74 @@
                   >拒绝撤单</el-button
                 >
               </el-popover>
+              <el-popover
+                v-if="
+                  ['9'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:agreedeal')
+                "
+                placement="bottom-end"
+                :ref="`popover-agreedeal-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">同意成交</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”{{ scope.row.tscode }}？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-agreedeal-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="handleInquiryDealConfirmClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >同意成交</el-button
+                >
+              </el-popover>
+              <el-popover
+                v-if="
+                  ['9'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:rejectiondeal')
+                "
+                placement="bottom-end"
+                :ref="`popover-rejectiondeal-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">拒绝成交</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”{{ scope.row.tscode }}？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-rejectiondeal-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="handleInquiryDealRejectionClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >拒绝成交</el-button
+                >
+              </el-popover>
             </template>
           </el-table-column>
         </el-table>
@@ -356,19 +424,21 @@ export default {
         { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
         { label: '交易员id', prop: 'userId', width: '120', align: 'left', show: false },
         { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
-        { label: '债券代码', prop: 'tscode', width: '130', align: 'left', show: true },
-        { label: '交易方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
+        { label: '询价时间', prop: 'createTime', width: '140', align: 'left', show: true },
         { label: '询价', prop: 'price', width: '120', align: 'left', show: true },
-        { label: '询面额', prop: 'volume', width: '100', align: 'left', show: true },
-        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '140', align: 'left', show: true },
+        { label: '询量（万）', prop: 'volume', width: '100', align: 'left', show: true },
+        { label: '成交额', prop: 'volume1', width: '100', align: 'left', show: true },
+        { label: '询价交割', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '成交交割', prop: 'deliveryTime1', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
+        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
         { label: '状态', prop: 'status', formatter: this.funcFormat, width: '120', align: 'left', show: true },
+        { label: '备注', prop: 'remark', width: '120', align: 'left', show: true },
         { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
         { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
-        { label: '研究员', prop: 'createuser', width: '160', align: 'left', show: true },
-        { label: '询价时间', prop: 'createTime', width: '140', align: 'right', show: true },
-        { label: '是否远期', prop: 'forward', width: '120', align: 'left', show: true },
+        { label: '研究员', prop: 'createuser', width: '160', align: 'left', show: false },
+        { label: '是否远期', prop: 'forward', width: '120', align: 'left', show: false },
         { label: '相关单号', prop: 'parentId', width: '140', align: 'left', show: true },
-        { label: '备注', prop: 'remark', width: '120', align: 'left', show: true },
         { label: '修改人', prop: 'updateBy', width: '120', align: 'left', show: true },
         { label: '修改时间', prop: 'updateTime', width: '120', align: 'left', show: true }
         // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
@@ -442,7 +512,7 @@ export default {
         }
       })
     },
-    // 绝收
+    // 拒收
     handleNotAcceptClick(scope) {
       api.inquiryRejection({ usertradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -542,6 +612,32 @@ export default {
         }
       })
     },
+    // 同意成交
+    handleInquiryDealConfirmClick(scope) {
+      const self = this
+      api.inquiryDealConfirm({ userTradeId: scope.row.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已成交",
+            type: 'success'
+          })
+          self.loadInitData()
+        }
+      })
+    },
+    // 拒绝成交
+    handleInquiryDealRejectionClick(scope) {
+      const self = this
+      api.inquiryDealRejection({ userTradeId: scope.row.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已拒绝",
+            type: 'success'
+          })
+          self.loadInitData()
+        }
+      })
+    },
     // 数据格式化
     funcFormat(row, column) {
       switch (column.property) {
@@ -550,7 +646,7 @@ export default {
         case "direction":
           return config.funcKeyValue(row.direction, "directionMeta")
         case "deliveryTime":
-          return moment(row.deliveryTime).format('YYYY-MM-DD') + `（T+${row.deliverySpeed}）`
+          return moment(row.deliveryTime).format('YYYY-MM-DD') // + `（T+${row.deliverySpeed}）`
       }
     },
   },

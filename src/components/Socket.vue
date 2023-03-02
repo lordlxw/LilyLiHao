@@ -37,7 +37,9 @@ export default {
       Promise.all([
         this.dialogTableVisible = true
       ]).then(() => {
-        this.$refs.tradeEnquiry.loadInitData()
+        if (self.dialogTableVisible) {
+          this.$refs.tradeEnquiry.loadInitData()
+        }
       })
     },
     // ************websocket start**************************
@@ -180,7 +182,7 @@ export default {
               case 'request_cancel_bond_0':
               case 'request_cancel_bond_1':
                 const notify = self.$notify({
-                  title: `${msgJson.data.tradeuser} 撤单`,
+                  title: `${msgJson.data.tradeuser} 发起撤单`,
                   dangerouslyUseHTMLString: true,
                   message: h(
                     "div",
@@ -245,7 +247,7 @@ export default {
               case 'deny_deal_bond_0':
               case 'deny_deal_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.tradeuser} 拒绝成交`,
+                  title: `${msgJson.data.tradeuser} 已拒绝成交`,
                   dangerouslyUseHTMLString: true,
                   message: `
                   <div class="notify">
@@ -274,7 +276,6 @@ export default {
                   duration: 0
                 });
                 self.tryPlay()
-                break
                 break
             }
           }
@@ -346,43 +347,17 @@ export default {
         }
       })
     },
+    // 播放提示音
+    tryPlay() {
+      try {
+        this.$refs.playAudio.play()
+      } catch (error) {
+        console.log(error)
+      }
+    }
   },
   unmounted() {
     socket.close()
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import "@/assets/css/style.scss";
-.notigy-agree,
-.notigy-cancel {
-  display: inline-block;
-  line-height: 1;
-  white-space: nowrap;
-  cursor: pointer;
-  background: $main-color;
-  border: 1px solid $main-color;
-  color: white;
-  -webkit-appearance: none;
-  text-align: center;
-  box-sizing: border-box;
-  outline: none;
-  margin: 0;
-  transition: 0.1s;
-  font-weight: 500;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  padding: 8px 16px;
-  font-size: 14px;
-  border-radius: 4px;
-}
-
-.notigy-cancel {
-  margin-left: 20px;
-  background: white;
-  border: 1px solid #dcdfe6;
-  color: #606266;
-}
-</style>
