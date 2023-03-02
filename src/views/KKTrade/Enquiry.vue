@@ -426,10 +426,11 @@ export default {
         { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
         { label: '询价时间', prop: 'createTime', width: '190', align: 'left', show: true },
         { label: '询价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
+        { label: '成交价', prop: 'realPrice', formatter: this.funcFormat, width: '120', align: 'right', show: true },
         { label: '询量（万）', prop: 'volume', width: '100', align: 'right', show: true },
-        { label: '成交额', prop: 'volume1', width: '100', align: 'right', show: true },
+        { label: '成交额（万）', prop: 'realVolume', formatter: this.funcFormat, width: '100', align: 'right', show: true },
         { label: '询价交割', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
-        { label: '成交交割', prop: 'deliveryTime1', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '成交交割', prop: 'realDeliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
         { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
         { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
         { label: '状态', prop: 'status', formatter: this.funcFormat, width: '120', align: 'left', show: true },
@@ -646,8 +647,14 @@ export default {
           return config.funcKeyValue(row.direction, "directionMeta")
         case "deliveryTime":
           return moment(row.deliveryTime).format('YYYY-MM-DD') // + `（T+${row.deliverySpeed}）`
+        case "realDeliveryTime":
+          return row.realDeliveryTime ? moment(row.realDeliveryTime).format('YYYY-MM-DD') : "--"
         case "price":
           return util.moneyFormat(row.price, 4)
+        case "realPrice":
+          return row.realPrice ? util.moneyFormat(row.realPrice, 4) : "--"
+        case "realVolume":
+          return row.realVolume ? row.realVolume : "--"
       }
     },
   },
