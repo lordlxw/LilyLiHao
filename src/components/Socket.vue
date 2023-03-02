@@ -37,7 +37,7 @@ export default {
       Promise.all([
         this.dialogTableVisible = true
       ]).then(() => {
-        if (self.dialogTableVisible) {
+        if (this.dialogTableVisible) {
           this.$refs.tradeEnquiry.loadInitData()
         }
       })
