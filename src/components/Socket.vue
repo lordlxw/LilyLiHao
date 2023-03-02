@@ -115,7 +115,7 @@ export default {
               case 'deal_bond_1':
               case 'deal_null':
                 self.$notify({
-                  title: `${msgJson.data.tradeuser} 已成交`,
+                  title: `${msgJson.data.xunjiayuanName} 已成交`,
                   dangerouslyUseHTMLString: true,
                   message: `
                   <div class="notify">

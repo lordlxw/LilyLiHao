@@ -25,9 +25,7 @@ export default {
         // 债券编号
         tscode: params.tscode,
         // 成交量
-        volume: params.volume,
-        // 备注
-        remark: params.remark
+        volume: params.volume
       }
     })
   },
@@ -52,7 +50,7 @@ export default {
     })
   },
   /**
-   * 成交修改
+   * 成交
    * @param {*} params
    * @returns
    */

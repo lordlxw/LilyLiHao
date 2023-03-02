@@ -1829,7 +1829,9 @@ export default {
                 // 债券编号
                 tscode: this[formName].tscode,
                 // 成交量
-                volume: this[formName].volume
+                volume: this[formName].volume,
+                // 备注
+                remark: this[formName].remark
               }).then(res => {
                 if (res && res.code === '00000' && res.value) {
                   const h = this.$createElement;
@@ -1991,7 +1993,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${util.moneyFormat(msgJson.data.price)}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量（万）</dt>
@@ -2029,7 +2031,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${util.moneyFormat(msgJson.data.price)}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量（万）</dt>

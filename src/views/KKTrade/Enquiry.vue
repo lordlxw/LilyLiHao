@@ -424,7 +424,7 @@ export default {
         { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
         { label: '交易员id', prop: 'userId', width: '120', align: 'left', show: false },
         { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
-        { label: '询价时间', prop: 'createTime', width: '140', align: 'left', show: true },
+        { label: '询价时间', prop: 'createTime', width: '190', align: 'left', show: true },
         { label: '询价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
         { label: '询量（万）', prop: 'volume', width: '100', align: 'right', show: true },
         { label: '成交额', prop: 'volume1', width: '100', align: 'right', show: true },
@@ -433,7 +433,7 @@ export default {
         { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
         { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
         { label: '状态', prop: 'status', formatter: this.funcFormat, width: '120', align: 'left', show: true },
-        { label: '备注', prop: 'remark', width: '120', align: 'left', show: true },
+        { label: '备注', prop: 'remark', width: '300', align: 'left', show: true },
         { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
         { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
         { label: '研究员', prop: 'createuser', width: '160', align: 'left', show: false },
@@ -547,7 +547,6 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(this.ruleForm)
           api.inquiryDeal({
             usertradeId: this.dealForm.usertradeId,
             price: this.dealForm.price,
