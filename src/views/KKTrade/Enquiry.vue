@@ -3,9 +3,7 @@
   <div class="content">
     <!-- <div class="filter-condition"></div> -->
     <div class="list">
-      <div class="do">
-
-      </div>
+      <div class="do"></div>
       <div class="table mt10">
         <el-table
           v-loading="loading"
@@ -43,7 +41,246 @@
             label="操作"
             width="160"
           >
-            <template> </template>
+            <template slot-scope="scope">
+              <el-popover
+                v-if="setAuth('inquiry:accept') && scope.row.status === 0"
+                placement="bottom-end"
+                :ref="`popover-accept-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">接收</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-accept-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button type="text" @click="handleAcceptClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >接收</el-button
+                >
+              </el-popover>
+              <el-popover
+                v-if="setAuth('inquiry:rejection') && scope.row.status === 0"
+                placement="bottom-end"
+                :ref="`popover-notaccept-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">拒收</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-notaccept-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button type="text" @click="handleNotAcceptClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >拒收</el-button
+                >
+              </el-popover>
+              <el-button
+                @click="handleDealClick(scope.row)"
+                type="text"
+                size="small"
+                v-if="
+                  ['1', '4', '8'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:deal')
+                "
+                >成交</el-button
+              >
+              <el-popover
+                v-if="
+                  ['0', '1', '4'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:cancel')
+                "
+                placement="bottom-end"
+                :ref="`popover-cancel-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">撤销</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”{{ scope.row.tscode }}？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-cancel-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="handleInquiryCancelClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >撤单</el-button
+                >
+              </el-popover>
+              <el-popover
+                v-if="
+                  ['7'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:agreecancel')
+                "
+                placement="bottom-end"
+                :ref="`popover-agreecancel-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">同意撤销</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”{{ scope.row.tscode }}？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-agreecancel-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="handleInquiryCancelConfirmClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >同意撤单</el-button
+                >
+              </el-popover>
+              <el-popover
+                v-if="
+                  ['7'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:rejectioncancel')
+                "
+                placement="bottom-end"
+                :ref="`popover-rejectioncancel-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">拒绝撤销</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”{{ scope.row.tscode }}？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-rejectioncancel-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="handleInquiryCancelRejectionClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >拒绝撤单</el-button
+                >
+              </el-popover>
+              <el-popover
+                v-if="
+                  ['9'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:agreedeal')
+                "
+                placement="bottom-end"
+                :ref="`popover-agreedeal-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">同意成交</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”{{ scope.row.tscode }}？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-agreedeal-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="handleInquiryDealConfirmClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >同意成交</el-button
+                >
+              </el-popover>
+              <el-popover
+                v-if="
+                  ['9'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:rejectiondeal')
+                "
+                placement="bottom-end"
+                :ref="`popover-rejectiondeal-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">拒绝成交</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”{{ scope.row.tscode }}？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      scope._self.$refs[
+                        `popover-rejectiondeal-${scope.$index}`
+                      ].doClose()
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="handleInquiryDealRejectionClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >拒绝成交</el-button
+                >
+              </el-popover>
+            </template>
           </el-table-column>
         </el-table>
       </div>
@@ -98,7 +335,7 @@ export default {
         { label: '备注', prop: 'remark', width: '300', align: 'left', show: true },
         { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
         { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
-        { label: '研究员', prop: 'createuser', width: '160', align: 'left', show: false },
+        { label: '研究员', prop: 'createuser', width: '160', align: 'left', show: true },
         { label: '是否远期', prop: 'forward', width: '120', align: 'left', show: false },
         { label: '相关单号', prop: 'parentId', width: '140', align: 'left', show: true },
         { label: '修改人', prop: 'updateBy', width: '120', align: 'left', show: true },
