@@ -342,7 +342,7 @@
             }}
           </dd>
         </dl>
-        <dl>
+        <!-- <dl>
           <dt>询价</dt>
           <dd>{{ dealRows.price }}</dd>
         </dl>
@@ -357,7 +357,7 @@
               dealRows.deliverySpeed
             }}）
           </dd>
-        </dl>
+        </dl> -->
       </div>
 
       <el-form
