@@ -622,6 +622,7 @@ export default {
             message: "已成交",
             type: 'success'
           })
+          scope._self.$refs[`popover-agreedeal-${scope.$index}`].doClose();
           self.loadInitData()
         }
       })
@@ -635,6 +636,7 @@ export default {
             message: "已拒绝",
             type: 'success'
           })
+          scope._self.$refs[`popover-rejectiondeal-${scope.$index}`].doClose();
           self.loadInitData()
         }
       })
@@ -658,10 +660,11 @@ export default {
           return row.realVolume ? row.realVolume : "--"
       }
     },
-    mounted() {
-      this.loadInitData()
-    }
+  },
+  mounted() {
+    this.loadInitData()
   }
+}
 </script>
 <style lang="scss" scoped>
 @import "@/assets/css/style.scss";
