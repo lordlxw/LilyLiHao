@@ -377,7 +377,7 @@
             v-model="dealForm.deliveryTime"
             type="date"
             placeholder="选择日期"
-            style="width: 130px"
+            style="width: 140px"
             :clearable="false"
           >
           </el-date-picker>
@@ -536,6 +536,7 @@ export default {
       Promise.all([
         this.dialogDealFormVisible = true
       ]).then(() => {
+        row.deliveryTime = moment(row.deliveryTime).format('YYYY-MM-DD')
         this.dealRows = row
         this.dealForm.usertradeId = row.userTradeId
         this.dealForm.price = row.price
@@ -732,6 +733,11 @@ export default {
   .my-el-row .el-col:nth-child(even) {
     font-size: 14px;
     word-break: break-all;
+  }
+}
+.notify {
+  dl {
+    line-height: 24px;
   }
 }
 </style>
