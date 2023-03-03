@@ -3,7 +3,21 @@
   <div class="content">
     <!-- <div class="filter-condition"></div> -->
     <div class="list">
-      <div class="do"></div>
+      <!-- <div class="do">
+        <div class="pagination mt10">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="pageNum"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size="pageSize"
+            layout="prev, next"
+            :total="totalCount"
+            background
+          >
+          </el-pagination>
+        </div>
+      </div> -->
       <div class="table mt10">
         <el-table
           v-loading="loading"
@@ -17,6 +31,14 @@
           default-expand-all
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
+          <el-table-column type="selection" width="40"> </el-table-column>
+          <!-- <el-table-column
+            fixed
+            type="index"
+            label="序号"
+            align="center"
+            width="50"
+          ></el-table-column> -->
           <template v-for="itemHead in tableHead">
             <el-table-column
               v-if="itemHead.show"
@@ -297,6 +319,86 @@
         </el-pagination>
       </div> -->
     </div>
+    <el-dialog
+      title="成交信息"
+      width="500px;"
+      :visible.sync="dialogDealFormVisible"
+      append-to-body
+    >
+      <div class="notify" style="margin-bottom: 20px">
+        <dl>
+          <dt>债券代码</dt>
+          <dd>{{ dealRows.tscode }}</dd>
+        </dl>
+        <dl>
+          <dt>交易方向</dt>
+          <dd>
+            {{
+              dealRows.direction === "bond_0"
+                ? "买入"
+                : dealRows.direction === "bond_1"
+                ? "卖出"
+                : ""
+            }}
+          </dd>
+        </dl>
+        <dl>
+          <dt>询价</dt>
+          <dd>{{ dealRows.price }}</dd>
+        </dl>
+        <dl>
+          <dt>询面额</dt>
+          <dd>{{ dealRows.volume }}</dd>
+        </dl>
+        <dl>
+          <dt>交割日期</dt>
+          <dd>
+            {{ dealRows.deliveryTime | dateFormat("yyyy-MM-dd") }}（T+{{
+              dealRows.deliverySpeed
+            }}）
+          </dd>
+        </dl>
+      </div>
+
+      <el-form
+        :model="dealForm"
+        :rules="rulesDealForm"
+        ref="dealForm"
+        label-width="90px"
+      >
+        <el-form-item label="成交价格" prop="price">
+          <el-input v-model="dealForm.price" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="成交量" prop="volume">
+          <el-input v-model="dealForm.volume" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="交割日期" prop="volume">
+          <el-date-picker
+            v-model="dealForm.deliveryTime"
+            type="date"
+            placeholder="选择日期"
+            style="width: 130px"
+            :clearable="false"
+          >
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input
+            type="textarea"
+            row="2"
+            resize="none"
+            v-model="dealForm.remark"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDealFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('dealForm')"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -322,17 +424,16 @@ export default {
         { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
         { label: '交易员id', prop: 'userId', width: '120', align: 'left', show: false },
         { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
-        { label: '询价时间', prop: 'createTime', width: '190', align: 'left', show: true },
-        { label: '询价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
-        { label: '成交价', prop: 'realPrice', formatter: this.funcFormat, width: '120', align: 'right', show: true },
-        { label: '询量（万）', prop: 'volume', width: '100', align: 'right', show: true },
-        { label: '成交额（万）', prop: 'realVolume', formatter: this.funcFormat, width: '100', align: 'right', show: true },
+        { label: '询价时间', prop: 'createTime', width: '140', align: 'left', show: true },
+        { label: '询价', prop: 'price', width: '120', align: 'left', show: true },
+        { label: '询量（万）', prop: 'volume', width: '100', align: 'left', show: true },
+        { label: '成交额', prop: 'volume1', width: '100', align: 'left', show: true },
         { label: '询价交割', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
-        { label: '成交交割', prop: 'realDeliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '成交交割', prop: 'deliveryTime1', formatter: this.funcFormat, width: '100', align: 'left', show: true },
         { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
         { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
         { label: '状态', prop: 'status', formatter: this.funcFormat, width: '120', align: 'left', show: true },
-        { label: '备注', prop: 'remark', width: '300', align: 'left', show: true },
+        { label: '备注', prop: 'remark', width: '120', align: 'left', show: true },
         { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
         { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
         { label: '研究员', prop: 'createuser', width: '160', align: 'left', show: true },
@@ -446,6 +547,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          console.log(this.ruleForm)
           api.inquiryDeal({
             usertradeId: this.dealForm.usertradeId,
             price: this.dealForm.price,
@@ -545,14 +647,6 @@ export default {
           return config.funcKeyValue(row.direction, "directionMeta")
         case "deliveryTime":
           return moment(row.deliveryTime).format('YYYY-MM-DD') // + `（T+${row.deliverySpeed}）`
-        case "realDeliveryTime":
-          return row.realDeliveryTime ? moment(row.realDeliveryTime).format('YYYY-MM-DD') : "--"
-        case "price":
-          return util.moneyFormat(row.price, 4)
-        case "realPrice":
-          return row.realPrice ? util.moneyFormat(row.realPrice, 4) : "--"
-        case "realVolume":
-          return row.realVolume ? row.realVolume : "--"
       }
     },
   },
