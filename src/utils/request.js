@@ -74,6 +74,13 @@ service.interceptors.response.use(response => {
       durations: 3 * 1000
     })
   }
+  if (error.toString().indexOf("Error: Network Error") !== -1) {
+    Message({
+      message: `网络错误，无法链接`,
+      type: 'warning',
+      durations: 3 * 1000
+    })
+  }
   return Promise.reject(error)
 })
 

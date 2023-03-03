@@ -24,6 +24,7 @@
           :rules="rules"
           ref="ruleForm"
           class="login-form"
+          size="medium"
         >
           <div class="tit">登录</div>
           <el-form-item prop="username">
@@ -32,6 +33,7 @@
               prefix-icon="el-icon-user"
               v-model="ruleForm.username"
               @keyup.enter.native="submitForm('ruleForm')"
+              size="medium"
             >
             </el-input>
           </el-form-item>
@@ -42,6 +44,7 @@
               v-model="ruleForm.password"
               show-password
               @keyup.enter.native="submitForm('ruleForm')"
+              size="medium"
             >
             </el-input>
           </el-form-item>
@@ -50,6 +53,7 @@
               type="primary"
               class="btn-login"
               @click="submitForm('ruleForm')"
+              size="medium"
               >进入系统</el-button
             >
           </el-form-item>

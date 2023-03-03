@@ -309,7 +309,8 @@
               <el-form
                 ref="buyForm"
                 :model="buyForm"
-                label-width="70px"
+                :rules="buyFormRules"
+                label-width="80px"
                 size="mini"
                 class="buy-form"
               >
@@ -321,7 +322,7 @@
                     buyForm.price | moneyFormat(4)
                   }}</span>
                 </el-form-item>
-                <el-form-item label="交易量(万)">
+                <el-form-item label="交易量(万)" prop="volume">
                   <el-input
                     v-model="buyForm.volume"
                     placeholder="请输入交易量"
@@ -361,13 +362,14 @@
                     >
                   </el-button-group>
                 </el-form-item>
-                <el-form-item label="交易速度">
+                <el-form-item label="交易速度" prop="deliveryTime">
                   <el-date-picker
                     v-model="buyForm.deliveryTime"
                     type="date"
                     placeholder="选择日期"
                     style="width: 130px"
                     :clearable="false"
+                    :picker-options="pickerOptions"
                   >
                   </el-date-picker>
                   <el-button-group>
@@ -385,7 +387,7 @@
                     > -->
                   </el-button-group>
                 </el-form-item>
-                <el-form-item label="交易员">
+                <el-form-item label="交易员" prop="tradeuserId">
                   <el-select
                     v-model="buyForm.tradeuserId"
                     placeholder="请选择交易员"
@@ -419,7 +421,8 @@
               <el-form
                 ref="saleForm"
                 :model="saleForm"
-                label-width="70px"
+                :rules="saleFormRules"
+                label-width="80px"
                 size="mini"
                 class="sale-form"
               >
@@ -431,7 +434,7 @@
                     saleForm.price | moneyFormat(4)
                   }}</span>
                 </el-form-item>
-                <el-form-item label="交易量(万)">
+                <el-form-item label="交易量(万)" prop="volume">
                   <el-input
                     v-model="saleForm.volume"
                     placeholder="请输入交易量"
@@ -471,13 +474,14 @@
                     >
                   </el-button-group>
                 </el-form-item>
-                <el-form-item label="交割日期">
+                <el-form-item label="交割日期" prop="deliveryTime">
                   <el-date-picker
                     v-model="saleForm.deliveryTime"
                     type="date"
                     placeholder="选择日期"
                     style="width: 130px"
                     :clearable="false"
+                    :picker-options="pickerOptions"
                   >
                   </el-date-picker>
                   <el-button-group>
@@ -495,7 +499,7 @@
                     > -->
                   </el-button-group>
                 </el-form-item>
-                <el-form-item label="交易员">
+                <el-form-item label="交易员" prop="tradeuserId">
                   <el-select
                     v-model="saleForm.tradeuserId"
                     placeholder="请选择交易员"
@@ -604,12 +608,14 @@ import apiTrade from '@/api/kk_trade'
 import apiKLine from '@/api/kk_kline'
 import apiAdmin from '@/api/kk_power_admin'
 import apiLogin from '@/api/kk_login'
+import apiCanlendar from '@/api/kk_canlendar'
 import ComTscodeSelect from '@/components/ComTscodeSelect.vue'
 import * as echarts from 'echarts'
 import configUtil from '@/utils/config.js'
 import * as util from '@/utils/util'
 import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
 import { pageMixin } from '@/utils/pageMixin'
+import config from '@/utils/config'
 let socket
 let lockReconnect = false
 export default {
@@ -619,7 +625,24 @@ export default {
     TradeEnquiry
   },
   data() {
+    // 金额格式验证
+    const moneyTest = async (rule, value, callback) => {
+      if (!config.regExpSet.money.test(value)) {
+        callback(new Error('请输入正确格式（-.----）'))
+      } else {
+        callback()
+      }
+    }
+    // 大于0格式验证
+    const plusAmountTest = async (rule, value, callback) => {
+      if (!config.regExpSet.gtzero.test(value)) {
+        callback(new Error('请输入大于0的正整数'))
+      } else {
+        callback()
+      }
+    }
     return {
+      config,
       // 框架
       headH: 50,
       // k线栏目
@@ -749,7 +772,25 @@ export default {
         // 快速交易
         quickSubmit: false,
       },
-      saleFormRules: [],
+      saleFormRules: {
+        direction: [
+          { required: true, message: '方向必选', trigger: 'blur' }
+        ],
+        price: [
+          { required: true, message: '价格必选', trigger: 'blur' },
+          { validator: moneyTest, trigger: 'blur' }
+        ],
+        volume: [
+          { required: true, message: '交易量必填', trigger: 'blur' },
+          { validator: plusAmountTest, trigger: 'blur' }
+        ],
+        deliveryTime: [
+          { required: true, message: '交割时间必选', trigger: 'blur' }
+        ],
+        tradeuserId: [
+          { required: true, message: '交易员必选', trigger: 'change' }
+        ]
+      },
       buyForm: {
         // 交易类型
         direction: '买',
@@ -770,18 +811,43 @@ export default {
         // 快速交易
         quickSubmit: false
       },
-      buyFormRules: [],
+      buyFormRules: {
+        direction: [
+          { required: true, message: '方向必选', trigger: 'blur' }
+        ],
+        price: [
+          { required: true, message: '价格必选', trigger: 'blur' },
+          { validator: moneyTest, trigger: 'blur' }
+        ],
+        volume: [
+          { required: true, message: '交易量必填', trigger: 'blur' },
+          { validator: plusAmountTest, trigger: 'blur' }
+        ],
+        deliveryTime: [
+          { required: true, message: '交割时间必选', trigger: 'blur' }
+        ],
+        tradeuserId: [
+          { required: true, message: '交易员必选', trigger: 'change' }
+        ]
+      },
       setForm: {
         volume: 0,
         quickSubmit: false
       },
-      setFormRules: [],
+      setFormRules: {
+        volume: [
+          { required: true, message: '交易量必填', trigger: 'blur' },
+          { validator: plusAmountTest, trigger: 'blur' }
+        ],
+      },
       popoverSetVisible: false,
       gridDataMsg: [],
       dialogTableVisible: false,
       tradeUsersOption: [],
       // 消息通知
-      notifyRejection: {}
+      notifyRejection: {},
+      // 交割日期选择
+      pickerOptions: {}
     }
   },
   computed: {
@@ -803,6 +869,7 @@ export default {
     }
   },
   created() {
+    this.getHolidayOfMonth()
     this.keyDown()
     this.initSocket()
   },
@@ -1802,19 +1869,23 @@ export default {
       this[formType].deliverySpeed = val
     },
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          switch (formName) {
-            case 'setForm':
+      switch (formName) {
+        case 'setForm':
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
               this.$store.commit('SET_DEFAULT_SET', JSON.stringify(this[formName]))
               this.buyForm.volume = parseInt(this[formName].volume)
               this.saleForm.volume = parseInt(this[formName].volume)
               this.buyForm.quickSubmit = this[formName].quickSubmit
               this.saleForm.quickSubmit = this[formName].quickSubmit
               this.$refs['popover-set'].doClose()
-              break
-            case 'buyForm':
-            case 'saleForm':
+            }
+          })
+          break
+        case 'buyForm':
+        case 'saleForm':
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
               apiTrade.inquirySheetAdd({
                 // 交割速度
                 deliverySpeed: this[formName].deliverySpeed,
@@ -1841,10 +1912,10 @@ export default {
                   });
                 }
               })
-              break
-          }
-        }
-      })
+            }
+          })
+          break
+      }
     },
     // ************websocket start**************************
     // 初始化
@@ -2319,15 +2390,47 @@ export default {
         }
       })
     },
-    // 获取询价单列表信息
-    getInquiryList() {
-      apiTrade.inquiryQuery({
-        pageNum: this.pageNum,
-        pageSize: this.pageSize
-      }).then(response => {
+    // 获取节假日
+    getHoliday() {
+      apiCanlendar.holiday().then(response => {
 
       })
     },
+    // 一月内节假日
+    getHolidayOfMonth() {
+      const self = this
+      apiCanlendar.holidayOfMonth().then(response => {
+        if (response && response.code === '00000') {
+          // 设置可选日期
+          self.pickerOptions = {
+            disabledDate(time) {
+              const date = new Date()
+              return time.getTime() < Date.now() || time.getTime() > (date.getTime() + 3600 * 1000 * 24 * 30) || response.value.indexOf(util.dateFormat(time, 'yyyy-MM-dd')) !== -1;
+            }
+          }
+        }
+      })
+    },
+    // 获取下个交易日
+    getNextDealDay() {
+      const self = this
+      apiCanlendar.nextDealDay().then(response => {
+        if (response && response.code === '00000') {
+          self.buyForm.deliveryTime = response.value
+          self.saleForm.deliveryTime = response.value
+        }
+      })
+    },
+    // 获取询价单列表信息
+    // getInquiryList() {
+    //   apiTrade.inquiryQuery({
+    //     pageNum: this.pageNum,
+    //     pageSize: this.pageSize
+    //   }).then(response => {
+
+    //   })
+    // },
+
     // 消息
     showMsg() {
       Promise.all([
@@ -2357,17 +2460,15 @@ export default {
     },
   },
   mounted() {
-    this.getInquiryList()
+    // this.getInquiryList()
+    // this.getHoliday()
+    this.getHolidayOfMonth()
+    this.getNextDealDay()
     this.initTSType()
     this.getAllBondPool()
     this.getByCodeBondPool()
     this.favoriteList()
     this.getTradeUserList()
-    // 创建询价单默认日期
-    const date = new Date();
-    date.setTime(date.getTime() + 3600 * 1000 * 24);
-    this.buyForm.deliveryTime = date
-    this.saleForm.deliveryTime = date
     // 初始化默认设置和询价单表格默认设置
     this.setForm.volume = this.defaultSet.volume
     this.setForm.quickSubmit = this.defaultSet.quickSubmit
@@ -2375,6 +2476,7 @@ export default {
     this.saleForm.volume = parseInt(this.setForm.volume)
     this.buyForm.quickSubmit = this.setForm.quickSubmit
     this.saleForm.quickSubmit = this.setForm.quickSubmit
+
     window.onresize = () => {
       if (this.myChart) {
         this.myChart.resize()
@@ -2765,6 +2867,16 @@ export default {
   }
   .el-tabs__content {
     padding: 0 10px;
+  }
+
+  .el-form-item--mini .el-form-item__content,
+  .el-form-item--mini .el-form-item__label {
+    line-height: 18px;
+  }
+
+  .el-form-item--mini.el-form-item,
+  .el-form-item--small.el-form-item {
+    margin-bottom: 14px;
   }
 }
 </style>

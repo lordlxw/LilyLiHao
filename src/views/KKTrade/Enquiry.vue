@@ -3,21 +3,9 @@
   <div class="content">
     <!-- <div class="filter-condition"></div> -->
     <div class="list">
-      <!-- <div class="do">
-        <div class="pagination mt10">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="pageNum"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size="pageSize"
-            layout="prev, next"
-            :total="totalCount"
-            background
-          >
-          </el-pagination>
-        </div>
-      </div> -->
+      <div class="do">
+
+      </div>
       <div class="table mt10">
         <el-table
           v-loading="loading"
