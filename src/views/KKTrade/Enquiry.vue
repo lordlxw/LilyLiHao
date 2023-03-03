@@ -372,7 +372,7 @@
         <el-form-item label="成交量" prop="volume">
           <el-input v-model="dealForm.volume" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="交割日期" prop="volume">
+        <el-form-item label="交割日期" prop="deliveryTime">
           <el-date-picker
             v-model="dealForm.deliveryTime"
             type="date"
@@ -540,7 +540,7 @@ export default {
         this.dealRows = row
         this.dealForm.usertradeId = row.userTradeId
         this.dealForm.price = row.price
-        this.dealForm.volume = row.volume
+        this.dealForm.volume = row.restVolume
         this.dealForm.remark = row.remark
         this.dealForm.deliveryTime = row.deliveryTime
       })
