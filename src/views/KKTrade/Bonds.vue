@@ -395,7 +395,7 @@
 </template>
 
 <script>
-import api from "@/api/kk_trade";
+import api from "@/api/kk_bonds";
 import { pageMixin } from '@/utils/pageMixin'
 import { animationMixin } from '@/utils/animationMixin'
 import config from '@/utils/config'
@@ -473,9 +473,14 @@ export default {
     // 初始化数据
     loadInitData() {
       this.loading = true;
-      api.inquiryQuery({
-        pageNum: this.pageNum,
-        pageSize: this.pageSize
+      api.get({
+        deliveryDateEnd: null,
+        deliveryDateStart: null,
+        realTradeId: null,
+        tradeNum: null,
+        tscode: null,
+        userName: null,
+        userTradeId: null
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
           this.tableData = response.rows;
