@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import api from "@/api/kk_bonds";
+import api from "@/api/kk_trade";
 import { pageMixin } from '@/utils/pageMixin'
 import { animationMixin } from '@/utils/animationMixin'
 import config from '@/utils/config'
