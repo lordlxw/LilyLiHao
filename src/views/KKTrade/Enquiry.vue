@@ -3,21 +3,6 @@
   <div class="content">
     <!-- <div class="filter-condition"></div> -->
     <div class="list">
-      <!-- <div class="do">
-        <div class="pagination mt10">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="pageNum"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size="pageSize"
-            layout="prev, next"
-            :total="totalCount"
-            background
-          >
-          </el-pagination>
-        </div>
-      </div> -->
       <div class="table mt10">
         <el-table
           v-loading="loading"
@@ -31,14 +16,6 @@
           default-expand-all
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         >
-          <el-table-column type="selection" width="40"> </el-table-column>
-          <!-- <el-table-column
-            fixed
-            type="index"
-            label="序号"
-            align="center"
-            width="50"
-          ></el-table-column> -->
           <template v-for="itemHead in tableHead">
             <el-table-column
               v-if="itemHead.show"
@@ -48,7 +25,7 @@
               :formatter="
                 itemHead.formatter
                   ? itemHead.formatter
-                  : (row, column, cellValue, index)=> {
+                  : (row, column, cellValue, index) => {
                       return cellValue;
                     }
               "
@@ -64,35 +41,6 @@
             width="160"
           >
             <template slot-scope="scope">
-              <!-- <el-popover
-                v-if="setAuth('inquiry:accept') && scope.row.status === 0"
-                placement="bottom-end"
-                :ref="`popover-accept-${scope.$index}`"
-              >
-                <p>
-                  确认要<span class="color-red">接收</span>“<span
-                    class="color-main"
-                    >{{ scope.row.tradeNum }}</span
-                  >”？
-                </p>
-                <div style="text-align: right">
-                  <el-button
-                    type="text"
-                    @click="
-                      scope._self.$refs[
-                        `popover-accept-${scope.$index}`
-                      ].doClose()
-                    "
-                    >取消</el-button
-                  >
-                  <el-button type="text" @click="handleAcceptClick(scope)"
-                    >确认</el-button
-                  >
-                </div>
-                <el-button type="text" slot="reference" class="ml10"
-                  >接收</el-button
-                >
-              </el-popover> -->
               <el-button
                 type="text"
                 v-if="setAuth('inquiry:accept') && scope.row.status === 0"
@@ -312,18 +260,6 @@
           </el-table-column>
         </el-table>
       </div>
-      <!-- <div class="pagination mt10">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="pageNum"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalCount"
-        >
-        </el-pagination>
-      </div> -->
     </div>
     <el-dialog
       title="成交信息"
@@ -365,7 +301,6 @@
           </dd>
         </dl> -->
       </div>
-
       <el-form
         :model="dealForm"
         :rules="rulesDealForm"
@@ -379,14 +314,10 @@
           <el-input v-model="dealForm.volume" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="交割日期" prop="deliveryTime">
-          <el-date-picker
-            v-model="dealForm.deliveryTime"
-            type="date"
-            placeholder="选择日期"
-            style="width: 140px"
-            :clearable="false"
-          >
-          </el-date-picker>
+          <delivery-canlendar
+            ref="deliveryCanlendar"
+            @change="handleDeliveryCanlendar"
+          ></delivery-canlendar>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input
@@ -410,6 +341,7 @@
 
 <script>
 import api from "@/api/kk_trade";
+import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 import { pageMixin } from '@/utils/pageMixin'
 import { animationMixin } from '@/utils/animationMixin'
 import config from '@/utils/config'
@@ -420,7 +352,26 @@ export default {
   props: {
     status: ''
   },
+  components: {
+    DeliveryCanlendar
+  },
   data() {
+    // 金额格式验证
+    const moneyTest = async (rule, value, callback) => {
+      if (!config.regExpSet.money.test(value)) {
+        callback(new Error('请输入正确格式（-.----）'))
+      } else {
+        callback()
+      }
+    }
+    // 大于0格式验证
+    const plusAmountTest = async (rule, value, callback) => {
+      if (!config.regExpSet.gtzero.test(value)) {
+        callback(new Error('请输入大于0的正整数'))
+      } else {
+        callback()
+      }
+    }
     return {
       config,
       loading: false,
@@ -464,7 +415,19 @@ export default {
         // 交割时间
         deliveryTime: '',
       },
-      rulesDealForm: {},
+      rulesDealForm: {
+        price: [
+          { required: true, message: '价格必选', trigger: 'blur' },
+          { validator: moneyTest, trigger: 'blur' }
+        ],
+        volume: [
+          { required: true, message: '交易量必填', trigger: 'blur' },
+          { validator: plusAmountTest, trigger: 'blur' }
+        ],
+        deliveryTime: [
+          { required: true, message: '交割时间必选', trigger: 'blur' }
+        ],
+      },
       dealRows: {}
     }
   },
@@ -564,7 +527,7 @@ export default {
           }).then((response) => {
             if (response && response.code === "00000") {
               this.$message({
-                message: "操作成功",
+                message: "已提交，如有变动请等待审核",
                 type: "success",
               });
               this.dialogDealFormVisible = false
@@ -646,6 +609,10 @@ export default {
           self.loadInitData()
         }
       })
+    },
+    // 交割日期
+    handleDeliveryCanlendar(obj) {
+      this.dealForm.deliveryTime = obj.value
     },
     // 数据格式化
     funcFormat(row, column) {

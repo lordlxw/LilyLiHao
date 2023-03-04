@@ -363,15 +363,10 @@
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="交易速度" prop="deliveryTime">
-                  <el-date-picker
-                    v-model="buyForm.deliveryTime"
-                    type="date"
-                    placeholder="选择日期"
-                    style="width: 130px"
-                    :clearable="false"
-                    :picker-options="pickerOptions"
-                  >
-                  </el-date-picker>
+                  <delivery-canlendar
+                    ref="buyDeliveryCanlendar"
+                    @change="handleBuyDeliveryCanlendar"
+                  ></delivery-canlendar>
                   <el-button-group>
                     <el-button
                       icon="el-icon-plus"
@@ -475,15 +470,10 @@
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="交割日期" prop="deliveryTime">
-                  <el-date-picker
-                    v-model="saleForm.deliveryTime"
-                    type="date"
-                    placeholder="选择日期"
-                    style="width: 130px"
-                    :clearable="false"
-                    :picker-options="pickerOptions"
-                  >
-                  </el-date-picker>
+                  <delivery-canlendar
+                    ref="saleDeliveryCanlendar"
+                    @change="handleSaleDeliveryCanlendar"
+                  ></delivery-canlendar>
                   <el-button-group>
                     <el-button
                       icon="el-icon-plus"
@@ -596,6 +586,27 @@
     <audio controls ref="playAudio" style="display: none">
       <source src="@/assets/audio/2.wav" type="audio/wav" />
     </audio>
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+      <span>请确认需要提交询价单？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button
+          type="primary"
+          @click="
+            quickSubmit(
+              `${
+                activeName === 'buy'
+                  ? 'buyForm'
+                  : activeName === 'sale'
+                  ? 'saleForm'
+                  : ''
+              }`
+            )
+          "
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -608,12 +619,12 @@ import apiTrade from '@/api/kk_trade'
 import apiKLine from '@/api/kk_kline'
 import apiAdmin from '@/api/kk_power_admin'
 import apiLogin from '@/api/kk_login'
-import apiCanlendar from '@/api/kk_canlendar'
 import ComTscodeSelect from '@/components/ComTscodeSelect.vue'
 import * as echarts from 'echarts'
 import configUtil from '@/utils/config.js'
 import * as util from '@/utils/util'
 import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
+import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 import { pageMixin } from '@/utils/pageMixin'
 import config from '@/utils/config'
 let socket
@@ -622,7 +633,8 @@ export default {
   mixins: [pageMixin],
   components: {
     ComTscodeSelect,
-    TradeEnquiry
+    TradeEnquiry,
+    DeliveryCanlendar
   },
   data() {
     // 金额格式验证
@@ -643,6 +655,7 @@ export default {
     }
     return {
       config,
+      dialogVisible: false,
       // 框架
       headH: 50,
       // k线栏目
@@ -869,7 +882,6 @@ export default {
     }
   },
   created() {
-    this.getHolidayOfMonth()
     this.keyDown()
     this.initSocket()
   },
@@ -1640,17 +1652,23 @@ export default {
         switch (keyCode) {
           case 13:
             // 检查K线轮询个数
-            const klineLoopCount = self.loopmethodskey.length
-            const indecator = self.loopmethodskey.indexOf(self.klineactive)
-            if (klineLoopCount - 1 <= indecator) {
-              self.klinemethods[self.loopmethodskey[0]]()
-            } else {
-              self.klinemethods[self.loopmethodskey[indecator + 1]]()
+            // const klineLoopCount = self.loopmethodskey.length
+            // const indecator = self.loopmethodskey.indexOf(self.klineactive)
+            // if (klineLoopCount - 1 <= indecator) {
+            //   self.klinemethods[self.loopmethodskey[0]]()
+            // } else {
+            //   self.klinemethods[self.loopmethodskey[indecator + 1]]()
+            // }
+            // if (e && e.preventDefault) {
+            //   e.preventDefault()
+            // } else {
+            //   window.event.returnValue = false
+            // }
+            if (self.activeName === 'buy') {
+              self.submitForm('buyForm')
             }
-            if (e && e.preventDefault) {
-              e.preventDefault()
-            } else {
-              window.event.returnValue = false
+            if (self.activeName === 'sale') {
+              self.submitForm('saleForm')
             }
             break
           case 112:
@@ -1868,6 +1886,40 @@ export default {
     handleDelivertySpeed(formType, val) {
       this[formType].deliverySpeed = val
     },
+    // 快速提交
+    quickSubmit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          apiTrade.inquirySheetAdd({
+            // 交割速度
+            deliverySpeed: this[formName].deliverySpeed,
+            // 交割日期
+            deliveryTime: util.dateFormat(this[formName].deliveryTime, "yyyy-MM-dd"),
+            // 买还是卖
+            direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
+            // 成交价格
+            price: util.moneyFormat(this[formName].price, 4),
+            // 交易员
+            tradeuserId: this[formName].tradeuserId,
+            // 债券编号
+            tscode: this[formName].tscode,
+            // 成交量
+            volume: this[formName].volume,
+            // 备注
+            remark: this[formName].remark
+          }).then(res => {
+            if (res && res.code === '00000' && res.value) {
+              const h = this.$createElement;
+              this.$notify({
+                title: '提醒',
+                message: h('i', { style: 'color: teal' }, '询价单发送成功')
+              });
+              this.dialogVisible = false
+            }
+          })
+        }
+      })
+    },
     submitForm(formName) {
       switch (formName) {
         case 'setForm':
@@ -1884,36 +1936,11 @@ export default {
           break
         case 'buyForm':
         case 'saleForm':
-          this.$refs[formName].validate((valid) => {
-            if (valid) {
-              apiTrade.inquirySheetAdd({
-                // 交割速度
-                deliverySpeed: this[formName].deliverySpeed,
-                // 交割日期
-                deliveryTime: util.dateFormat(this[formName].deliveryTime, "yyyy-MM-dd"),
-                // 买还是卖
-                direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
-                // 成交价格
-                price: util.moneyFormat(this[formName].price, 4),
-                // 交易员
-                tradeuserId: this[formName].tradeuserId,
-                // 债券编号
-                tscode: this[formName].tscode,
-                // 成交量
-                volume: this[formName].volume,
-                // 备注
-                remark: this[formName].remark
-              }).then(res => {
-                if (res && res.code === '00000' && res.value) {
-                  const h = this.$createElement;
-                  this.$notify({
-                    title: '提醒',
-                    message: h('i', { style: 'color: teal' }, '询价单发送成功')
-                  });
-                }
-              })
-            }
-          })
+          if (this.defaultSet.quickSubmit) {
+            this.quickSubmit(formName)
+          } else {
+            this.dialogVisible = true
+          }
           break
       }
     },
@@ -2385,47 +2412,14 @@ export default {
         }
       })
     },
-    // 获取节假日
-    getHoliday() {
-      apiCanlendar.holiday().then(response => {
-
-      })
+    // 买单交割日期变化
+    handleBuyDeliveryCanlendar(obj) {
+      this.buyForm.deliveryTime = obj.value
     },
-    // 一月内节假日
-    getHolidayOfMonth() {
-      const self = this
-      apiCanlendar.holidayOfMonth().then(response => {
-        if (response && response.code === '00000') {
-          // 设置可选日期
-          self.pickerOptions = {
-            disabledDate(time) {
-              const date = new Date()
-              return time.getTime() < Date.now() || time.getTime() > (date.getTime() + 3600 * 1000 * 24 * 30) || response.value.indexOf(util.dateFormat(time, 'yyyy-MM-dd')) !== -1;
-            }
-          }
-        }
-      })
+    // 卖单交割日期变化
+    handleSaleDeliveryCanlendar(obj) {
+      this.saleForm.deliveryTime = obj.value
     },
-    // 获取下个交易日
-    getNextDealDay() {
-      const self = this
-      apiCanlendar.nextDealDay().then(response => {
-        if (response && response.code === '00000') {
-          self.buyForm.deliveryTime = response.value
-          self.saleForm.deliveryTime = response.value
-        }
-      })
-    },
-    // 获取询价单列表信息
-    // getInquiryList() {
-    //   apiTrade.inquiryQuery({
-    //     pageNum: this.pageNum,
-    //     pageSize: this.pageSize
-    //   }).then(response => {
-
-    //   })
-    // },
-
     // 消息
     showMsg() {
       Promise.all([
@@ -2455,10 +2449,6 @@ export default {
     },
   },
   mounted() {
-    // this.getInquiryList()
-    // this.getHoliday()
-    this.getHolidayOfMonth()
-    this.getNextDealDay()
     this.initTSType()
     this.getAllBondPool()
     this.getByCodeBondPool()
