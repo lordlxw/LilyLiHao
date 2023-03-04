@@ -64,7 +64,7 @@
             width="160"
           >
             <template slot-scope="scope">
-              <el-popover
+              <!-- <el-popover
                 v-if="setAuth('inquiry:accept') && scope.row.status === 0"
                 placement="bottom-end"
                 :ref="`popover-accept-${scope.$index}`"
@@ -92,7 +92,13 @@
                 <el-button type="text" slot="reference" class="ml10"
                   >接收</el-button
                 >
-              </el-popover>
+              </el-popover> -->
+              <el-button
+                type="text"
+                v-if="setAuth('inquiry:accept') && scope.row.status === 0"
+                @click="handleAcceptClick(scope)"
+                >接收</el-button
+              >
               <el-popover
                 v-if="setAuth('inquiry:rejection') && scope.row.status === 0"
                 placement="bottom-end"
@@ -105,6 +111,9 @@
                   >”？
                 </p>
                 <div style="text-align: right">
+                  <el-button type="text" @click="handleNotAcceptClick(scope)"
+                    >确认</el-button
+                  >
                   <el-button
                     type="text"
                     @click="
@@ -113,9 +122,6 @@
                       ].doClose()
                     "
                     >取消</el-button
-                  >
-                  <el-button type="text" @click="handleNotAcceptClick(scope)"
-                    >确认</el-button
                   >
                 </div>
                 <el-button type="text" slot="reference" class="ml10"
@@ -500,10 +506,9 @@ export default {
       api.inquiryAccept({ usertradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
-            message: '已接受',
+            message: '已接收',
             type: 'success'
           })
-          scope._self.$refs[`popover-accept-${scope.$index}`].doClose();
           this.loadInitData()
         } else {
           this.$message({
