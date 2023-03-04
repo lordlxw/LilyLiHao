@@ -349,8 +349,12 @@ export default {
     },
     // 播放提示音
     tryPlay() {
+      const self = this
       try {
-        this.$refs.playAudio.play()
+        if (self.dialogTableVisible) {
+          self.$refs.tradeEnquiry.loadInitData()
+        }
+        self.$refs.playAudio.play()
       } catch (error) {
         console.log(error)
       }

@@ -2150,9 +2150,6 @@ export default {
                   duration: 0
                 });
                 self.tryPlay()
-                if (self.dialogTableVisible) {
-                  self.$refs.tradeEnquiry.loadInitData()
-                }
                 break
               case 'confirm_cancel_bond_0':
               case 'confirm_cancel_bond_1':
@@ -2186,9 +2183,6 @@ export default {
                   duration: 0
                 });
                 self.tryPlay()
-                if (self.dialogTableVisible) {
-                  self.$refs.tradeEnquiry.loadInitData()
-                }
                 break
               case 'tradecompare_bond_0':
               case 'tradecompare_bond_1':
@@ -2259,9 +2253,6 @@ export default {
                 });
                 self.tryPlay()
                 self.notifyRejection[msgJson.data.ut.userTradeId] = notify
-                if (self.dialogTableVisible) {
-                  self.$refs.tradeEnquiry.loadInitData()
-                }
                 break
             }
           }
@@ -2281,8 +2272,12 @@ export default {
     },
     // 播放提示音
     tryPlay() {
+      const self = this
       try {
-        this.$refs.playAudio.play()
+        if (self.dialogTableVisible) {
+          self.$refs.tradeEnquiry.loadInitData()
+        }
+        self.$refs.playAudio.play()
       } catch (error) {
         console.log(error)
       }

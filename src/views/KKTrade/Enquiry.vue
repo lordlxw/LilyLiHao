@@ -48,7 +48,7 @@
               :formatter="
                 itemHead.formatter
                   ? itemHead.formatter
-                  : function (row, column, cellValue, index) {
+                  : (row, column, cellValue, index)=> {
                       return cellValue;
                     }
               "

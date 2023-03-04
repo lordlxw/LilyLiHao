@@ -40,7 +40,7 @@
               :formatter="
                 itemHead.formatter
                   ? itemHead.formatter
-                  : function (row, column, cellValue, index) {
+                  : (row, column, cellValue, index) => {
                       return cellValue;
                     }
               "
@@ -55,9 +55,7 @@
             label="操作"
             width="160"
           >
-            <template slot-scope="">
-
-            </template>
+            <template slot-scope=""> </template>
           </el-table-column>
         </el-table>
       </div>
