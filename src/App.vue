@@ -5,6 +5,9 @@
 </template>
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  unmounted() {
+    sessionStorage.clear()
+  }
 }
 </script>
