@@ -3,6 +3,14 @@
   <div class="content">
     <!-- <div class="filter-condition"></div> -->
     <div class="list">
+      <div class="do">
+        <el-button
+          type="default"
+          v-if="setAuth('inquiry:insert')"
+          @click="dialogEnquiryFormVisible = true"
+          >添加</el-button
+        >
+      </div>
       <div class="table mt10">
         <el-table
           v-loading="loading"
@@ -284,22 +292,6 @@
             }}
           </dd>
         </dl>
-        <!-- <dl>
-          <dt>询价</dt>
-          <dd>{{ dealRows.price }}</dd>
-        </dl>
-        <dl>
-          <dt>询面额</dt>
-          <dd>{{ dealRows.volume }}</dd>
-        </dl>
-        <dl>
-          <dt>交割日期</dt>
-          <dd>
-            {{ dealRows.deliveryTime | dateFormat("yyyy-MM-dd") }}（T+{{
-              dealRows.deliverySpeed
-            }}）
-          </dd>
-        </dl> -->
       </div>
       <el-form
         :model="dealForm"
@@ -319,6 +311,24 @@
             @change="handleDeliveryCanlendar"
           ></delivery-canlendar>
         </el-form-item>
+        <el-form-item label="交易对手" prop="counterParty">
+          <el-input
+            v-model="dealForm.counterParty"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="联系人" prop="contactPerson">
+          <el-input
+            v-model="dealForm.contactPerson"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="联系方式" prop="contactType">
+          <el-input
+            v-model="dealForm.contactType"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input
             type="textarea"
@@ -336,12 +346,23 @@
         >
       </div>
     </el-dialog>
+    <el-dialog
+      title="询价"
+      width="500px;"
+      :visible.sync="dialogEnquiryFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <enquiry-edit @change="handleDialogVisible"></enquiry-edit>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import api from "@/api/kk_trade";
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
+import EnquiryEdit from '@/components/EnquiryEdit.vue'
 import { pageMixin } from '@/utils/pageMixin'
 import { animationMixin } from '@/utils/animationMixin'
 import config from '@/utils/config'
@@ -353,7 +374,8 @@ export default {
     status: ''
   },
   components: {
-    DeliveryCanlendar
+    DeliveryCanlendar,
+    EnquiryEdit
   },
   data() {
     // 金额格式验证
@@ -414,6 +436,12 @@ export default {
         remark: '',
         // 交割时间
         deliveryTime: '',
+        // 交易对手
+        counterParty: '',
+        // 联系人
+        contactPerson: '',
+        // 联系方式
+        contactType: ''
       },
       rulesDealForm: {
         price: [
@@ -428,7 +456,8 @@ export default {
           { required: true, message: '交割时间必选', trigger: 'blur' }
         ],
       },
-      dealRows: {}
+      dealRows: {},
+      dialogEnquiryFormVisible: false
     }
   },
   methods: {
@@ -511,6 +540,9 @@ export default {
         this.dealForm.volume = row.restVolume
         this.dealForm.remark = row.remark
         this.dealForm.deliveryTime = row.deliveryTime
+        this.dealForm.counterParty = row.counterParty
+        this.dealForm.contactPerson = row.contactPerson
+        this.dealForm.contactType = row.contactType
       })
     },
     // 表单提交
@@ -524,6 +556,9 @@ export default {
             volume: this.dealForm.volume,
             remark: this.dealForm.remark,
             deliveryTime: util.dateFormat(this.dealForm.deliveryTime, "yyyy-MM-dd 00:00:00"),
+            counterParty: this.dealForm.counterParty,
+            contactPerson: this.dealForm.contactPerson,
+            contactType: this.dealForm.contactType
           }).then((response) => {
             if (response && response.code === "00000") {
               this.$message({
@@ -535,6 +570,9 @@ export default {
               this.dealForm.volume = ''
               this.dealForm.remark = ''
               this.dealForm.deliveryTime = ''
+              this.dealForm.counterParty = ''
+              this.dealForm.contactPerson = ''
+              this.dealForm.contactType = ''
               this.loadInitData()
             }
           });
@@ -633,6 +671,9 @@ export default {
           return row.realVolume ? row.realVolume : "--"
       }
     },
+    handleDialogVisible(obj) {
+      this.dialogEnquiryFormVisible = obj.dialogVisible
+    }
   },
   mounted() {
     this.loadInitData()

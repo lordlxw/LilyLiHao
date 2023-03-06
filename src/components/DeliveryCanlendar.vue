@@ -7,6 +7,7 @@
     :clearable="false"
     :picker-options="pickerOptions"
     @input="handleChange"
+    :editable="false"
   >
   </el-date-picker>
 </template>

@@ -64,5 +64,15 @@ export default {
         realTradeIdList: params.realTradeIdList
       }
     })
+  },
+  /**
+   *
+   * @param {*} params
+   */
+  dealRoll(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/gundan`,
+      method: 'post'
+    })
   }
 }

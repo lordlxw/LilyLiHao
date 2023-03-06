@@ -252,7 +252,7 @@
             </ul>
           </el-scrollbar>
         </div>
-        <!-- 交易聊天框 -->
+        <!-- 交易框 -->
         <div class="chatbox">
           <ul class="best-price-wapper">
             <el-popover

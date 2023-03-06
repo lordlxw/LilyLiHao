@@ -72,7 +72,13 @@ export default {
         // 交割时间
         deliveryTime: params.deliveryTime,
         // 备注
-        remark: params.remark
+        remark: params.remark,
+        // 交易对手
+        counterParty: params.counterParty,
+        // 联系人
+        contactPerson: params.contactPerson,
+        // 联系方式
+        contactType: params.contactType
       }
     })
   },
