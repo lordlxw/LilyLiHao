@@ -90,7 +90,7 @@
 </template>
 
 <script>
-import api from '@/api/kk_trade'
+import api from '@/api/kk_bonds'
 import apiAdmin from '@/api/kk_power_admin'
 import * as util from '@/utils/util'
 import config from '@/utils/config'
@@ -194,7 +194,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          api.inquirySheetAdd({
+          api.bondsCover({
             // 交割速度
             deliverySpeed: this[formName].deliverySpeed,
             // 交割日期
@@ -204,7 +204,7 @@ export default {
             // 成交价格
             price: util.moneyFormat(this[formName].price, 4),
             // 交易员
-            tradeuserId: this[formName].tradeuserId,
+            userId: this[formName].tradeuserId,
             // 债券编号
             tscode: this[formName].tscode,
             // 成交量
