@@ -158,6 +158,15 @@ export default {
         userTradeId: null
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
+          response.rows.forEach(element => {
+            if (element.children && element.children.length > 0) {
+              const realTradeIdList = []
+              element.children.forEach(element => {
+                realTradeIdList.push(element.realTradeId)
+              })
+              element.realTradeIdList = realTradeIdList
+            }
+          });
           this.tableData = response.rows;
           this.totalCount = response.total;
         } else {

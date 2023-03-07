@@ -41,10 +41,11 @@
         </el-button-group>
       </el-form-item>
       <el-form-item label="交易速度" prop="deliveryTime">
-        <delivery-canlendar
+        <!-- <delivery-canlendar
           ref="buyDeliveryCanlendar"
           @change="handleBuyDeliveryCanlendar"
-        ></delivery-canlendar>
+        ></delivery-canlendar> -->
+        {{ coverForm.deliveryTime | dateFormat("yyyy-MM-dd") }}
         <el-button-group>
           <el-button
             icon="el-icon-plus"
@@ -137,7 +138,8 @@ export default {
         // 备注
         remark: '',
         // 快速交易
-        quickSubmit: false
+        quickSubmit: false,
+        realTradeIdList: []
       },
       coverFormRules: {
         direction: [
@@ -198,7 +200,7 @@ export default {
             // 交割速度
             deliverySpeed: this[formName].deliverySpeed,
             // 交割日期
-            deliveryTime: util.dateFormat(this[formName].deliveryTime, "yyyy-MM-dd"),
+            deliveryTime: util.dateFormat(this[formName].deliveryTime, "yyyy-MM-dd 00:00:00"),
             // 买还是卖
             direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
             // 成交价格
@@ -210,7 +212,8 @@ export default {
             // 成交量
             volume: this[formName].volume,
             // 备注
-            remark: this[formName].remark
+            remark: this[formName].remark,
+            realTradeIdList: this[formName].realTradeIdList
           }).then(res => {
             if (res && res.code === '00000' && res.value) {
               this.$message({
@@ -240,10 +243,11 @@ export default {
       this.coverForm.price = this.row.price
       this.coverForm.volume = this.row.volume
       this.coverForm.deliveryTime = this.row.deliveryTime
+      this.coverForm.realTradeIdList = this.row.realTradeIdList
+      this.getTradeUserList()
     }
   },
   mounted() {
-    this.getTradeUserList()
     this.loadInitData()
   }
 }
