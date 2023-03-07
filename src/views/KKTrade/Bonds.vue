@@ -55,102 +55,30 @@
             label="操作"
             width="160"
           >
-            <template slot-scope=""> </template>
+            <template slot-scope="scope">
+              <el-button
+                type="text"
+                v-if="setAuth('bonds:cover') && scope.row.realTradeId === null"
+                @click="handleBondsCover(scope.row)"
+                >平仓</el-button
+              >
+            </template>
           </el-table-column>
         </el-table>
       </div>
-      <!-- <div class="pagination mt10">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="pageNum"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalCount"
-        >
-        </el-pagination>
-      </div> -->
     </div>
     <el-dialog
-      title="成交信息"
+      title="平仓"
       width="500px;"
-      :visible.sync="dialogDealFormVisible"
+      :visible.sync="dialogBondsCoverFormVisible"
       append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
     >
-      <div class="notify" style="margin-bottom: 20px">
-        <dl>
-          <dt>债券代码</dt>
-          <dd>{{ dealRows.tscode }}</dd>
-        </dl>
-        <dl>
-          <dt>交易方向</dt>
-          <dd>
-            {{
-              dealRows.direction === "bond_0"
-                ? "买入"
-                : dealRows.direction === "bond_1"
-                ? "卖出"
-                : ""
-            }}
-          </dd>
-        </dl>
-        <dl>
-          <dt>询价</dt>
-          <dd>{{ dealRows.price | moneyFormat(4) }}</dd>
-        </dl>
-        <dl>
-          <dt>询面额</dt>
-          <dd>{{ dealRows.volume }}</dd>
-        </dl>
-        <dl>
-          <dt>交割日期</dt>
-          <dd>
-            {{ dealRows.deliveryTime | dateFormat("yyyy-MM-dd") }}（T+{{
-              dealRows.deliverySpeed
-            }}）
-          </dd>
-        </dl>
-      </div>
-
-      <el-form
-        :model="dealForm"
-        :rules="rulesDealForm"
-        ref="dealForm"
-        label-width="90px"
-      >
-        <el-form-item label="成交价格" prop="price">
-          <el-input v-model="dealForm.price" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="成交量" prop="volume">
-          <el-input v-model="dealForm.volume" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="交割日期" prop="volume">
-          <el-date-picker
-            v-model="dealForm.deliveryTime"
-            type="date"
-            placeholder="选择日期"
-            style="width: 130px"
-            :clearable="false"
-          >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input
-            type="textarea"
-            row="2"
-            resize="none"
-            v-model="dealForm.remark"
-            autocomplete="off"
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogDealFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('dealForm')"
-          >确 定</el-button
-        >
-      </div>
+      <bonds-cover
+        :row="currentRow"
+        @change="handleBondsCoverDialogVisible"
+      ></bonds-cover>
     </el-dialog>
   </div>
 </template>
@@ -159,6 +87,7 @@
 import api from "@/api/kk_bonds";
 import { pageMixin } from '@/utils/pageMixin'
 import { animationMixin } from '@/utils/animationMixin'
+import BondsCover from '@/components/BondsCover.vue'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
 import moment from 'moment'
@@ -166,6 +95,9 @@ export default {
   mixins: [animationMixin, pageMixin],
   props: {
     status: ''
+  },
+  components: {
+    BondsCover
   },
   data() {
     return {
@@ -175,38 +107,26 @@ export default {
       tableHead: [
         // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
         { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
-        { label: '询价时间', prop: 'createTime', width: '190', align: 'left', show: true },
+        { label: '成交时间', prop: 'createTime', width: '190', align: 'left', show: true },
+        { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
+        { label: '交易额（万）', prop: 'volume', width: '100', align: 'right', show: true },
         { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
-        { label: '询价交割', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
         { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
-        { label: '询价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
         { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
         { label: '备注', prop: 'remark', width: '300', align: 'left', show: true },
         { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
         { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
-        { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
         { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
-        { label: '询量（万）', prop: 'volume', width: '100', align: 'right', show: true },
         { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
         { label: '交易员', prop: 'xunjiayuanName', width: '120', align: 'left', show: true }
         // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
       ],
       tableData: [],
-      dialogDealFormVisible: false,
-      dealForm: {
-        // 询价单号
-        usertradeId: '',
-        // 成交价格
-        price: '',
-        // 成交量
-        volume: '',
-        // 备注
-        remark: '',
-        // 交割时间
-        deliveryTime: '',
-      },
-      rulesDealForm: {},
-      dealRows: {}
+      // 平仓弹框
+      dialogBondsCoverFormVisible: false,
+      currentRow: {}
     }
   },
   methods: {
@@ -247,148 +167,15 @@ export default {
         this.loading = false;
       });
     },
-    // 接受
-    handleAcceptClick(scope) {
-      api.inquiryAccept({ usertradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: '已接受',
-            type: 'success'
-          })
-          scope._self.$refs[`popover-accept-${scope.$index}`].doClose();
-          this.loadInitData()
-        } else {
-          this.$message({
-            message: response.message,
-            type: 'error'
-          })
-        }
+    // 平仓弹框
+    handleBondsCover(row) {
+      Promise.all([this.currentRow = row]).then(() => {
+        this.dialogBondsCoverFormVisible = true
       })
     },
-    // 拒收
-    handleNotAcceptClick(scope) {
-      api.inquiryRejection({ usertradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: '已拒收',
-            type: 'info'
-          })
-          scope._self.$refs[`popover-notaccept-${scope.$index}`].doClose();
-          this.loadInitData()
-        } else {
-          this.$message({
-            message: response.message,
-            type: 'error'
-          })
-        }
-      })
-    },
-    // 点击成交
-    handleDealClick(row) {
-      Promise.all([
-        this.dialogDealFormVisible = true
-      ]).then(() => {
-        this.dealRows = row
-        this.dealForm.usertradeId = row.userTradeId
-        this.dealForm.price = row.price
-        this.dealForm.volume = row.volume
-        this.dealForm.remark = row.remark
-        this.dealForm.deliveryTime = row.deliveryTime
-      })
-    },
-    // 表单提交
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          api.inquiryDeal({
-            usertradeId: this.dealForm.usertradeId,
-            price: this.dealForm.price,
-            volume: this.dealForm.volume,
-            remark: this.dealForm.remark,
-            deliveryTime: util.dateFormat(this.dealForm.deliveryTime, "yyyy-MM-dd 00:00:00"),
-          }).then((response) => {
-            if (response && response.code === "00000") {
-              this.$message({
-                message: "操作成功",
-                type: "success",
-              });
-              this.dialogDealFormVisible = false
-              this.dealForm.price = ''
-              this.dealForm.volume = ''
-              this.dealForm.remark = ''
-              this.dealForm.deliveryTime = ''
-              this.loadInitData()
-            }
-          });
-        }
-      })
-    },
-    // 提交撤单申请
-    handleInquiryCancelClick(scope) {
-      api.inquiryCancel({ usertradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: `${response.message}`,
-            type: 'success'
-          })
-          scope._self.$refs[`popover-cancel-${scope.$index}`].doClose();
-          this.loadInitData()
-        }
-      })
-    },
-    // 确认撤单
-    handleInquiryCancelConfirmClick(scope) {
-      const self = this
-      api.inquiryCancelConfirm({ usertradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          self.$message({
-            message: "已撤单",
-            type: 'success'
-          })
-          scope._self.$refs[`popover-agreecancel-${scope.$index}`].doClose();
-          self.loadInitData()
-        }
-      })
-    },
-    // 拒绝撤单
-    handleInquiryCancelRejectionClick(scope) {
-      const self = this
-      api.inquiryCancelRejection({ usertradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          self.$message({
-            message: "已拒绝",
-            type: 'success'
-          })
-          scope._self.$refs[`popover-rejectioncancel-${scope.$index}`].doClose();
-          self.loadInitData()
-        }
-      })
-    },
-    // 同意成交
-    handleInquiryDealConfirmClick(scope) {
-      const self = this
-      api.inquiryDealConfirm({ userTradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: "已成交",
-            type: 'success'
-          })
-          self.loadInitData()
-        }
-      })
-    },
-    // 拒绝成交
-    handleInquiryDealRejectionClick(scope) {
-      const self = this
-      api.inquiryDealRejection({ userTradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: "已拒绝",
-            type: 'success'
-          })
-          self.loadInitData()
-        }
-      })
+    // 平仓弹框回参接收
+    handleBondsCoverDialogVisible(obj) {
+      this.dialogBondsCoverFormVisible = obj.dialogVisible
     },
     // 数据格式化
     funcFormat(row, column) {
