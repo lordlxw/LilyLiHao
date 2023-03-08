@@ -2242,7 +2242,7 @@ export default {
                       h("dl", null, [
                         h("dt", null, "成交量（万）"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.ut.volume + ' ' : ''),
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? msgJson.data.ut.restVolume + ' ' : ''),
                           h("span", null, msgJson.data.dto.volume)
                         ])
                       ]),

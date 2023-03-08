@@ -306,10 +306,10 @@
           <el-input v-model="dealForm.volume" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="交割日期" prop="deliveryTime">
-          <delivery-canlendar
-            ref="deliveryCanlendar"
-            @change="handleDeliveryCanlendar"
-          ></delivery-canlendar>
+          <delivery-canlendar-update
+            ref="deliveryCanlendarUpdate"
+            @change="handleDeliveryCanlendarUpdate"
+          ></delivery-canlendar-update>
         </el-form-item>
         <el-form-item label="交易对手" prop="counterParty">
           <el-input
@@ -361,7 +361,7 @@
 
 <script>
 import api from "@/api/kk_trade";
-import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
+import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
 import { pageMixin } from '@/utils/pageMixin'
 import { animationMixin } from '@/utils/animationMixin'
@@ -374,7 +374,7 @@ export default {
     status: ''
   },
   components: {
-    DeliveryCanlendar,
+    DeliveryCanlendarUpdate,
     EnquiryEdit
   },
   data() {
@@ -540,6 +540,7 @@ export default {
         this.dealForm.volume = row.restVolume
         this.dealForm.remark = row.remark
         this.dealForm.deliveryTime = row.deliveryTime
+        this.$refs.deliveryCanlendarUpdate.deliveryTime = row.deliveryTime
         this.dealForm.counterParty = row.counterParty
         this.dealForm.contactPerson = row.contactPerson
         this.dealForm.contactType = row.contactType
@@ -649,7 +650,7 @@ export default {
       })
     },
     // 交割日期
-    handleDeliveryCanlendar(obj) {
+    handleDeliveryCanlendarUpdate(obj) {
       this.dealForm.deliveryTime = obj.value
     },
     // 数据格式化

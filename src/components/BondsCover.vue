@@ -83,7 +83,7 @@
       </el-form-item>
       <el-form-item>
         <el-button class="btn-green" @click="submitForm('coverForm')"
-          >创 建</el-button
+          >确认平仓</el-button
         >
       </el-form-item>
     </el-form>

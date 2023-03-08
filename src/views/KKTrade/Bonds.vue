@@ -109,7 +109,7 @@ export default {
         { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
         { label: '成交时间', prop: 'createTime', width: '190', align: 'left', show: true },
         { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
-        { label: '交易额（万）', prop: 'volume', width: '100', align: 'right', show: true },
+        { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
         { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
         { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
         { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
