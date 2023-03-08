@@ -89,9 +89,9 @@ export default {
   realTradeUserList(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/listTrader`,
-      method: 'post',
+      method: 'get',
       data: {
-        realTradeIdList: [39, 25, 24, 23, 22, 21, 12, 40, 37, 36, 30, 29, 28, 27, 26, 20, 18, 17, 16, 2, 32, 31, 10, 9, 8, 7, 5, 4]
+        realTradeIdList: params.realTradeIdList
       },
     })
   }

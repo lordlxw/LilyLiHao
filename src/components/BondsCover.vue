@@ -229,8 +229,8 @@ export default {
       })
     },
     // 获取交易员列表
-    getTradeUserList() {
-      apiAdmin.tradeUserList().then(response => {
+    getTradeUserList(realTradeIdList) {
+      apiAdmin.realTradeUserList({ realTradeIdList }).then(response => {
         if (response && response.code === '00000' && response.value) {
           this.tradeUsersOption = response.value
         }
@@ -244,7 +244,7 @@ export default {
       this.coverForm.volume = this.row.volume
       this.coverForm.deliveryTime = this.row.deliveryTime
       this.coverForm.realTradeIdList = this.row.realTradeIdList
-      this.getTradeUserList()
+      this.getTradeUserList(JSON.stringify(this.row.realTradeIdList))
     }
   },
   mounted() {
