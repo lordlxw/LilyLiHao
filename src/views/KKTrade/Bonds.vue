@@ -27,8 +27,7 @@
           style="width: 100%"
           height="600"
           border
-          row-key="userTradeId"
-          default-expand-all
+          row-key="rowId"
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
           :row-class-name="tableRowClassName"
           :cell-style="cellStyle"
@@ -167,13 +166,18 @@ export default {
         userTradeId: null
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
+          let rowId = 0
           response.rows.forEach(element => {
             if (element.children && element.children.length > 0) {
               const realTradeIdList = []
               element.children.forEach(element => {
+                rowId++
                 realTradeIdList.push(element.realTradeId)
+                element.rowId = rowId
               })
+              rowId++
               element.realTradeIdList = realTradeIdList
+              element.rowId = rowId
             }
           });
           this.tableData = response.rows;
