@@ -201,7 +201,7 @@ export default {
             // 交割速度
             deliverySpeed: this[formName].deliverySpeed,
             // 交割日期
-            deliveryTime: util.dateFormat(this[formName].deliveryTime, "yyyy-MM-dd 00:00:00"),
+            deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYY-MM-DD 00:00:00"),
             // 买还是卖
             direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
             // 成交价格

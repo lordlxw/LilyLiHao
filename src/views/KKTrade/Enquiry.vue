@@ -434,7 +434,7 @@ export default {
         volume: '',
         // 备注
         remark: '',
-        // 交割时间
+        // 交割日期
         deliveryTime: '',
         // 交易对手
         counterParty: '',
@@ -453,7 +453,7 @@ export default {
           { validator: plusAmountTest, trigger: 'blur' }
         ],
         deliveryTime: [
-          { required: true, message: '交割时间必选', trigger: 'blur' }
+          { required: true, message: '交割日期必选', trigger: 'blur' }
         ],
       },
       dealRows: {},
@@ -556,7 +556,7 @@ export default {
             price: this.dealForm.price,
             volume: this.dealForm.volume,
             remark: this.dealForm.remark,
-            deliveryTime: util.dateFormat(this.dealForm.deliveryTime, "yyyy-MM-dd 00:00:00"),
+            deliveryTime: util.dateFormat(this.dealForm.deliveryTime, "YYYY-MM-DD 00:00:00"),
             counterParty: this.dealForm.counterParty,
             contactPerson: this.dealForm.contactPerson,
             contactType: this.dealForm.contactType

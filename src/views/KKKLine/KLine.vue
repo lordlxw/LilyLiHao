@@ -362,7 +362,7 @@
                     >
                   </el-button-group>
                 </el-form-item>
-                <el-form-item label="交易速度" prop="deliveryTime">
+                <el-form-item label="交割日期" prop="deliveryTime">
                   <delivery-canlendar
                     ref="buyDeliveryCanlendar"
                     @change="handleBuyDeliveryCanlendar"
@@ -776,7 +776,7 @@ export default {
         tscode: '',
         // 交割速度
         deliverySpeed: 0,
-        // 交割时间
+        // 交割日期
         deliveryTime: '',
         // 交易员
         tradeuserId: '',
@@ -798,7 +798,7 @@ export default {
           { validator: plusAmountTest, trigger: 'blur' }
         ],
         deliveryTime: [
-          { required: true, message: '交割时间必选', trigger: 'blur' }
+          { required: true, message: '交割日期必选', trigger: 'blur' }
         ],
         tradeuserId: [
           { required: true, message: '交易员必选', trigger: 'change' }
@@ -815,7 +815,7 @@ export default {
         tscode: '',
         // 交割速度
         deliverySpeed: 0,
-        // 交割时间
+        // 交割日期
         deliveryTime: '',
         // 交易员
         tradeuserId: '',
@@ -837,7 +837,7 @@ export default {
           { validator: plusAmountTest, trigger: 'blur' }
         ],
         deliveryTime: [
-          { required: true, message: '交割时间必选', trigger: 'blur' }
+          { required: true, message: '交割日期必选', trigger: 'blur' }
         ],
         tradeuserId: [
           { required: true, message: '交易员必选', trigger: 'change' }
@@ -1894,7 +1894,7 @@ export default {
             // 交割速度
             deliverySpeed: this[formName].deliverySpeed,
             // 交割日期
-            deliveryTime: util.dateFormat(this[formName].deliveryTime, "yyyy-MM-dd"),
+            deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD"),
             // 买还是卖
             direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
             // 成交价格
