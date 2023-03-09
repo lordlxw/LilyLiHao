@@ -40,7 +40,7 @@
           v-else
           :index="item.component === null ? index + 1 + '' : item.component"
           :route="item.component"
-          :key="index"
+          :key="item.component"
           @click="
             handleNavigator(
               [`${item.menuName}`],

@@ -166,6 +166,11 @@ export default {
       }
     }
   },
+  watch: {
+    row: function () {
+      this.loadInitData()
+    }
+  },
   methods: {
     // 交易量加法函数
     funcVolumeAdd(val) {

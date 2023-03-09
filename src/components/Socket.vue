@@ -75,6 +75,16 @@ export default {
           const h = self.$createElement
           if (msgJson) {
             switch (msgJson.dataType) {
+              case 'bid_1':
+                console.log(1111)
+                // self.businessOutList = msgJson.data
+                // self.buyForm.price = self.funcGetBestPrice('max', msgJson.data)
+                break
+              case 'bid_0':
+                console.log(2222)
+                // self.businessInList = msgJson.data
+                // self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
+                break
               // 返回研究员待接收询价单（买）
               case 'start_bond_0':
                 console.log('周佳洪：' + msgJson.data)

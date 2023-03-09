@@ -87,6 +87,7 @@
 
 <script>
 import api from "@/api/kk_bonds";
+import apiBondPool from '@/api/kk_bond_pool'
 import { pageMixin } from '@/utils/pageMixin'
 import { animationMixin } from '@/utils/animationMixin'
 import BondsCover from '@/components/BondsCover.vue'
@@ -130,7 +131,11 @@ export default {
       tableData: [],
       // 平仓弹框
       dialogBondsCoverFormVisible: false,
-      currentRow: {}
+      currentRow: {},
+      // 买
+      businessInList: [],
+      // 卖
+      businessOutList: [],
     }
   },
   methods: {
@@ -183,7 +188,20 @@ export default {
     // 平仓弹框
     handleBondsCover(row) {
       Promise.all([this.currentRow = row]).then(() => {
-        this.dialogBondsCoverFormVisible = true
+        switch (row.direction) {
+          case 'bond_0':
+            this.initRightBusinessList({
+              tscode: row.tscode,
+              bidtype: 1
+            })
+            break
+          case 'bond_1':
+            this.initRightBusinessList({
+              tscode: row.tscode,
+              bidtype: 0
+            })
+            break
+        }
       })
     },
     // 平仓弹框回参接收
@@ -225,7 +243,55 @@ export default {
             return 'color:green';
         }
       }
-    }
+    },
+    // 卖出，买入数据
+    initRightBusinessList(params) {
+      const self = this
+      apiBondPool.businessList(params).then(res => {
+        if (res.code === '00000') {
+          switch (params.bidtype) {
+            case 1:
+              self.businessOutList = res.value
+              self.currentRow.price = self.funcGetBestPrice('max', res.value)
+              break;
+            case 0:
+              self.businessInList = res.value
+              self.currentRow.price = self.funcGetBestPrice('min', res.value)
+              break;
+          }
+          self.dialogBondsCoverFormVisible = true
+        }
+      })
+    },
+    // 买卖最优值(type:min最小，type:max最大;arr:初始数组;)
+    funcGetBestPrice(type, arr) {
+      switch (type) {
+        case 'min':
+          let minVal = ''
+          for (let i = 0; i < arr.length; i++) {
+            if (i === 0) {
+              minVal = arr[i].price
+            } else {
+              if (arr[i].price < minVal) {
+                minVal = arr[i].price
+              }
+            }
+          }
+          return minVal
+        case 'max':
+          let maxVal = ''
+          for (let i = 0; i < arr.length; i++) {
+            if (i === 0) {
+              maxVal = arr[i].price
+            } else {
+              if (arr[i].price > maxVal) {
+                maxVal = arr[i].price
+              }
+            }
+          }
+          return maxVal
+      }
+    },
   },
   mounted() {
     this.loadInitData()
