@@ -242,13 +242,11 @@ export default {
     // 加载初始值
     loadInitData() {
       console.log(this.row)
-      this.coverForm.direction = this.row.direction === 'bond_0' ? 'bond_1' : (this.row.direction === 'bond_1' ? 'bond_0' : '')
+      this.coverForm.direction = this.row.direction
       this.coverForm.tscode = this.row.tscode
       this.coverForm.price = this.row.price
       this.coverForm.volume = this.row.volume
       const isBefore = moment(moment(new Date()).format('YYYY-MM-DD 00:00:00')).isBefore(this.row.deliveryTime)
-      console.log(333333)
-      console.log(isBefore)
       if (isBefore) {
         this.$refs.buyDeliveryCanlendarUpdate.deliveryTime = this.row.deliveryTime
         this.coverForm.deliveryTime = this.row.deliveryTime
