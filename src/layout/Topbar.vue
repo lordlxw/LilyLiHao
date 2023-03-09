@@ -15,7 +15,7 @@
         >
       </el-breadcrumb>
       <ul class="k-nav">
-        <li class="nav-right">
+        <li class="nav-right" v-if="setAuth('kline:view')">
           <router-link target="_blank" :to="{ path: '/kline' }" class="i-text"
             ><i class="fa fa-line-chart"></i
           ></router-link>
@@ -45,8 +45,10 @@ import Velocity from "velocity-animate";
 import screenfull from "screenfull";
 import apiLogin from '@/api/kk_login'
 import MainSocket from '@/components/Socket.vue'
+import { pageMixin } from '@/utils/pageMixin'
 import config from "@/utils/config.js";
 export default {
+  mixins: [pageMixin],
   components: {
     MainSocket
   },
@@ -81,9 +83,9 @@ export default {
     })
   },
   methods: {
-    setAuth(index) {
-      return this.roleId === '1' || this.menus_ids.indexOf(index) !== -1
-    },
+    // setAuth(index) {
+    //   return this.roleId === '1' || this.menus_ids.indexOf(index) !== -1
+    // },
     ...mapMutations(["SET_IS_COLLAPSE", "SET_CRUMENUSINDEX"]),
     /* 折叠展开 */
     changeFoldState() {
