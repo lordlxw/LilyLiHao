@@ -123,7 +123,7 @@ export default {
       tradeUsersOption: [],
       coverForm: {
         // 交易类型
-        direction: '买',
+        direction: '买入',
         // 价格
         price: '',
         // 交易量
@@ -201,9 +201,9 @@ export default {
             // 交割速度
             deliverySpeed: this[formName].deliverySpeed,
             // 交割日期
-            deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYY-MM-DD 00:00:00"),
+            deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD 00:00:00"),
             // 买还是卖
-            direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
+            direction: this[formName].direction,
             // 成交价格
             price: util.moneyFormat(this[formName].price, 4),
             // 交易员
@@ -242,7 +242,7 @@ export default {
     // 加载初始值
     loadInitData() {
       console.log(this.row)
-      this.coverForm.direction = this.row.direction
+      this.coverForm.direction = this.row.direction === 'bond_1' ? 'bond_0' : (this.row.direction === 'bond_0' ? 'bond_1' : '')
       this.coverForm.tscode = this.row.tscode
       this.coverForm.price = this.row.price
       this.coverForm.volume = this.row.volume

@@ -119,7 +119,7 @@ export default {
         { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
         { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
         { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
-        { label: '备注', prop: 'remark', width: '300', align: 'left', show: true },
+        { label: '备注', prop: 'remark', width: 'auto', align: 'left', show: true },
         { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
         { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
         { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
