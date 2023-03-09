@@ -192,13 +192,13 @@ export default {
           case 'bond_0':
             this.initRightBusinessList({
               tscode: row.tscode,
-              bidtype: 1
+              bidtype: 0
             })
             break
           case 'bond_1':
             this.initRightBusinessList({
               tscode: row.tscode,
-              bidtype: 0
+              bidtype: 1
             })
             break
         }
