@@ -627,6 +627,7 @@ import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 import { pageMixin } from '@/utils/pageMixin'
 import config from '@/utils/config'
+import moment from 'moment'
 let socket
 let lockReconnect = false
 export default {
@@ -2415,10 +2416,16 @@ export default {
     // 买单交割日期变化
     handleBuyDeliveryCanlendar(obj) {
       this.buyForm.deliveryTime = obj.value
+      if (moment(obj.value).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isAfter(moment(new Date()).format('YYYY-MM-DD 11:00:00'))) {
+        this.$refs.buyForm.fields[0].deliveryTime = '即将收市，请谨慎提交'
+      }
     },
     // 卖单交割日期变化
     handleSaleDeliveryCanlendar(obj) {
       this.saleForm.deliveryTime = obj.value
+      if (moment(obj.value).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isAfter(moment(new Date()).format('YYYY-MM-DD 11:00:00'))) {
+        this.$refs.saleForm.fields[0].deliveryTime = '即将收市，请谨慎提交'
+      }
     },
     // 消息
     showMsg() {
