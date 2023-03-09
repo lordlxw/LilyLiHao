@@ -112,20 +112,20 @@ export default {
       tableHead: [
         // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
         { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
-        { label: '成交时间', prop: 'createTime', width: '190', align: 'left', show: true },
+        { label: '成交时间', prop: 'createTime', width: '190', align: 'left', show: false },
+        { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
+        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
         { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
         { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
         { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
         { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
-        { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
-        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
         { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
         { label: '备注', prop: 'remark', width: 'auto', align: 'left', show: true },
-        { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
-        { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
+        { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: false },
+        { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: false },
         { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
         { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
-        { label: '交易员', prop: 'xunjiayuanName', width: '120', align: 'left', show: true }
+        { label: '研究员', prop: 'xunjiayuanName', width: '120', align: 'left', show: false }
         // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
       ],
       tableData: [],
