@@ -30,6 +30,8 @@
           row-key="userTradeId"
           default-expand-all
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+          :row-class-name="tableRowClassName"
+          :cell-style="cellStyle"
         >
           <template v-for="itemHead in tableHead">
             <el-table-column
@@ -103,6 +105,8 @@ export default {
     return {
       config,
       loading: false,
+      // 表格行内样式
+      rowClassNameList: ['warning-row'],
       // 表头
       tableHead: [
         // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
@@ -205,6 +209,23 @@ export default {
           return row.realVolume ? row.realVolume : "--"
       }
     },
+    // 行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (row.children) {
+        return 'warning-row'
+      }
+    },
+    // 盒子样式
+    cellStyle(row, column, rowIndex, columnIndex) {
+      if (row.column.label === '方向') {
+        switch (row.row.direction) {
+          case 'bond_1': // 卖出
+            return 'color:#e88585';
+          case 'bond_0': // 买入
+            return 'color:green';
+        }
+      }
+    }
   },
   mounted() {
     this.loadInitData()
