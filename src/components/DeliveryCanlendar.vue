@@ -38,7 +38,7 @@ export default {
           self.pickerOptions = {
             disabledDate(time) {
               const date = new Date()
-              return time.getTime() < Date.now() || time.getTime() > (date.getTime() + 3600 * 1000 * 24 * 30) || response.value.indexOf(util.dateFormat(time, 'yyyy-MM-dd')) !== -1;
+              return (time.getTime() + 3600 * 1000 * 24 * 1) < Date.now() || time.getTime() > (date.getTime() + 3600 * 1000 * 24 * 30) || response.value.indexOf(util.dateFormat(time, 'yyyy-MM-dd')) !== -1;
             }
           }
         }

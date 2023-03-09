@@ -40,12 +40,12 @@
           <el-button type="primary" @click="funcVolumeAdd(10000)">10</el-button>
         </el-button-group>
       </el-form-item>
-      <el-form-item label="交易速度" prop="deliveryTime">
-        <!-- <delivery-canlendar
-          ref="buyDeliveryCanlendar"
-          @change="handleBuyDeliveryCanlendar"
-        ></delivery-canlendar> -->
-        {{ coverForm.deliveryTime | dateFormat("yyyy-MM-dd") }}
+      <el-form-item label="交割日期" prop="deliveryTime">
+        <delivery-canlendar-update
+          ref="buyDeliveryCanlendarUpdate"
+          @change="handleBuyDeliveryCanlendarUpdate"
+        ></delivery-canlendar-update>
+        <!-- {{ coverForm.deliveryTime | dateFormat("YYYY-MM-DD") }} -->
         <el-button-group>
           <el-button
             icon="el-icon-plus"
@@ -95,11 +95,12 @@ import api from '@/api/kk_bonds'
 import apiAdmin from '@/api/kk_power_admin'
 import * as util from '@/utils/util'
 import config from '@/utils/config'
-import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
+import moment from 'moment'
+import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 export default {
   props: ['row'],
   components: {
-    DeliveryCanlendar
+    DeliveryCanlendarUpdate
   },
   data() {
     // 金额格式验证
@@ -131,7 +132,7 @@ export default {
         tscode: '',
         // 交割速度
         deliverySpeed: 0,
-        // 交割时间
+        // 交割日期
         deliveryTime: '',
         // 交易员
         tradeuserId: '',
@@ -157,7 +158,7 @@ export default {
           { validator: plusAmountTest, trigger: 'blur' }
         ],
         deliveryTime: [
-          { required: true, message: '交割时间必选', trigger: 'blur' }
+          { required: true, message: '交割日期必选', trigger: 'blur' }
         ],
         tradeuserId: [
           { required: true, message: '交易员必选', trigger: 'change' }
@@ -182,10 +183,10 @@ export default {
       return ''
     },
     // 买单交割日期变化
-    handleBuyDeliveryCanlendar(obj) {
+    handleBuyDeliveryCanlendarUpdate(obj) {
       this.coverForm.deliveryTime = obj.value
     },
-    // 点击交易速度
+    // 点击交割日期
     handleDelivertySpeed(val) {
       this.coverForm.deliverySpeed = val
     },
@@ -213,6 +214,7 @@ export default {
             volume: this[formName].volume,
             // 备注
             remark: this[formName].remark,
+            //
             realTradeIdList: this[formName].realTradeIdList
           }).then(res => {
             if (res && res.code === '00000' && res.value) {
@@ -233,18 +235,30 @@ export default {
       apiAdmin.realTradeUserList({ realTradeIdList }).then(response => {
         if (response && response.code === '00000' && response.value) {
           this.tradeUsersOption = response.value
+          this.coverForm.tradeuserId = response.value[0].userId
         }
       })
     },
     // 加载初始值
     loadInitData() {
+      console.log(this.row)
       this.coverForm.direction = this.row.direction === 'bond_0' ? 'bond_1' : (this.row.direction === 'bond_1' ? 'bond_0' : '')
       this.coverForm.tscode = this.row.tscode
       this.coverForm.price = this.row.price
       this.coverForm.volume = this.row.volume
-      this.coverForm.deliveryTime = this.row.deliveryTime
+      const isBefore = moment(moment(new Date()).format('YYYY-MM-DD 00:00:00')).isBefore(this.row.deliveryTime)
+      console.log(333333)
+      console.log(isBefore)
+      if (isBefore) {
+        this.$refs.buyDeliveryCanlendarUpdate.deliveryTime = this.row.deliveryTime
+        this.coverForm.deliveryTime = this.row.deliveryTime
+      } else {
+        this.$refs.buyDeliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD 00:00:00')
+        this.coverForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD 00:00:00')
+      }
+
       this.coverForm.realTradeIdList = this.row.realTradeIdList
-      this.getTradeUserList(JSON.stringify(this.row.realTradeIdList))
+      this.getTradeUserList(this.row.realTradeIdList)
     }
   },
   mounted() {

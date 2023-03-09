@@ -88,11 +88,8 @@ export default {
   // 平仓时选择交易员优先级
   realTradeUserList(params) {
     return request({
-      url: `${Vue.prototype.$apiUrl}/realtrade/listTrader`,
-      method: 'get',
-      data: {
-        realTradeIdList: params.realTradeIdList
-      },
+      url: `${Vue.prototype.$apiUrl}/realtrade/listTrader?realTradeIdList=${params.realTradeIdList}`,
+      method: 'get'
     })
   }
 }
