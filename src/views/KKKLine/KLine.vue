@@ -108,7 +108,18 @@
     </div>
     <div class="container" style="background-color: #202020">
       <!-- 左侧 -->
-      <div class="left-group">
+      <div
+        class="left-group"
+        :style="{
+          width: leftWith,
+        }"
+      >
+        <!-- 关闭和打开左侧侧面板 -->
+        <div
+          class="open-colse"
+          :class="leftFold"
+          @click="handleLeftOpenOrClose"
+        ></div>
         <ul class="left-tabs">
           <li
             :class="activeTab == tabList[0] ? 'active' : ''"
@@ -256,7 +267,7 @@
                 </el-form-item>
                 <el-form-item label="交易量(万)" prop="volume">
                   <el-input
-                    style="width: 190px"
+                    style="width: 176px"
                     v-model="buyForm.volume"
                     placeholder="请输入交易量"
                   ></el-input
@@ -264,8 +275,9 @@
                   <el-button-group class="mt10">
                     <el-button
                       type="primary"
+                      style="background: white; color: #202020"
                       @click="funcVolumeAdd('buyForm', 0)"
-                      >清零</el-button
+                      >0</el-button
                     >
                     <el-button
                       type="primary"
@@ -375,7 +387,7 @@
                 </el-form-item>
                 <el-form-item label="交易量(万)" prop="volume">
                   <el-input
-                    style="width: 190px"
+                    style="width: 176px"
                     v-model="saleForm.volume"
                     placeholder="请输入交易量"
                   ></el-input
@@ -383,8 +395,9 @@
                   <el-button-group class="mt10">
                     <el-button
                       type="primary"
+                      style="background: white; color: #202020"
                       @click="funcVolumeAdd('saleForm', 0)"
-                      >清零</el-button
+                      >0</el-button
                     >
                     <el-button
                       type="primary"
@@ -479,7 +492,11 @@
         }"
       >
         <!-- 关闭和打开右侧面板 -->
-        <div class="open-colse" :class="fold" @click="handleOpenOrClose"></div>
+        <div
+          class="open-colse"
+          :class="rightFold"
+          @click="handleRightOpenOrClose"
+        ></div>
         <!-- 卖出 -->
         <div class="r-out" v-if="businessOutList && businessOutList.length > 0">
           <el-scrollbar>
@@ -489,7 +506,7 @@
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
               >
-                <span style="width: 50px">{{ item.brokerName }}</span>
+                <span style="width: 50px">{{ item.brokername }}</span>
                 <span style="flex: 1" class="ellipsis">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
@@ -510,7 +527,7 @@
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
               >
-                <span style="width: 50px">{{ item.brokerName }}</span>
+                <span style="width: 50px">{{ item.brokername }}</span>
                 <span class="ellipsis" style="flex: 1">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
@@ -542,7 +559,7 @@
                 <span style="width: 120px">{{
                   item.tradeprice | moneyFormat(4)
                 }}</span>
-                <span style="width: 100px">{{ item.brokerName }}</span>
+                <span style="width: 100px">{{ item.brokername }}</span>
                 <span style="width: 80px">{{ item.tradetime }}</span>
                 <!-- <span style="width: 60px">{{ item.netprice }}</span> -->
               </li>
@@ -722,7 +739,9 @@ export default {
       noForward: null,
       data0: [],
       myChart: '',
-      fold: 'el-icon-s-unfold',
+      leftWith: '200px',
+      leftFold: 'el-icon-s-fold',
+      rightFold: 'el-icon-s-unfold',
       rightWith: '360px',
       optionTSType: [],
       optionYear: [
@@ -767,7 +786,7 @@ export default {
       //       "updatetime": "17:41:20",
       //       "updatedatetime": "2023-01-18 17:41:20",
       //       "brokerid": 2,
-      //       "brokerName": null,
+      //       "brokername": null,
       //       "bidtype": 0,
       //       "barginflag": 0,
       //       "volumecomment": "5000(明天+0)",
@@ -1740,13 +1759,27 @@ export default {
         e.returnValue = true
       }
     },
+    // 左侧面板关闭打开
+    handleLeftOpenOrClose() {
+      console.log(12)
+      if (this.leftFold === 'el-icon-s-fold') {
+        this.leftFold = 'el-icon-s-unfold'
+        this.leftWith = '0px'
+      } else {
+        this.leftFold = 'el-icon-s-fold'
+        this.leftWith = '200px'
+      }
+      setTimeout(() => {
+        this.myChart.resize()
+      }, 600)
+    },
     // 右侧面板关闭打开
-    handleOpenOrClose() {
-      if (this.fold === 'el-icon-s-unfold') {
-        this.fold = 'el-icon-s-fold'
+    handleRightOpenOrClose() {
+      if (this.rightFold === 'el-icon-s-unfold') {
+        this.rightFold = 'el-icon-s-fold'
         this.rightWith = '0px'
       } else {
-        this.fold = 'el-icon-s-unfold'
+        this.rightFold = 'el-icon-s-unfold'
         this.rightWith = '360px'
       }
       setTimeout(() => {
@@ -1878,17 +1911,17 @@ export default {
           for (let i = 0; i < arr.length; i++) {
             if (i === 0) {
               minVal = arr[i].price
-              self.saleForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
+              self.saleForm.remark = arr[i].tscode + " " + arr[i].brokername + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
             } else {
               if (arr[i].price < minVal) {
                 minVal = arr[i].price
-                self.saleForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
+                self.saleForm.remark = arr[i].tscode + " " + arr[i].brokername + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
               }
             }
           }
           return minVal
         // return Math.min.apply(Math, arr.map(item => {
-        //   self.saleForm.remark = item.tscode + " " + item.brokerName + " " + (item.volumecomment ? item.volumecomment : item.volume)
+        //   self.saleForm.remark = item.tscode + " " + item.brokername + " " + (item.volumecomment ? item.volumecomment : item.volume)
         //   return item.price
         // }))
         case 'max':
@@ -1896,17 +1929,17 @@ export default {
           for (let i = 0; i < arr.length; i++) {
             if (i === 0) {
               maxVal = arr[i].price
-              self.buyForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
+              self.buyForm.remark = arr[i].tscode + " " + arr[i].brokername + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
             } else {
               if (arr[i].price > maxVal) {
                 maxVal = arr[i].price
-                self.buyForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
+                self.buyForm.remark = arr[i].tscode + " " + arr[i].brokername + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
               }
             }
           }
           return maxVal
         // return Math.max.apply(Math, arr.map(item => {
-        //   self.buyForm.remark = item.tscode + " " + item.brokerName + " " + (item.volumecomment ? item.volumecomment : item.volume)
+        //   self.buyForm.remark = item.tscode + " " + item.brokername + " " + (item.volumecomment ? item.volumecomment : item.volume)
         //   return item.price
         // }))
       }
@@ -2606,9 +2639,21 @@ export default {
   bottom: 0px;
 
   .left-group {
-    width: 200px;
     border-right: 1px solid #ec0000;
+    position: relative;
+    transition: width 0.5s;
 
+    .open-colse {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      right: -16px;
+      top: 0;
+      color: #54ffff;
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 999999;
+    }
     .left-tabs {
       overflow: hidden;
       display: flex;
@@ -2631,6 +2676,7 @@ export default {
 
     .tab-common {
       height: 100%;
+      overflow: hidden;
     }
 
     .search-box {
