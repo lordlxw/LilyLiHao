@@ -238,8 +238,10 @@
                 size="mini"
                 class="buy-form"
               >
-                <el-form-item label="债券代码">
-                  <span class="txt-green">{{ buyForm.tscode }}</span>
+                <el-form-item label="券码">
+                  <span class="txt-green">{{
+                    buyForm.tscode.replace(/.IB/, "")
+                  }}</span>
                 </el-form-item>
                 <el-form-item label="价格" prop="price">
                   <el-input-number
@@ -311,13 +313,20 @@
                       >1</el-button
                     >
                   </el-button-group> -->
-                  <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
+                  <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span
+                  ><br />
+                  <el-button
+                    v-if="setAuth('inquiry:insert')"
+                    class="btn-green mt10"
+                    @click="submitForm('buyForm')"
+                    >发送</el-button
+                  >
                 </el-form-item>
                 <el-form-item label="交易员" prop="tradeuserId">
                   <el-select
                     v-model="buyForm.tradeuserId"
                     placeholder="请选择交易员"
-                    style="width: 150px"
+                    style="width: 120px"
                   >
                     <el-option
                       v-for="item in tradeUsersOption"
@@ -334,14 +343,9 @@
                     v-model="buyForm.remark"
                     placeholder="请输入内容"
                     resize="none"
-                    rows="2"
+                    rows="5"
+                    style="width: 360px"
                   ></el-input>
-                  <el-button
-                    v-if="setAuth('inquiry:insert')"
-                    class="btn-green"
-                    @click="submitForm('buyForm')"
-                    >发送</el-button
-                  >
                 </el-form-item>
               </el-form>
             </el-tab-pane>
@@ -356,8 +360,10 @@
                 size="mini"
                 class="sale-form"
               >
-                <el-form-item label="债券代码">
-                  <span class="txt-red">{{ saleForm.tscode }}</span>
+                <el-form-item label="券码">
+                  <span class="txt-red">{{
+                    saleForm.tscode.replace(/.IB/, "")
+                  }}</span>
                 </el-form-item>
                 <el-form-item label="价格" prop="price">
                   <el-input-number
@@ -427,12 +433,19 @@
                     >
                   </el-button-group> -->
                   <span class="txt-red">{{ saleForm.deliveryTimeMsg }}</span>
+                  <br />
+                  <el-button
+                    v-if="setAuth('inquiry:insert')"
+                    class="btn-red mt10"
+                    @click="submitForm('saleForm')"
+                    >发送</el-button
+                  >
                 </el-form-item>
                 <el-form-item label="交易员" prop="tradeuserId">
                   <el-select
                     v-model="saleForm.tradeuserId"
                     placeholder="请选择交易员"
-                    style="width: 150px"
+                    style="width: 120px"
                   >
                     <el-option
                       v-for="item in tradeUsersOption"
@@ -449,14 +462,9 @@
                     v-model="saleForm.remark"
                     placeholder="请输入内容"
                     resize="none"
-                    rows="2"
+                    rows="5"
+                    style="width: 360px"
                   ></el-input>
-                  <el-button
-                    v-if="setAuth('inquiry:insert')"
-                    class="btn-red"
-                    @click="submitForm('saleForm')"
-                    >发送</el-button
-                  >
                 </el-form-item>
               </el-form>
             </el-tab-pane>
