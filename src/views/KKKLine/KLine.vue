@@ -267,7 +267,7 @@
                 </el-form-item>
                 <el-form-item label="交易量(万)" prop="volume">
                   <el-input
-                    style="width: 176px"
+                    style="width: 160px"
                     v-model="buyForm.volume"
                     placeholder="请输入交易量"
                   ></el-input
@@ -281,13 +281,8 @@
                     >
                     <el-button
                       type="primary"
-                      @click="funcVolumeAdd('buyForm', 1000)"
-                      >1</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('buyForm', 2000)"
-                      >2</el-button
+                      @click="funcVolumeAdd('buyForm', 5000)"
+                      >5</el-button
                     >
                     <el-button
                       type="primary"
@@ -296,13 +291,18 @@
                     >
                     <el-button
                       type="primary"
-                      @click="funcVolumeAdd('buyForm', 5000)"
-                      >5</el-button
+                      @click="funcVolumeAdd('buyForm', 10000)"
+                      >10</el-button
                     >
                     <el-button
                       type="primary"
-                      @click="funcVolumeAdd('buyForm', 10000)"
-                      >10</el-button
+                      @click="funcVolumeAdd('buyForm', 2000)"
+                      >2</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 1000)"
+                      >1</el-button
                     >
                   </el-button-group>
                 </el-form-item>
@@ -338,7 +338,7 @@
                   <el-select
                     v-model="buyForm.tradeuserId"
                     placeholder="请选择交易员"
-                    style="width: 120px"
+                    style="width: 110px"
                   >
                     <el-option
                       v-for="item in tradeUsersOption"
@@ -387,7 +387,7 @@
                 </el-form-item>
                 <el-form-item label="交易量(万)" prop="volume">
                   <el-input
-                    style="width: 176px"
+                    style="width: 160px"
                     v-model="saleForm.volume"
                     placeholder="请输入交易量"
                   ></el-input
@@ -401,13 +401,8 @@
                     >
                     <el-button
                       type="primary"
-                      @click="funcVolumeAdd('saleForm', 1000)"
-                      >1</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('saleForm', 2000)"
-                      >2</el-button
+                      @click="funcVolumeAdd('saleForm', 5000)"
+                      >5</el-button
                     >
                     <el-button
                       type="primary"
@@ -416,13 +411,18 @@
                     >
                     <el-button
                       type="primary"
-                      @click="funcVolumeAdd('saleForm', 5000)"
-                      >5</el-button
+                      @click="funcVolumeAdd('saleForm', 10000)"
+                      >10</el-button
                     >
                     <el-button
                       type="primary"
-                      @click="funcVolumeAdd('saleForm', 10000)"
-                      >10</el-button
+                      @click="funcVolumeAdd('saleForm', 2000)"
+                      >2</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 1000)"
+                      >1</el-button
                     >
                   </el-button-group>
                 </el-form-item>
@@ -458,7 +458,7 @@
                   <el-select
                     v-model="saleForm.tradeuserId"
                     placeholder="请选择交易员"
-                    style="width: 120px"
+                    style="width: 110px"
                   >
                     <el-option
                       v-for="item in tradeUsersOption"
@@ -506,7 +506,7 @@
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
               >
-                <span style="width: 50px">{{ item.brokername }}</span>
+                <span style="width: 50px">{{ item.brokerName }}</span>
                 <span style="flex: 1" class="ellipsis">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
@@ -527,7 +527,7 @@
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
               >
-                <span style="width: 50px">{{ item.brokername }}</span>
+                <span style="width: 50px">{{ item.brokerName }}</span>
                 <span class="ellipsis" style="flex: 1">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
@@ -559,7 +559,7 @@
                 <span style="width: 120px">{{
                   item.tradeprice | moneyFormat(4)
                 }}</span>
-                <span style="width: 100px">{{ item.brokername }}</span>
+                <span style="width: 100px">{{ item.brokerName }}</span>
                 <span style="width: 80px">{{ item.tradetime }}</span>
                 <!-- <span style="width: 60px">{{ item.netprice }}</span> -->
               </li>
@@ -786,7 +786,7 @@ export default {
       //       "updatetime": "17:41:20",
       //       "updatedatetime": "2023-01-18 17:41:20",
       //       "brokerid": 2,
-      //       "brokername": null,
+      //       "brokerName": null,
       //       "bidtype": 0,
       //       "barginflag": 0,
       //       "volumecomment": "5000(明天+0)",
@@ -1911,17 +1911,17 @@ export default {
           for (let i = 0; i < arr.length; i++) {
             if (i === 0) {
               minVal = arr[i].price
-              self.saleForm.remark = arr[i].tscode + " " + arr[i].brokername + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
+              self.saleForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
             } else {
               if (arr[i].price < minVal) {
                 minVal = arr[i].price
-                self.saleForm.remark = arr[i].tscode + " " + arr[i].brokername + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
+                self.saleForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
               }
             }
           }
           return minVal
         // return Math.min.apply(Math, arr.map(item => {
-        //   self.saleForm.remark = item.tscode + " " + item.brokername + " " + (item.volumecomment ? item.volumecomment : item.volume)
+        //   self.saleForm.remark = item.tscode + " " + item.brokerName + " " + (item.volumecomment ? item.volumecomment : item.volume)
         //   return item.price
         // }))
         case 'max':
@@ -1929,17 +1929,17 @@ export default {
           for (let i = 0; i < arr.length; i++) {
             if (i === 0) {
               maxVal = arr[i].price
-              self.buyForm.remark = arr[i].tscode + " " + arr[i].brokername + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
+              self.buyForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
             } else {
               if (arr[i].price > maxVal) {
                 maxVal = arr[i].price
-                self.buyForm.remark = arr[i].tscode + " " + arr[i].brokername + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
+                self.buyForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
               }
             }
           }
           return maxVal
         // return Math.max.apply(Math, arr.map(item => {
-        //   self.buyForm.remark = item.tscode + " " + item.brokername + " " + (item.volumecomment ? item.volumecomment : item.volume)
+        //   self.buyForm.remark = item.tscode + " " + item.brokerName + " " + (item.volumecomment ? item.volumecomment : item.volume)
         //   return item.price
         // }))
       }
