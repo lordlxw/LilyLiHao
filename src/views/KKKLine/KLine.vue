@@ -231,10 +231,16 @@
               </li>
             </el-popover>
             <li class="txt-red txt-bold">
-              卖 {{ saleFormPrice | moneyFormat(4) }}
+              远卖 {{ saleFormForwardPrice | moneyFormat(4) }}
             </li>
             <li class="txt-green txt-bold">
-              买 {{ buyFormPrice | moneyFormat(4) }}
+              远买 {{ buyFormForwardPrice | moneyFormat(4) }}
+            </li>
+            <li class="txt-red txt-bold">
+              近卖 {{ saleFormPrice | moneyFormat(4) }}
+            </li>
+            <li class="txt-green txt-bold">
+              近买 {{ buyFormPrice | moneyFormat(4) }}
             </li>
           </ul>
           <el-tabs v-model="activeName">
@@ -951,6 +957,8 @@ export default {
         ]
       },
       buyFormPrice: '',
+      saleFormForwardPrice: '',
+      buyFormForwardPrice: '',
       setForm: {
         volume: 0,
         quickSubmit: false
@@ -2122,6 +2130,7 @@ export default {
                 break
               case 'isforward_1':
                 self.businessForwardOutList = msgJson.data
+                self.saleFormForwardPrice = self.funcGetBestPrice('max', msgJson.data)
                 // if (self.buyForm.maxWait <= 0) {
                 //   self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', msgJson.data)
                 // } else {
@@ -2130,6 +2139,7 @@ export default {
                 break
               case 'isforward_0':
                 self.businessForwardInList = msgJson.data
+                self.buyFormForwardPrice = self.funcGetBestPrice('min', msgJson.data)
                 // if (self.saleForm.maxWait <= 0) {
                 //   self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
                 // } else {
