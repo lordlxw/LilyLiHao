@@ -298,10 +298,10 @@
               </li>
             </el-popover>
             <li class="txt-red txt-bold">
-              卖 {{ saleForm.price | moneyFormat(4) }}
+              卖 {{ saleFormPrice | moneyFormat(4) }}
             </li>
             <li class="txt-green txt-bold">
-              买 {{ buyForm.price | moneyFormat(4) }}
+              买 {{ buyFormPrice | moneyFormat(4) }}
             </li>
           </ul>
           <el-tabs v-model="activeName">
@@ -317,10 +317,16 @@
                 <el-form-item label="债券代码">
                   <span class="txt-green">{{ buyForm.tscode }}</span>
                 </el-form-item>
-                <el-form-item label="价格">
-                  <span class="txt-green">{{
+                <el-form-item label="价格" prop="price">
+                  <el-input-number
+                    v-model="buyForm.price"
+                    step="0.001"
+                    placeholder="请输入价格"
+                    @input="handleMaxWait('buyForm')"
+                  ></el-input-number>
+                  <!-- <span class="txt-green">{{
                     buyForm.price | moneyFormat(4)
-                  }}</span>
+                  }}</span> -->
                 </el-form-item>
                 <el-form-item label="交易量(万)" prop="volume">
                   <el-input
@@ -381,6 +387,7 @@
                       >1</el-button
                     > -->
                   </el-button-group>
+                  <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
                 </el-form-item>
                 <el-form-item label="交易员" prop="tradeuserId">
                   <el-select
@@ -424,10 +431,12 @@
                 <el-form-item label="债券代码">
                   <span class="txt-red">{{ saleForm.tscode }}</span>
                 </el-form-item>
-                <el-form-item label="价格">
-                  <span class="txt-red">{{
-                    saleForm.price | moneyFormat(4)
-                  }}</span>
+                <el-form-item label="价格" prop="price">
+                  <el-input-number
+                    v-model="buyForm.price"
+                    placeholder="请输入价格"
+                    @input="handleMaxWait('saleForm')"
+                  ></el-input-number>
                 </el-form-item>
                 <el-form-item label="交易量(万)" prop="volume">
                   <el-input
@@ -488,6 +497,7 @@
                       >1</el-button
                     > -->
                   </el-button-group>
+                  <span class="txt-red">{{ saleForm.deliveryTimeMsg }}</span>
                 </el-form-item>
                 <el-form-item label="交易员" prop="tradeuserId">
                   <el-select
@@ -785,6 +795,10 @@ export default {
         remark: '',
         // 快速交易
         quickSubmit: false,
+        // 交割日期消息
+        deliveryTimeMsg: '',
+        // 等待时长
+        maxWait: 0
       },
       saleFormRules: {
         direction: [
@@ -805,6 +819,7 @@ export default {
           { required: true, message: '交易员必选', trigger: 'change' }
         ]
       },
+      saleFormPrice: '',
       buyForm: {
         // 交易类型
         direction: '买',
@@ -823,7 +838,11 @@ export default {
         // 备注
         remark: '',
         // 快速交易
-        quickSubmit: false
+        quickSubmit: false,
+        // 交割日期消息
+        deliveryTimeMsg: '',
+        // 等待时长
+        maxWait: 0
       },
       buyFormRules: {
         direction: [
@@ -844,6 +863,7 @@ export default {
           { required: true, message: '交易员必选', trigger: 'change' }
         ]
       },
+      buyFormPrice: '',
       setForm: {
         volume: 0,
         quickSubmit: false
@@ -861,7 +881,9 @@ export default {
       // 消息通知
       notifyRejection: {},
       // 交割日期选择
-      pickerOptions: {}
+      pickerOptions: {},
+      // 价格变动定时器
+      timer: null
     }
   },
   computed: {
@@ -883,6 +905,9 @@ export default {
     }
   },
   created() {
+    if (!this.setAuth('kline:view')) {
+      this.$router.push({ path: '/main' })
+    }
     this.keyDown()
     this.initSocket()
   },
@@ -1771,11 +1796,11 @@ export default {
           switch (params.bidtype) {
             case 1:
               self.businessOutList = res.value
-              self.buyForm.price = self.funcGetBestPrice('max', res.value)
+              self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', res.value)
               break;
             case 0:
               self.businessInList = res.value
-              self.saleForm.price = self.funcGetBestPrice('min', res.value)
+              self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', res.value)
               break;
             default:
               self.businessAllList = res.value
@@ -1982,13 +2007,21 @@ export default {
                 // self.businessOutList.pop()
                 // self.businessOutList.unshift(msgJson.data)
                 self.businessOutList = msgJson.data
-                self.buyForm.price = self.funcGetBestPrice('max', msgJson.data)
+                if (self.buyForm.maxWait <= 0) {
+                  self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', msgJson.data)
+                } else {
+                  self.buyFormPrice = self.funcGetBestPrice('max', msgJson.data)
+                }
                 break
               case 'bid_0':
                 // self.businessInList.pop()
                 // self.businessInList.unshift(msgJson.data)
                 self.businessInList = msgJson.data
-                self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
+                if (self.saleForm.maxWait <= 0) {
+                  self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
+                } else {
+                  self.saleFormPrice = self.funcGetBestPrice('min', msgJson.data)
+                }
                 break
               case 'trade':
                 self.transactionAllList.pop()
@@ -2396,8 +2429,6 @@ export default {
     },
     // 接收单据
     handleReceiveClick(row) {
-      console.log(111)
-      console.log(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_0' }))
       if (row.status === 'delegate_bond_0') {
         socket.send(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_0' }))
       } else if (row.status === 'delegate_bond_1') {
@@ -2417,14 +2448,18 @@ export default {
     handleBuyDeliveryCanlendar(obj) {
       this.buyForm.deliveryTime = obj.value
       if (moment(obj.value).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isAfter(moment(new Date()).format('YYYY-MM-DD 11:00:00'))) {
-        this.$refs.buyForm.fields[0].deliveryTime = '即将收市，请谨慎提交'
+        this.buyForm.deliveryTimeMsg = '即将收市'
+      } else {
+        this.buyForm.deliveryTimeMsg = ''
       }
     },
     // 卖单交割日期变化
     handleSaleDeliveryCanlendar(obj) {
       this.saleForm.deliveryTime = obj.value
       if (moment(obj.value).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isAfter(moment(new Date()).format('YYYY-MM-DD 11:00:00'))) {
-        this.$refs.saleForm.fields[0].deliveryTime = '即将收市，请谨慎提交'
+        this.saleForm.deliveryTimeMsg = '即将收市'
+      } else {
+        this.saleForm.deliveryTimeMsg = ''
       }
     },
     // 消息
@@ -2454,6 +2489,20 @@ export default {
           break;
       }
     },
+    // 价格修改等待时间
+    initPriceWait() {
+      this.timer = setInterval(() => {
+        if (this.buyForm.maxWait > 0) {
+          this.buyForm.maxWait -= 1
+        }
+        if (this.saleForm.maxWait > 0) {
+          this.saleForm.maxWait -= 1
+        }
+      }, 1000)
+    },
+    handleMaxWait(formName) {
+      this[formName].maxWait = 5
+    }
   },
   mounted() {
     this.initTSType()
@@ -2469,6 +2518,7 @@ export default {
     this.buyForm.quickSubmit = this.setForm.quickSubmit
     this.saleForm.quickSubmit = this.setForm.quickSubmit
 
+    this.initPriceWait()
     window.onresize = () => {
       if (this.myChart) {
         this.myChart.resize()
@@ -2477,6 +2527,8 @@ export default {
   },
   unmounted() {
     socket.close()
+    clearInterval(this.timer)
+    this.timer = null
   }
 }
 </script>
@@ -2716,7 +2768,7 @@ export default {
 
     .chatbox {
       width: 100%;
-      height: 380px;
+      height: 400px;
       position: relative;
       bottom: 0;
       color: #ec0000;

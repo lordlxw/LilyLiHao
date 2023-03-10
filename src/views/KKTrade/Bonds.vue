@@ -117,6 +117,7 @@ export default {
         { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
         { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
         { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '浮动盈亏', prop: 'floatProfit', width: '100', align: 'right', show: true },
         { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
         { label: '备注', prop: 'remark', width: 'auto', align: 'left', show: true },
         { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: false },
