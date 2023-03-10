@@ -173,6 +173,295 @@
       <!-- 中间 -->
       <div class="center">
         <div ref="refKline" if="data0.length>0" style="height: 500px"></div>
+        <div class="volume"></div>
+        <!-- 交易框 -->
+        <div class="chatbox">
+          <ul class="best-price-wapper">
+            <el-popover
+              placement="bottom-end"
+              width="300"
+              trigger="manual"
+              ref="popover-set"
+              v-model="popoverSetVisible"
+            >
+              <div class="default-set-wrapper">
+                <el-form
+                  ref="setForm"
+                  :model="setForm"
+                  :rules="setFormRules"
+                  label-width="100px"
+                >
+                  <el-form-item label="交易量（万）" prop="volume">
+                    <el-input v-model="setForm.volume"></el-input>
+                  </el-form-item>
+                  <el-form-item label="快速提交">
+                    <el-checkbox
+                      label="是"
+                      v-model="setForm.quickSubmit"
+                      name="quickSubmit"
+                    ></el-checkbox>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" @click="submitForm('setForm')"
+                      >保存默认设置</el-button
+                    >
+                    <el-button type="default" @click="popoverSetVisible = false"
+                      >取消</el-button
+                    >
+                  </el-form-item>
+                </el-form>
+              </div>
+              <li
+                slot="reference"
+                class="txt-white chat-set"
+                @click="popoverSetVisible = !popoverSetVisible"
+              >
+                <i class="el-icon-setting"></i>
+              </li>
+            </el-popover>
+            <li class="txt-red txt-bold">
+              卖 {{ saleFormPrice | moneyFormat(4) }}
+            </li>
+            <li class="txt-green txt-bold">
+              买 {{ buyFormPrice | moneyFormat(4) }}
+            </li>
+          </ul>
+          <el-tabs v-model="activeName">
+            <el-tab-pane label="买(F1)" name="buy">
+              <el-form
+                :inline="true"
+                label-position="top"
+                ref="buyForm"
+                :model="buyForm"
+                :rules="buyFormRules"
+                label-width="80px"
+                size="mini"
+                class="buy-form"
+              >
+                <el-form-item label="债券代码">
+                  <span class="txt-green">{{ buyForm.tscode }}</span>
+                </el-form-item>
+                <el-form-item label="价格" prop="price">
+                  <el-input-number
+                    v-model="buyForm.price"
+                    step="0.001"
+                    placeholder="请输入价格"
+                    @input="handleMaxWait('buyForm')"
+                  ></el-input-number>
+                  <!-- <span class="txt-green">{{
+                    buyForm.price | moneyFormat(4)
+                  }}</span> -->
+                </el-form-item>
+                <el-form-item label="交易量(万)" prop="volume">
+                  <el-input
+                    style="width: 190px"
+                    v-model="buyForm.volume"
+                    placeholder="请输入交易量"
+                  ></el-input
+                  ><br />
+                  <el-button-group class="mt10">
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 0)"
+                      >清零</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 1000)"
+                      >1</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 2000)"
+                      >2</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 3000)"
+                      >3</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 5000)"
+                      >5</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('buyForm', 10000)"
+                      >10</el-button
+                    >
+                  </el-button-group>
+                </el-form-item>
+                <el-form-item label="交割日期" prop="deliveryTime">
+                  <delivery-canlendar
+                    ref="buyDeliveryCanlendar"
+                    @change="handleBuyDeliveryCanlendar"
+                  ></delivery-canlendar>
+                  <!-- <el-button-group>
+                    <el-button
+                      icon="el-icon-plus"
+                      :class="funcDeliverySpeed('buyForm', 0)"
+                      @click="handleDelivertySpeed('buyForm', 0)"
+                      >0</el-button
+                    >
+                    <el-button
+                      icon="el-icon-plus"
+                      :class="funcDeliverySpeed('buyForm', 1)"
+                      @click="handleDelivertySpeed('buyForm', 1)"
+                      >1</el-button
+                    >
+                  </el-button-group> -->
+                  <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
+                </el-form-item>
+                <el-form-item label="交易员" prop="tradeuserId">
+                  <el-select
+                    v-model="buyForm.tradeuserId"
+                    placeholder="请选择交易员"
+                    style="width: 150px"
+                  >
+                    <el-option
+                      v-for="item in tradeUsersOption"
+                      :key="item.userId"
+                      :label="item.userName"
+                      :value="item.userId"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="备注">
+                  <el-input
+                    type="textarea"
+                    v-model="buyForm.remark"
+                    placeholder="请输入内容"
+                    resize="none"
+                    rows="2"
+                  ></el-input>
+                  <el-button
+                    v-if="setAuth('inquiry:insert')"
+                    class="btn-green"
+                    @click="submitForm('buyForm')"
+                    >发送</el-button
+                  >
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="卖(F2)" name="sale">
+              <el-form
+                :inline="true"
+                label-position="top"
+                ref="saleForm"
+                :model="saleForm"
+                :rules="saleFormRules"
+                label-width="80px"
+                size="mini"
+                class="sale-form"
+              >
+                <el-form-item label="债券代码">
+                  <span class="txt-red">{{ saleForm.tscode }}</span>
+                </el-form-item>
+                <el-form-item label="价格" prop="price">
+                  <el-input-number
+                    v-model="saleForm.price"
+                    step="0.001"
+                    placeholder="请输入价格"
+                    @input="handleMaxWait('saleForm')"
+                  ></el-input-number>
+                </el-form-item>
+                <el-form-item label="交易量(万)" prop="volume">
+                  <el-input
+                    style="width: 190px"
+                    v-model="saleForm.volume"
+                    placeholder="请输入交易量"
+                  ></el-input
+                  ><br />
+                  <el-button-group class="mt10">
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 0)"
+                      >清零</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 1000)"
+                      >1</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 2000)"
+                      >2</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 3000)"
+                      >3</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 5000)"
+                      >5</el-button
+                    >
+                    <el-button
+                      type="primary"
+                      @click="funcVolumeAdd('saleForm', 10000)"
+                      >10</el-button
+                    >
+                  </el-button-group>
+                </el-form-item>
+                <el-form-item label="交割日期" prop="deliveryTime">
+                  <delivery-canlendar
+                    ref="saleDeliveryCanlendar"
+                    @change="handleSaleDeliveryCanlendar"
+                  ></delivery-canlendar>
+                  <!-- <el-button-group>
+                    <el-button
+                      icon="el-icon-plus"
+                      :class="funcDeliverySpeed('saleForm', 0)"
+                      @click="handleDelivertySpeed('saleForm', 0)"
+                      >0</el-button
+                    >
+                    <el-button
+                      icon="el-icon-plus"
+                      :class="funcDeliverySpeed('saleForm', 1)"
+                      @click="handleDelivertySpeed('saleForm', 1)"
+                      >1</el-button
+                    >
+                  </el-button-group> -->
+                  <span class="txt-red">{{ saleForm.deliveryTimeMsg }}</span>
+                </el-form-item>
+                <el-form-item label="交易员" prop="tradeuserId">
+                  <el-select
+                    v-model="saleForm.tradeuserId"
+                    placeholder="请选择交易员"
+                    style="width: 150px"
+                  >
+                    <el-option
+                      v-for="item in tradeUsersOption"
+                      :key="item.userId"
+                      :label="item.userName"
+                      :value="item.userId"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="备注">
+                  <el-input
+                    type="textarea"
+                    v-model="saleForm.remark"
+                    placeholder="请输入内容"
+                    resize="none"
+                    rows="2"
+                  ></el-input>
+                  <el-button
+                    v-if="setAuth('inquiry:insert')"
+                    class="btn-red"
+                    @click="submitForm('saleForm')"
+                    >发送</el-button
+                  >
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
       </div>
       <!-- 右侧 -->
       <div
@@ -251,285 +540,6 @@
               </li>
             </ul>
           </el-scrollbar>
-        </div>
-        <!-- 交易框 -->
-        <div class="chatbox">
-          <ul class="best-price-wapper">
-            <el-popover
-              placement="bottom-end"
-              width="300"
-              trigger="manual"
-              ref="popover-set"
-              v-model="popoverSetVisible"
-            >
-              <div class="default-set-wrapper">
-                <el-form
-                  ref="setForm"
-                  :model="setForm"
-                  :rules="setFormRules"
-                  label-width="100px"
-                >
-                  <el-form-item label="交易量（万）" prop="volume">
-                    <el-input v-model="setForm.volume"></el-input>
-                  </el-form-item>
-                  <el-form-item label="快速提交">
-                    <el-checkbox
-                      label="是"
-                      v-model="setForm.quickSubmit"
-                      name="quickSubmit"
-                    ></el-checkbox>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" @click="submitForm('setForm')"
-                      >保存默认设置</el-button
-                    >
-                    <el-button type="default" @click="popoverSetVisible = false"
-                      >取消</el-button
-                    >
-                  </el-form-item>
-                </el-form>
-              </div>
-              <li
-                slot="reference"
-                class="txt-white chat-set"
-                @click="popoverSetVisible = !popoverSetVisible"
-              >
-                <i class="el-icon-setting"></i>
-              </li>
-            </el-popover>
-            <li class="txt-red txt-bold">
-              卖 {{ saleFormPrice | moneyFormat(4) }}
-            </li>
-            <li class="txt-green txt-bold">
-              买 {{ buyFormPrice | moneyFormat(4) }}
-            </li>
-          </ul>
-          <el-tabs v-model="activeName">
-            <el-tab-pane label="买(F1)" name="buy">
-              <el-form
-                ref="buyForm"
-                :model="buyForm"
-                :rules="buyFormRules"
-                label-width="80px"
-                size="mini"
-                class="buy-form"
-              >
-                <el-form-item label="债券代码">
-                  <span class="txt-green">{{ buyForm.tscode }}</span>
-                </el-form-item>
-                <el-form-item label="价格" prop="price">
-                  <el-input-number
-                    v-model="buyForm.price"
-                    step="0.001"
-                    placeholder="请输入价格"
-                    @input="handleMaxWait('buyForm')"
-                  ></el-input-number>
-                  <!-- <span class="txt-green">{{
-                    buyForm.price | moneyFormat(4)
-                  }}</span> -->
-                </el-form-item>
-                <el-form-item label="交易量(万)" prop="volume">
-                  <el-input
-                    v-model="buyForm.volume"
-                    placeholder="请输入交易量"
-                  ></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-button-group>
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('buyForm', 0)"
-                      >清零</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('buyForm', 1000)"
-                      >1</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('buyForm', 2000)"
-                      >2</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('buyForm', 3000)"
-                      >3</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('buyForm', 5000)"
-                      >5</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('buyForm', 10000)"
-                      >10</el-button
-                    >
-                  </el-button-group>
-                </el-form-item>
-                <el-form-item label="交割日期" prop="deliveryTime">
-                  <delivery-canlendar
-                    ref="buyDeliveryCanlendar"
-                    @change="handleBuyDeliveryCanlendar"
-                  ></delivery-canlendar>
-                  <el-button-group>
-                    <el-button
-                      icon="el-icon-plus"
-                      :class="funcDeliverySpeed('buyForm', 0)"
-                      @click="handleDelivertySpeed('buyForm', 0)"
-                      >0</el-button
-                    >
-                    <!-- <el-button
-                      icon="el-icon-plus"
-                      :class="funcDeliverySpeed('buyForm', 1)"
-                      @click="handleDelivertySpeed('buyForm', 1)"
-                      >1</el-button
-                    > -->
-                  </el-button-group>
-                  <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
-                </el-form-item>
-                <el-form-item label="交易员" prop="tradeuserId">
-                  <el-select
-                    v-model="buyForm.tradeuserId"
-                    placeholder="请选择交易员"
-                  >
-                    <el-option
-                      v-for="item in tradeUsersOption"
-                      :key="item.userId"
-                      :label="item.userName"
-                      :value="item.userId"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="备注">
-                  <el-input
-                    type="textarea"
-                    v-model="buyForm.remark"
-                    placeholder="请输入内容"
-                    resize="none"
-                    rows="2"
-                  ></el-input>
-                </el-form-item>
-                <el-form-item v-if="setAuth('inquiry:insert')">
-                  <el-button class="btn-green" @click="submitForm('buyForm')"
-                    >发送</el-button
-                  >
-                </el-form-item>
-              </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="卖(F2)" name="sale">
-              <el-form
-                ref="saleForm"
-                :model="saleForm"
-                :rules="saleFormRules"
-                label-width="80px"
-                size="mini"
-                class="sale-form"
-              >
-                <el-form-item label="债券代码">
-                  <span class="txt-red">{{ saleForm.tscode }}</span>
-                </el-form-item>
-                <el-form-item label="价格" prop="price">
-                  <el-input-number
-                    v-model="buyForm.price"
-                    placeholder="请输入价格"
-                    @input="handleMaxWait('saleForm')"
-                  ></el-input-number>
-                </el-form-item>
-                <el-form-item label="交易量(万)" prop="volume">
-                  <el-input
-                    v-model="saleForm.volume"
-                    placeholder="请输入交易量"
-                  ></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-button-group>
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('saleForm', 0)"
-                      >清零</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('saleForm', 1000)"
-                      >1</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('saleForm', 2000)"
-                      >2</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('saleForm', 3000)"
-                      >3</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('saleForm', 5000)"
-                      >5</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('saleForm', 10000)"
-                      >10</el-button
-                    >
-                  </el-button-group>
-                </el-form-item>
-                <el-form-item label="交割日期" prop="deliveryTime">
-                  <delivery-canlendar
-                    ref="saleDeliveryCanlendar"
-                    @change="handleSaleDeliveryCanlendar"
-                  ></delivery-canlendar>
-                  <el-button-group>
-                    <el-button
-                      icon="el-icon-plus"
-                      :class="funcDeliverySpeed('saleForm', 0)"
-                      @click="handleDelivertySpeed('saleForm', 0)"
-                      >0</el-button
-                    >
-                    <!-- <el-button
-                      icon="el-icon-plus"
-                      :class="funcDeliverySpeed('saleForm', 1)"
-                      @click="handleDelivertySpeed('saleForm', 1)"
-                      >1</el-button
-                    > -->
-                  </el-button-group>
-                  <span class="txt-red">{{ saleForm.deliveryTimeMsg }}</span>
-                </el-form-item>
-                <el-form-item label="交易员" prop="tradeuserId">
-                  <el-select
-                    v-model="saleForm.tradeuserId"
-                    placeholder="请选择交易员"
-                  >
-                    <el-option
-                      v-for="item in tradeUsersOption"
-                      :key="item.userId"
-                      :label="item.userName"
-                      :value="item.userId"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="备注">
-                  <el-input
-                    type="textarea"
-                    v-model="saleForm.remark"
-                    placeholder="请输入内容"
-                    resize="none"
-                    rows="2"
-                  ></el-input>
-                </el-form-item>
-                <el-form-item v-if="setAuth('inquiry:insert')">
-                  <el-button class="btn-red" @click="submitForm('saleForm')"
-                    >发送</el-button
-                  >
-                </el-form-item>
-              </el-form>
-            </el-tab-pane>
-          </el-tabs>
         </div>
       </div>
     </div>
@@ -2659,6 +2669,39 @@ export default {
 
   .center {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    .volume {
+      flex: 1;
+    }
+    .chatbox {
+      width: 100%;
+      height: 200px;
+      position: relative;
+      bottom: 0;
+      color: #ec0000;
+      box-sizing: border-box;
+      padding: 0px;
+      background: #202020;
+      overflow: hidden;
+      .best-price-wapper {
+        position: absolute;
+        overflow: hidden;
+        right: 0;
+        z-index: 1;
+        li {
+          height: 40px;
+          line-height: 40px;
+          float: right;
+          padding: 0 10px;
+          line-height: 40px;
+        }
+        li.chat-set:hover {
+          cursor: pointer;
+          background: #333131;
+        }
+      }
+    }
   }
 
   .right-group {
@@ -2762,35 +2805,6 @@ export default {
           top: 0px;
           right: 0;
           left: 0;
-        }
-      }
-    }
-
-    .chatbox {
-      width: 100%;
-      height: 400px;
-      position: relative;
-      bottom: 0;
-      color: #ec0000;
-      box-sizing: border-box;
-      padding: 0px;
-      background: #202020;
-      overflow: hidden;
-      .best-price-wapper {
-        position: absolute;
-        overflow: hidden;
-        right: 0;
-        z-index: 1;
-        li {
-          height: 40px;
-          line-height: 40px;
-          float: right;
-          padding: 0 10px;
-          line-height: 40px;
-        }
-        li.chat-set:hover {
-          cursor: pointer;
-          background: #333131;
         }
       }
     }
