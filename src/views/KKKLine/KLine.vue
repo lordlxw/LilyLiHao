@@ -2139,7 +2139,7 @@ export default {
                 break
               case 'isforward_0':
                 self.businessForwardInList = msgJson.data
-                self.buyFormForwardPrice = self.funcGetBestPrice('min', msgJson.data.concat(businessInList))
+                self.buyFormForwardPrice = self.funcGetBestPrice('min', msgJson.data.concat(self.businessInList))
                 // if (self.saleForm.maxWait <= 0) {
                 //   self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
                 // } else {
