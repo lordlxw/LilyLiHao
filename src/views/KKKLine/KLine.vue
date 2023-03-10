@@ -497,9 +497,9 @@
           :class="rightFold"
           @click="handleRightOpenOrClose"
         ></div>
-        <!-- 卖出 -->
-        <div class="r-out" v-if="businessOutList && businessOutList.length > 0">
-          <el-scrollbar>
+        <!-- 及期卖出 -->
+        <div class="r-out">
+          <el-scrollbar v-if="businessOutList && businessOutList.length > 0">
             <ul>
               <li
                 v-for="(item, index) in businessOutList"
@@ -518,12 +518,58 @@
             </ul>
           </el-scrollbar>
         </div>
-        <!-- 买入 -->
-        <div class="r-in" v-if="businessInList && businessInList.length > 0">
-          <el-scrollbar>
+        <!-- 及期买入 -->
+        <div class="r-in">
+          <el-scrollbar v-if="businessInList && businessInList.length > 0">
             <ul>
               <li
                 v-for="(item, index) in businessInList"
+                :key="index"
+                :title="item.volumecomment ? item.volumecomment : item.volume"
+              >
+                <span style="width: 50px">{{ item.brokerName }}</span>
+                <span class="ellipsis" style="flex: 1">
+                  {{ item.volumecomment ? item.volumecomment : item.volume }}
+                </span>
+                <span style="width: 50px">{{
+                  item.price | moneyFormat(4)
+                }}</span>
+                <span style="width: 50px">{{ item.updatetime }}</span>
+              </li>
+            </ul>
+          </el-scrollbar>
+        </div>
+        <!-- 远期卖出 -->
+        <div class="r-out">
+          <el-scrollbar
+            v-if="businessForwardOutList && businessForwardOutList.length > 0"
+          >
+            <ul>
+              <li
+                v-for="(item, index) in businessForwardOutList"
+                :key="index"
+                :title="item.volumecomment ? item.volumecomment : item.volume"
+              >
+                <span style="width: 50px">{{ item.brokerName }}</span>
+                <span style="flex: 1" class="ellipsis">
+                  {{ item.volumecomment ? item.volumecomment : item.volume }}
+                </span>
+                <span style="width: 50px">{{
+                  item.price | moneyFormat(4)
+                }}</span>
+                <span style="width: 50px">{{ item.updatetime }}</span>
+              </li>
+            </ul>
+          </el-scrollbar>
+        </div>
+        <!-- 远期买入 -->
+        <div class="r-in">
+          <el-scrollbar
+            v-if="businessForwardInList && businessForwardInList.length > 0"
+          >
+            <ul>
+              <li
+                v-for="(item, index) in businessForwardInList"
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
               >
@@ -771,10 +817,14 @@ export default {
       tstype: '',
       tslength: '1',
       // 摆单数据
-      // 买
+      // 及期买
       businessInList: [],
-      // 卖
+      // 及期卖
       businessOutList: [],
+      // 远期卖
+      businessForwardOutList: [],
+      // 远期买
+      businessForwardInList: [],
       // 买卖成交长度
       inOutLength: 26,
       // 所有
@@ -2054,9 +2104,7 @@ export default {
           const h = self.$createElement;
           if (msgJson && msgJson.dataKey === self.activeTscode) {
             switch (msgJson.dataType) {
-              case 'bid_1':
-                // self.businessOutList.pop()
-                // self.businessOutList.unshift(msgJson.data)
+              case 'noforward_1':
                 self.businessOutList = msgJson.data
                 if (self.buyForm.maxWait <= 0) {
                   self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', msgJson.data)
@@ -2064,15 +2112,29 @@ export default {
                   self.buyFormPrice = self.funcGetBestPrice('max', msgJson.data)
                 }
                 break
-              case 'bid_0':
-                // self.businessInList.pop()
-                // self.businessInList.unshift(msgJson.data)
+              case 'noforward_0':
                 self.businessInList = msgJson.data
                 if (self.saleForm.maxWait <= 0) {
                   self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
                 } else {
                   self.saleFormPrice = self.funcGetBestPrice('min', msgJson.data)
                 }
+                break
+              case 'isforward_1':
+                self.businessForwardOutList = msgJson.data
+                // if (self.buyForm.maxWait <= 0) {
+                //   self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', msgJson.data)
+                // } else {
+                //   self.buyFormPrice = self.funcGetBestPrice('max', msgJson.data)
+                // }
+                break
+              case 'isforward_0':
+                self.businessForwardInList = msgJson.data
+                // if (self.saleForm.maxWait <= 0) {
+                //   self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
+                // } else {
+                //   self.saleFormPrice = self.funcGetBestPrice('min', msgJson.data)
+                // }
                 break
               case 'trade':
                 self.transactionAllList.pop()
@@ -2802,7 +2864,7 @@ export default {
     .r-in,
     .r-out,
     .r-trans {
-      height: 100px;
+      height: 120px;
       border-bottom: 1px solid #ec0000;
       .el-scrollbar {
         width: 100%;
