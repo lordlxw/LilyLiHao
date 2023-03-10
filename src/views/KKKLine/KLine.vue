@@ -231,10 +231,10 @@
               </li>
             </el-popover>
             <li class="txt-red txt-bold">
-              远卖 {{ saleFormForwardPrice | moneyFormat(4) }}
+              总卖 {{ saleFormForwardPrice | moneyFormat(4) }}
             </li>
             <li class="txt-green txt-bold">
-              远买 {{ buyFormForwardPrice | moneyFormat(4) }}
+              总买 {{ buyFormForwardPrice | moneyFormat(4) }}
             </li>
             <li class="txt-red txt-bold">
               近卖 {{ saleFormPrice | moneyFormat(4) }}
@@ -2130,7 +2130,7 @@ export default {
                 break
               case 'isforward_1':
                 self.businessForwardOutList = msgJson.data
-                self.saleFormForwardPrice = self.funcGetBestPrice('max', msgJson.data)
+                self.saleFormForwardPrice = self.funcGetBestPrice('max', msgJson.data.concat(self.businessOutList))
                 // if (self.buyForm.maxWait <= 0) {
                 //   self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', msgJson.data)
                 // } else {
@@ -2139,7 +2139,7 @@ export default {
                 break
               case 'isforward_0':
                 self.businessForwardInList = msgJson.data
-                self.buyFormForwardPrice = self.funcGetBestPrice('min', msgJson.data)
+                self.buyFormForwardPrice = self.funcGetBestPrice('min', msgJson.data.concat(businessInList))
                 // if (self.saleForm.maxWait <= 0) {
                 //   self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
                 // } else {
