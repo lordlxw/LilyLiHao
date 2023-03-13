@@ -3,71 +3,102 @@
   <div class="content">
     <!-- <div class="filter-condition"></div> -->
     <div class="list">
-      <!-- <div class="do">
-        <div class="pagination mt10">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="pageNum"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size="pageSize"
-            layout="prev, next"
-            :total="totalCount"
-            background
-          >
-          </el-pagination>
-        </div>
-      </div> -->
-      <div class="table mt10">
-        <el-table
-          v-loading="loading"
-          ref="multipleTable"
-          :data="tableData"
-          tooltip-effect="dark"
-          style="width: 100%"
-          height="600"
-          border
-          row-key="rowId"
-          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-          :row-class-name="tableRowClassName"
-          :cell-style="cellStyle"
-        >
-          <template v-for="itemHead in tableHead">
-            <el-table-column
-              v-if="itemHead.show"
-              :key="itemHead.label"
-              :align="itemHead.align"
-              :prop="itemHead.prop"
-              :formatter="
-                itemHead.formatter
-                  ? itemHead.formatter
-                  : (row, column, cellValue, index) => {
-                      return cellValue;
-                    }
-              "
-              :label="itemHead.label"
-              :width="itemHead.width ? itemHead.width : ''"
+      <el-tabs
+        v-model="status"
+        type="card"
+        @tab-click="handleTabsClick"
+        class="mt20"
+      >
+        <el-tab-pane label="未平仓" name="0">
+          <div class="table mt10">
+            <el-table
+              v-loading="loading"
+              :data="tableData"
+              tooltip-effect="dark"
+              style="width: 100%"
+              height="600"
+              border
+              row-key="rowId"
+              :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+              :row-class-name="tableRowClassName"
+              :cell-style="cellStyle"
             >
-            </el-table-column>
-          </template>
-          <el-table-column
-            fixed="right"
-            align="center"
-            label="操作"
-            width="160"
-          >
-            <template slot-scope="scope">
-              <el-button
-                type="text"
-                v-if="setAuth('bonds:cover') && scope.row.realTradeId === null"
-                @click="handleBondsCover(scope.row)"
-                >平仓</el-button
+              <template v-for="itemHead in tableHead">
+                <el-table-column
+                  v-if="itemHead.show"
+                  :key="itemHead.label"
+                  :align="itemHead.align"
+                  :prop="itemHead.prop"
+                  :formatter="
+                    itemHead.formatter
+                      ? itemHead.formatter
+                      : (row, column, cellValue, index) => {
+                          return cellValue;
+                        }
+                  "
+                  :label="itemHead.label"
+                  :width="itemHead.width ? itemHead.width : ''"
+                >
+                </el-table-column>
+              </template>
+              <el-table-column
+                fixed="right"
+                align="center"
+                label="操作"
+                width="80"
               >
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
+                <template slot-scope="scope">
+                  <el-button
+                    type="text"
+                    v-if="
+                      setAuth('bonds:cover') && scope.row.realTradeId === null
+                    "
+                    @click="handleBondsCover(scope.row)"
+                    >平仓</el-button
+                  >
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="已平仓" name="1">
+          <div class="table mt10">
+            <el-table
+              v-loading="loading"
+              :data="tableDataFinish"
+              tooltip-effect="dark"
+              style="width: 100%"
+              height="600"
+              border
+              row-key="rowId"
+              :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+              :row-class-name="tableRowClassName"
+              :cell-style="cellStyle"
+            >
+              <template v-for="itemHead in tableHeadFinish">
+                <el-table-column
+                  v-if="itemHead.show"
+                  :key="itemHead.label"
+                  :align="itemHead.align"
+                  :prop="itemHead.prop"
+                  :formatter="
+                    itemHead.formatter
+                      ? itemHead.formatter
+                      : (row, column, cellValue, index) => {
+                          return cellValue;
+                        }
+                  "
+                  :label="itemHead.label"
+                  :width="itemHead.width ? itemHead.width : ''"
+                >
+                </el-table-column>
+              </template>
+            </el-table>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
     </div>
+
     <el-dialog
       title="平仓"
       width="500px;"
@@ -95,9 +126,6 @@ import * as util from '@/utils/util'
 import moment from 'moment'
 export default {
   mixins: [animationMixin, pageMixin],
-  props: {
-    status: ''
-  },
   components: {
     BondsCover
   },
@@ -107,11 +135,13 @@ export default {
       loading: false,
       // 表格行内样式
       rowClassNameList: ['warning-row'],
+      // 持仓状态
+      status: '0',
       // 表头
       tableHead: [
         // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
         { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
-        { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
+        { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '130', align: 'left', show: true },
         { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
         { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
         { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
@@ -129,6 +159,27 @@ export default {
         // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
       ],
       tableData: [],
+      tableHeadFinish: [
+        // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
+        { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
+        { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '130', align: 'left', show: true },
+        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
+        { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
+        { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
+        { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
+        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '浮动盈亏', prop: 'floatProfit', width: '100', align: 'right', show: true },
+        { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
+        { label: '备注', prop: 'remark', width: 'auto', align: 'left', show: true },
+        { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: false },
+        { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: false },
+        { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
+        { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
+        { label: '研究员', prop: 'xunjiayuanName', width: '120', align: 'left', show: false },
+        { label: '成交时间', prop: 'createTime', width: '190', align: 'left', show: true }
+        // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
+      ],
+      tableDataFinish: [],
       // 平仓弹框
       dialogBondsCoverFormVisible: false,
       currentRow: {},
@@ -190,6 +241,50 @@ export default {
         this.loading = false;
       });
     },
+    // 初始化已平仓数据
+    loadInitDataFinish() {
+      this.loading = true;
+      api.getFinish({
+        deliveryDateEnd: null,
+        deliveryDateStart: null,
+        realTradeId: null,
+        tradeNum: null,
+        tscode: null,
+        userName: null,
+        userTradeId: null
+      }).then((response) => {
+        if (response && response.code === 200 && response.rows) {
+          let rowId = 0
+          response.rows.forEach(element => {
+            if (element.children && element.children.length > 0) {
+              const realTradeIdList = []
+              element.children.forEach(element => {
+                rowId++
+                realTradeIdList.push(element.realTradeId)
+                element.rowId = rowId
+              })
+              rowId++
+              element.realTradeIdList = realTradeIdList
+              element.rowId = rowId
+            }
+          });
+          this.tableDataFinish = response.rows;
+          this.totalCount = response.total;
+        } else {
+          this.tableDataFinish = [];
+          this.totalCount = 0;
+        }
+        this.loading = false;
+      });
+    },
+    handleTabsClick(tab, event) {
+      if (tab.index === '0') {
+        this.loadInitData();
+      }
+      if (tab.index === '1') {
+        this.loadInitDataFinish();
+      }
+    },
     // 平仓弹框
     handleBondsCover(row) {
       Promise.all([this.currentRow = row]).then(() => {
@@ -221,15 +316,17 @@ export default {
         case "direction":
           return config.funcKeyValue(row.direction, "directionMeta")
         case "deliveryTime":
-          return moment(row.deliveryTime).format('YYYY-MM-DD') // + `（T+${row.deliverySpeed}）`
+          return moment(new Date(row.deliveryTime)).format('YYYY-MM-DD') // + `（T+${row.deliverySpeed}）`
         case "realDeliveryTime":
-          return row.realDeliveryTime ? moment(row.realDeliveryTime).format('YYYY-MM-DD') : "--"
+          return row.realDeliveryTime ? moment(new Date(row.realDeliveryTime)).format('YYYY-MM-DD') : "--"
         case "price":
           return util.moneyFormat(row.price, 4)
         case "realPrice":
           return row.realPrice ? util.moneyFormat(row.realPrice, 4) : "--"
         case "realVolume":
           return row.realVolume ? row.realVolume : "--"
+        case "tscode":
+          return row.tscode.replace(/.IB/, '')
       }
     },
     // 行样式
@@ -375,6 +472,6 @@ export default {
 
 <style lang="scss">
 body {
-  background-color: #f8f8f8;
+  background-color: white;
 }
 </style>

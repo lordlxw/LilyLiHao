@@ -3,12 +3,31 @@ import Vue from 'vue'
 import request from '@/utils/request'
 export default {
   /**
-   * 列表
+   * 未平仓列表
    * @param {*} params
    */
   get(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/listByCurrentUser`,
+      method: 'get',
+      params: {
+        deliveryDateEnd: params.deliveryDateEnd,
+        deliveryDateStart: params.deliveryDateStart,
+        realTradeId: params.realTradeId,
+        tradeNum: params.tradeNum,
+        tscode: params.tscode,
+        userName: params.userName,
+        userTradeId: params.userTradeId
+      }
+    })
+  },
+  /**
+   * 已平仓列表
+   * @param {*} params
+   */
+  getFinish(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/listFinishTrade`,
       method: 'get',
       params: {
         deliveryDateEnd: params.deliveryDateEnd,
