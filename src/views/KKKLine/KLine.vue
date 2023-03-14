@@ -1384,6 +1384,7 @@ export default {
             const downColor = '#00da3c';
             const downBorderColor = '#008F28';
             const option = {
+              animation: false,
               darkMode: true,
               backgroundColor: 'transparent',
               gradientColor: [],
@@ -1438,16 +1439,14 @@ export default {
                   'MA30': false
                 }
               },
-              grid: {
-                left: '0px',
-                right: '5px',
-                bottom: '0px',
-                top: 50,
-                containLabel: true,
-                show: true,
-                borderColor: '#ec0000'
+              axisPointer: {
+                link: [
+                  {
+                    xAxisIndex: [0, 1]
+                  }
+                ]
               },
-              xAxis: {
+              xAxis: [{
                 type: 'category',
                 data: this.data0.categoryData,
                 boundaryGap: false,
@@ -1463,8 +1462,29 @@ export default {
                 splitLine: { show: false },
                 min: 'dataMin',
                 max: 'dataMax'
-              },
-              yAxis: {
+              }, {
+                type: 'category',
+                gridIndex: 1,
+                data: this.data0.categoryData,
+                boundaryGap: false,
+                splitLine: { show: false },
+                axisLabel: { show: false },
+                axisTick: { show: false },
+                axisLine: { lineStyle: { color: '#777' } },
+                min: 'dataMin',
+                max: 'dataMax',
+                axisPointer: {
+                  type: 'shadow',
+                  label: { show: false },
+                  triggerTooltip: true,
+                  handle: {
+                    show: true,
+                    margin: 30,
+                    color: '#B80C00'
+                  }
+                }
+              }],
+              yAxis: [{
                 scale: true,
                 position: 'right',
                 splitArea: {
@@ -1486,22 +1506,53 @@ export default {
                     type: 'dashed'
                   }
                 }
-              },
+              }, {
+                scale: true,
+                gridIndex: 1,
+                splitNumber: 2,
+                axisLabel: { show: false },
+                axisLine: { show: false },
+                axisTick: { show: false },
+                splitLine: { show: false }
+              }],
+              grid: [{
+                left: 0,
+                right: 5,
+                bottom: 60,
+                top: 50,
+                containLabel: true,
+                show: true,
+                borderColor: '#ec0000'
+              }, {
+                left: 0,
+                right: 30,
+                bottom: 0,
+                top: 450,
+              }],
               dataZoom: [
                 {
                   type: 'inside',
-                  start: 50,
-                  end: 100
-                },
-                {
-                  show: false,
-                  type: 'slider',
-                  top: '90%',
+                  xAxisIndex: [0, 1],
                   start: 50,
                   end: 100
                 }
               ],
               series: [
+                {
+                  name: '交易量',
+                  type: 'bar',
+                  xAxisIndex: 1,
+                  yAxisIndex: 1,
+                  itemStyle: {
+                    color: '#7fbe9e'
+                  },
+                  emphasis: {
+                    itemStyle: {
+                      color: '#140'
+                    }
+                  },
+                  data: this.data0.volume
+                },
                 {
                   name: '日线',
                   type: 'candlestick',
@@ -1738,13 +1789,16 @@ export default {
     splitData(rawData, xAxisKey) {
       const categoryData = []
       const values = []
+      const volume = []
       for (let i = 0; i < rawData.length; i++) {
         categoryData.push(rawData[i][xAxisKey])
         values.push([rawData[i].openprice, rawData[i].closeprice, rawData[i].lowprice, rawData[i].highprice])
+        volume.push(rawData[i].openprice * 10000)
       }
       return {
         categoryData,
-        values
+        values,
+        volume
       }
     },
     calculateMA(dayCount, data0) {
