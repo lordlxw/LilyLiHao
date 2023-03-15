@@ -681,7 +681,7 @@
       <div class="both-clear"></div>
     </el-dialog>
     <audio controls ref="playAudio" style="display: none">
-      <source src="@/assets/audio/2.wav" type="audio/wav" />
+      <source src="@/assets/audio/1.wav" type="audio/wav" />
     </audio>
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
       <span>请确认需要提交询价单？</span>
