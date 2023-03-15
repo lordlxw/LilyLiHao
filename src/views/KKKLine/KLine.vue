@@ -1379,8 +1379,6 @@ export default {
             const chartDom = this.$refs.refKline
             this.myChart = echarts.init(chartDom)
             this.data0 = this.splitData(res.value, 'tradedate')
-            console.log(222222)
-            console.log(this.data0)
             const upColor = '#ec0000';
             const upBorderColor = '#8A0000';
             const downColor = '#00da3c';
@@ -1436,23 +1434,20 @@ export default {
                   return obj;
                 }
               },
-              legend: {
-                data: ['日线', 'MA5', 'MA10', 'MA20', 'MA30'],
-                show: true,
-                textStyle: {
-                  color: '#ec0000'
-                },
-                selected: {
-                  'MA10': false,
-                  'MA20': false,
-                  'MA30': false
-                }
-              },
+              // legend: {
+              //   data: ['日线', 'MA5', 'MA10', 'MA20', 'MA30'],
+              //   show: true,
+              //   textStyle: {
+              //     color: '#ec0000'
+              //   },
+              //   selected: {
+              //     'MA10': false,
+              //     'MA20': false,
+              //     'MA30': false
+              //   }
+              // },
               axisPointer: {
                 link: [
-                  {
-                    xAxisIndex: [0, 1]
-                  },
                   {
                     xAxisIndex: [0, 1]
                   }
@@ -1532,7 +1527,7 @@ export default {
                 left: 0,
                 right: 5,
                 bottom: 60,
-                top: 50,
+                top: 10,
                 containLabel: true,
                 show: true,
                 borderColor: '#ec0000'
@@ -1544,9 +1539,8 @@ export default {
               }],
               visualMap: {
                 show: false,
-                seriesIndex: 5,
+                seriesIndex: 0,
                 dimension: 2,
-                type: 'piecewise',
                 pieces: [
                   {
                     value: 1,
@@ -1596,33 +1590,33 @@ export default {
                     opacity: 0.5
                   }
                 },
-                {
-                  name: 'MA10',
-                  type: 'line',
-                  data: this.calculateMA(10, this.data0),
-                  smooth: true,
-                  lineStyle: {
-                    opacity: 0.5
-                  }
-                },
-                {
-                  name: 'MA20',
-                  type: 'line',
-                  data: this.calculateMA(20, this.data0),
-                  smooth: true,
-                  lineStyle: {
-                    opacity: 0.5
-                  }
-                },
-                {
-                  name: 'MA30',
-                  type: 'line',
-                  data: this.calculateMA(30, this.data0),
-                  smooth: true,
-                  lineStyle: {
-                    opacity: 0.5
-                  }
-                },
+                // {
+                //   name: 'MA10',
+                //   type: 'line',
+                //   data: this.calculateMA(10, this.data0),
+                //   smooth: true,
+                //   lineStyle: {
+                //     opacity: 0.5
+                //   }
+                // },
+                // {
+                //   name: 'MA20',
+                //   type: 'line',
+                //   data: this.calculateMA(20, this.data0),
+                //   smooth: true,
+                //   lineStyle: {
+                //     opacity: 0.5
+                //   }
+                // },
+                // {
+                //   name: 'MA30',
+                //   type: 'line',
+                //   data: this.calculateMA(30, this.data0),
+                //   smooth: true,
+                //   lineStyle: {
+                //     opacity: 0.5
+                //   }
+                // },
               ]
             }
             // this.myChart.setOption(option, true) 参数true表示清空之前的数据，默认为false
@@ -2702,7 +2696,7 @@ export default {
       width: 16px;
       height: 16px;
       right: -16px;
-      top: 0;
+      top: -5px;
       color: #54ffff;
       font-size: 16px;
       cursor: pointer;
@@ -2788,6 +2782,7 @@ export default {
       position: relative;
       bottom: 0;
       color: #ec0000;
+      border-top: 1px solid #ec0000;
       box-sizing: border-box;
       padding: 0px;
       background: #202020;
@@ -2824,7 +2819,7 @@ export default {
       width: 16px;
       height: 16px;
       left: -16px;
-      top: 0;
+      top: -5px;
       color: #54ffff;
       font-size: 16px;
       cursor: pointer;
