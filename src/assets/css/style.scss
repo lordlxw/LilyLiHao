@@ -86,7 +86,7 @@ body {
     }
 
     .color-red {
-        color: red;
+        color: #ec0000;
     }
 
     .pointer {
@@ -146,7 +146,7 @@ body {
             position : absolute;
             right    : -10px;
             top      : -10px;
-            color    : red;
+            color    : #ec0000;
             font-size: 20px;
             cursor   : pointer;
         }
@@ -172,7 +172,7 @@ body {
             position : absolute;
             right    : -10px;
             top      : -10px;
-            color    : red;
+            color    : #ec0000;
             font-size: 20px;
             cursor   : pointer;
         }
@@ -200,7 +200,7 @@ body {
             position : absolute;
             right    : -10px;
             top      : -10px;
-            color    : red;
+            color    : #ec0000;
             font-size: 20px;
             cursor   : pointer;
         }
@@ -386,7 +386,7 @@ a:hover {
 }
 
 .el-table .odd-row {
-    background: #f8d5d5;
+    background: #f3e2f3;
 }
 
 .el-table .even-row {

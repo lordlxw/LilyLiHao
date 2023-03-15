@@ -1379,15 +1379,17 @@ export default {
             const chartDom = this.$refs.refKline
             this.myChart = echarts.init(chartDom)
             this.data0 = this.splitData(res.value, 'tradedate')
+            console.log(222222)
+            console.log(this.data0)
             const upColor = '#ec0000';
             const upBorderColor = '#8A0000';
             const downColor = '#00da3c';
             const downBorderColor = '#008F28';
             const option = {
               animation: false,
-              darkMode: true,
-              backgroundColor: 'transparent',
-              gradientColor: [],
+              // darkMode: true,
+              // backgroundColor: 'transparent',
+              // gradientColor: [],
               // tooltip: {
               //   show: true,
               //   trigger: 'axis',
@@ -1449,8 +1451,10 @@ export default {
               axisPointer: {
                 link: [
                   {
-                    // xAxisIndex: [0, 1]
-                    xAxisIndex: 'all'
+                    xAxisIndex: [0, 1]
+                  },
+                  {
+                    xAxisIndex: [0, 1]
                   }
                 ]
               },
@@ -1459,12 +1463,12 @@ export default {
                 data: this.data0.categoryData,
                 boundaryGap: false,
                 axisLine: {
-                  show: false,
+                  show: true,
                   onZero: false,
                   lineStyle: {
                     color: '#ec0000',
                     width: 1,
-                    type: 'dotted'
+                    type: 'solid'
                   }
                 },
                 splitLine: { show: false },
@@ -1478,7 +1482,7 @@ export default {
                 splitLine: { show: false },
                 axisLabel: { show: false },
                 axisTick: { show: false },
-                axisLine: { lineStyle: { color: 'red' } },
+                axisLine: { lineStyle: { color: '#ec0000' } },
                 min: 'dataMin',
                 max: 'dataMax',
                 axisPointer: {
@@ -1516,6 +1520,7 @@ export default {
                 }
               }, {
                 scale: true,
+                position: 'right',
                 gridIndex: 1,
                 splitNumber: 2,
                 axisLabel: { show: false },
@@ -1533,14 +1538,15 @@ export default {
                 borderColor: '#ec0000'
               }, {
                 left: 0,
-                right: 25,
+                right: 30,
                 bottom: 1,
                 top: 450,
               }],
               visualMap: {
-                show: true,
+                show: false,
                 seriesIndex: 5,
                 dimension: 2,
+                type: 'piecewise',
                 pieces: [
                   {
                     value: 1,
@@ -1714,8 +1720,7 @@ export default {
       const volumes = []
       for (let i = 0; i < rawData.length; i++) {
         categoryData.push(rawData[i][xAxisKey])
-        values.push([rawData[i].openprice, rawData[i].closeprice, rawData[i].lowprice, rawData[i].highprice])
-        volumes.push(rawData[i].volume)
+        values.push([rawData[i].openprice, rawData[i].closeprice, rawData[i].lowprice, rawData[i].highprice, rawData[i].volume])
         volumes.push([i, rawData[i].volume, rawData[i].openprice > rawData[i].closeprice ? 1 : -1])
       }
       return {
