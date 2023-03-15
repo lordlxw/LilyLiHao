@@ -1425,6 +1425,13 @@ export default {
                 trigger: 'axis',
                 axisPointer: {
                   type: 'cross'
+                },
+                position: function (pos, params, el, elRect, size) {
+                  const obj = {
+                    top: 10
+                  };
+                  obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
+                  return obj;
                 }
               },
               legend: {
@@ -1470,7 +1477,7 @@ export default {
                 splitLine: { show: false },
                 axisLabel: { show: false },
                 axisTick: { show: false },
-                axisLine: { lineStyle: { color: '#777' } },
+                axisLine: { lineStyle: { color: 'red' } },
                 min: 'dataMin',
                 max: 'dataMax',
                 axisPointer: {
@@ -1478,7 +1485,7 @@ export default {
                   label: { show: false },
                   triggerTooltip: true,
                   handle: {
-                    show: true,
+                    show: false,
                     margin: 30,
                     color: '#B80C00'
                   }
@@ -1515,6 +1522,21 @@ export default {
                 axisTick: { show: false },
                 splitLine: { show: false }
               }],
+              visualMap: {
+                show: false,
+                seriesIndex: 5,
+                dimension: 2,
+                pieces: [
+                  {
+                    value: 1,
+                    color: '#ec0000'
+                  },
+                  {
+                    value: -1,
+                    color: '#00da3c'
+                  }
+                ]
+              },
               grid: [{
                 left: 0,
                 right: 5,
@@ -1525,8 +1547,8 @@ export default {
                 borderColor: '#ec0000'
               }, {
                 left: 0,
-                right: 30,
-                bottom: 0,
+                right: 0,
+                bottom: 1,
                 top: 450,
               }],
               dataZoom: [
@@ -1543,14 +1565,6 @@ export default {
                   type: 'bar',
                   xAxisIndex: 1,
                   yAxisIndex: 1,
-                  itemStyle: {
-                    color: '#7fbe9e'
-                  },
-                  emphasis: {
-                    itemStyle: {
-                      color: '#140'
-                    }
-                  },
                   data: this.data0.volume
                 },
                 {

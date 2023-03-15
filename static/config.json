@@ -1,6 +1,8 @@
 {
   "apiUrl111": "lilytest.quants.top:8005",
   "wsUrl222": "ws://lilytest.quants.top:8005/websocket",
-  "apiUrl": "http://180.184.173.35:8004",
-  "wsUrl": "ws://180.184.173.35:8004/websocket"
+  "apiUrl333": "http://180.184.173.35:8004",
+  "wsUrl444": "ws://180.184.173.35:8004/websocket",
+  "apiUrl": "https://api.quants.top",
+  "wsUrl": "wss://api.quants.top/websocket"
 }
