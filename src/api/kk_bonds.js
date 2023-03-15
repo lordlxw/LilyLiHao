@@ -51,8 +51,10 @@ export default {
       data: {
         // 交割速度
         deliverySpeed: params.deliverySpeed,
-        // 交割时间
+        // 交割日期
         deliveryTime: params.deliveryTime,
+        // 原交割日期
+        deliveryTime2: params.deliveryTime2,
         // 方向
         direction: params.direction,
         // 成交价格

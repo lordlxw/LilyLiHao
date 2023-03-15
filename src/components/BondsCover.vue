@@ -134,6 +134,8 @@ export default {
         deliverySpeed: 0,
         // 交割日期
         deliveryTime: '',
+        // 原交割日期
+        deliveryTime2: '',
         // 交易员
         tradeuserId: '',
         // 备注
@@ -207,6 +209,8 @@ export default {
             deliverySpeed: this[formName].deliverySpeed,
             // 交割日期
             deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD 00:00:00"),
+            // 原交割日期
+            deliveryTime2: util.dateFormat(this[formName].deliveryTime2, "YYYY-MM-DD 00:00:00"),
             // 买还是卖
             direction: this[formName].direction,
             // 成交价格
@@ -251,6 +255,7 @@ export default {
       this.coverForm.tscode = this.row.tscode
       this.coverForm.price = this.row.price
       this.coverForm.volume = this.row.volume
+      this.coverForm.deliveryTime2 = this.row.deliveryTime
       const isBefore = moment(moment(new Date()).format('YYYY-MM-DD 00:00:00')).isBefore(this.row.deliveryTime)
       if (isBefore) {
         this.$refs.buyDeliveryCanlendarUpdate.deliveryTime = this.row.deliveryTime
@@ -259,7 +264,6 @@ export default {
         this.$refs.buyDeliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD 00:00:00')
         this.coverForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD 00:00:00')
       }
-
       this.coverForm.realTradeIdList = this.row.realTradeIdList
       this.getTradeUserList(this.row.realTradeIdList)
     }

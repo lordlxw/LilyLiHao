@@ -292,13 +292,15 @@ export default {
           case 'bond_0':
             this.initRightBusinessList({
               tscode: row.tscode,
-              bidtype: 0
+              bidtype: 0,
+              deliveryTime2: row.deliveryTime
             })
             break
           case 'bond_1':
             this.initRightBusinessList({
               tscode: row.tscode,
-              bidtype: 1
+              bidtype: 1,
+              deliveryTime2: row.deliveryTime
             })
             break
         }
@@ -316,9 +318,9 @@ export default {
         case "direction":
           return config.funcKeyValue(row.direction, "directionMeta")
         case "deliveryTime":
-          return moment(new Date(row.deliveryTime)).format('YYYY-MM-DD') // + `（T+${row.deliverySpeed}）`
+          return moment(row.deliveryTime).format('YYYY-MM-DD') // + `（T+${row.deliverySpeed}）`
         case "realDeliveryTime":
-          return row.realDeliveryTime ? moment(new Date(row.realDeliveryTime)).format('YYYY-MM-DD') : "--"
+          return row.realDeliveryTime ? moment(row.realDeliveryTime).format('YYYY-MM-DD') : "--"
         case "price":
           return util.moneyFormat(row.price, 4)
         case "realPrice":

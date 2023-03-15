@@ -1793,7 +1793,7 @@ export default {
       for (let i = 0; i < rawData.length; i++) {
         categoryData.push(rawData[i][xAxisKey])
         values.push([rawData[i].openprice, rawData[i].closeprice, rawData[i].lowprice, rawData[i].highprice])
-        volume.push(rawData[i].openprice * 10000)
+        volume.push(rawData[i].volume)
       }
       return {
         categoryData,
