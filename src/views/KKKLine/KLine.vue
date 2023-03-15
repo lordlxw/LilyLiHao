@@ -1449,7 +1449,8 @@ export default {
               axisPointer: {
                 link: [
                   {
-                    xAxisIndex: [0, 1]
+                    // xAxisIndex: [0, 1]
+                    xAxisIndex: 'all'
                   }
                 ]
               },
@@ -1522,21 +1523,6 @@ export default {
                 axisTick: { show: false },
                 splitLine: { show: false }
               }],
-              visualMap: {
-                show: false,
-                seriesIndex: 5,
-                dimension: 2,
-                pieces: [
-                  {
-                    value: 1,
-                    color: '#ec0000'
-                  },
-                  {
-                    value: -1,
-                    color: '#00da3c'
-                  }
-                ]
-              },
               grid: [{
                 left: 0,
                 right: 5,
@@ -1547,10 +1533,25 @@ export default {
                 borderColor: '#ec0000'
               }, {
                 left: 0,
-                right: 0,
+                right: 25,
                 bottom: 1,
                 top: 450,
               }],
+              visualMap: {
+                show: true,
+                seriesIndex: 5,
+                dimension: 2,
+                pieces: [
+                  {
+                    value: 1,
+                    color: downColor
+                  },
+                  {
+                    value: -1,
+                    color: upColor
+                  }
+                ]
+              },
               dataZoom: [
                 {
                   type: 'inside',
@@ -1561,11 +1562,11 @@ export default {
               ],
               series: [
                 {
-                  name: '交易量',
+                  name: 'volume',
                   type: 'bar',
                   xAxisIndex: 1,
                   yAxisIndex: 1,
-                  data: this.data0.volume
+                  data: this.data0.volumes
                 },
                 {
                   name: '日线',
@@ -1579,99 +1580,6 @@ export default {
                     borderColor0: downBorderColor,
                     opacity: 1
                   },
-                  // markPoint: {
-                  //   itemStyle: {
-                  //     opacity: 0
-                  //   }
-                  // },
-                  // markLine: {
-                  //   lineStyle: {
-                  //     opacity: 0
-                  //   }
-                  // }
-                  // markPoint: {
-                  //   label: {
-                  //     formatter: function (param) {
-                  //       return param != null ? Math.round(param.value) + '' : '';
-                  //     }
-                  //   },
-                  //   data: [
-                  //     {
-                  //       name: 'Mark',
-                  //       coord: ['2013/5/31', 2300],
-                  //       value: 2300,
-                  //       itemStyle: {
-                  //         color: 'rgb(41,60,85)'
-                  //       }
-                  //     },
-                  //     {
-                  //       name: 'highest value',
-                  //       type: 'max',
-                  //       valueDim: 'highest'
-                  //     },
-                  //     {
-                  //       name: 'lowest value',
-                  //       type: 'min',
-                  //       valueDim: 'lowest'
-                  //     },
-                  //     {
-                  //       name: 'average value on close',
-                  //       type: 'average',
-                  //       valueDim: 'close'
-                  //     }
-                  //   ],
-                  //   tooltip: {
-                  //     formatter: function (param) {
-                  //       return param.name + '<br>' + (param.data.coord || '');
-                  //     }
-                  //   }
-                  // },
-                  // markLine: {
-                  //   symbol: ['none', 'none'],
-                  //   data: [
-                  //     [
-                  //       {
-                  //         name: 'from lowest to highest',
-                  //         type: 'min',
-                  //         valueDim: 'lowest',
-                  //         symbol: 'circle',
-                  //         symbolSize: 10,
-                  //         label: {
-                  //           show: false
-                  //         },
-                  //         emphasis: {
-                  //           label: {
-                  //             show: false
-                  //           }
-                  //         }
-                  //       },
-                  //       {
-                  //         type: 'max',
-                  //         valueDim: 'highest',
-                  //         symbol: 'circle',
-                  //         symbolSize: 10,
-                  //         label: {
-                  //           show: false
-                  //         },
-                  //         emphasis: {
-                  //           label: {
-                  //             show: false
-                  //           }
-                  //         }
-                  //       }
-                  //     ],
-                  //     {
-                  //       name: 'min line on close',
-                  //       type: 'min',
-                  //       valueDim: 'close'
-                  //     },
-                  //     {
-                  //       name: 'max line on close',
-                  //       type: 'max',
-                  //       valueDim: 'close'
-                  //     }
-                  //   ]
-                  // }
                 },
                 {
                   name: 'MA5',
@@ -1803,16 +1711,17 @@ export default {
     splitData(rawData, xAxisKey) {
       const categoryData = []
       const values = []
-      const volume = []
+      const volumes = []
       for (let i = 0; i < rawData.length; i++) {
         categoryData.push(rawData[i][xAxisKey])
         values.push([rawData[i].openprice, rawData[i].closeprice, rawData[i].lowprice, rawData[i].highprice])
-        volume.push(rawData[i].volume)
+        volumes.push(rawData[i].volume)
+        volumes.push([i, rawData[i].volume, rawData[i].openprice > rawData[i].closeprice ? 1 : -1])
       }
       return {
         categoryData,
         values,
-        volume
+        volumes
       }
     },
     calculateMA(dayCount, data0) {

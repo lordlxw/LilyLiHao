@@ -71,9 +71,8 @@
               height="600"
               border
               row-key="rowId"
-              :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-              :row-class-name="tableRowClassName"
-              :cell-style="cellStyle"
+              :row-class-name="tableRowFinishClassName"
+              :cell-style="finishCellStyle"
             >
               <template v-for="itemHead in tableHeadFinish">
                 <el-table-column
@@ -124,6 +123,8 @@ import BondsCover from '@/components/BondsCover.vue'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
 import moment from 'moment'
+let tableFinishClassName = ''
+let currentFinishCode = ''
 export default {
   mixins: [animationMixin, pageMixin],
   components: {
@@ -337,6 +338,25 @@ export default {
         return 'warning-row'
       }
     },
+    // 已平仓行样式
+    tableRowFinishClassName({ row, rowIndex }) {
+      if (rowIndex === 0) {
+        tableFinishClassName = 'odd-row'
+        currentFinishCode = row.finishCode
+      } else {
+        if (currentFinishCode !== row.finishCode) {
+          currentFinishCode = row.finishCode
+          if (tableFinishClassName === 'even-row') {
+            tableFinishClassName = 'odd-row'
+          } else {
+            tableFinishClassName = 'even-row'
+          }
+        } else {
+          console.log(rowIndex)
+        }
+      }
+      return tableFinishClassName
+    },
     // 盒子样式
     cellStyle(row, column, rowIndex, columnIndex) {
       if (row.column.label === '方向') {
@@ -344,7 +364,23 @@ export default {
           case 'bond_1': // 卖出
             return 'color:#e88585';
           case 'bond_0': // 买入
-            return 'color:green';
+            return 'color:#00da3c';
+        }
+      }
+    },
+    // 已平仓盒子样式
+    finishCellStyle(row, column, rowIndex, columnIndex) {
+      console.log(11111111)
+      console.log(row)
+      if (moment(moment(row.row.deliveryTime).format('YYYY-MM-DD')).isBefore(moment(new Date()).format('YYYY-MM-DD'))) {
+        return 'color:#5d0b0b';
+      }
+      if (row.column.label === '方向') {
+        switch (row.row.direction) {
+          case 'bond_1': // 卖出
+            return 'color:#e88585';
+          case 'bond_0': // 买入
+            return 'color:#00da3c';
         }
       }
     },

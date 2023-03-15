@@ -385,6 +385,14 @@ a:hover {
     background: #f0f9eb;
 }
 
+.el-table .odd-row {
+    background: #f8d5d5;
+}
+
+.el-table .even-row {
+    background: white;
+}
+
 .el-table--small .el-table__cell {
     padding: 0;
 }
