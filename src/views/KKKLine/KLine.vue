@@ -978,7 +978,9 @@ export default {
       // 交割日期选择
       pickerOptions: {},
       // 价格变动定时器
-      timer: null
+      timer: null,
+      // socket timer
+      socketTimer: null
     }
   },
   computed: {
@@ -1526,7 +1528,7 @@ export default {
               grid: [{
                 left: 0,
                 right: 5,
-                bottom: 60,
+                bottom: 70,
                 top: 10,
                 containLabel: true,
                 show: true,
@@ -1535,7 +1537,7 @@ export default {
                 left: 0,
                 right: 30,
                 bottom: 1,
-                top: 450,
+                top: 420,
               }],
               visualMap: {
                 show: false,
@@ -1581,15 +1583,15 @@ export default {
                     opacity: 1
                   },
                 },
-                {
-                  name: 'MA5',
-                  type: 'line',
-                  data: this.calculateMA(5, this.data0),
-                  smooth: true,
-                  lineStyle: {
-                    opacity: 0.5
-                  }
-                },
+                // {
+                //   name: 'MA5',
+                //   type: 'line',
+                //   data: this.calculateMA(5, this.data0),
+                //   smooth: true,
+                //   lineStyle: {
+                //     opacity: 0.5
+                //   }
+                // },
                 // {
                 //   name: 'MA10',
                 //   type: 'line',
@@ -1795,7 +1797,6 @@ export default {
     },
     // 左侧面板关闭打开
     handleLeftOpenOrClose() {
-      console.log(12)
       if (this.leftFold === 'el-icon-s-fold') {
         this.leftFold = 'el-icon-s-unfold'
         this.leftWith = '0px'
@@ -2079,6 +2080,7 @@ export default {
         // 打开事件
         socket.onopen = function () {
           console.log("websocket已打开");
+          self.socketHeart()
         }
         // 浏览器端收消息，获得从服务端发送过来的文本消息
         socket.onmessage = function (msg) {
@@ -2430,6 +2432,13 @@ export default {
         }
       }
     },
+    // socket心跳
+    socketHeart() {
+      this.socketTimer = setInterval(() => {
+        console.log('心跳')
+        socket.send(JSON.stringify({ "dataKey": 'HELLO', "dataType": 'ping' }))
+      }, 30 * 1000)
+    },
     // 播放提示音
     tryPlay() {
       const self = this
@@ -2628,6 +2637,8 @@ export default {
     socket.close()
     clearInterval(this.timer)
     this.timer = null
+    clearInterval(this.socketTimer)
+    this.socketTimer = null
   }
 }
 </script>

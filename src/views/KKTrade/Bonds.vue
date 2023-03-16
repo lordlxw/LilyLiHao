@@ -370,8 +370,6 @@ export default {
     },
     // 已平仓盒子样式
     finishCellStyle(row, column, rowIndex, columnIndex) {
-      console.log(11111111)
-      console.log(row)
       if (moment(moment(row.row.deliveryTime).format('YYYY-MM-DD')).isBefore(moment(new Date()).format('YYYY-MM-DD'))) {
         return 'color:#5d0b0b';
       }
