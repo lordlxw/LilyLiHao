@@ -16,10 +16,7 @@
         }}
       </el-form-item>
       <el-form-item label="券码" prop="tscode">
-        <el-input
-          v-model="coverForm.tscode"
-          placeholder="请输入券码"
-        ></el-input>
+        {{ coverForm.tscode }}
       </el-form-item>
       <el-form-item label="价格" prop="price">
         <el-input v-model="coverForm.price" placeholder="请输入价格"></el-input>
@@ -42,24 +39,23 @@
       </el-form-item>
       <el-form-item label="交割日期" prop="deliveryTime">
         <delivery-canlendar-update
-          ref="buyDeliveryCanlendarUpdate"
-          @change="handleBuyDeliveryCanlendarUpdate"
+          ref="deliveryCanlendarUpdate"
+          @change="handleDeliveryCanlendarUpdate"
         ></delivery-canlendar-update>
-        <!-- {{ coverForm.deliveryTime | dateFormat("YYYY-MM-DD") }} -->
-        <el-button-group>
+        <!-- <el-button-group>
           <el-button
             icon="el-icon-plus"
             :class="funcDeliverySpeed(0)"
             @click="handleDelivertySpeed(0)"
             >0</el-button
           >
-          <!-- <el-button
+          <el-button
                       icon="el-icon-plus"
                       :class="funcDeliverySpeed('coverForm', 1)"
                       @click="handleDelivertySpeed('coverForm', 1)"
                       >1</el-button
-                    > -->
-        </el-button-group>
+                    >
+        </el-button-group> -->
       </el-form-item>
       <el-form-item label="交易员" prop="tradeuserId">
         <el-select v-model="coverForm.tradeuserId" placeholder="请选择交易员">
@@ -92,6 +88,7 @@
 
 <script>
 import api from '@/api/kk_bonds'
+import apiCanlendar from '@/api/kk_canlendar'
 import apiAdmin from '@/api/kk_power_admin'
 import * as util from '@/utils/util'
 import config from '@/utils/config'
@@ -190,7 +187,7 @@ export default {
       return ''
     },
     // 买单交割日期变化
-    handleBuyDeliveryCanlendarUpdate(obj) {
+    handleDeliveryCanlendarUpdate(obj) {
       this.coverForm.deliveryTime = obj.value
     },
     // 点击交割日期
@@ -254,19 +251,29 @@ export default {
       this.coverForm.direction = this.row.direction === 'bond_1' ? 'bond_0' : (this.row.direction === 'bond_0' ? 'bond_1' : '')
       this.coverForm.tscode = this.row.tscode
       this.coverForm.price = this.row.price
-      this.coverForm.volume = this.row.volume
+      this.coverForm.volume = parseFloat(this.row.volume)
       this.coverForm.deliveryTime2 = this.row.deliveryTime
-      const isBefore = moment(moment(new Date()).format('YYYY-MM-DD 00:00:00')).isBefore(this.row.deliveryTime)
-      if (isBefore) {
-        this.$refs.buyDeliveryCanlendarUpdate.deliveryTime = this.row.deliveryTime
-        this.coverForm.deliveryTime = this.row.deliveryTime
+      if (moment(this.row.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
+        this.coverForm.deliveryTime = moment(this.row.deliveryTime).format('YYYY-MM-DD')
+        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.row.deliveryTime).format('YYYY-MM-DD')
+      } else if (moment(this.row.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
+        this.coverForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
       } else {
-        this.$refs.buyDeliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD 00:00:00')
-        this.coverForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD 00:00:00')
+        this.getNextDealDay()
       }
       this.coverForm.realTradeIdList = this.row.realTradeIdList
       this.getTradeUserList(this.row.realTradeIdList)
-    }
+    },
+    // 获取下个交易日
+    getNextDealDay() {
+      apiCanlendar.nextDealDay().then(response => {
+        if (response && response.code === '00000') {
+          this.coverForm.deliveryTime = response.value
+          this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
+        }
+      })
+    },
   },
   mounted() {
     this.loadInitData()

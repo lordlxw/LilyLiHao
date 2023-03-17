@@ -6,6 +6,15 @@
       :rules="bondsFormRules"
       label-width="100px"
     >
+      <el-form-item label="方向" prop="direction">
+        {{
+          bondsForm.direction === "bond_0"
+            ? "买入"
+            : bondsForm.direction === "bond_1"
+            ? "卖出"
+            : "不明确"
+        }}
+      </el-form-item>
       <el-form-item label="券码">
         {{ bondsForm.tscode }}
       </el-form-item>
@@ -28,25 +37,25 @@
           <el-button type="primary" @click="funcVolumeAdd(10000)">10</el-button>
         </el-button-group>
       </el-form-item>
-      <el-form-item label="交易速度" prop="deliveryTime">
-        <delivery-canlendar
-          ref="buyDeliveryCanlendar"
-          @change="handleBuyDeliveryCanlendar"
-        ></delivery-canlendar>
-        <el-button-group>
+      <el-form-item label="交割日期" prop="deliveryTime">
+        <delivery-canlendar-update
+          ref="deliveryCanlendarUpdate"
+          @change="handleDeliveryCanlendarUpdate"
+        ></delivery-canlendar-update>
+        <!-- <el-button-group>
           <el-button
             icon="el-icon-plus"
             :class="funcDeliverySpeed(0)"
             @click="handleDelivertySpeed(0)"
             >0</el-button
           >
-          <!-- <el-button
-                      icon="el-icon-plus"
-                      :class="funcDeliverySpeed('bondsForm', 1)"
-                      @click="handleDelivertySpeed('bondsForm', 1)"
-                      >1</el-button
-                    > -->
-        </el-button-group>
+          <el-button
+            icon="el-icon-plus"
+            :class="funcDeliverySpeed('bondsForm', 1)"
+            @click="handleDelivertySpeed('bondsForm', 1)"
+            >1</el-button
+          >
+        </el-button-group> -->
       </el-form-item>
       <el-form-item label="交易对手" prop="counterParty">
         <el-input
@@ -83,13 +92,15 @@
 
 <script>
 import api from '@/api/kk_bonds'
+import apiCanlendar from '@/api/kk_canlendar'
 import * as util from '@/utils/util'
 import config from '@/utils/config'
-import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
+import moment from 'moment'
+import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 export default {
   props: ['row'],
   components: {
-    DeliveryCanlendar
+    DeliveryCanlendarUpdate
   },
   data() {
     // 金额格式验证
@@ -130,7 +141,9 @@ export default {
         // 联系方式
         contactType: '',
         // 交易单ID
-        realTradeId: ''
+        realTradeId: '',
+        // 方向
+        direction: ''
       },
       bondsFormRules: {
         price: [
@@ -169,7 +182,7 @@ export default {
       return ''
     },
     // 买单交割日期变化
-    handleBuyDeliveryCanlendar(obj) {
+    handleDeliveryCanlendarUpdate(obj) {
       this.bondsForm.deliveryTime = obj.value
     },
     // 点击交易速度
@@ -214,16 +227,33 @@ export default {
     },
     loadInitData() {
       this.bondsForm.price = this.row.price
-      this.bondsForm.volume = this.row.volume
+      this.bondsForm.volume = parseFloat(this.row.volume)
       this.bondsForm.tscode = this.row.tscode
-      // this.bondsForm.deliverySpeed = this.row.deliverySpeed
-      this.bondsForm.deliveryTime = this.row.deliveryTime
+      if (moment(this.row.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
+        this.bondsForm.deliveryTime = moment(this.row.deliveryTime).format('YYYY-MM-DD')
+        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.row.deliveryTime).format('YYYY-MM-DD')
+      } else if (moment(this.row.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
+        this.bondsForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+      } else {
+        this.getNextDealDay()
+      }
       this.bondsForm.remark = this.row.remark
       this.bondsForm.counterParty = this.row.counterParty
       this.bondsForm.contactPerson = this.row.contactPerson
       this.bondsForm.contactType = this.row.contactType
       this.bondsForm.realTradeId = this.row.realTradeId
-    }
+      this.bondsForm.direction = this.row.direction
+    },
+    // 获取下个交易日
+    getNextDealDay() {
+      apiCanlendar.nextDealDay().then(response => {
+        if (response && response.code === '00000') {
+          this.bondsForm.deliveryTime = response.value
+          this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
+        }
+      })
+    },
   },
   mounted() {
     this.loadInitData()
