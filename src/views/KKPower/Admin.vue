@@ -96,6 +96,12 @@
             width="170"
           >
             <template slot-scope="scope">
+              <el-button
+                v-if="setAuth('system:user:edit')"
+                type="text"
+                @click="handleEdit(scope.row, '/power/tablehead')"
+                >设置表头</el-button
+              >
               <el-popover
                 v-if="setAuth('user:disable')"
                 placement="bottom-end"
@@ -208,7 +214,7 @@ export default {
         { label: "手机号", prop: "phonenumber", width: "120", align: "left", show: true },
         { label: "状态", prop: "status", formatter: this.funcFormat, width: "100", align: "left", show: true },
         { label: "备注", prop: "remark", width: "auto", align: "left", show: true },
-        { label: "创建时间", prop: "createTime", width: "140", align: "left", show: true }
+        { label: "创建时间", prop: "createTime", width: "150", align: "left", show: true }
       ],
       tableData: [],
       loading: true,

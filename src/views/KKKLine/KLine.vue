@@ -231,10 +231,16 @@
               </li>
             </el-popover>
             <li class="txt-red txt-bold">
+              总差 {{ forwardDiffPrice ? forwardDiffPrice : "0.00bp" }}
+            </li>
+            <li class="txt-red txt-bold">
               总卖 {{ saleFormForwardPrice | moneyFormat(4) }}
             </li>
             <li class="txt-green txt-bold">
               总买 {{ buyFormForwardPrice | moneyFormat(4) }}
+            </li>
+            <li class="txt-red txt-bold">
+              近差 {{ currentDiffPrice ? currentDiffPrice : "0.00bp" }}
             </li>
             <li class="txt-red txt-bold">
               近卖 {{ saleFormPrice | moneyFormat(4) }}
@@ -823,9 +829,9 @@ export default {
       tstype: '',
       tslength: '1',
       // 摆单数据
-      // 及期买
+      // 近期买
       businessInList: [],
-      // 及期卖
+      // 近期卖
       businessOutList: [],
       // 远期卖
       businessForwardOutList: [],
@@ -959,6 +965,10 @@ export default {
       buyFormPrice: '',
       saleFormForwardPrice: '',
       buyFormForwardPrice: '',
+      // 总差
+      forwardDiffPrice: '',
+      // 近差
+      currentDiffPrice: '',
       setForm: {
         volume: 0,
         quickSubmit: false
@@ -2097,6 +2107,7 @@ export default {
                 } else {
                   self.buyFormPrice = self.funcGetBestPrice('max', msgJson.data)
                 }
+                self.calcuDiffPrice(1)
                 break
               case 'noforward_0':
                 self.businessInList = msgJson.data
@@ -2105,10 +2116,12 @@ export default {
                 } else {
                   self.saleFormPrice = self.funcGetBestPrice('min', msgJson.data)
                 }
+                self.calcuDiffPrice(1)
                 break
               case 'isforward_1':
                 self.businessForwardOutList = msgJson.data
                 self.buyFormForwardPrice = self.funcGetBestPrice('max', msgJson.data.concat(self.businessOutList))
+                self.calcuDiffPrice(2)
                 // if (self.buyForm.maxWait <= 0) {
                 //   self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', msgJson.data)
                 // } else {
@@ -2118,6 +2131,7 @@ export default {
               case 'isforward_0':
                 self.businessForwardInList = msgJson.data
                 self.saleFormForwardPrice = self.funcGetBestPrice('min', msgJson.data.concat(self.businessInList))
+                self.calcuDiffPrice(2)
                 // if (self.saleForm.maxWait <= 0) {
                 //   self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
                 // } else {
@@ -2610,6 +2624,15 @@ export default {
     },
     handleMaxWait(formName) {
       this[formName].maxWait = 5
+    },
+    // 计算近差和总差 1:近差；2：总差
+    calcuDiffPrice(type) {
+      if (type === 1) {
+        this.currentDiffPrice = (util.moneyFormat((this.buyFormPrice - this.saleFormPrice) * 100, 2)) + 'bp'
+      }
+      if (type === 2) {
+        this.forwardDiffPrice = (util.moneyFormat((this.buyFormForwardPrice - this.saleFormForwardPrice) * 100, 2)) + 'bp'
+      }
     }
   },
   mounted() {

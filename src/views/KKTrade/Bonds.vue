@@ -115,7 +115,8 @@
 </template>
 
 <script>
-import api from "@/api/kk_bonds";
+import api from "@/api/kk_bonds"
+import apiAdmin from '@/api/kk_power_admin'
 import apiBondPool from '@/api/kk_bond_pool'
 import { pageMixin } from '@/utils/pageMixin'
 import { animationMixin } from '@/utils/animationMixin'
@@ -139,26 +140,27 @@ export default {
       // 持仓状态
       status: '0',
       // 表头
-      tableHead: [
-        // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
-        { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
-        { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '130', align: 'left', show: true },
-        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
-        { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
-        { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
-        { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
-        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
-        { label: '浮动盈亏', prop: 'floatProfit', width: '100', align: 'right', show: true },
-        { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
-        { label: '备注', prop: 'remark', width: 'auto', align: 'left', show: true },
-        { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: false },
-        { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: false },
-        { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
-        { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
-        { label: '研究员', prop: 'xunjiayuanName', width: '120', align: 'left', show: false },
-        { label: '成交时间', prop: 'createTime', width: '190', align: 'left', show: true }
-        // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
-      ],
+      tableHead: [],
+      // tableHead: [
+      // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
+      // { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
+      // { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '130', align: 'left', show: false },
+      // { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: false },
+      // { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: false },
+      // { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: false },
+      // { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
+      // { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: false },
+      // { label: '浮动盈亏', prop: 'floatProfit', width: '100', align: 'right', show: false },
+      // { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
+      // { label: '备注', prop: 'remark', width: 'auto', align: 'left', show: false },
+      // { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: false },
+      // { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: false },
+      // { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
+      // { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
+      // { label: '研究员', prop: 'xunjiayuanName', width: '120', align: 'left', show: false },
+      // { label: '成交时间', prop: 'createTime', width: '190', align: 'left', show: false }
+      // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
+      // ],
       tableData: [],
       tableHeadFinish: [
         // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
@@ -205,6 +207,23 @@ export default {
     },
     // 导出
     handleExport() {
+    },
+    // 获取用户模版id下设置的column
+    dispatchUserColumn() {
+      apiAdmin.getUserColumn({
+        templateId: 2,
+        userId: null,
+      }).then(response => {
+        if (response && response.code === '00000') {
+          const headContent = JSON.parse(response.value.headContent)
+          headContent.forEach(element => {
+            if (config.noBondsHead[element]) {
+              config.noBondsHead[element].formatter = this.funcFormat
+              this.tableHead.push(config.noBondsHead[element])
+            }
+          })
+        }
+      })
     },
     // 初始化数据
     loadInitData() {
@@ -331,6 +350,7 @@ export default {
         case "tscode":
           return row.tscode.replace(/.IB/, '')
       }
+      return row[column.property]
     },
     // 行样式
     tableRowClassName({ row, rowIndex }) {
@@ -432,6 +452,7 @@ export default {
     },
   },
   mounted() {
+    this.dispatchUserColumn()
     this.loadInitData()
   }
 }

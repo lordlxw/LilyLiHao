@@ -91,5 +91,44 @@ export default {
       url: `${Vue.prototype.$apiUrl}/realtrade/listTrader?realTradeIdList=${params.realTradeIdList}`,
       method: 'get'
     })
+  },
+  // ****** 设置表头
+  // column查询
+  getColumn(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/syscolumn/columnlist?templateId=${params.templateId}`,
+      method: 'get'
+    })
+  },
+  // template查询
+  getTemplate() {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/syscolumn/templatelist`,
+      method: 'get'
+    })
+  },
+  // 个人设置查询 ?templateId=${params.templateId}&userId=${params.userId}
+  getUserColumn(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/sysusercolumn/list`,
+      method: 'get',
+      params: {
+        templateId: params.templateId,
+        userId: params.userId
+      }
+    })
+  },
+  // 个人列设置保存
+  saveColumn(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/sysusercolumn/save`,
+      method: 'post',
+      data: {
+        fieldValue: params.fieldValue,
+        headContent: params.headContent,
+        templateId: params.templateId,
+        userId: params.userId
+      }
+    })
   }
 }

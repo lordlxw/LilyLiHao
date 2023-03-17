@@ -90,6 +90,21 @@ const router = new Router({
           path: '/power/admin/edit',
           component: () => import('@/views/KKPower/Admin/Edit.vue'),
         },
+        // 表头设置
+        {
+          path: '/power/tablehead',
+          component: () => import('@/views/KKPower/TableHead.vue'),
+        },
+        // 表头设置 - 添加
+        {
+          path: '/power/tablehead/add',
+          component: () => import('@/views/KKPower/TableHead/Add.vue'),
+        },
+        // 表头设置 - 编辑
+        {
+          path: '/power/tablehead/edit',
+          component: () => import('@/views/KKPower/TableHead/Edit.vue'),
+        },
         // 交易管理 - 询价单
         {
           path: '/trade/enquiry',
