@@ -114,7 +114,10 @@ export default {
     userTradeId: { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
     xunjiayuanId: { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
     xunjiayuanName: { label: '研究员', prop: 'xunjiayuanName', width: '120', align: 'left', show: true },
-    createTime: { label: '成交时间', prop: 'createTime', width: '190', align: 'left', show: true }
+    createTime: { label: '成交时间', prop: 'createTime', width: '150', align: 'left', show: true },
+    counterParty: { label: '交易对手', prop: 'counterParty', width: '90', align: 'left', show: true },
+    contactPerson: { label: '联系人', prop: 'contactPerson', width: '120', align: 'left', show: true },
+    contactType: { label: '联系方式', prop: 'contactType', width: '110', align: 'left', show: true }
     // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
   }
 }
