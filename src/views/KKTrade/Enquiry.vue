@@ -361,6 +361,7 @@
 
 <script>
 import api from "@/api/kk_trade";
+import apiAdmin from '@/api/kk_power_admin'
 import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
 import { pageMixin } from '@/utils/pageMixin'
@@ -398,31 +399,7 @@ export default {
       config,
       loading: false,
       // 表头
-      tableHead: [
-        // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
-        { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
-        { label: '交易员id', prop: 'userId', width: '120', align: 'left', show: false },
-        { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
-        { label: '询价时间', prop: 'createTime', width: '190', align: 'left', show: true },
-        { label: '询价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
-        { label: '成交价', prop: 'realPrice', formatter: this.funcFormat, width: '120', align: 'right', show: true },
-        { label: '询量（万）', prop: 'volume', width: '100', align: 'right', show: true },
-        { label: '成交额（万）', prop: 'realVolume', formatter: this.funcFormat, width: '100', align: 'right', show: true },
-        { label: '询价交割', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
-        { label: '成交交割', prop: 'realDeliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
-        { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
-        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
-        { label: '状态', prop: 'status', formatter: this.funcFormat, width: '120', align: 'left', show: true },
-        { label: '备注', prop: 'remark', width: '300', align: 'left', show: true },
-        { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
-        { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
-        { label: '研究员', prop: 'createuser', width: '160', align: 'left', show: true },
-        { label: '是否远期', prop: 'forward', width: '120', align: 'left', show: false },
-        { label: '相关单号', prop: 'parentId', width: '140', align: 'left', show: true },
-        { label: '修改人', prop: 'updateBy', width: '120', align: 'left', show: true },
-        { label: '修改时间', prop: 'updateTime', width: '120', align: 'left', show: true }
-        // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
-      ],
+      tableHead: [],
       tableData: [],
       dialogDealFormVisible: false,
       dealForm: {
@@ -475,6 +452,24 @@ export default {
     },
     // 导出
     handleExport() {
+    },
+    // 获取用户模版id下设置的column
+    dispatchUserColumn() {
+      apiAdmin.getUserColumn({
+        templateId: 1,
+        userId: null,
+      }).then(response => {
+        if (response && response.code === '00000') {
+          const headContent = JSON.parse(response.value.headContent)
+          for (let i = 0; i < headContent.length; i++) {
+            if (config.enquiryHead[headContent[i]]) {
+              config.enquiryHead[headContent[i]].formatter = this.funcFormat
+              this.tableHead.push(config.enquiryHead[headContent[i]])
+            }
+          }
+          this.loadInitData()
+        }
+      })
     },
     // 初始化数据
     loadInitData() {
@@ -677,7 +672,7 @@ export default {
     }
   },
   mounted() {
-    this.loadInitData()
+    this.dispatchUserColumn()
   }
 }
 </script>

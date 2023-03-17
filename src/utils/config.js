@@ -69,10 +69,36 @@ export default {
     // 版本号
     version: /^([1-9]\d|[1-9])(.([1-9]\d|\d)){2}$/
   },
-  // 未平仓表头
-  noBondsHead: {
+  // 询价单头
+  enquiryHead: {
     // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
-    createBy: { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: true },
+    createBy: { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
+    userId: { label: '交易员id', prop: 'userId', width: '120', align: 'left', show: false },
+    userTradeId: { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
+    createTime: { label: '询价时间', prop: 'createTime', width: '190', align: 'left', show: true },
+    price: { label: '询价', prop: 'price', width: '120', align: 'right', show: true },
+    realPrice: { label: '成交价', prop: 'realPrice', width: '120', align: 'right', show: true },
+    volume: { label: '询量', prop: 'volume', width: '100', align: 'right', show: true },
+    realVolume: { label: '成交额', prop: 'realVolume', width: '100', align: 'right', show: true },
+    deliveryTime: { label: '询价交割', prop: 'deliveryTime', width: '100', align: 'left', show: true },
+    realDeliveryTime: { label: '成交交割', prop: 'realDeliveryTime', width: '100', align: 'left', show: true },
+    tscode: { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
+    direction: { label: '方向', prop: 'direction', width: '80', align: 'left', show: true },
+    status: { label: '状态', prop: 'status', width: '120', align: 'left', show: true },
+    remark: { label: '备注', prop: 'remark', width: '300', align: 'left', show: true },
+    tradeNum: { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
+    deliverySpeed: { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
+    createuser: { label: '研究员', prop: 'createuser', width: '160', align: 'left', show: true },
+    forward: { label: '是否远期', prop: 'forward', width: '120', align: 'left', show: false },
+    parentId: { label: '相关单号', prop: 'parentId', width: '140', align: 'left', show: false },
+    updateBy: { label: '修改人', prop: 'updateBy', width: '120', align: 'left', show: true },
+    updateTime: { label: '修改时间', prop: 'updateTime', width: '120', align: 'left', show: true }
+    // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
+  },
+  // 未平仓表头
+  bondsHead: {
+    // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
+    createBy: { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
     tscode: { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '130', align: 'left', show: true },
     direction: { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
     price: { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
@@ -80,12 +106,12 @@ export default {
     deliverySpeed: { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: true },
     deliveryTime: { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
     floatProfit: { label: '浮动盈亏', prop: 'floatProfit', width: '100', align: 'right', show: true },
-    realTradeId: { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: true },
+    realTradeId: { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
     remark: { label: '备注', prop: 'remark', width: 'auto', align: 'left', show: true },
     tradeNum: { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
     tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
-    userTradeId: { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: true },
-    xunjiayuanId: { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: true },
+    userTradeId: { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
+    xunjiayuanId: { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
     xunjiayuanName: { label: '研究员', prop: 'xunjiayuanName', width: '120', align: 'left', show: true },
     createTime: { label: '成交时间', prop: 'createTime', width: '190', align: 'left', show: true }
     // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
