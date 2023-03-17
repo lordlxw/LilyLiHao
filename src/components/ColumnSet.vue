@@ -4,6 +4,7 @@
       :titles="['原始字段', '展示字段']"
       v-model="value"
       :data="data"
+      target-order="push"
     ></el-transfer>
     <el-button type="primary" @click="handleSaveColumn" class="mt20"
       >保存设置</el-button
