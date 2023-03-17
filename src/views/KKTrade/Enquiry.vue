@@ -439,6 +439,9 @@ export default {
       dialogEnquiryFormVisible: false
     }
   },
+  created() {
+    this.dispatchUserColumn()
+  },
   methods: {
     // 搜索事件
     handleSearch() {
@@ -667,14 +670,17 @@ export default {
           return row.realPrice ? util.moneyFormat(row.realPrice, 4) : "--"
         case "realVolume":
           return row.realVolume ? row.realVolume : "--"
+        case "tscode":
+          return row.tscode.replace(/.IB/, '')
       }
+      return row[column.property]
     },
     handleDialogVisible(obj) {
       this.dialogEnquiryFormVisible = obj.dialogVisible
     }
   },
   mounted() {
-    this.dispatchUserColumn()
+
   }
 }
 </script>
