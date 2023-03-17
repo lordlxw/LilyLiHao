@@ -23,6 +23,7 @@
           row-key="userTradeId"
           default-expand-all
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+          :key="Math.random()"
         >
           <template v-for="itemHead in tableHead">
             <el-table-column
@@ -42,6 +43,7 @@
             >
             </el-table-column>
           </template>
+          <el-table-column></el-table-column>
           <el-table-column
             fixed="right"
             align="center"

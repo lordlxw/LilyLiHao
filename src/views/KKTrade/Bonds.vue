@@ -22,6 +22,7 @@
               :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
               :row-class-name="tableRowClassName"
               :cell-style="cellStyle"
+              :key="Math.random()"
             >
               <template v-for="itemHead in tableHead">
                 <el-table-column
@@ -41,6 +42,7 @@
                 >
                 </el-table-column>
               </template>
+              <el-table-column></el-table-column>
               <el-table-column
                 fixed="right"
                 align="center"
@@ -73,6 +75,7 @@
               row-key="rowId"
               :row-class-name="tableRowFinishClassName"
               :cell-style="finishCellStyle"
+              :key="Math.random()"
             >
               <template v-for="itemHead in tableHeadFinish">
                 <el-table-column
@@ -92,6 +95,7 @@
                 >
                 </el-table-column>
               </template>
+              <el-table-column></el-table-column>
             </el-table>
           </div>
         </el-tab-pane>
@@ -142,26 +146,7 @@ export default {
       // 表头
       tableHead: [],
       tableData: [],
-      tableHeadFinish: [
-        // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
-        // { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
-        // { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '130', align: 'left', show: true },
-        // { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
-        // { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
-        // { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
-        // { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
-        // { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
-        // { label: '已平盈亏', prop: 'floatProfit', width: '100', align: 'right', show: true },
-        // { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
-        // { label: '备注', prop: 'remark', width: 'auto', align: 'left', show: true },
-        // { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: false },
-        // { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: false },
-        // { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
-        // { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
-        // { label: '研究员', prop: 'xunjiayuanName', width: '120', align: 'left', show: false },
-        // { label: '成交时间', prop: 'createTime', width: '190', align: 'left', show: true }
-        // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
-      ],
+      tableHeadFinish: [],
       tableDataFinish: [],
       // 平仓弹框
       dialogBondsCoverFormVisible: false,
@@ -171,6 +156,10 @@ export default {
       // 卖
       businessOutList: [],
     }
+  },
+  created() {
+    this.dispatchUserColumn()
+    this.dispatchUserBondedColumn()
   },
   methods: {
     // 搜索事件
@@ -199,7 +188,7 @@ export default {
           for (let i = 0; i < headContent.length; i++) {
             if (config.bondsHead[headContent[i]]) {
               config.bondsHead[headContent[i]].formatter = this.funcFormat
-              this.tableHeadFinish.push(config.bondsHead[headContent[i]])
+              this.tableHead.push(config.bondsHead[headContent[i]])
             }
           }
           this.loadInitData()
@@ -216,10 +205,9 @@ export default {
           for (let i = 0; i < headContent.length; i++) {
             if (config.bondsHead[headContent[i]]) {
               config.bondsHead[headContent[i]].formatter = this.funcFormat
-              this.tableHead.push(config.bondsHead[headContent[i]])
+              this.tableHeadFinish.push(config.bondsHead[headContent[i]])
             }
           }
-          this.loadInitDataFinish()
         }
       })
     },
@@ -297,10 +285,10 @@ export default {
     },
     handleTabsClick(tab, event) {
       if (tab.index === '0') {
-        this.loadInitData();
+        this.loadInitData()
       }
       if (tab.index === '1') {
-        this.loadInitDataFinish();
+        this.loadInitDataFinish()
       }
     },
     // 平仓弹框
@@ -369,8 +357,6 @@ export default {
           } else {
             tableFinishClassName = 'even-row'
           }
-        } else {
-          console.log(rowIndex)
         }
       }
       return tableFinishClassName
@@ -450,7 +436,7 @@ export default {
     },
   },
   mounted() {
-    this.dispatchUserColumn()
+    this.loadInitData()
   }
 }
 </script>

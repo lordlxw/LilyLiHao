@@ -68,14 +68,14 @@ export default {
         userId: this.userId,
       }).then(response => {
         if (response && response.code === '00000') {
-          this.value = response.value
+          this.value = JSON.parse(response.value.headContent)
         }
       })
     }
   },
   mounted() {
     Promise.all([(this.userId = this.urlParams.userId)]).then(() => {
-      // this.dispatchUserColumn()
+      this.dispatchUserColumn()
       this.dispatchColumn()
     });
   }
