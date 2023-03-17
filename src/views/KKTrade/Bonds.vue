@@ -58,6 +58,15 @@
                     @click="handleBondsCover(scope.row)"
                     >平仓</el-button
                   >
+                  <el-button
+                    @click="handleNoBondsEditClick(scope.row)"
+                    type="text"
+                    size="small"
+                    v-if="
+                      setAuth('bonds:update') && scope.row.realTradeId !== null
+                    "
+                    >修改</el-button
+                  >
                 </template>
               </el-table-column>
             </el-table>
@@ -96,6 +105,50 @@
                 </el-table-column>
               </template>
               <el-table-column></el-table-column>
+              <el-table-column
+                fixed="right"
+                align="center"
+                label="操作"
+                width="120"
+              >
+                <template slot-scope="scope">
+                  <el-popover
+                    v-if="setAuth('bonds:delivery')"
+                    placement="bottom-end"
+                    :ref="`popover-delivery-${scope.$index}`"
+                  >
+                    <p>
+                      确认要<span class="color-red"> 交割 </span> "{{
+                        scope.row.tscode
+                      }}"？
+                    </p>
+                    <div style="text-align: right">
+                      <el-button
+                        type="text"
+                        @click="
+                          scope._self.$refs[
+                            `popover-delivery-${scope.$index}`
+                          ].doClose()
+                        "
+                        >取消</el-button
+                      >
+                      <el-button type="text" @click="handleDeliveryClick(scope)"
+                        >确认</el-button
+                      >
+                    </div>
+                    <el-button type="text" slot="reference" class="ml10"
+                      >交割</el-button
+                    >
+                  </el-popover>
+                  <el-button
+                    @click="handleBondsEditClick(scope.row)"
+                    type="text"
+                    size="small"
+                    v-if="setAuth('bonds:update')"
+                    >修改</el-button
+                  >
+                </template>
+              </el-table-column>
             </el-table>
           </div>
         </el-tab-pane>
@@ -115,6 +168,32 @@
         @change="handleBondsCoverDialogVisible"
       ></bonds-cover>
     </el-dialog>
+    <el-dialog
+      title="未平仓编辑"
+      width="500px;"
+      :visible.sync="dialogNoBondsFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <no-bonds-edit
+        :row="nobondsRow"
+        @change="handleNoBondsDialogVisible"
+      ></no-bonds-edit>
+    </el-dialog>
+    <el-dialog
+      title="已平仓编辑"
+      width="500px;"
+      :visible.sync="dialogBondsFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <bonds-edit
+        :row="bondsRow"
+        @change="handleBondsDialogVisible"
+      ></bonds-edit>
+    </el-dialog>
   </div>
 </template>
 
@@ -125,6 +204,8 @@ import apiBondPool from '@/api/kk_bond_pool'
 import { pageMixin } from '@/utils/pageMixin'
 import { animationMixin } from '@/utils/animationMixin'
 import BondsCover from '@/components/BondsCover.vue'
+import NoBondsEdit from '@/components/NoBondsEdit.vue'
+import BondsEdit from '@/components/BondsEdit.vue'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
 import moment from 'moment'
@@ -133,7 +214,9 @@ let currentFinishCode = ''
 export default {
   mixins: [animationMixin, pageMixin],
   components: {
-    BondsCover
+    BondsCover,
+    NoBondsEdit,
+    BondsEdit
   },
   data() {
     return {
@@ -155,6 +238,12 @@ export default {
       businessInList: [],
       // 卖
       businessOutList: [],
+      // 未平仓编辑弹框
+      dialogNoBondsFormVisible: false,
+      nobondsRow: [],
+      // 已平仓编辑弹框
+      dialogBondsFormVisible: false,
+      bondsRow: []
     }
   },
   created() {
@@ -434,6 +523,52 @@ export default {
           return maxVal
       }
     },
+    // 交割
+    handleDeliveryClick(scope) {
+      console.log(`popover-delivery-${scope.$index}`)
+      scope._self.$refs[`popover-delivery-${scope.$index}`].doClose();
+      api.dealDelivery({ finishCodes: scope.row.finishCode }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: '已交割',
+            type: 'info'
+          })
+          scope._self.$refs[`popover-delivery-${scope.$index}`].doClose();
+          this.loadInitData()
+        } else {
+          this.$message({
+            message: response.message,
+            type: 'error'
+          })
+        }
+      })
+    },
+    // 未平仓弹框变化
+    handleNoBondsDialogVisible(obj) {
+      this.dialogNoBondsFormVisible = obj.dialogVisible
+      this.loadInitData()
+    },
+    // 未平仓编辑弹框
+    handleNoBondsEditClick(row) {
+      Promise.all([
+        this.nobondsRow = JSON.parse(JSON.stringify(row))
+      ]).then(() => {
+        this.dialogNoBondsFormVisible = true
+      })
+    },
+    // 已平仓弹框变化
+    handleBondsDialogVisible(obj) {
+      this.dialogBondsFormVisible = obj.dialogVisible
+      this.loadInitDataFinish()
+    },
+    // 已平仓编辑弹框
+    handleBondsEditClick(row) {
+      Promise.all([
+        this.bondsRow = JSON.parse(JSON.stringify(row))
+      ]).then(() => {
+        this.dialogBondsFormVisible = true
+      })
+    }
   },
   mounted() {
     this.loadInitData()

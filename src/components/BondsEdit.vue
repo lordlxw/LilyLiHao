@@ -1,36 +1,20 @@
 <template>
   <div>
     <el-form
-      ref="enquiryForm"
-      :model="enquiryForm"
-      :rules="enquiryFormRules"
+      ref="bondsForm"
+      :model="bondsForm"
+      :rules="bondsFormRules"
       label-width="100px"
     >
-      <el-form-item label="方向" prop="direction">
-        <el-button-group>
-          <el-button @click="handleDirection('买')" :class="funcDirection('买')"
-            >买</el-button
-          >
-          <el-button @click="handleDirection('卖')" :class="funcDirection('卖')"
-            >卖</el-button
-          >
-        </el-button-group>
-      </el-form-item>
-      <el-form-item label="券码" prop="tscode">
-        <el-input
-          v-model="enquiryForm.tscode"
-          placeholder="请输入券码"
-        ></el-input>
+      <el-form-item label="券码">
+        {{ bondsForm.tscode }}
       </el-form-item>
       <el-form-item label="价格" prop="price">
-        <el-input
-          v-model="enquiryForm.price"
-          placeholder="请输入价格"
-        ></el-input>
+        <el-input v-model="bondsForm.price" placeholder="请输入价格"></el-input>
       </el-form-item>
-      <el-form-item label="交易量(万)" prop="volume">
+      <el-form-item label="交易量" prop="volume">
         <el-input
-          v-model="enquiryForm.volume"
+          v-model="bondsForm.volume"
           placeholder="请输入交易量"
         ></el-input>
       </el-form-item>
@@ -58,34 +42,38 @@
           >
           <!-- <el-button
                       icon="el-icon-plus"
-                      :class="funcDeliverySpeed('enquiryForm', 1)"
-                      @click="handleDelivertySpeed('enquiryForm', 1)"
+                      :class="funcDeliverySpeed('bondsForm', 1)"
+                      @click="handleDelivertySpeed('bondsForm', 1)"
                       >1</el-button
                     > -->
         </el-button-group>
       </el-form-item>
-      <el-form-item label="交易员" prop="tradeuserId">
-        <el-select v-model="enquiryForm.tradeuserId" placeholder="请选择交易员">
-          <el-option
-            v-for="item in tradeUsersOption"
-            :key="item.userId"
-            :label="item.userName"
-            :value="item.userId"
-          >
-          </el-option>
-        </el-select>
+      <el-form-item label="交易对手" prop="counterParty">
+        <el-input
+          v-model="bondsForm.counterParty"
+          autocomplete="off"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="联系人" prop="contactPerson">
+        <el-input
+          v-model="bondsForm.contactPerson"
+          autocomplete="off"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="联系方式" prop="contactType">
+        <el-input v-model="bondsForm.contactType" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="备注">
         <el-input
           type="textarea"
-          v-model="enquiryForm.remark"
+          v-model="bondsForm.remark"
           placeholder="请输入内容"
           resize="none"
           rows="2"
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button class="btn-green" @click="submitForm('enquiryForm')"
+        <el-button class="btn-green" @click="submitForm('bondsForm')"
           >保存</el-button
         >
       </el-form-item>
@@ -94,8 +82,7 @@
 </template>
 
 <script>
-import api from '@/api/kk_trade'
-import apiAdmin from '@/api/kk_power_admin'
+import api from '@/api/kk_bonds'
 import * as util from '@/utils/util'
 import config from '@/utils/config'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
@@ -123,9 +110,7 @@ export default {
     }
     return {
       tradeUsersOption: [],
-      enquiryForm: {
-        // 交易类型
-        direction: '买',
+      bondsForm: {
         // 价格
         price: '',
         // 交易量
@@ -136,20 +121,18 @@ export default {
         deliverySpeed: 0,
         // 交割时间
         deliveryTime: '',
-        // 交易员
-        tradeuserId: '',
         // 备注
         remark: '',
-        // 快速交易
-        quickSubmit: false
+        // 交易对手
+        counterParty: '',
+        // 联系人
+        contactPerson: '',
+        // 联系方式
+        contactType: '',
+        // 交易单ID
+        realTradeId: ''
       },
-      enquiryFormRules: {
-        direction: [
-          { required: true, message: '方向必选', trigger: 'blur' }
-        ],
-        tscode: [
-          { required: true, message: '券码必填', trigger: 'blur' }
-        ],
+      bondsFormRules: {
         price: [
           { required: true, message: '价格必填', trigger: 'blur' },
           { validator: moneyTest, trigger: 'blur' }
@@ -160,75 +143,67 @@ export default {
         ],
         deliveryTime: [
           { required: true, message: '交割时间必选', trigger: 'blur' }
-        ],
-        tradeuserId: [
-          { required: true, message: '交易员必选', trigger: 'change' }
         ]
       }
+    }
+  },
+  watch: {
+    row: function () {
+      this.loadInitData()
     }
   },
   methods: {
     // 交易量加法函数
     funcVolumeAdd(val) {
       if (val === 0) {
-        this.enquiryForm.volume = 0
+        this.bondsForm.volume = 0
       } else {
-        this.enquiryForm.volume += val
+        this.bondsForm.volume += val
       }
-    },
-    // 方向
-    funcDirection(val) {
-      if (this.enquiryForm.direction === val) {
-        return 'btn-active'
-      }
-      return ''
     },
     // 交割速度方法
     funcDeliverySpeed(val) {
-      if (this.enquiryForm.deliverySpeed === val) {
+      if (this.bondsForm.deliverySpeed === val) {
         return 'btn-active'
       }
       return ''
     },
     // 买单交割日期变化
     handleBuyDeliveryCanlendar(obj) {
-      this.enquiryForm.deliveryTime = obj.value
+      this.bondsForm.deliveryTime = obj.value
     },
     // 点击交易速度
     handleDelivertySpeed(val) {
-      this.enquiryForm.deliverySpeed = val
-    },
-    // 点击交易方向
-    handleDirection(val) {
-      this.enquiryForm.direction = val
+      this.bondsForm.deliverySpeed = val
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          api.inquirySheetAdd({
+          api.dealBondsEdit({
             // 交割速度
             deliverySpeed: this[formName].deliverySpeed,
             // 交割日期
-            deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD"),
-            // 买还是卖
-            direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
+            deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD 00:00:00"),
             // 成交价格
             price: util.moneyFormat(this[formName].price, 4),
-            // 交易员
-            tradeuserId: this[formName].tradeuserId,
-            // 债券编号
-            tscode: this[formName].tscode,
             // 成交量
             volume: this[formName].volume,
             // 备注
-            remark: this[formName].remark
+            remark: this[formName].remark,
+            // 联系人
+            contactPerson: this[formName].contactPerson,
+            // 联系方式
+            contactType: this[formName].contactType,
+            // 交易对手
+            counterParty: this[formName].counterParty,
+            // 交易id
+            realTradeId: this[formName].realTradeId
           }).then(res => {
-            if (res && res.code === '00000' && res.value) {
-              const h = this.$createElement;
-              this.$notify({
-                title: '提醒',
-                message: h('i', { style: 'color: teal' }, '询价单发送成功')
-              });
+            if (res && res.code === '00000') {
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              })
               this.$emit('change', {
                 dialogVisible: false
               })
@@ -237,17 +212,21 @@ export default {
         }
       })
     },
-    // 获取交易员列表
-    getTradeUserList() {
-      apiAdmin.tradeUserList().then(response => {
-        if (response && response.code === '00000' && response.value) {
-          this.tradeUsersOption = response.value
-        }
-      })
-    },
+    loadInitData() {
+      this.bondsForm.price = this.row.price
+      this.bondsForm.volume = this.row.volume
+      this.bondsForm.tscode = this.row.tscode
+      // this.bondsForm.deliverySpeed = this.row.deliverySpeed
+      this.bondsForm.deliveryTime = this.row.deliveryTime
+      this.bondsForm.remark = this.row.remark
+      this.bondsForm.counterParty = this.row.counterParty
+      this.bondsForm.contactPerson = this.row.contactPerson
+      this.bondsForm.contactType = this.row.contactType
+      this.bondsForm.realTradeId = this.row.realTradeId
+    }
   },
   mounted() {
-    this.getTradeUserList()
+    this.loadInitData()
   }
 }
 </script>

@@ -87,7 +87,7 @@ export default {
     })
   },
   /**
-   *
+   * 滚单
    * @param {*} params
    */
   dealRoll(params) {
@@ -95,5 +95,69 @@ export default {
       url: `${Vue.prototype.$apiUrl}/realtrade/gundan`,
       method: 'post'
     })
-  }
+  },
+  // 已平仓交割
+  dealDelivery(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/jiaoge`,
+      method: 'post',
+      data: {
+        finishCodes: params.finishCodes
+      }
+    })
+  },
+  // 未平仓修改
+  dealNoBondsEdit(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/weipingchange`,
+      method: 'post',
+      data: {
+        // 联系人
+        contactPerson: params.contactPerson,
+        // 联系方式
+        contactType: params.contactType,
+        // 交易对手
+        counterParty: params.counterParty,
+        // 交割速度
+        deliverySpeed: params.deliverySpeed,
+        // 交割时间
+        deliveryTime: params.deliveryTime,
+        // 成交价格
+        price: params.price,
+        // 交易单ID
+        realTradeId: params.realTradeId,
+        // 备注
+        remark: params.remark,
+        // 成交量
+        volume: params.volume
+      }
+    })
+  },
+  // 已平仓修改
+  dealBondsEdit(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/yipingchange`,
+      method: 'post',
+      data: {
+        // 联系人
+        contactPerson: params.contactPerson,
+        // 联系方式
+        contactType: params.contactType,
+        // 交易对手
+        counterParty: params.counterParty,
+        // 交割速度
+        deliverySpeed: params.deliverySpeed,
+        // 交割时间
+        deliveryTime: params.deliveryTime,
+        // 成交价格
+        price: params.price,
+        // 交易单ID
+        realTradeId: params.realTradeId,
+        // 备注
+        remark: params.remark,
+        // 成交量
+        volume: params.volume
+      }
+    })
+  },
 }
