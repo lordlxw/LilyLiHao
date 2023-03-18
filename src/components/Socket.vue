@@ -257,7 +257,7 @@ export default {
               case 'deny_deal_bond_0':
               case 'deny_deal_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.tradeuser} 已拒绝成交`,
+                  title: `${msgJson.data.xunjiayuanName} 已拒绝成交`,
                   dangerouslyUseHTMLString: true,
                   message: `
                   <div class="notify">

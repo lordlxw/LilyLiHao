@@ -300,6 +300,7 @@
         :rules="rulesDealForm"
         ref="dealForm"
         label-width="90px"
+        :close-on-click-modal="false"
       >
         <el-form-item label="成交价格" prop="price">
           <el-input v-model="dealForm.price" autocomplete="off"></el-input>
