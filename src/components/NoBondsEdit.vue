@@ -219,7 +219,7 @@ export default {
           }).then(res => {
             if (res && res.code === '00000') {
               this.$message({
-                message: '修改成功',
+                message: '已发送修改 请等待研究员确认',
                 type: 'success'
               })
               this.$emit('change', {
