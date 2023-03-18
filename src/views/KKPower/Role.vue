@@ -75,9 +75,10 @@
                   <el-button
                     type="text"
                     @click="
-                      scope._self.$refs[
+                      handlePopoverClose(
+                        scope,
                         `popover-delete-${scope.$index}`
-                      ].doClose()
+                      )
                     "
                     >取消</el-button
                   >
@@ -127,7 +128,10 @@ export default {
             message: "删除成功",
             type: "success",
           });
-          scope._self.$refs[`popover-delete-${scope.$index}`].doClose();
+          this.handlePopoverClose(
+            scope,
+            `popover-delete-${scope.$index}`
+          )
           this.loadInitData();
         }
       });

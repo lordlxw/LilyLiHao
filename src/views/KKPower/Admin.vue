@@ -80,7 +80,7 @@
               :formatter="
                 itemHead.formatter
                   ? itemHead.formatter
-                  : function (row, column, cellValue, index) {
+                  : (row, column, cellValue, index) => {
                       return cellValue;
                     }
               "
@@ -118,9 +118,10 @@
                   <el-button
                     type="text"
                     @click="
-                      scope._self.$refs[
+                      handlePopoverClose(
+                        scope,
                         `popover-disabled-${scope.$index}`
-                      ].doClose()
+                      )
                     "
                     >取消</el-button
                   >
@@ -153,9 +154,10 @@
                   <el-button
                     type="text"
                     @click="
-                      scope._self.$refs[
+                      handlePopoverClose(
+                        scope,
                         `popover-delete-${scope.$index}`
-                      ].doClose()
+                      )
                     "
                     >取消</el-button
                   >
@@ -232,7 +234,7 @@ export default {
             message: `${scope.row.status === 0 ? "启用" : "禁用"}成功`,
             type: "success",
           });
-          scope._self.$refs[`popover-disabled-${scope.$index}`].doClose();
+          this.handlePopoverClose(scope, `popover-disabled-${scope.$index}`)
           this.loadInitData();
         }
       });
@@ -245,7 +247,7 @@ export default {
             message: "删除成功",
             type: "success",
           });
-          scope._self.$refs[`popover-delete-${scope.$index}`].doClose();
+          this.handlePopoverClose(scope, `popover-delete-${scope.$index}`)
           this.loadInitData();
         }
       });

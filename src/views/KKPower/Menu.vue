@@ -81,16 +81,17 @@
                 <p>
                   确认<span class="color-red">删除</span>“<span
                     class="color-main"
-                    >{{ scope.row.name }}</span
+                    >{{ scope.row.menuName }}</span
                   >”？
                 </p>
                 <div style="text-align: right">
                   <el-button
                     type="text"
                     @click="
-                      scope._self.$refs[
+                      handlePopoverClose(
+                        scope,
                         `popover-delete-${scope.$index}`
-                      ].doClose()
+                      )
                     "
                     >取消</el-button
                   >
@@ -162,7 +163,10 @@ export default {
             message: "删除成功",
             type: "success",
           });
-          scope._self.$refs[`popover-delete-${scope.$index}`].doClose();
+          this.handlePopoverClose(
+            scope,
+            `popover-delete-${scope.$index}`
+          )
           this.loadInitData();
         }
       });
