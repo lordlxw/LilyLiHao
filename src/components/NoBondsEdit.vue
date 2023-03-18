@@ -32,12 +32,12 @@
       </el-form-item>
       <el-form-item>
         <el-button-group>
-          <el-button type="primary" @click="funcVolumeAdd(0)">清零</el-button>
-          <el-button type="primary" @click="funcVolumeAdd(1000)">1</el-button>
-          <el-button type="primary" @click="funcVolumeAdd(2000)">2</el-button>
-          <el-button type="primary" @click="funcVolumeAdd(3000)">3</el-button>
+          <el-button type="primary" @click="funcVolumeAdd(0)" style="background: white; color:#333333">清零</el-button>
           <el-button type="primary" @click="funcVolumeAdd(5000)">5</el-button>
+          <el-button type="primary" @click="funcVolumeAdd(3000)">3</el-button>
           <el-button type="primary" @click="funcVolumeAdd(10000)">10</el-button>
+          <el-button type="primary" @click="funcVolumeAdd(2000)">2</el-button>
+          <el-button type="primary" @click="funcVolumeAdd(1000)">1</el-button>
         </el-button-group>
       </el-form-item>
       <el-form-item label="交割日期" prop="deliveryTime">
@@ -89,7 +89,7 @@
       </el-form-item>
       <el-form-item>
         <el-button class="btn-green" @click="submitForm('noBondsForm')"
-          >保存</el-button
+          >申请修改</el-button
         >
       </el-form-item>
     </el-form>

@@ -102,14 +102,14 @@ export default {
       url: `${Vue.prototype.$apiUrl}/realtrade/jiaoge`,
       method: 'post',
       data: {
-        finishCodes: params.finishCodes
+        realTradeId: params.realTradeId
       }
     })
   },
-  // 未平仓修改
+  // 未平仓修改申请
   dealNoBondsEdit(params) {
     return request({
-      url: `${Vue.prototype.$apiUrl}/realtrade/weipingchange`,
+      url: `${Vue.prototype.$apiUrl}/realtrade/weipingchangerequest`,
       method: 'post',
       data: {
         // 联系人
@@ -133,10 +133,10 @@ export default {
       }
     })
   },
-  // 已平仓修改
+  // 已平仓修改申请
   dealBondsEdit(params) {
     return request({
-      url: `${Vue.prototype.$apiUrl}/realtrade/yipingchange`,
+      url: `${Vue.prototype.$apiUrl}/realtrade/yipingchangerequest`,
       method: 'post',
       data: {
         // 联系人
@@ -160,4 +160,44 @@ export default {
       }
     })
   },
+  // 未平仓修改申请确认审核通过
+  dealNoBondsEditComfirm(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/weipingchangeconfirm`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
+  },
+  // 已平仓修改申请确认审核通过
+  dealBondsEditComfirm(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/yipingchangeconfirm`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
+  },
+  // 未平仓修改申请拒绝通过
+  dealNoBondsEditRejection(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/weipingchangedeny`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
+  },
+  // 已平仓修改申请拒绝通过
+  dealBondsEditRejection(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/yipingchangedeny`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
+  }
 }

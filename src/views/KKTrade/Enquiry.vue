@@ -69,17 +69,18 @@
                   >”？
                 </p>
                 <div style="text-align: right">
-                  <el-button type="text" @click="handleNotAcceptClick(scope)"
-                    >确认</el-button
-                  >
                   <el-button
                     type="text"
                     @click="
-                      scope._self.$refs[
+                      handlePopoverClose(
+                        scope,
                         `popover-notaccept-${scope.$index}`
-                      ].doClose()
+                      )
                     "
                     >取消</el-button
+                  >
+                  <el-button type="text" @click="handleNotAcceptClick(scope)"
+                    >确认</el-button
                   >
                 </div>
                 <el-button type="text" slot="reference" class="ml10"
@@ -114,9 +115,10 @@
                   <el-button
                     type="text"
                     @click="
-                      scope._self.$refs[
+                      handlePopoverClose(
+                        scope,
                         `popover-cancel-${scope.$index}`
-                      ].doClose()
+                      )
                     "
                     >取消</el-button
                   >
@@ -148,9 +150,10 @@
                   <el-button
                     type="text"
                     @click="
-                      scope._self.$refs[
+                      handlePopoverClose(
+                        scope,
                         `popover-agreecancel-${scope.$index}`
-                      ].doClose()
+                      )
                     "
                     >取消</el-button
                   >
@@ -182,9 +185,10 @@
                   <el-button
                     type="text"
                     @click="
-                      scope._self.$refs[
+                      handlePopoverClose(
+                        scope,
                         `popover-rejectioncancel-${scope.$index}`
-                      ].doClose()
+                      )
                     "
                     >取消</el-button
                   >
@@ -216,9 +220,10 @@
                   <el-button
                     type="text"
                     @click="
-                      scope._self.$refs[
+                      handlePopoverClose(
+                        scope,
                         `popover-agreedeal-${scope.$index}`
-                      ].doClose()
+                      )
                     "
                     >取消</el-button
                   >
@@ -250,9 +255,10 @@
                   <el-button
                     type="text"
                     @click="
-                      scope._self.$refs[
+                      handlePopoverClose(
+                        scope,
                         `popover-rejectiondeal-${scope.$index}`
-                      ].doClose()
+                      )
                     "
                     >取消</el-button
                   >
@@ -519,7 +525,10 @@ export default {
             message: '已拒收',
             type: 'info'
           })
-          scope._self.$refs[`popover-notaccept-${scope.$index}`].doClose();
+          this.handlePopoverClose(
+            scope,
+            `popover-notaccept-${scope.$index}`
+          )
           this.loadInitData()
         } else {
           this.$message({
@@ -589,7 +598,10 @@ export default {
             message: `${response.message}`,
             type: 'success'
           })
-          scope._self.$refs[`popover-cancel-${scope.$index}`].doClose();
+          this.handlePopoverClose(
+            scope,
+            `popover-cancel-${scope.$index}`
+          )
           this.loadInitData()
         }
       })
@@ -603,7 +615,10 @@ export default {
             message: "已撤单",
             type: 'success'
           })
-          scope._self.$refs[`popover-agreecancel-${scope.$index}`].doClose();
+          this.handlePopoverClose(
+            scope,
+            `popover-agreecancel-${scope.$index}`
+          )
           self.loadInitData()
         }
       })
@@ -617,7 +632,10 @@ export default {
             message: "已拒绝",
             type: 'success'
           })
-          scope._self.$refs[`popover-rejectioncancel-${scope.$index}`].doClose();
+          this.handlePopoverClose(
+            scope,
+            `popover-rejectioncancel-${scope.$index}`
+          )
           self.loadInitData()
         }
       })
@@ -631,7 +649,10 @@ export default {
             message: "已成交",
             type: 'success'
           })
-          scope._self.$refs[`popover-agreedeal-${scope.$index}`].doClose();
+          this.handlePopoverClose(
+            scope,
+            `popover-agreedeal-${scope.$index}`
+          )
           self.loadInitData()
         }
       })
@@ -645,7 +666,10 @@ export default {
             message: "已拒绝",
             type: 'success'
           })
-          scope._self.$refs[`popover-rejectiondeal-${scope.$index}`].doClose();
+          this.handlePopoverClose(
+            scope,
+            `popover-rejectiondeal-${scope.$index}`
+          )
           self.loadInitData()
         }
       })

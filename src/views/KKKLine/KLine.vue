@@ -722,6 +722,7 @@ import apiTrade from '@/api/kk_trade'
 import apiKLine from '@/api/kk_kline'
 import apiAdmin from '@/api/kk_power_admin'
 import apiLogin from '@/api/kk_login'
+import apiBonds from "@/api/kk_bonds"
 import ComTscodeSelect from '@/components/ComTscodeSelect.vue'
 import * as echarts from 'echarts'
 import configUtil from '@/utils/config.js'
@@ -744,7 +745,7 @@ export default {
     // 金额格式验证
     const moneyTest = async (rule, value, callback) => {
       if (!config.regExpSet.money.test(value)) {
-        callback(new Error('请输入正确格式（-.----）'))
+        callback(new Error('大于0的正确格式（-.----）'))
       } else {
         callback()
       }
@@ -2098,6 +2099,7 @@ export default {
           let msgJson = JSON.parse(msg.data)
           console.log(msgJson.dataType)
           const h = self.$createElement;
+          let notify = null
           if (msgJson && msgJson.dataKey === self.activeTscode) {
             switch (msgJson.dataType) {
               case 'noforward_1':
@@ -2204,7 +2206,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>交割日期</dt>
-                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                   </div>
                   `,
@@ -2248,7 +2250,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>交割日期</dt>
-                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                   </div>
                   `,
@@ -2286,7 +2288,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>交割日期</dt>
-                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                   </div>
                   `,
@@ -2319,7 +2321,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>交割日期</dt>
-                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                   </div>
                   `,
@@ -2352,7 +2354,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>交割日期</dt>
-                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                   </div>
                   `,
@@ -2362,7 +2364,7 @@ export default {
                 break
               case 'tradecompare_bond_0':
               case 'tradecompare_bond_1':
-                const notify = self.$notify({
+                notify = self.$notify({
                   title: `${msgJson.data.ut.tradeuser} 等待确认成交`,
                   dangerouslyUseHTMLString: true,
                   message: h(
@@ -2429,6 +2431,216 @@ export default {
                 });
                 self.tryPlay()
                 self.notifyRejection[msgJson.data.ut.userTradeId] = notify
+                break
+              case 'weipingchangerequest_bond_0':
+              case 'weipingchangerequest_bond_1':
+                notify = self.$notify({
+                  title: `${msgJson.data.changer} 等待未平仓修改审核`,
+                  dangerouslyUseHTMLString: true,
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "创建时间"),
+                        h("dd", null, `${msgJson.data.rt.createTime}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.rt.tscode.replace(/.IB/, '')}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.rt.direction === 'bond_0' ? '买入' : msgJson.data.rt.direction === 'bond_1' ? '卖出' : ' '}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交价"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red;padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.rt.price, 4) + ' ' : ''),
+                          h("span", null, util.moneyFormat(msgJson.data.dto.price, 4))
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交量"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.rt.volume + ' ' : ''),
+                          h("span", null, msgJson.data.dto.volume)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
+                          h("span", null, msgJson.data.dto.deliveryTime.substr(0, 10))
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割速度"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliverySpeed') !== -1 ? msgJson.data.rt.deliverySpeed : ''),
+                          h("span", null, msgJson.data.dto.deliverySpeed)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交易对手"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('counterParty') !== -1 ? msgJson.data.rt.counterParty : ''),
+                          h("span", null, msgJson.data.dto.counterParty)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "联系人"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactPerson') !== -1 ? msgJson.data.rt.contactPerson : ''),
+                          h("span", null, msgJson.data.dto.contactPerson)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "联系方式"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactType') !== -1 ? msgJson.data.rt.contactType : ''),
+                          h("span", null, msgJson.data.dto.contactType)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "备注"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('remark') !== -1 ? msgJson.data.rt.remark : ''),
+                          h("span", null, msgJson.data.dto.remark)
+                        ])
+                      ]),
+                      h("dl", { style: "margin-top:20px;" }, [
+                        h("dt", null, ""),
+                        h("dd", { style: "padding-left:76px;" }, [
+                          h("button", {
+                            class: "notigy-agree",
+                            on: {
+                              click: function () {
+                                self.handleAgreeNoBondsUpdateClick(msgJson.data.rt.realTradeId)
+                              }
+                            }
+                          }, "同意"),
+                          h("button", {
+                            class: "notigy-cancel",
+                            on: {
+                              click: function () {
+                                self.handleRejectNoBondsUpdateClick(msgJson.data.rt.realTradeId)
+                              }
+                            }
+                          }, "拒绝")
+                        ])
+                      ]),
+                    ],
+                  ),
+                  duration: 0
+                });
+                self.tryPlay()
+                self.notifyRejection[msgJson.data.rt.realTradeId] = notify
+                break
+              case 'yipingchangerequest_bond_0':
+              case 'yipingchangerequest_bond_1':
+                notify = self.$notify({
+                  title: `${msgJson.data.changer} 等待已平仓修改审核`,
+                  dangerouslyUseHTMLString: true,
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "创建时间"),
+                        h("dd", null, `${msgJson.data.rt.createTime}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.rt.tscode.replace(/.IB/, '')}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.rt.direction === 'bond_0' ? '买入' : msgJson.data.rt.direction === 'bond_1' ? '卖出' : ''}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交价"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red;padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.rt.price, 4) + ' ' : ''),
+                          h("span", null, util.moneyFormat(msgJson.data.dto.price, 4))
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交量"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.rt.volume + ' ' : ''),
+                          h("span", null, msgJson.data.dto.volume)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
+                          h("span", null, msgJson.data.dto.deliveryTime.substr(0, 10))
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割速度"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliverySpeed') !== -1 ? msgJson.data.rt.deliverySpeed : ''),
+                          h("span", null, msgJson.data.dto.deliverySpeed)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交易对手"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('counterParty') !== -1 ? msgJson.data.rt.counterParty : ''),
+                          h("span", null, msgJson.data.dto.counterParty)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "联系人"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactPerson') !== -1 ? msgJson.data.rt.contactPerson : ''),
+                          h("span", null, msgJson.data.dto.contactPerson)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "联系方式"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactType') !== -1 ? msgJson.data.rt.contactType : ''),
+                          h("span", null, msgJson.data.dto.contactType)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "备注"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('remark') !== -1 ? msgJson.data.rt.remark : ''),
+                          h("span", null, msgJson.data.dto.remark)
+                        ])
+                      ]),
+                      h("dl", { style: "margin-top:20px;" }, [
+                        h("dt", null, ""),
+                        h("dd", { style: "padding-left:76px;" }, [
+                          h("button", {
+                            class: "notigy-agree",
+                            on: {
+                              click: function () {
+                                self.handleAgreeBondsUpdateClick(msgJson.data.rt.realTradeId)
+                              }
+                            }
+                          }, "同意"),
+                          h("button", {
+                            class: "notigy-cancel",
+                            on: {
+                              click: function () {
+                                self.handleRejectBondsUpdateClick(msgJson.data.rt.realTradeId)
+                              }
+                            }
+                          }, "拒绝")
+                        ])
+                      ]),
+                    ],
+                  ),
+                  duration: 0
+                });
+                self.tryPlay()
+                self.notifyRejection[msgJson.data.rt.realTradeId] = notify
                 break
             }
           }
@@ -2546,6 +2758,62 @@ export default {
           if (self.dialogTableVisible) {
             self.$refs.tradeEnquiry.loadInitData()
           }
+        }
+      })
+    },
+    // 同意修改未平仓单
+    handleAgreeNoBondsUpdateClick(realTradeId) {
+      const self = this
+      apiBonds.dealNoBondsEditComfirm({ realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已审核",
+            type: 'success'
+          })
+          self.notifyRejection[parseInt(realTradeId)].close()
+          delete self.notifyRejection[parseInt(realTradeId)]
+        }
+      })
+    },
+    // 拒绝修改未平仓单
+    handleRejectNoBondsUpdateClick(realTradeId) {
+      const self = this
+      apiBonds.dealNoBondsEditRejection({ realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已拒绝修改",
+            type: 'warning'
+          })
+          self.notifyRejection[parseInt(realTradeId)].close()
+          delete self.notifyRejection[parseInt(realTradeId)]
+        }
+      })
+    },
+    // 同意修改已平仓单
+    handleAgreeBondsUpdateClick(realTradeId) {
+      const self = this
+      apiBonds.dealBondsEditComfirm({ realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已审核",
+            type: 'success'
+          })
+          self.notifyRejection[parseInt(realTradeId)].close()
+          delete self.notifyRejection[parseInt(realTradeId)]
+        }
+      })
+    },
+    // 拒绝修改已平仓单
+    handleRejectBondsUpdateClick(realTradeId) {
+      const self = this
+      apiBonds.dealBondsEditRejection({ realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已拒绝修改",
+            type: 'warning'
+          })
+          self.notifyRejection[parseInt(realTradeId)].close()
+          delete self.notifyRejection[parseInt(realTradeId)]
         }
       })
     },

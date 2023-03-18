@@ -160,5 +160,11 @@ export const pageMixin = {
       }
       return result
     },
+    // 关闭popover弹框
+    handlePopoverClose(scope, ref) {
+      if (!scope._self.$refs[ref].doClose()) {
+        document.body.click()
+      }
+    }
   }
 }

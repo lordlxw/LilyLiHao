@@ -57,7 +57,8 @@ export default {
     // 11位手机号
     mobile: /^1[0-9]{10}$/,
     // 钱
-    money: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,4})?$/,
+    // money: /^(([1-9]{1}\d*)|(0{1}))(\.\d{1,4})?$/,
+    money: /^(([1-9]{1}\d*))(\.\d{1,4})?$/,
     // 日期时间
     dtime: /^(\d+)-(\d{ 1,2 })-(\d{ 1,2 }) (\d{ 1,2 }):(\d{ 1,2 }):(\d{ 1,2 })$/,
     // 时分
@@ -85,7 +86,7 @@ export default {
     tscode: { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
     direction: { label: '方向', prop: 'direction', width: '80', align: 'left', show: true },
     status: { label: '状态', prop: 'status', width: '120', align: 'left', show: true },
-    remark: { label: '备注', prop: 'remark', width: '300', align: 'left', show: true },
+    remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
     tradeNum: { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
     deliverySpeed: { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
     createuser: { label: '研究员', prop: 'createuser', width: '160', align: 'left', show: true },
@@ -109,7 +110,7 @@ export default {
     floatProfit: { label: '浮动盈亏', prop: 'floatProfit', width: '100', align: 'right', show: true },
     profit: { label: '已平盈亏', prop: 'profit', width: '100', align: 'right', show: true },
     realTradeId: { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
-    remark: { label: '备注', prop: 'remark', width: 'auto', align: 'left', show: true },
+    remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
     tradeNum: { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
     tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
     userTradeId: { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },

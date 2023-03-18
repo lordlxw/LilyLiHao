@@ -10,6 +10,11 @@
         class="mt20"
       >
         <el-tab-pane label="未平仓" name="0">
+          <div class="do">
+            <el-button size="mini" @click="handleDefaultExpandAll">{{
+              defaultExpandAll ? "全收" : "全展"
+            }}</el-button>
+          </div>
           <div class="table mt10">
             <el-table
               v-loading="loading"
@@ -23,6 +28,7 @@
               :row-class-name="tableRowClassName"
               :cell-style="cellStyle"
               :key="Math.random()"
+              :default-expand-all="defaultExpandAll"
             >
               <template v-for="itemHead in tableHead">
                 <el-table-column
@@ -63,10 +69,49 @@
                     type="text"
                     size="small"
                     v-if="
-                      setAuth('bonds:update') && scope.row.realTradeId !== null
+                      setAuth('bonds:update') &&
+                      scope.row.realTradeId !== null &&
+                      scope.row.status === 11
                     "
                     >修改</el-button
                   >
+
+                  <el-popover
+                    v-if="
+                      setAuth('bonds:updateconfirm') &&
+                      scope.row.realTradeId !== null &&
+                      scope.row.status === 17
+                    "
+                    placement="bottom-end"
+                    :ref="`popover-agreeupdatenobonds-${scope.$index}`"
+                  >
+                    <p>
+                      确认要<span class="color-red">同意修改</span>“<span
+                        class="color-main"
+                        >{{ scope.row.tradeNum }}</span
+                      >”{{ scope.row.tscode }}？
+                    </p>
+                    <div style="text-align: right">
+                      <el-button
+                        type="text"
+                        @click="
+                          handlePopoverClose(
+                            scope,
+                            `popover-agreeupdatenobonds-${scope.$index}`
+                          )
+                        "
+                        >取消</el-button
+                      >
+                      <el-button
+                        type="text"
+                        @click="handleAgreeNoBondsUpdateClick(scope)"
+                        >确认</el-button
+                      >
+                    </div>
+                    <el-button type="text" slot="reference" class="ml10"
+                      >修改审核</el-button
+                    >
+                  </el-popover>
                 </template>
               </el-table-column>
             </el-table>
@@ -126,9 +171,10 @@
                       <el-button
                         type="text"
                         @click="
-                          scope._self.$refs[
+                          handlePopoverClose(
+                            scope,
                             `popover-delivery-${scope.$index}`
-                          ].doClose()
+                          )
                         "
                         >取消</el-button
                       >
@@ -144,9 +190,45 @@
                     @click="handleBondsEditClick(scope.row)"
                     type="text"
                     size="small"
-                    v-if="setAuth('bonds:update')"
+                    v-if="setAuth('bonds:update') && scope.row.status === 12"
                     >修改</el-button
                   >
+                  <el-popover
+                    v-if="
+                      setAuth('bonds:updateconfirm') &&
+                      scope.row.realTradeId !== null &&
+                      scope.row.status === 16
+                    "
+                    placement="bottom-end"
+                    :ref="`popover-agreeupdatebonds-${scope.$index}`"
+                  >
+                    <p>
+                      确认要<span class="color-red">同意修改</span>“<span
+                        class="color-main"
+                        >{{ scope.row.tradeNum }}</span
+                      >”{{ scope.row.tscode }}？
+                    </p>
+                    <div style="text-align: right">
+                      <el-button
+                        type="text"
+                        @click="
+                          handlePopoverClose(
+                            scope,
+                            `popover-agreeupdatebonds-${scope.$index}`
+                          )
+                        "
+                        >取消</el-button
+                      >
+                      <el-button
+                        type="text"
+                        @click="handleAgreeBondsUpdateClick(scope)"
+                        >确认</el-button
+                      >
+                    </div>
+                    <el-button type="text" slot="reference" class="ml10"
+                      >修改审核</el-button
+                    >
+                  </el-popover>
                 </template>
               </el-table-column>
             </el-table>
@@ -169,7 +251,7 @@
       ></bonds-cover>
     </el-dialog>
     <el-dialog
-      title="未平仓编辑"
+      title="未平仓修改申请"
       width="500px;"
       :visible.sync="dialogNoBondsFormVisible"
       append-to-body
@@ -182,7 +264,7 @@
       ></no-bonds-edit>
     </el-dialog>
     <el-dialog
-      title="已平仓编辑"
+      title="已平仓修改申请"
       width="500px;"
       :visible.sync="dialogBondsFormVisible"
       append-to-body
@@ -231,6 +313,7 @@ export default {
       tableData: [],
       tableHeadFinish: [],
       tableDataFinish: [],
+      defaultExpandAll: false,
       // 平仓弹框
       dialogBondsCoverFormVisible: false,
       currentRow: {},
@@ -525,15 +608,13 @@ export default {
     },
     // 交割
     handleDeliveryClick(scope) {
-      console.log(`popover-delivery-${scope.$index}`)
-      scope._self.$refs[`popover-delivery-${scope.$index}`].doClose();
-      api.dealDelivery({ finishCodes: scope.row.finishCode }).then(response => {
+      api.dealDelivery({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
             message: '已交割',
             type: 'info'
           })
-          scope._self.$refs[`popover-delivery-${scope.$index}`].doClose();
+          this.handlePopoverClose(scope, `popover-delivery-${scope.$index}`)
           this.loadInitData()
         } else {
           this.$message({
@@ -568,10 +649,40 @@ export default {
       ]).then(() => {
         this.dialogBondsFormVisible = true
       })
+    },
+    // 同意修改未平仓单
+    handleAgreeNoBondsUpdateClick(scope) {
+      api.dealNoBondsEditComfirm({ realTradeId: scope.row.realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已审核",
+            type: 'success'
+          })
+          this.handlePopoverClose(scope, `popover-agreeupdatenobonds-${scope.$index}`)
+          this.loadInitData()
+        }
+      })
+    },
+    // 同意修改已平仓单
+    handleAgreeBondsUpdateClick(scope) {
+      api.dealBondsEditComfirm({ realTradeId: scope.row.realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已审核",
+            type: 'success'
+          })
+          this.handlePopoverClose(scope, `popover-agreeupdatebonds-${scope.$index}`)
+          this.loadInitDataFinish()
+        }
+      })
+    },
+    // 全展 ， 全收
+    handleDefaultExpandAll() {
+      this.defaultExpandAll = !this.defaultExpandAll
     }
   },
   mounted() {
-    this.loadInitData()
+    // this.loadInitData()
   }
 }
 </script>
