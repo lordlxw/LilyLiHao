@@ -253,7 +253,6 @@ export default {
                   self.$refs.tradeEnquiry.loadInitData()
                 }
                 break
-
               case 'deny_deal_bond_0':
               case 'deny_deal_bond_1':
                 self.$notify({
@@ -280,6 +279,170 @@ export default {
                     <dl>
                       <dt>交割日期</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 0
+                });
+                self.tryPlay()
+                break
+              case 'weipingchangeconfirm_bond_0':
+              case 'weipingchangeconfirm_bond_1':
+                self.$notify({
+                  title: `${msgJson.data.xunjiayuanName} 已同意未平仓修改`,
+                  dangerouslyUseHTMLString: true,
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode.replace(/.IB/, '')}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${msgJson.data.price}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                    </dl>
+                    <dl>
+                      <dt>单据号</dt>
+                      <dd>${msgJson.data.tradeNum}</dd>
+                    </dl>
+                    <dl>
+                      <dt>备注</dt>
+                      <dd>${msgJson.data.remark}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 0
+                });
+                self.tryPlay()
+                break;
+              case 'weipingchangedeny_bond_0':
+              case 'weipingchangedeny_bond_1':
+                self.$notify({
+                  title: `${msgJson.data.xunjiayuanName} 已拒绝未平仓修改`,
+                  dangerouslyUseHTMLString: true,
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode.replace(/.IB/, '')}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${msgJson.data.price}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                    </dl>
+                    <dl>
+                      <dt>单据号</dt>
+                      <dd>${msgJson.data.tradeNum}</dd>
+                    </dl>
+                    <dl>
+                      <dt>备注</dt>
+                      <dd>${msgJson.data.remark}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 0
+                });
+                self.tryPlay()
+                break;
+              case 'yipingchangeconfirm_bond_0':
+              case 'yipingchangeconfirm_bond_1':
+                self.$notify({
+                  title: `${msgJson.data.xunjiayuanName} 已同意已平仓修改`,
+                  dangerouslyUseHTMLString: true,
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode.replace(/.IB/, '')}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${msgJson.data.price}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                    </dl>
+                    <dl>
+                      <dt>单据号</dt>
+                      <dd>${msgJson.data.tradeNum}</dd>
+                    </dl>
+                    <dl>
+                      <dt>备注</dt>
+                      <dd>${msgJson.data.remark}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 0
+                });
+                self.tryPlay()
+                break;
+              case 'yipingchangedeny_bond_0':
+              case 'yipingchangedeny_bond_1':
+                self.$notify({
+                  title: `${msgJson.data.xunjiayuanName} 已拒绝已平仓修改`,
+                  dangerouslyUseHTMLString: true,
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode.replace(/.IB/, '')}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${msgJson.data.price}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                    </dl>
+                    <dl>
+                      <dt>单据号</dt>
+                      <dd>${msgJson.data.tradeNum}</dd>
+                    </dl>
+                    <dl>
+                      <dt>备注</dt>
+                      <dd>${msgJson.data.remark}</dd>
                     </dl>
                   </div>
                   `,
