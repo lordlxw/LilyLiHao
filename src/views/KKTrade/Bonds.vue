@@ -94,18 +94,13 @@
                     <div style="text-align: right">
                       <el-button
                         type="text"
-                        @click="
-                          handlePopoverClose(
-                            scope,
-                            `popover-agreeupdatenobonds-${scope.$index}`
-                          )
-                        "
-                        >取消</el-button
+                        @click="handleAgreeNoBondsUpdateClick(scope)"
+                        >同意</el-button
                       >
                       <el-button
                         type="text"
-                        @click="handleAgreeNoBondsUpdateClick(scope)"
-                        >确认</el-button
+                        @click="handleRejectNoBondsUpdateClick(scope)"
+                        >拒绝</el-button
                       >
                     </div>
                     <el-button type="text" slot="reference" class="ml10"
@@ -211,18 +206,13 @@
                     <div style="text-align: right">
                       <el-button
                         type="text"
-                        @click="
-                          handlePopoverClose(
-                            scope,
-                            `popover-agreeupdatebonds-${scope.$index}`
-                          )
-                        "
-                        >取消</el-button
+                        @click="handleAgreeBondsUpdateClick(scope)"
+                        >同意</el-button
                       >
                       <el-button
                         type="text"
-                        @click="handleAgreeBondsUpdateClick(scope)"
-                        >确认</el-button
+                        @click="handleRejectBondsUpdateClick(scope)"
+                        >拒绝</el-button
                       >
                     </div>
                     <el-button type="text" slot="reference" class="ml10"
@@ -612,13 +602,13 @@ export default {
         if (response && response.code === '00000') {
           this.$message({
             message: '已交割',
-            type: 'info'
+            type: 'success'
           })
           this.handlePopoverClose(scope, `popover-delivery-${scope.$index}`)
-          this.loadInitData()
+          this.loadInitDataFinish()
         } else {
           this.$message({
-            message: response.message,
+            message: response.data.message,
             type: 'error'
           })
         }
@@ -663,6 +653,19 @@ export default {
         }
       })
     },
+    // 拒绝修改未平仓单
+    handleRejectNoBondsUpdateClick(scope) {
+      api.dealNoBondsEditRejection({ realTradeId: scope.row.realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已拒绝修改",
+            type: 'warning'
+          })
+          this.handlePopoverClose(scope, `popover-agreeupdatenobonds-${scope.$index}`)
+          this.loadInitData()
+        }
+      })
+    },
     // 同意修改已平仓单
     handleAgreeBondsUpdateClick(scope) {
       api.dealBondsEditComfirm({ realTradeId: scope.row.realTradeId }).then(response => {
@@ -670,6 +673,19 @@ export default {
           this.$message({
             message: "已审核",
             type: 'success'
+          })
+          this.handlePopoverClose(scope, `popover-agreeupdatebonds-${scope.$index}`)
+          this.loadInitDataFinish()
+        }
+      })
+    },
+    // 拒绝修改已平仓单
+    handleRejectBondsUpdateClick(scope) {
+      api.dealBondsEditRejection({ realTradeId: scope.row.realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已拒绝修改",
+            type: 'warning'
           })
           this.handlePopoverClose(scope, `popover-agreeupdatebonds-${scope.$index}`)
           this.loadInitDataFinish()

@@ -745,7 +745,7 @@ export default {
     // 金额格式验证
     const moneyTest = async (rule, value, callback) => {
       if (!config.regExpSet.money.test(value)) {
-        callback(new Error('大于0的正确格式（-.----）'))
+        callback(new Error('大于0的格式（-.----）'))
       } else {
         callback()
       }
