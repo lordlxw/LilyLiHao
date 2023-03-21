@@ -69,7 +69,7 @@
                     type="text"
                     size="small"
                     v-if="
-                      setAuth('bonds:update') &&
+                      setAuth('nobonds:update') &&
                       scope.row.realTradeId !== null &&
                       scope.row.status === 11
                     "
@@ -78,7 +78,7 @@
 
                   <el-popover
                     v-if="
-                      setAuth('bonds:updateconfirm') &&
+                      setAuth('nobonds:updateconfirm') &&
                       scope.row.realTradeId !== null &&
                       scope.row.status === 17
                     "
@@ -255,80 +255,6 @@
             </el-table>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="违约成交" name="2">
-          <div class="table mt10">
-            <el-table
-              v-loading="loading"
-              :data="tableDataBreak"
-              tooltip-effect="dark"
-              style="width: 100%"
-              height="600"
-              border
-              :key="Math.random()"
-            >
-              <template v-for="itemHead in tableHeadBreak">
-                <el-table-column
-                  v-if="itemHead.show"
-                  :key="itemHead.label"
-                  :align="itemHead.align"
-                  :prop="itemHead.prop"
-                  :formatter="
-                    itemHead.formatter
-                      ? itemHead.formatter
-                      : (row, column, cellValue, index) => {
-                          return cellValue;
-                        }
-                  "
-                  :label="itemHead.label"
-                  :width="itemHead.width ? itemHead.width : ''"
-                >
-                </el-table-column>
-              </template>
-              <el-table-column></el-table-column>
-              <el-table-column
-                fixed="right"
-                align="center"
-                label="操作"
-                width="120"
-              >
-                <template slot-scope="scope">
-                  <el-popover
-                    v-if="setAuth('break:back')"
-                    placement="bottom-end"
-                    :ref="`popover-breakback-${scope.$index}`"
-                  >
-                    <p>
-                      确认"{{ scope.row.tscode }}"<span class="color-red">
-                        撤销违约
-                      </span>
-                      ？
-                    </p>
-                    <div style="text-align: right">
-                      <el-button
-                        type="text"
-                        @click="
-                          handlePopoverClose(
-                            scope,
-                            `popover-breakback-${scope.$index}`
-                          )
-                        "
-                        >取消</el-button
-                      >
-                      <el-button
-                        type="text"
-                        @click="handleBreakBackClick(scope)"
-                        >确认</el-button
-                      >
-                    </div>
-                    <el-button type="text" slot="reference" class="ml10"
-                      >撤销</el-button
-                    >
-                  </el-popover>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </el-tab-pane>
       </el-tabs>
     </div>
 
@@ -408,29 +334,6 @@ export default {
       tableData: [],
       tableHeadFinish: [],
       tableDataFinish: [],
-      tableHeadBreak: [
-        { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
-        { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '130', align: 'left', show: true },
-        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
-        { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
-        { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
-        { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: true },
-        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
-        { label: '浮动盈亏', prop: 'floatProfit', width: '100', align: 'right', show: true },
-        { label: '已平盈亏', prop: 'profit', width: '100', align: 'right', show: true },
-        { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
-        { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
-        { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
-        { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
-        { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
-        { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
-        { label: '研究员', prop: 'xunjiayuanName', width: '120', align: 'left', show: true },
-        { label: '成交时间', prop: 'createTime', width: '150', align: 'left', show: true },
-        { label: '交易对手', prop: 'counterParty', width: '90', align: 'left', show: true },
-        { label: '联系人', prop: 'contactPerson', width: '120', align: 'left', show: true },
-        { label: '联系方式', prop: 'contactType', width: '110', align: 'left', show: true }
-      ],
-      tableDataBreak: [],
       defaultExpandAll: false,
       // 平仓弹框
       dialogBondsCoverFormVisible: false,
@@ -573,35 +476,12 @@ export default {
         this.loading = false;
       });
     },
-    // 初始化违约成交
-    loadInitDataBreak() {
-      this.loading = true;
-      api.getBreak({
-        deliveryDateEnd: null,
-        deliveryDateStart: null,
-        realTradeId: null,
-        tradeNum: null,
-        tscode: null,
-        userName: null,
-        userTradeId: null
-      }).then((response) => {
-        if (response && response.code === '00000' && response.value) {
-          this.tableDataBreak = response.value;
-        } else {
-          this.tableDataBreak = [];
-        }
-        this.loading = false;
-      });
-    },
     handleTabsClick(tab, event) {
       if (tab.index === '0') {
         this.loadInitData()
       }
       if (tab.index === '1') {
         this.loadInitDataFinish()
-      }
-      if (tab.index === '2') {
-        this.loadInitDataBreak()
       }
     },
     // 平仓弹框
@@ -774,24 +654,6 @@ export default {
             type: 'success'
           })
           this.handlePopoverClose(scope, `popover-break-${scope.$index}`)
-          this.loadInitDataBreak()
-        } else {
-          this.$message({
-            message: response.data.message,
-            type: 'error'
-          })
-        }
-      })
-    },
-    // 撤销违约
-    handleBreakBackClick(scope) {
-      api.dealBreakReturn({ realTradeId: scope.row.realTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-          this.handlePopoverClose(scope, `popover-breakback-${scope.$index}`)
           this.loadInitDataBreak()
         } else {
           this.$message({

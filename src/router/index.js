@@ -119,6 +119,11 @@ const router = new Router({
         {
           path: '/trade/reward',
           component: () => import('@/views/KKTrade/Reward.vue')
+        },
+        // 交易管理 - 违约成交
+        {
+          path: '/trade/break',
+          component: () => import('@/views/KKTrade/Break.vue')
         }
       ]
     }
