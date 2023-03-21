@@ -4,12 +4,12 @@
     <!-- <div class="filter-condition"></div> -->
     <div class="list">
       <el-tabs
-        v-model="status"
+        ref="eltabs"
         type="card"
         @tab-click="handleTabsClick"
         class="mt20"
       >
-        <el-tab-pane label="未平仓" name="0">
+        <el-tab-pane :label="tablist[0]" v-if="setAuth('nobonds:view')">
           <div class="do">
             <el-button size="mini" @click="handleDefaultExpandAll">{{
               defaultExpandAll ? "全收" : "全展"
@@ -112,7 +112,7 @@
             </el-table>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="已平仓" name="1">
+        <el-tab-pane :label="tablist[1]" v-if="setAuth('bonds:view')">
           <div class="table mt10">
             <el-table
               v-loading="loading"
@@ -327,8 +327,8 @@ export default {
       loading: false,
       // 表格行内样式
       rowClassNameList: ['warning-row'],
-      // 持仓状态
-      status: '0',
+      // tabs
+      tablist: ['未平仓', '已平仓'],
       // 表头
       tableHead: [],
       tableData: [],
@@ -349,10 +349,6 @@ export default {
       dialogBondsFormVisible: false,
       bondsRow: []
     }
-  },
-  created() {
-    this.dispatchUserColumn()
-    this.dispatchUserBondedColumn()
   },
   methods: {
     // 搜索事件
@@ -384,7 +380,6 @@ export default {
               this.tableHead.push(config.bondsHead[headContent[i]])
             }
           }
-          this.loadInitData()
         }
       })
     },
@@ -477,10 +472,10 @@ export default {
       });
     },
     handleTabsClick(tab, event) {
-      if (tab.index === '0') {
+      if (tab.label === '未平仓') {
         this.loadInitData()
       }
-      if (tab.index === '1') {
+      if (tab.label === '已平仓') {
         this.loadInitDataFinish()
       }
     },
@@ -747,7 +742,18 @@ export default {
     }
   },
   mounted() {
-    // this.loadInitData()
+    this.dispatchUserColumn()
+    this.dispatchUserBondedColumn()
+    if (this.$refs.eltabs.panes.length > 0) {
+      switch (this.$refs.eltabs.panes[0].label) {
+        case this.tablist[0]:
+          this.loadInitData()
+          break
+        case this.tablist[1]:
+          this.loadInitDataBreak()
+          break
+      }
+    }
   }
 }
 </script>
