@@ -40,6 +40,22 @@ export default {
       }
     })
   },
+  // 违约查询列表
+  getBreak(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/listweiyueTrade`,
+      method: 'get',
+      params: {
+        deliveryDateEnd: params.deliveryDateEnd,
+        deliveryDateStart: params.deliveryDateStart,
+        realTradeId: params.realTradeId,
+        tradeNum: params.tradeNum,
+        tscode: params.tscode,
+        userName: params.userName,
+        userTradeId: params.userTradeId
+      }
+    })
+  },
   /**
    * 平仓
    * @param {*} params
@@ -194,6 +210,26 @@ export default {
   dealBondsEditRejection(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/yipingchangedeny`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
+  },
+  // 交易违约
+  dealBreak(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/weiyue`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
+  },
+  // 违约撤回
+  dealBreakReturn(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/weiyuereturn`,
       method: 'post',
       data: {
         realTradeId: params.realTradeId
