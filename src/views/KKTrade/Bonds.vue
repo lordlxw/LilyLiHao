@@ -472,10 +472,10 @@ export default {
       });
     },
     handleTabsClick(tab, event) {
-      if (tab.label === '未平仓') {
+      if (tab.label === this.tablist[0]) {
         this.loadInitData()
       }
-      if (tab.label === '已平仓') {
+      if (tab.label === this.tablist[1]) {
         this.loadInitDataFinish()
       }
     },
