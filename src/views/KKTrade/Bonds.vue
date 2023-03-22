@@ -155,11 +155,7 @@
               >
                 <template slot-scope="scope">
                   <el-checkbox
-                    v-if="
-                      moment(
-                        moment(scope.row.deliveryTime).format('YYYY-MM-DD')
-                      ).isAfter(moment(new Date()).format('YYYY-MM-DD'))
-                    "
+                    v-if="funcIsBreak(scope)"
                     v-model="scope.row.breakStatus"
                     >违约</el-checkbox
                   >
@@ -813,6 +809,12 @@ export default {
     // 全展 ， 全收
     handleDefaultExpandAll() {
       this.defaultExpandAll = !this.defaultExpandAll
+    },
+    // 是否违约
+    funcIsBreak(scope) {
+      return moment(
+        moment(scope.row.deliveryTime).format('YYYY-MM-DD')
+      ).isAfter(moment(new Date()).format('YYYY-MM-DD'))
     }
   },
   mounted() {
