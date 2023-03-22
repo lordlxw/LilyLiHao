@@ -18,7 +18,7 @@
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
-          height="600"
+          class="table-height"
           border
           row-key="userTradeId"
           default-expand-all
@@ -775,6 +775,9 @@ export default {
   .my-el-row .el-col:nth-child(even) {
     font-size: 14px;
     word-break: break-all;
+  }
+  .table-height {
+    height: 1000px !important;
   }
 }
 .notify {
