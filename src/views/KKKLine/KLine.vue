@@ -1005,7 +1005,6 @@ export default {
     activeTscode(newVal, oldVal) {
       if (newVal !== oldVal) {
         if (newVal && socket != null) {
-          console.log(JSON.stringify({ "dataKey": newVal, "dataType": "tscode" }))
           socket.send(JSON.stringify({ "dataKey": newVal, "dataType": "tscode" }))
           this.calcFavoriteIcon()
         }
@@ -1911,8 +1910,6 @@ export default {
       api.transactionList({
         tscode: this.activeTscode
       }).then(res => {
-        console.log('成交返回')
-        console.log(res.value)
         if (res.code === '00000') {
           this.transactionAllList = res.value
         }
@@ -2092,6 +2089,9 @@ export default {
         socket.onopen = function () {
           console.log("websocket已打开");
           self.socketHeart()
+          if (self.activeTscode) {
+            socket.send(JSON.stringify({ "dataKey": self.activeTscode, "dataType": "tscode" }))
+          }
         }
         // 浏览器端收消息，获得从服务端发送过来的文本消息
         socket.onmessage = function (msg) {
@@ -2661,8 +2661,9 @@ export default {
     // socket心跳
     socketHeart() {
       this.socketTimer = setInterval(() => {
-        console.log('心跳')
-        socket.send(JSON.stringify({ "dataKey": 'HELLO', "dataType": 'ping' }))
+        if (socket) {
+          socket.send(JSON.stringify({ "dataKey": 'HELLO', "dataType": 'ping' }))
+        }
       }, 30 * 1000)
     },
     // 播放提示音
@@ -2691,6 +2692,9 @@ export default {
       lockReconnect = true
       setTimeout(() => {
         console.log("尝试重连")
+        if (socket) {
+          socket.close()
+        }
         Promise.all([
           lockReconnect = false
         ]).then(() => {
