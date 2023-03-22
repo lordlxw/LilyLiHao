@@ -9,7 +9,7 @@
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
-          height="600"
+          class="table-height"
           border
         >
           <template v-for="itemHead in tableHead">
@@ -234,6 +234,9 @@ export default {
   .my-el-row .el-col:nth-child(even) {
     font-size: 14px;
     word-break: break-all;
+  }
+  .table-height {
+    height: 800px !important;
   }
 }
 .notify {

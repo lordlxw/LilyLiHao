@@ -22,7 +22,7 @@
               :data="tableData"
               tooltip-effect="dark"
               style="width: 100%"
-              height="600"
+              class="table-height"
               border
               row-key="rowId"
               :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -121,7 +121,7 @@
               :data="tableDataFinish"
               tooltip-effect="dark"
               style="width: 100%"
-              height="600"
+              class="table-height"
               border
               row-key="rowId"
               :row-class-name="tableRowFinishClassName"
@@ -147,6 +147,7 @@
                 >
                 </el-table-column>
               </template>
+              <el-table-column></el-table-column>
               <el-table-column
                 align="center"
                 label="是否违约"
@@ -161,38 +162,8 @@
                   >
                 </template>
               </el-table-column>
-              <!-- <el-table-column align="center" label="操作" width="100">
+              <el-table-column align="center" label="操作" width="100">
                 <template slot-scope="scope">
-                  <el-popover
-                    v-if="setAuth('bonds:break')"
-                    placement="bottom-end"
-                    :ref="`popover-break-${scope.$index}`"
-                  >
-                    <p>
-                      确认"{{ scope.row.tscode }}"<span class="color-red">
-                        违约
-                      </span>
-                      ？
-                    </p>
-                    <div style="text-align: right">
-                      <el-button
-                        type="text"
-                        @click="
-                          handlePopoverClose(
-                            scope,
-                            `popover-break-${scope.$index}`
-                          )
-                        "
-                        >取消</el-button
-                      >
-                      <el-button type="text" @click="handleBreakClick(scope)"
-                        >确认</el-button
-                      >
-                    </div>
-                    <el-button type="text" slot="reference" class="ml10"
-                      >违约</el-button
-                    >
-                  </el-popover>
                   <el-button
                     @click="handleBondsEditClick(scope.row)"
                     type="text"
@@ -233,8 +204,7 @@
                     >
                   </el-popover>
                 </template>
-              </el-table-column> -->
-              <el-table-column></el-table-column>
+              </el-table-column>
               <el-table-column align="center" label="交割操作" width="100">
                 <template slot-scope="scope">
                   <el-popover
@@ -467,20 +437,6 @@ export default {
         userTradeId: null
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
-          // let rowId = 0
-          // response.rows.forEach(element => {
-          //   if (element.children && element.children.length > 0) {
-          //     const realTradeIdList = []
-          //     element.children.forEach(element => {
-          //       rowId++
-          //       realTradeIdList.push(element.realTradeId)
-          //       element.rowId = rowId
-          //     })
-          //     rowId++
-          //     element.realTradeIdList = realTradeIdList
-          //     element.rowId = rowId
-          //   }
-          // });
           response.rows.forEach(element => {
             element.breakStatus = false
           });
@@ -494,10 +450,14 @@ export default {
       });
     },
     handleTabsClick(tab, event) {
+      finishCode = ''
+      finishCodeSameCount = 0
       if (tab.label === this.tablist[0]) {
+        this.tableData = []
         this.loadInitData()
       }
       if (tab.label === this.tablist[1]) {
+        this.tableDataFinish = []
         this.loadInitDataFinish()
       }
     },
@@ -899,6 +859,9 @@ export default {
   .my-el-row .el-col:nth-child(even) {
     font-size: 14px;
     word-break: break-all;
+  }
+  .table-height {
+    height: 800px !important;
   }
 }
 </style>
