@@ -777,7 +777,7 @@ export default {
     word-break: break-all;
   }
   .table-height {
-    height: 1000px !important;
+    height: 600px !important;
   }
 }
 .notify {
