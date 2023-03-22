@@ -2088,6 +2088,8 @@ export default {
         // 打开事件
         socket.onopen = function () {
           console.log("websocket已打开");
+          clearInterval(self.socketTimer)
+          self.socketTimer = null
           self.socketHeart()
           if (self.activeTscode) {
             socket.send(JSON.stringify({ "dataKey": self.activeTscode, "dataType": "tscode" }))
