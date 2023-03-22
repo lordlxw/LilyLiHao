@@ -38,7 +38,7 @@
               :ref="`popover-deliveryback-${scope.$index}`"
             >
               <p>
-                确认要<span class="color-red"> 撤回 </span> "{{
+                确认要<span class="color-red"> 改违约 </span> "{{
                   scope.row.tscode
                 }}"？
               </p>
@@ -58,7 +58,7 @@
                 >
               </div>
               <el-button type="text" slot="reference" class="ml10"
-                >撤回</el-button
+                >改违约</el-button
               >
             </el-popover>
           </template>
@@ -117,12 +117,12 @@ export default {
     // 导出
     handleExport() {
     },
-    // 交割撤回
+    // 改违约
     handleDeliveryBackClick(scope) {
-      api.deliverBack({ realTradeId: scope.row.realTradeId }).then(response => {
+      api.deliverBreak({ id: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
-            message: '成功撤回',
+            message: '操作成功',
             type: 'success'
           })
           this.handlePopoverClose(scope, `popover-deliveryback-${scope.$index}`)

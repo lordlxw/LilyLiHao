@@ -118,7 +118,8 @@ export default {
       url: `${Vue.prototype.$apiUrl}/realtrade/jiaoge`,
       method: 'post',
       data: {
-        realTradeId: params.realTradeId
+        jiaogeIdlist: params.jiaogeIdlist,
+        weiyueIdlist: params.weiyueIdlist
       }
     })
   },

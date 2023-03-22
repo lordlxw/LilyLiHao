@@ -34,5 +34,19 @@ export default {
         realTradeId: params.realTradeId
       }
     })
+  },
+  /**
+   * 改违约
+   * @param {*} params
+   * @returns
+   */
+  deliverBreak(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/gaiweiyue`,
+      method: 'post',
+      data: {
+        id: params.id
+      }
+    })
   }
 }

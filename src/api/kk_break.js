@@ -18,13 +18,13 @@ export default {
       }
     })
   },
-  // 违约撤回
+  // 改交割
   dealBreakReturn(params) {
     return request({
-      url: `${Vue.prototype.$apiUrl}/realtrade/weiyuereturn`,
+      url: `${Vue.prototype.$apiUrl}/realtrade/gaijiaoge`,
       method: 'post',
       data: {
-        realTradeId: params.realTradeId
+        id: params.id
       }
     })
   }

@@ -9,6 +9,7 @@
         @tab-click="handleTabsClick"
         class="mt20"
       >
+        <!-- 未平仓 -->
         <el-tab-pane :label="tablist[0]" v-if="setAuth('nobonds:view')">
           <div class="do">
             <el-button size="mini" @click="handleDefaultExpandAll">{{
@@ -112,6 +113,7 @@
             </el-table>
           </div>
         </el-tab-pane>
+        <!-- 已平仓 -->
         <el-tab-pane :label="tablist[1]" v-if="setAuth('bonds:view')">
           <div class="table mt10">
             <el-table
@@ -125,6 +127,7 @@
               :row-class-name="tableRowFinishClassName"
               :cell-style="finishCellStyle"
               :key="Math.random()"
+              :span-method="objectSpanMethod"
             >
               <template v-for="itemHead in tableHeadFinish">
                 <el-table-column
@@ -144,43 +147,26 @@
                 >
                 </el-table-column>
               </template>
-              <el-table-column></el-table-column>
               <el-table-column
-                fixed="right"
                 align="center"
-                label="操作"
-                width="150"
+                label="是否违约"
+                width="80"
+                v-if="setAuth('bonds:delivery')"
               >
                 <template slot-scope="scope">
-                  <el-popover
-                    v-if="setAuth('bonds:delivery')"
-                    placement="bottom-end"
-                    :ref="`popover-delivery-${scope.$index}`"
+                  <el-checkbox
+                    v-if="
+                      moment(
+                        moment(scope.row.deliveryTime).format('YYYY-MM-DD')
+                      ).isAfter(moment(new Date()).format('YYYY-MM-DD'))
+                    "
+                    v-model="scope.row.breakStatus"
+                    >违约</el-checkbox
                   >
-                    <p>
-                      确认要<span class="color-red"> 交割 </span> "{{
-                        scope.row.tscode
-                      }}"？
-                    </p>
-                    <div style="text-align: right">
-                      <el-button
-                        type="text"
-                        @click="
-                          handlePopoverClose(
-                            scope,
-                            `popover-delivery-${scope.$index}`
-                          )
-                        "
-                        >取消</el-button
-                      >
-                      <el-button type="text" @click="handleDeliveryClick(scope)"
-                        >确认</el-button
-                      >
-                    </div>
-                    <el-button type="text" slot="reference" class="ml10"
-                      >交割</el-button
-                    >
-                  </el-popover>
+                </template>
+              </el-table-column>
+              <!-- <el-table-column align="center" label="操作" width="100">
+                <template slot-scope="scope">
                   <el-popover
                     v-if="setAuth('bonds:break')"
                     placement="bottom-end"
@@ -251,6 +237,40 @@
                     >
                   </el-popover>
                 </template>
+              </el-table-column> -->
+              <el-table-column></el-table-column>
+              <el-table-column align="center" label="交割操作" width="100">
+                <template slot-scope="scope">
+                  <el-popover
+                    v-if="setAuth('bonds:delivery')"
+                    placement="bottom-end"
+                    :ref="`popover-delivery-${scope.$index}`"
+                  >
+                    <p>
+                      确认要<span class="color-red"> 交割 </span> "{{
+                        scope.row.tscode
+                      }}"？
+                    </p>
+                    <div style="text-align: right">
+                      <el-button
+                        type="text"
+                        @click="
+                          handlePopoverClose(
+                            scope,
+                            `popover-delivery-${scope.$index}`
+                          )
+                        "
+                        >取消</el-button
+                      >
+                      <el-button type="text" @click="handleDeliveryClick(scope)"
+                        >确认</el-button
+                      >
+                    </div>
+                    <el-button type="text" slot="reference" class="ml10"
+                      >交割</el-button
+                    >
+                  </el-popover>
+                </template>
               </el-table-column>
             </el-table>
           </div>
@@ -314,6 +334,9 @@ import * as util from '@/utils/util'
 import moment from 'moment'
 let tableFinishClassName = ''
 let currentFinishCode = ''
+// 合并单元格
+let finishCode = ''
+let finishCodeSameCount = 0
 export default {
   mixins: [animationMixin, pageMixin],
   components: {
@@ -448,19 +471,22 @@ export default {
         userTradeId: null
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
-          let rowId = 0
+          // let rowId = 0
+          // response.rows.forEach(element => {
+          //   if (element.children && element.children.length > 0) {
+          //     const realTradeIdList = []
+          //     element.children.forEach(element => {
+          //       rowId++
+          //       realTradeIdList.push(element.realTradeId)
+          //       element.rowId = rowId
+          //     })
+          //     rowId++
+          //     element.realTradeIdList = realTradeIdList
+          //     element.rowId = rowId
+          //   }
+          // });
           response.rows.forEach(element => {
-            if (element.children && element.children.length > 0) {
-              const realTradeIdList = []
-              element.children.forEach(element => {
-                rowId++
-                realTradeIdList.push(element.realTradeId)
-                element.rowId = rowId
-              })
-              rowId++
-              element.realTradeIdList = realTradeIdList
-              element.rowId = rowId
-            }
+            element.breakStatus = false
           });
           this.tableDataFinish = response.rows;
           this.totalCount = response.total;
@@ -574,6 +600,36 @@ export default {
         }
       }
     },
+    // 合并单元格
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (column.label === '交割操作') {
+        // 1、根据当前finishCode查找个数作为合并行数
+        finishCodeSameCount = 0
+        let flag = false
+        if (finishCode !== row.finishCode) {
+          finishCode = row.finishCode
+          for (let i = 0; i < this.tableDataFinish.length; i++) {
+            if (this.tableDataFinish[i].finishCode === row.finishCode) {
+              finishCodeSameCount = finishCodeSameCount + 1
+              flag = true
+            } else {
+              if (flag) {
+                break
+              }
+            }
+          }
+          return {
+            rowspan: finishCodeSameCount,
+            colspan: columnIndex
+          }
+        } else {
+          return {
+            rowspan: 0,
+            colspan: columnIndex
+          };
+        }
+      }
+    },
     // 卖出，买入数据
     initRightBusinessList(params) {
       const self = this
@@ -624,10 +680,28 @@ export default {
     },
     // 交割
     handleDeliveryClick(scope) {
-      api.dealDelivery({ realTradeId: scope.row.realTradeId }).then(response => {
+      let jiaogeIdlist = []
+      let weiyueIdlist = []
+      let flag = false
+      for (let i = 0; i < this.tableDataFinish.length; i++) {
+        console.log(scope.row.finishCode, this.tableDataFinish[i].finishCode)
+        if (scope.row.finishCode === this.tableDataFinish[i].finishCode) {
+          if (this.tableDataFinish[i].breakStatus) {
+            weiyueIdlist.push(this.tableDataFinish[i].realTradeId)
+          } else {
+            jiaogeIdlist.push(this.tableDataFinish[i].realTradeId)
+          }
+          flag = true
+        } else {
+          if (flag) {
+            break
+          }
+        }
+      }
+      api.dealDelivery({ jiaogeIdlist: jiaogeIdlist, weiyueIdlist: weiyueIdlist }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
-            message: '已交割',
+            message: '操作成功',
             type: 'success'
           })
           this.handlePopoverClose(scope, `popover-delivery-${scope.$index}`)

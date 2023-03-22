@@ -45,7 +45,7 @@
               >
                 <p>
                   确认"{{ scope.row.tscode }}"<span class="color-red">
-                    撤销违约
+                    改交割
                   </span>
                   ？
                 </p>
@@ -65,7 +65,7 @@
                   >
                 </div>
                 <el-button type="text" slot="reference" class="ml10"
-                  >撤销</el-button
+                  >改交割</el-button
                 >
               </el-popover>
             </template>
@@ -122,9 +122,9 @@ export default {
         this.loading = false;
       });
     },
-    // 撤销违约
+    // 改交割
     handleBreakBackClick(scope) {
-      api.dealBreakReturn({ realTradeId: scope.row.realTradeId }).then(response => {
+      api.dealBreakReturn({ id: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
             message: '操作成功',
