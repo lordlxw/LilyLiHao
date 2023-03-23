@@ -236,5 +236,12 @@ export default {
         realTradeId: params.realTradeId
       }
     })
+  },
+  // 已平导出
+  bondsExport() {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/export`,
+      method: 'post'
+    })
   }
 }

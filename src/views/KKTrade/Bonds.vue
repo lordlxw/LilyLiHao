@@ -14,6 +14,9 @@
             <el-button size="mini" @click="handleDefaultExpandAll">{{
               defaultExpandAll ? "全收" : "全展"
             }}</el-button>
+            <el-button type="primary" size="mini" @click="handleExport"
+              >导出</el-button
+            >
           </div>
           <div class="table mt10" ref="noBondsDo">
             <el-table
@@ -358,7 +361,20 @@ export default {
       })
     },
     // 导出
+    // 导出
     handleExport() {
+      api.bondsExport().then((response) => {
+        var blob = new Blob([response], { type: `application/vnd.ms-excel` });
+        var objectUrl = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.setAttribute("style", "display:none");
+        a.setAttribute("href", objectUrl);
+        var filename = `已平仓_${moment().format("YYYY-MM-DD HH:mm:ss")}.xlsx`;
+        a.setAttribute("download", filename);
+        a.click();
+        URL.revokeObjectURL(objectUrl);
+      });
     },
     // 获取用户模版id下设置的column
     dispatchUserColumn() {
