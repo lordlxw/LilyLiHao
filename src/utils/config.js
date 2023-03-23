@@ -94,7 +94,8 @@ export default {
     parentId: { label: '相关单号', prop: 'parentId', width: '140', align: 'left', show: false },
     updateBy: { label: '修改人', prop: 'updateBy', width: '120', align: 'left', show: true },
     updateTime: { label: '修改时间', prop: 'updateTime', width: '120', align: 'left', show: true },
-    tradeTime: { label: '成交时间', prop: 'tradeTime', width: '190', align: 'left', show: true }
+    tradeTime: { label: '成交时间', prop: 'tradeTime', width: '190', align: 'left', show: true },
+    tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true }
     // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
   },
   // 未平仓表头

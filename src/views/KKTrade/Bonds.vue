@@ -121,7 +121,7 @@
               :data="tableDataFinish"
               tooltip-effect="dark"
               style="width: 100%"
-              height="600"
+              class="table-height"
               border
               row-key="rowId"
               :row-class-name="tableRowFinishClassName"
@@ -798,6 +798,12 @@ export default {
           this.loadInitDataBreak()
           break
       }
+    }
+    window.onresize = () => {
+      // const width = 1920
+      // const height = 1080
+      // const clientWith = document.body.clientWidth
+      // const clientHeight = document.body.clientHeight
     }
   }
 }
