@@ -1,7 +1,6 @@
 <!-- 持仓单 -->
 <template>
   <div class="content">
-    <!-- <div class="filter-condition"></div> -->
     <div class="list">
       <el-tabs
         ref="eltabs"
@@ -11,7 +10,7 @@
       >
         <!-- 未平仓 -->
         <el-tab-pane :label="tablist[0]" v-if="setAuth('nobonds:view')">
-          <div class="do">
+          <div class="do" ref="noBondsDo">
             <el-button size="mini" @click="handleDefaultExpandAll">{{
               defaultExpandAll ? "全收" : "全展"
             }}</el-button>
@@ -799,11 +798,15 @@ export default {
           break
       }
     }
+
+    console.log(111111)
+    console.log(this.$refs.noBondsDo.getBoundingClientRect().left)
     window.onresize = () => {
       // const width = 1920
       // const height = 1080
       // const clientWith = document.body.clientWidth
       // const clientHeight = document.body.clientHeight
+
     }
   }
 }

@@ -80,6 +80,7 @@ export default {
     price: { label: '询价', prop: 'price', width: '120', align: 'right', show: true },
     realPrice: { label: '成交价', prop: 'realPrice', width: '120', align: 'right', show: true },
     volume: { label: '询量', prop: 'volume', width: '100', align: 'right', show: true },
+    restVolume: { label: '剩余询量', prop: 'restVolume', width: '100', align: 'left', show: true },
     realVolume: { label: '成交额', prop: 'realVolume', width: '100', align: 'right', show: true },
     deliveryTime: { label: '询价交割', prop: 'deliveryTime', width: '100', align: 'left', show: true },
     realDeliveryTime: { label: '成交交割', prop: 'realDeliveryTime', width: '100', align: 'left', show: true },
