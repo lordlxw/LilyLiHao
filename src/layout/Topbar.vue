@@ -3,7 +3,7 @@
     <div class="navigator">
       <i
         class="collapse"
-        :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"
+        :class="isCollapse ? 'el-icon-s-fold' : 'el-icon-s-unfold'"
         @click="changeFoldState"
       ></i>
       <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -75,21 +75,17 @@ export default {
   computed: {
     ...mapState({
       isCollapse: (state) => state.isCollapse,
-      asideLeftWidth: (state) => state.asideLeftWidth,
-      activeIndex: (state) => state.curMenuIndex
+      asideLeftWidth: (state) => state.asideLeftWidth
     }),
     ...mapGetters({
       userInfo: 'getUserInfo'
     })
   },
   methods: {
-    // setAuth(index) {
-    //   return this.roleId === '1' || this.menus_ids.indexOf(index) !== -1
-    // },
-    ...mapMutations(["SET_IS_COLLAPSE", "SET_CRUMENUSINDEX"]),
+    ...mapMutations(["SET_IS_COLLAPSE"]),
     /* 折叠展开 */
     changeFoldState() {
-      this["SET_IS_COLLAPSE"](!this.isCollapse);
+      this["SET_IS_COLLAPSE"]({ isCollapse: !this.isCollapse, val: this.initFrameW(!this.isCollapse ? 200 : 0) });
     },
     /* 全屏与退出全屏 */
     handleScreenfull() {
@@ -129,46 +125,16 @@ export default {
           break;
       }
     },
-    /* 用户登出 */
-    fetchLogout() {
-      // apiLogin.logout({}).then((response) => {
-      //   sessionStorage.removeItem(config.keys.tokenKey);
-      //   sessionStorage.removeItem(config.keys.menusKey);
-      //   sessionStorage.removeItem(config.keys.loginNameKey);
-      //   this.$router.push({ path: "/login" });
-      // });
-    },
-    handleSelect(key, keyPath) {
-      this["SET_CRUMENUSINDEX"](key)
-    },
-    // handleNavigator(val1, val2, val3) {
-    //   const params = {
-    //     val1,
-    //     val2,
-    //     val3
-    //   }
-    //   this.$store.commit('SET_NAVIGATOR', params)
-    // }
+    // 计算宽度
+    initFrameW(val) {
+      const width = 1920
+      const clientWith = document.body.clientWidth
+      return Math.floor(clientWith / width * val)
+    }
   },
   mounted() {
-    let index = 1
-    if (/^\/system/.test(this.$route.path)) {
-      index = '1'
-      // this.handleNavigator(['用户权限', '用户角色'], ['1-1', '1-1-1'], '/system/power/role')
-    } else if (/^\/product/.test(this.$route.path)) {
-      index = '2'
-      // this.handleNavigator(['平台代售', '作品管理'], ['2-1', '2-1-1'], '/product/agent/works')
-    } else if (/^\/market/.test(this.$route.path)) {
-      index = '3'
-      // this.handleNavigator(['空投活动', '空投管理'], ['3-1', '3-1-1'], '/market/airdrop/manage')
-    } else if (/^\/account/.test(this.$route.path)) {
-      index = '4'
-      // this.handleNavigator(['平台账户'], ['4-1'], '/account/account')
-    } else if (/^\/member/.test(this.$route.path)) {
-      index = '5'
-      // this.handleNavigator(['会员管理'], ['51'], '/member/memberlist')
+    window.onresize = () => {
     }
-    this["SET_CRUMENUSINDEX"](index)
   },
 };
 </script>

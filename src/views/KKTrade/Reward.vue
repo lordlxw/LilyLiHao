@@ -8,7 +8,7 @@
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%"
-        height="600"
+        :height="rewardH"
         border
       >
         <template v-for="itemHead in tableHead">
@@ -98,7 +98,8 @@ export default {
         { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
         { label: '备注', prop: 'remark', width: '500', align: 'left', show: true }
       ],
-      tableData: []
+      tableData: [],
+      rewardH: ''
     }
   },
   methods: {
@@ -177,10 +178,16 @@ export default {
       return !moment(
         moment(scope.row.deliveryTime).format('YYYY-MM-DD')
       ).isBefore(moment(new Date()).format('YYYY-MM-DD'))
+    },
+    // 计算高度
+    initFrameH(obj, val) {
+      const clientHeight = document.body.clientHeight
+      this[obj] = Math.floor(clientHeight - val)
     }
   },
   mounted() {
     this.loadInitData()
+    this.initFrameH('rewardH', 200)
   }
 }
 </script>
@@ -250,9 +257,6 @@ export default {
   .my-el-row .el-col:nth-child(even) {
     font-size: 14px;
     word-break: break-all;
-  }
-  .table-height {
-    height: 800px !important;
   }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <el-container class="form-container height100percent">
     <el-container class="height100percent">
-      <el-aside width="auto" class="height100percent">
+      <el-aside :width="asideLeftWidth" class="height100percent">
         <div class="aside-left" ref="animateAsideLeft">
           <el-scrollbar class="scrollbar-aside">
             <sidebar></sidebar>

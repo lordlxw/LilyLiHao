@@ -10,18 +10,18 @@
       >
         <!-- 未平仓 -->
         <el-tab-pane :label="tablist[0]" v-if="setAuth('nobonds:view')">
-          <div class="do" ref="noBondsDo">
+          <div class="do">
             <el-button size="mini" @click="handleDefaultExpandAll">{{
               defaultExpandAll ? "全收" : "全展"
             }}</el-button>
           </div>
-          <div class="table mt10">
+          <div class="table mt10" ref="noBondsDo">
             <el-table
               v-loading="loading"
               :data="tableData"
               tooltip-effect="dark"
               style="width: 100%"
-              height="600"
+              :height="nobondsH"
               border
               row-key="rowId"
               :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -120,7 +120,7 @@
               :data="tableDataFinish"
               tooltip-effect="dark"
               style="width: 100%"
-              class="table-height"
+              :height="bondsH"
               border
               row-key="rowId"
               :row-class-name="tableRowFinishClassName"
@@ -339,7 +339,9 @@ export default {
       nobondsRow: [],
       // 已平仓编辑弹框
       dialogBondsFormVisible: false,
-      bondsRow: []
+      bondsRow: [],
+      nobondsH: '',
+      bondsH: ''
     }
   },
   methods: {
@@ -783,6 +785,17 @@ export default {
       return moment(
         moment(scope.row.deliveryTime).format('YYYY-MM-DD')
       ).isSameOrAfter(moment(new Date()).format('YYYY-MM-DD'))
+    },
+    // 计算宽度
+    initFrameW(obj, val) {
+      const width = 1920
+      const clientWith = document.body.clientWidth
+      this[obj] = Math.floor(clientWith / width * val)
+    },
+    // 计算高度
+    initFrameH(obj, val) {
+      const clientHeight = document.body.clientHeight
+      this[obj] = Math.floor(clientHeight - val)
     }
   },
   mounted() {
@@ -798,16 +811,8 @@ export default {
           break
       }
     }
-
-    console.log(111111)
-    console.log(this.$refs.noBondsDo.getBoundingClientRect().left)
-    window.onresize = () => {
-      // const width = 1920
-      // const height = 1080
-      // const clientWith = document.body.clientWidth
-      // const clientHeight = document.body.clientHeight
-
-    }
+    this.initFrameH('nobondsH', 200)
+    this.initFrameH('bondsH', 200)
   }
 }
 </script>

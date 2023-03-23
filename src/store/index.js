@@ -10,7 +10,7 @@ const store = new Vuex.Store({
     // 记录当前选中的tscode,刷新恢复使用
     tscodeGlobal: '',
     isCollapse: false,
-    asideLeftWidth: '200px',
+    asideLeftWidth: '0px',
     userId: 0,
     roleId: '',
     nickName: '',
@@ -128,9 +128,10 @@ const store = new Vuex.Store({
   actions: {},
   mutations: {
     // 菜单收起与展开
-    SET_IS_COLLAPSE(state, isCollapse) {
-      state.isCollapse = isCollapse
-      state.asideLeftWidth = isCollapse ? '64px' : '200px'
+    SET_IS_COLLAPSE(state, params) {
+      console.log(params)
+      state.isCollapse = params.isCollapse
+      state.asideLeftWidth = params.val + 'px'
     },
     // 设置登录名
     SET_LOGINNAME(state, loginName) {

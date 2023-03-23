@@ -18,7 +18,7 @@
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
-          class="table-height"
+          :height="enquiryH"
           border
           row-key="userTradeId"
           default-expand-all
@@ -443,7 +443,8 @@ export default {
         ],
       },
       dealRows: {},
-      dialogEnquiryFormVisible: false
+      dialogEnquiryFormVisible: false,
+      enquiryH: ''
     }
   },
   created() {
@@ -702,10 +703,15 @@ export default {
     },
     handleDialogVisible(obj) {
       this.dialogEnquiryFormVisible = obj.dialogVisible
+    },
+    // 计算高度
+    initFrameH(obj, val) {
+      const clientHeight = document.body.clientHeight
+      this[obj] = Math.floor(clientHeight - val)
     }
   },
   mounted() {
-
+    this.initFrameH('enquiryH', 200)
   }
 }
 </script>
