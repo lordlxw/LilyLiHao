@@ -45,7 +45,7 @@ export default {
       url: `${Vue.prototype.$apiUrl}/realtrade/gaiweiyue`,
       method: 'post',
       data: {
-        id: params.id
+        realTradeId: params.realTradeId
       }
     })
   }

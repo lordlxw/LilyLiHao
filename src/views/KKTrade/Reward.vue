@@ -33,7 +33,7 @@
         <el-table-column fixed="right" align="center" label="操作" width="80">
           <template slot-scope="scope">
             <el-popover
-              v-if="setAuth('reward:back')"
+              v-if="setAuth('reward:back') && funcIsBreak(scope)"
               placement="bottom-end"
               :ref="`popover-deliveryback-${scope.$index}`"
             >
@@ -119,7 +119,7 @@ export default {
     },
     // 改违约
     handleDeliveryBackClick(scope) {
-      api.deliverBreak({ id: scope.row.realTradeId }).then(response => {
+      api.deliverBreak({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
             message: '操作成功',
@@ -171,6 +171,12 @@ export default {
           return row.tscode.replace(/.IB/, '')
       }
       return row[column.property]
+    },
+    // 是否不能改违约
+    funcIsBreak(scope) {
+      return !moment(
+        moment(scope.row.deliveryTime).format('YYYY-MM-DD')
+      ).isBefore(moment(new Date()).format('YYYY-MM-DD'))
     }
   },
   mounted() {

@@ -124,7 +124,7 @@ export default {
     },
     // 改交割
     handleBreakBackClick(scope) {
-      api.dealBreakReturn({ id: scope.row.realTradeId }).then(response => {
+      api.dealBreakReturn({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
             message: '操作成功',

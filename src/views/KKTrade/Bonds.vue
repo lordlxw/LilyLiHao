@@ -147,21 +147,7 @@
                 >
                 </el-table-column>
               </template>
-              <el-table-column></el-table-column>
-              <el-table-column
-                align="center"
-                label="是否违约"
-                width="80"
-                v-if="setAuth('bonds:delivery')"
-              >
-                <template slot-scope="scope">
-                  <el-checkbox
-                    v-if="funcIsBreak(scope)"
-                    v-model="scope.row.breakStatus"
-                    >违约</el-checkbox
-                  >
-                </template>
-              </el-table-column>
+              <!-- <el-table-column></el-table-column> -->
               <el-table-column align="center" label="操作" width="100">
                 <template slot-scope="scope">
                   <el-button
@@ -205,10 +191,28 @@
                   </el-popover>
                 </template>
               </el-table-column>
-              <el-table-column align="center" label="交割操作" width="100">
+              <el-table-column
+                align="center"
+                label="是否违约"
+                width="80"
+                v-if="setAuth('bonds:delivery')"
+              >
+                <template slot-scope="scope">
+                  <el-checkbox
+                    v-if="funcIsBreak(scope)"
+                    v-model="scope.row.breakStatus"
+                    >违约</el-checkbox
+                  >
+                </template>
+              </el-table-column>
+              <el-table-column
+                align="center"
+                label="交割操作"
+                width="100"
+                v-if="setAuth('bonds:delivery')"
+              >
                 <template slot-scope="scope">
                   <el-popover
-                    v-if="setAuth('bonds:delivery')"
                     placement="bottom-end"
                     :ref="`popover-delivery-${scope.$index}`"
                   >
@@ -511,6 +515,9 @@ export default {
     // 行样式
     tableRowClassName({ row, rowIndex }) {
       if (row.children) {
+        if (moment(moment(row.deliveryTime).format('YYYY-MM-DD')).isBefore(moment(moment(new Date()).format('YYYY-MM-DD')))) {
+          return 'history-row'
+        }
         return 'warning-row'
       }
     },
@@ -770,11 +777,11 @@ export default {
     handleDefaultExpandAll() {
       this.defaultExpandAll = !this.defaultExpandAll
     },
-    // 是否违约
+    // 是否可违约
     funcIsBreak(scope) {
       return moment(
         moment(scope.row.deliveryTime).format('YYYY-MM-DD')
-      ).isAfter(moment(new Date()).format('YYYY-MM-DD'))
+      ).isSameOrAfter(moment(new Date()).format('YYYY-MM-DD'))
     }
   },
   mounted() {
