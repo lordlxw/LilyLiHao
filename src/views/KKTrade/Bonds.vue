@@ -14,9 +14,6 @@
             <el-button size="mini" @click="handleDefaultExpandAll">{{
               defaultExpandAll ? "全收" : "全展"
             }}</el-button>
-            <el-button type="primary" size="mini" @click="handleExport"
-              >导出</el-button
-            >
           </div>
           <div class="table mt10" ref="noBondsDo">
             <el-table
@@ -117,6 +114,11 @@
         </el-tab-pane>
         <!-- 已平仓 -->
         <el-tab-pane :label="tablist[1]" v-if="setAuth('bonds:view')">
+          <div class="do">
+            <el-button type="primary" size="mini" @click="handleExport"
+              >导出</el-button
+            >
+          </div>
           <div class="table mt10">
             <el-table
               v-loading="loading"
