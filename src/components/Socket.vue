@@ -142,7 +142,7 @@ export default {
                       <dd>${msgJson.data.price}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
+                      <dt>成交量</dt>
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
@@ -175,7 +175,7 @@ export default {
                       <dd>${msgJson.data.price}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
+                      <dt>成交量</dt>
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
@@ -215,7 +215,7 @@ export default {
                         h("dd", null, `${msgJson.data.price}`)
                       ]),
                       h("dl", null, [
-                        h("dt", null, "成交量（万）"),
+                        h("dt", null, "成交量"),
                         h("dd", null, `${msgJson.data.volume}`)
                       ]),
                       h("dl", null, [
@@ -273,7 +273,7 @@ export default {
                       <dd>${msgJson.data.price}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
+                      <dt>成交量</dt>
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>

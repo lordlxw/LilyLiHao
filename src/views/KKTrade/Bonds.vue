@@ -22,7 +22,7 @@
               :data="tableData"
               tooltip-effect="dark"
               style="width: 100%"
-              class="table-height"
+              height="600"
               border
               row-key="rowId"
               :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -121,7 +121,7 @@
               :data="tableDataFinish"
               tooltip-effect="dark"
               style="width: 100%"
-              class="table-height"
+              height="600"
               border
               row-key="rowId"
               :row-class-name="tableRowFinishClassName"
@@ -515,10 +515,13 @@ export default {
     // 行样式
     tableRowClassName({ row, rowIndex }) {
       if (row.children) {
-        if (moment(moment(row.deliveryTime).format('YYYY-MM-DD')).isBefore(moment(moment(new Date()).format('YYYY-MM-DD')))) {
+        if (moment(moment(row.deliveryTime).format('YYYY-MM-DD')).isBefore(moment(new Date()).format('YYYY-MM-DD'))) {
           return 'history-row'
+        } else if (moment(moment(row.deliveryTime).format('YYYY-MM-DD')).isSame(moment(new Date()).format('YYYY-MM-DD'))) {
+          return 'warning-row'
+        } else {
+          return 'success-row'
         }
-        return 'warning-row'
       }
     },
     // 已平仓行样式
@@ -647,7 +650,6 @@ export default {
       let weiyueIdlist = []
       let flag = false
       for (let i = 0; i < this.tableDataFinish.length; i++) {
-        console.log(scope.row.finishCode, this.tableDataFinish[i].finishCode)
         if (scope.row.finishCode === this.tableDataFinish[i].finishCode) {
           if (this.tableDataFinish[i].breakStatus) {
             weiyueIdlist.push(this.tableDataFinish[i].realTradeId)

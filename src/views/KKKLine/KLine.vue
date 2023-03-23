@@ -2203,7 +2203,7 @@ export default {
                       <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
+                      <dt>成交量</dt>
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
@@ -2247,7 +2247,7 @@ export default {
                       <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
+                      <dt>成交量</dt>
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
@@ -2285,7 +2285,7 @@ export default {
                       <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
+                      <dt>成交量</dt>
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
@@ -2318,7 +2318,7 @@ export default {
                       <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
+                      <dt>成交量</dt>
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
@@ -2351,7 +2351,7 @@ export default {
                       <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
-                      <dt>成交量（万）</dt>
+                      <dt>成交量</dt>
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
@@ -2393,7 +2393,7 @@ export default {
                         ])
                       ]),
                       h("dl", null, [
-                        h("dt", null, "成交量（万）"),
+                        h("dt", null, "成交量"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? msgJson.data.ut.restVolume + ' ' : ''),
                           h("span", null, msgJson.data.dto.volume)

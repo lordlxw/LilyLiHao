@@ -9,7 +9,7 @@
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
-          class="table-height"
+          height="600"
           border
         >
           <template v-for="itemHead in tableHead">
