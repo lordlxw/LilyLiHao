@@ -10,6 +10,9 @@
         style="width: 100%"
         :height="rewardH"
         border
+        header-row-style="height:30px;line-height:30px;"
+        header-cell-style="background:#f8f8f8;"
+        :key="Math.random()"
       >
         <template v-for="itemHead in tableHead">
           <el-table-column
@@ -99,8 +102,11 @@ export default {
         { label: '备注', prop: 'remark', width: '500', align: 'left', show: true }
       ],
       tableData: [],
-      rewardH: ''
+      rewardH: '0'
     }
+  },
+  created() {
+    this.initFrameH('rewardH', 200)
   },
   methods: {
     // 搜索事件
@@ -187,7 +193,6 @@ export default {
   },
   mounted() {
     this.loadInitData()
-    this.initFrameH('rewardH', 200)
   }
 }
 </script>

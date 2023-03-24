@@ -9,8 +9,11 @@
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
-          height="600"
+          :height="breakH"
           border
+          :key="Math.random()"
+          header-row-style="height:30px;line-height:30px;"
+          header-cell-style="background:#f8f8f8;"
         >
           <template v-for="itemHead in tableHead">
             <el-table-column
@@ -97,9 +100,11 @@ export default {
         { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true }
       ],
       tableData: [],
+      breakH: '0'
     }
   },
   created() {
+    this.initFrameH('breakH', 200)
   },
   methods: {
     // 初始化违约成交
@@ -162,6 +167,11 @@ export default {
       }
       return row[column.property]
     },
+    // 计算高度
+    initFrameH(obj, val) {
+      const clientHeight = document.body.clientHeight
+      this[obj] = Math.floor(clientHeight - val)
+    }
   },
   mounted() {
     this.loadInitData()

@@ -240,8 +240,8 @@ export default {
   // 已平导出
   bondsExport() {
     return request({
-      url: `${Vue.prototype.$apiUrl}/export`,
-      method: 'post'
+      url: `${Vue.prototype.$apiUrl}/realtrade/export`,
+      method: 'get'
     })
   }
 }

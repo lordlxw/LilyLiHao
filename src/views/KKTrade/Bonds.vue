@@ -29,6 +29,8 @@
               :cell-style="cellStyle"
               :key="Math.random()"
               :default-expand-all="defaultExpandAll"
+              header-row-style="height:30px;line-height:30px;"
+              header-cell-style="background:#f8f8f8;"
             >
               <template v-for="itemHead in tableHead">
                 <el-table-column
@@ -53,7 +55,7 @@
                 fixed="right"
                 align="center"
                 label="操作"
-                width="80"
+                width="120"
               >
                 <template slot-scope="scope">
                   <el-button
@@ -144,6 +146,8 @@
               :cell-style="finishCellStyle"
               :key="Math.random()"
               :span-method="objectSpanMethod"
+              header-row-style="height:30px;line-height:30px;"
+              header-cell-style="background:#f8f8f8;"
             >
               <template v-for="itemHead in tableHeadFinish">
                 <el-table-column
@@ -373,8 +377,8 @@ export default {
       // 已平仓编辑弹框
       dialogBondsFormVisible: false,
       bondsRow: [],
-      nobondsH: '',
-      bondsH: '',
+      nobondsH: '0',
+      bondsH: '0',
       // 平开仓
       dialogBondsRollFormVisible: false,
       // 平Row
@@ -382,6 +386,10 @@ export default {
       // 开Row
       openRow: {}
     }
+  },
+  created(){
+    this.initFrameH('nobondsH', 200)
+    this.initFrameH('bondsH', 200)
   },
   methods: {
     // 搜索事件
@@ -905,8 +913,6 @@ export default {
           break
       }
     }
-    this.initFrameH('nobondsH', 200)
-    this.initFrameH('bondsH', 200)
   }
 }
 </script>

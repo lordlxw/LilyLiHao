@@ -23,6 +23,8 @@
           row-key="userTradeId"
           default-expand-all
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+          header-row-style="height:30px;line-height:30px;"
+          header-cell-style="background:#f8f8f8;"
           :key="Math.random()"
         >
           <template v-for="itemHead in tableHead">
@@ -444,11 +446,11 @@ export default {
       },
       dealRows: {},
       dialogEnquiryFormVisible: false,
-      enquiryH: ''
+      enquiryH: '0'
     }
   },
   created() {
-    this.dispatchUserColumn()
+    this.initFrameH('enquiryH', 200)
   },
   methods: {
     // 搜索事件
@@ -711,7 +713,7 @@ export default {
     }
   },
   mounted() {
-    this.initFrameH('enquiryH', 200)
+    this.dispatchUserColumn()
   }
 }
 </script>
