@@ -387,7 +387,7 @@ export default {
       openRow: {}
     }
   },
-  created(){
+  created() {
     this.initFrameH('nobondsH', 200)
     this.initFrameH('bondsH', 200)
   },

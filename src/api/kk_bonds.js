@@ -241,7 +241,8 @@ export default {
   bondsExport() {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/export`,
-      method: 'get'
+      method: 'get',
+      responseType: 'arraybuffer'
     })
   }
 }

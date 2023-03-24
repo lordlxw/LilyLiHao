@@ -45,12 +45,13 @@ service.interceptors.response.use(response => {
       // if (response.request && response.request.responseType === 'arraybuffer') {
       //   return resp
       // }
-      Message({
-        message: `${resp.message}`,
-        type: 'warning',
-        durations: 3 * 1000
-      })
-      break
+      return resp
+    // Message({
+    //   message: `${resp.message}`,
+    //   type: 'warning',
+    //   durations: 3 * 1000
+    // })
+    // break
   }
 }, error => {
   console.log(error)
