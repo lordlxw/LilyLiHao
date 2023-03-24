@@ -65,6 +65,14 @@
                     >平仓</el-button
                   >
                   <el-button
+                    type="text"
+                    v-if="
+                      setAuth('nobonds:roll') && scope.row.realTradeId === null
+                    "
+                    @click="handleRoll(scope.row)"
+                    >滚单</el-button
+                  >
+                  <el-button
                     @click="handleNoBondsEditClick(scope.row)"
                     type="text"
                     size="small"
@@ -115,7 +123,11 @@
         <!-- 已平仓 -->
         <el-tab-pane :label="tablist[1]" v-if="setAuth('bonds:view')">
           <div class="do">
-            <el-button type="primary" size="mini" @click="handleExport"
+            <el-button
+              v-if="setAuth('bonds:export')"
+              type="primary"
+              size="mini"
+              @click="handleExport"
               >导出</el-button
             >
           </div>
@@ -291,6 +303,20 @@
         @change="handleBondsDialogVisible"
       ></bonds-edit>
     </el-dialog>
+    <el-dialog
+      title="滚单"
+      width="650px;"
+      :visible.sync="dialogBondsRollFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <bonds-roll
+        :overRow="overRow"
+        :openRow="openRow"
+        @change="handleBondsRollDialogVisible"
+      ></bonds-roll>
+    </el-dialog>
   </div>
 </template>
 
@@ -303,6 +329,7 @@ import { animationMixin } from '@/utils/animationMixin'
 import BondsCover from '@/components/BondsCover.vue'
 import NoBondsEdit from '@/components/NoBondsEdit.vue'
 import BondsEdit from '@/components/BondsEdit.vue'
+import BondsRoll from '@/components/BondsRoll.vue'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
 import moment from 'moment'
@@ -316,7 +343,8 @@ export default {
   components: {
     BondsCover,
     NoBondsEdit,
-    BondsEdit
+    BondsEdit,
+    BondsRoll
   },
   data() {
     return {
@@ -346,7 +374,13 @@ export default {
       dialogBondsFormVisible: false,
       bondsRow: [],
       nobondsH: '',
-      bondsH: ''
+      bondsH: '',
+      // 平开仓
+      dialogBondsRollFormVisible: false,
+      // 平Row
+      overRow: {},
+      // 开Row
+      openRow: {}
     }
   },
   methods: {
@@ -362,7 +396,6 @@ export default {
         this.handleSearch()
       })
     },
-    // 导出
     // 导出
     handleExport() {
       api.bondsExport().then((response) => {
@@ -489,20 +522,38 @@ export default {
       Promise.all([this.currentRow = JSON.parse(JSON.stringify(row))]).then(() => {
         switch (row.direction) {
           case 'bond_0':
-            this.initRightBusinessList({
+            this.initBondsCoverBusinessList({
               tscode: row.tscode,
               bidtype: 0,
               deliveryTime2: row.deliveryTime
             })
             break
           case 'bond_1':
-            this.initRightBusinessList({
+            this.initBondsCoverBusinessList({
               tscode: row.tscode,
               bidtype: 1,
               deliveryTime2: row.deliveryTime
             })
             break
         }
+      })
+    },
+    // 滚单弹框
+    handleRoll(row) {
+      Promise.all([
+        this.overRow = JSON.parse(JSON.stringify(row)),
+        this.openRow = JSON.parse(JSON.stringify(row))
+      ]).then(() => {
+        this.initBondsRollBusinessList({
+          tscode: row.tscode,
+          bidtype: 0,
+          direction: row.direction
+        })
+        this.initBondsRollBusinessList({
+          tscode: row.tscode,
+          bidtype: 1,
+          direction: row.direction
+        })
       })
     },
     // 平仓弹框回参接收
@@ -616,7 +667,7 @@ export default {
       }
     },
     // 卖出，买入数据
-    initRightBusinessList(params) {
+    initBondsCoverBusinessList(params) {
       const self = this
       apiBondPool.businessList(params).then(res => {
         if (res.code === '00000') {
@@ -631,6 +682,31 @@ export default {
               break;
           }
           self.dialogBondsCoverFormVisible = true
+        }
+      })
+    },
+    // 滚单卖出，买入数据
+    initBondsRollBusinessList(params) {
+      const self = this
+      apiBondPool.businessList(params).then(res => {
+        if (res.code === '00000') {
+          switch (params.bidtype) {
+            case 1:
+              self.businessOutList = res.value
+              if (row.direction === 'bond_1') {
+                self.overRow.price = self.funcGetBestPrice('max', res.value)
+                self.openRow.price = self.funcGetBestPrice('min', res.value)
+              }
+              break;
+            case 0:
+              self.businessInList = res.value
+              if (row.direction === 'bond_0') {
+                self.overRow.price = self.funcGetBestPrice('min', res.value)
+                self.openRow.price = self.funcGetBestPrice('max', res.value)
+              }
+              break;
+          }
+          self.dialogBondsRollFormVisible = true
         }
       })
     },
