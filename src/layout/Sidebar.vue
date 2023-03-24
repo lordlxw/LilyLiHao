@@ -2,8 +2,6 @@
   <div>
     <el-menu
       :default-active="this.$route.path"
-      @open="handleOpen"
-      @close="handleClose"
       background-color="#202020"
       text-color="#fff"
       active-text-color="#fff"
@@ -67,7 +65,6 @@ export default {
   },
   computed: {
     ...mapState({
-      isCollapse: state => state.isCollapse,
       curMenuIndex: state => state.curMenuIndex
     }),
     ...mapGetters({
@@ -87,12 +84,6 @@ export default {
   methods: {
     setAuth(index) {
       return this.roleId === '1' || this.menus_ids.indexOf(index) !== -1
-    },
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath)
     },
     fetchMenus() {
       this.menus = config.menus

@@ -41,7 +41,6 @@
 </template>
 <script>
 import { mapMutations, mapState, mapGetters } from "vuex";
-import Velocity from "velocity-animate";
 import screenfull from "screenfull";
 import apiLogin from '@/api/kk_login'
 import MainSocket from '@/components/Socket.vue'
@@ -61,14 +60,6 @@ export default {
       dialogFormVisible: false,
     };
   },
-  watch: {
-    /* 监听左侧菜单宽度变化，改变顶部logo大小 */
-    asideLeftWidth(newVal, oldVal) {
-      Velocity(this.$refs["animateLogo"], {
-        width: newVal,
-      });
-    },
-  },
   created() {
     this.menus = config.menus
   },
@@ -85,7 +76,7 @@ export default {
     ...mapMutations(["SET_IS_COLLAPSE"]),
     /* 折叠展开 */
     changeFoldState() {
-      this["SET_IS_COLLAPSE"]({ isCollapse: !this.isCollapse, val: this.initFrameW(!this.isCollapse ? 200 : 0) });
+      this["SET_IS_COLLAPSE"]({ isCollapse: !this.isCollapse, val: this.initFrameW(this.isCollapse ? 200 : 0) });
     },
     /* 全屏与退出全屏 */
     handleScreenfull() {
@@ -133,8 +124,6 @@ export default {
     }
   },
   mounted() {
-    window.onresize = () => {
-    }
   },
 };
 </script>

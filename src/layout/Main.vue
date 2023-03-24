@@ -29,8 +29,7 @@
 import Topbar from './Topbar'
 import Sidebar from './Sidebar'
 import MainContent from './Content'
-import { mapState } from 'vuex'
-import Velocity from 'velocity-animate'
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'Layout',
   components: {
@@ -38,25 +37,34 @@ export default {
     Sidebar,
     MainContent
   },
-  watch: {
-    asideLeftWidth(newVal, oldVal) {
-      Velocity(this.$refs['animateAsideLeft'], {
-        width: newVal
-      })
-      Velocity(this.$refs['animateContent'], {
-        'padding-left': newVal
-      })
-    }
-  },
   computed: {
     ...mapState({
-      asideLeftWidth: state => state.asideLeftWidth
+      asideLeftWidth: state => state.asideLeftWidth,
+      isCollapse: state => state.isCollapse,
     })
   },
+  methods: {
+    ...mapMutations(["SET_IS_COLLAPSE"]),
+    // 计算宽度
+    initFrameW(val) {
+      const width = 1920
+      const clientWith = document.body.clientWidth
+      return Math.floor(clientWith / width * val)
+    }
+  },
   mounted() {
-    Velocity(this.$refs.animateAsideLeft, {
-      width: this.asideLeftWidth
-    })
+    if (this.isCollapse) {
+      this["SET_IS_COLLAPSE"]({ isCollapse: this.isCollapse, val: this.initFrameW(0) })
+    } else {
+      this["SET_IS_COLLAPSE"]({ isCollapse: this.isCollapse, val: this.initFrameW(200) })
+    }
+    window.onresize = () => {
+      setTimeout(() => {
+        if (this.asideLeftWidth !== '0px') {
+          this["SET_IS_COLLAPSE"]({ isCollapse: this.isCollapse, val: this.initFrameW(200) })
+        }
+      }, 300)
+    }
   }
 }
 </script>
@@ -64,6 +72,7 @@ export default {
 @import "@/assets/css/style.scss";
 .height100percent {
   height: 100%;
+  animation: 0.3s;
 }
 .form-container {
   .el-aside {

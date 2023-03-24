@@ -10,7 +10,7 @@ const store = new Vuex.Store({
     // 记录当前选中的tscode,刷新恢复使用
     tscodeGlobal: '',
     isCollapse: false,
-    asideLeftWidth: '0px',
+    asideLeftWidth: '',
     userId: 0,
     roleId: '',
     nickName: '',
@@ -129,7 +129,6 @@ const store = new Vuex.Store({
   mutations: {
     // 菜单收起与展开
     SET_IS_COLLAPSE(state, params) {
-      console.log(params)
       state.isCollapse = params.isCollapse
       state.asideLeftWidth = params.val + 'px'
     },
