@@ -237,8 +237,16 @@ export default {
       }
     })
   },
-  // 已平导出
-  bondsExport() {
+  // 已平全量导出
+  bondsAllExport() {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/export`,
+      method: 'get',
+      responseType: 'arraybuffer'
+    })
+  },
+  // 已平增量导出
+  bondsAddExport() {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/export`,
       method: 'get',

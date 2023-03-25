@@ -126,11 +126,18 @@
         <el-tab-pane :label="tablist[1]" v-if="setAuth('bonds:view')">
           <div class="do">
             <el-button
-              v-if="setAuth('bonds:export')"
+              v-if="setAuth('bonds:allexport')"
               type="primary"
               size="mini"
-              @click="handleExport"
-              >导出</el-button
+              @click="handleAllExport"
+              >全量导出</el-button
+            >
+            <el-button
+              v-if="setAuth('bonds:addexport')"
+              type="primary"
+              size="mini"
+              @click="handleAddExport"
+              >增量导出</el-button
             >
           </div>
           <div class="table mt10">
@@ -404,16 +411,31 @@ export default {
         this.handleSearch()
       })
     },
-    // 导出
-    handleExport() {
-      api.bondsExport().then((response) => {
+    // 全量导出
+    handleAllExport() {
+      api.bondsAllExport().then((response) => {
         var blob = new Blob([response], { type: `application/vnd.ms-excel` });
         var objectUrl = URL.createObjectURL(blob);
         var a = document.createElement("a");
         document.body.appendChild(a);
         a.setAttribute("style", "display:none");
         a.setAttribute("href", objectUrl);
-        var filename = `已平仓_${moment().format("YYYY-MM-DD HH:mm:ss")}.xlsx`;
+        var filename = `已平仓_全量_${moment().format("YYYY-MM-DD HH:mm:ss")}.xlsx`;
+        a.setAttribute("download", filename);
+        a.click();
+        URL.revokeObjectURL(objectUrl);
+      });
+    },
+    // 增量导出
+    handleAddExport() {
+      api.bondsAddExport().then((response) => {
+        var blob = new Blob([response], { type: `application/vnd.ms-excel` });
+        var objectUrl = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.setAttribute("style", "display:none");
+        a.setAttribute("href", objectUrl);
+        var filename = `已平仓_增量_${moment().format("YYYY-MM-DD HH:mm:ss")}.xlsx`;
         a.setAttribute("download", filename);
         a.click();
         URL.revokeObjectURL(objectUrl);
