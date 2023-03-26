@@ -1,85 +1,167 @@
 <template>
   <div>
     <el-form
-      ref="coverForm"
-      :model="coverForm"
-      :rules="coverFormRules"
+      ref="rollForm"
+      :model="rollForm"
+      :rules="rollFormRules"
       label-width="100px"
     >
-      <el-form-item label="方向" prop="direction">
-        {{
-          coverForm.direction === "bond_0"
-            ? "买入"
-            : coverForm.direction === "bond_1"
-            ? "卖出"
-            : "不明确"
-        }}
-      </el-form-item>
-      <el-form-item label="券码" prop="tscode">
-        {{ coverForm.tscode }}
-      </el-form-item>
-      <el-form-item label="价格" prop="price">
-        <el-input v-model="coverForm.price" placeholder="请输入价格"></el-input>
-      </el-form-item>
-      <el-form-item label="交易量(万)" prop="volume">
-        <el-input
-          v-model="coverForm.volume"
-          placeholder="请输入交易量"
-        ></el-input>
-      </el-form-item>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="方向" prop="direction">
+            {{
+              rollForm.direction === "bond_0"
+                ? "买入"
+                : rollForm.direction === "bond_1"
+                ? "卖出"
+                : "不明确"
+            }}
+          </el-form-item>
+          <el-form-item label="券码" prop="tscode">
+            {{ rollForm.tscode }}
+          </el-form-item>
+          <el-form-item label="价格" prop="price">
+            <el-input
+              v-model="rollForm.price"
+              placeholder="请输入价格"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="交易量" prop="volume">
+            <el-input
+              v-model="rollForm.volume"
+              placeholder="请输入交易量"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button-group>
+              <el-button type="primary" @click="funcVolumeAdd(0)"
+                >清零</el-button
+              >
+              <el-button type="primary" @click="funcVolumeAdd(1000)"
+                >1</el-button
+              >
+              <el-button type="primary" @click="funcVolumeAdd(2000)"
+                >2</el-button
+              >
+              <el-button type="primary" @click="funcVolumeAdd(3000)"
+                >3</el-button
+              >
+              <el-button type="primary" @click="funcVolumeAdd(5000)"
+                >5</el-button
+              >
+              <el-button type="primary" @click="funcVolumeAdd(10000)"
+                >10</el-button
+              >
+            </el-button-group>
+          </el-form-item>
+          <el-form-item label="交割日期" prop="deliveryTime">
+            <delivery-canlendar-update
+              ref="deliveryCanlendarUpdate"
+              @change="handleDeliveryCanlendarUpdate"
+            ></delivery-canlendar-update>
+          </el-form-item>
+          <el-form-item label="交易员" prop="userId">
+            <el-select v-model="rollForm.userId" placeholder="请选择交易员">
+              <el-option
+                v-for="item in tradeUsersOption"
+                :key="item.userId"
+                :label="item.userName"
+                :value="item.userId"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="备注">
+            <el-input
+              type="textarea"
+              v-model="rollForm.remark"
+              placeholder="请输入内容"
+              resize="none"
+              rows="2"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="方向" prop="direction2">
+            {{
+              rollForm.direction2 === "bond_0"
+                ? "买入"
+                : rollForm.direction2 === "bond_1"
+                ? "卖出"
+                : "不明确"
+            }}
+          </el-form-item>
+          <el-form-item label="券码" prop="tscode2">
+            {{ rollForm.tscode2 }}
+          </el-form-item>
+          <el-form-item label="价格" prop="price2">
+            <el-input
+              v-model="rollForm.price2"
+              placeholder="请输入价格"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="交易量" prop="volume2">
+            <el-input
+              v-model="rollForm.volume2"
+              placeholder="请输入交易量"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button-group>
+              <el-button type="primary" @click="funcVolumeAdd2(0)"
+                >清零</el-button
+              >
+              <el-button type="primary" @click="funcVolumeAdd2(1000)"
+                >1</el-button
+              >
+              <el-button type="primary" @click="funcVolumeAdd2(2000)"
+                >2</el-button
+              >
+              <el-button type="primary" @click="funcVolumeAdd2(3000)"
+                >3</el-button
+              >
+              <el-button type="primary" @click="funcVolumeAdd2(5000)"
+                >5</el-button
+              >
+              <el-button type="primary" @click="funcVolumeAdd2(10000)"
+                >10</el-button
+              >
+            </el-button-group>
+          </el-form-item>
+          <el-form-item label="交割日期" prop="deliveryTime2">
+            <delivery-canlendar-update
+              ref="deliveryCanlendarUpdate2"
+              @change="handleDeliveryCanlendarUpdate2"
+            ></delivery-canlendar-update>
+          </el-form-item>
+          <el-form-item label="交易员" prop="userId2">
+            <el-select v-model="rollForm.userId2" placeholder="请选择交易员">
+              <el-option
+                v-for="item in tradeUsersOption"
+                :key="item.userId"
+                :label="item.userName"
+                :value="item.userId"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="备注">
+            <el-input
+              type="textarea"
+              v-model="rollForm.remark2"
+              placeholder="请输入内容"
+              resize="none"
+              rows="2"
+            ></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
       <el-form-item>
-        <el-button-group>
-          <el-button type="primary" @click="funcVolumeAdd(0)">清零</el-button>
-          <el-button type="primary" @click="funcVolumeAdd(1000)">1</el-button>
-          <el-button type="primary" @click="funcVolumeAdd(2000)">2</el-button>
-          <el-button type="primary" @click="funcVolumeAdd(3000)">3</el-button>
-          <el-button type="primary" @click="funcVolumeAdd(5000)">5</el-button>
-          <el-button type="primary" @click="funcVolumeAdd(10000)">10</el-button>
-        </el-button-group>
-      </el-form-item>
-      <el-form-item label="交割日期" prop="deliveryTime">
-        <delivery-canlendar-update
-          ref="deliveryCanlendarUpdate"
-          @change="handleDeliveryCanlendarUpdate"
-        ></delivery-canlendar-update>
-        <!-- <el-button-group>
-          <el-button
-            icon="el-icon-plus"
-            :class="funcDeliverySpeed(0)"
-            @click="handleDelivertySpeed(0)"
-            >0</el-button
-          >
-          <el-button
-                      icon="el-icon-plus"
-                      :class="funcDeliverySpeed('coverForm', 1)"
-                      @click="handleDelivertySpeed('coverForm', 1)"
-                      >1</el-button
-                    >
-        </el-button-group> -->
-      </el-form-item>
-      <el-form-item label="交易员" prop="tradeuserId">
-        <el-select v-model="coverForm.tradeuserId" placeholder="请选择交易员">
-          <el-option
-            v-for="item in tradeUsersOption"
-            :key="item.userId"
-            :label="item.userName"
-            :value="item.userId"
-          >
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="备注">
-        <el-input
-          type="textarea"
-          v-model="coverForm.remark"
-          placeholder="请输入内容"
-          resize="none"
-          rows="2"
-        ></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button class="btn-green" @click="submitForm('coverForm')"
-          >确认平仓</el-button
+        <span class="txt-red">价差：{{ rollForm.price - rollForm.price2 }}</span
+        ><br />
+        <el-button class="btn-green" @click="submitForm('rollForm')"
+          >确认滚单</el-button
         >
       </el-form-item>
     </el-form>
@@ -95,7 +177,7 @@ import config from '@/utils/config'
 import moment from 'moment'
 import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 export default {
-  props: ['row'],
+  props: ['overRow', 'openRow'],
   components: {
     DeliveryCanlendarUpdate
   },
@@ -118,7 +200,7 @@ export default {
     }
     return {
       tradeUsersOption: [],
-      coverForm: {
+      rollForm: {
         // 交易类型
         direction: '买入',
         // 价格
@@ -131,17 +213,28 @@ export default {
         deliverySpeed: 0,
         // 交割日期
         deliveryTime: '',
-        // 原交割日期
-        deliveryTime2: '',
         // 交易员
-        tradeuserId: '',
+        userId: '',
         // 备注
         remark: '',
-        // 快速交易
-        quickSubmit: false,
-        realTradeIdList: []
+        // 交易类型
+        direction2: '买入',
+        // 价格
+        price2: '',
+        // 交易量
+        volume2: '',
+        // 债券号
+        tscode2: '',
+        // 交割速度
+        deliverySpeed2: 0,
+        // 交割日期
+        deliveryTime2: '',
+        // 交易员
+        userId2: '',
+        // 备注
+        remark2: ''
       },
-      coverFormRules: {
+      rollFormRules: {
         direction: [
           { required: true, message: '方向必选', trigger: 'blur' }
         ],
@@ -159,14 +252,34 @@ export default {
         deliveryTime: [
           { required: true, message: '交割日期必选', trigger: 'blur' }
         ],
-        tradeuserId: [
+        userId: [
+          { required: true, message: '交易员必选', trigger: 'change' }
+        ],
+        direction2: [
+          { required: true, message: '方向必选', trigger: 'blur' }
+        ],
+        tscode2: [
+          { required: true, message: '券码必填', trigger: 'blur' }
+        ],
+        price2: [
+          { required: true, message: '价格必填', trigger: 'blur' },
+          { validator: moneyTest, trigger: 'blur' }
+        ],
+        volume2: [
+          { required: true, message: '交易量必填', trigger: 'blur' },
+          { validator: plusAmountTest, trigger: 'blur' }
+        ],
+        deliveryTime2: [
+          { required: true, message: '交割日期必选', trigger: 'blur' }
+        ],
+        userId2: [
           { required: true, message: '交易员必选', trigger: 'change' }
         ]
       }
     }
   },
   watch: {
-    row: function () {
+    overRow: function () {
       this.loadInitData()
     }
   },
@@ -174,40 +287,57 @@ export default {
     // 交易量加法函数
     funcVolumeAdd(val) {
       if (val === 0) {
-        this.coverForm.volume = 0
+        this.rollForm.volume = 0
       } else {
-        this.coverForm.volume += val
+        this.rollForm.volume += val
+      }
+    },
+    // 交易量加法函数2
+    funcVolumeAdd2(val) {
+      if (val === 0) {
+        this.rollForm.volume2 = 0
+      } else {
+        this.rollForm.volume2 += val
       }
     },
     // 交割速度方法
     funcDeliverySpeed(val) {
-      if (this.coverForm.deliverySpeed === val) {
+      if (this.rollForm.deliverySpeed === val) {
         return 'btn-active'
       }
       return ''
     },
-    // 买单交割日期变化
+    // 交割速度方法
+    funcDeliverySpeed2(val) {
+      if (this.rollForm.deliverySpeed2 === val) {
+        return 'btn-active'
+      }
+      return ''
+    },
+    // 交割日期变化
     handleDeliveryCanlendarUpdate(obj) {
-      this.coverForm.deliveryTime = obj.value
+      this.rollForm.deliveryTime = obj.value
+    },
+    // 交割日期变化
+    handleDeliveryCanlendarUpdate2(obj) {
+      this.rollForm.deliveryTime2 = obj.value
     },
     // 点击交割日期
     handleDelivertySpeed(val) {
-      this.coverForm.deliverySpeed = val
+      this.rollForm.deliverySpeed = val
     },
-    // 点击交易方向
-    handleDirection(val) {
-      this.coverForm.direction = val
+    // 点击交割日期
+    handleDelivertySpeed2(val) {
+      this.rollForm.deliverySpeed2 = val
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          api.bondsCover({
+          api.dealRoll({
             // 交割速度
             deliverySpeed: this[formName].deliverySpeed,
             // 交割日期
             deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD 00:00:00"),
-            // 原交割日期
-            deliveryTime2: util.dateFormat(this[formName].deliveryTime2, "YYYY-MM-DD 00:00:00"),
             // 买还是卖
             direction: this[formName].direction,
             // 成交价格
@@ -220,12 +350,26 @@ export default {
             volume: this[formName].volume,
             // 备注
             remark: this[formName].remark,
-            //
-            realTradeIdList: this[formName].realTradeIdList
+            // 交割速度
+            deliverySpeed2: this[formName].deliverySpeed2,
+            // 交割日期
+            deliveryTime2: util.dateFormat(this[formName].deliveryTime2, "YYYY-MM-DD 00:00:00"),
+            // 买还是卖
+            direction2: this[formName].direction2,
+            // 成交价格
+            price2: util.moneyFormat(this[formName].price2, 4),
+            // 交易员
+            userId2: this[formName].tradeuserId2,
+            // 债券编号
+            tscode2: this[formName].tscode2,
+            // 成交量
+            volume2: this[formName].volume2,
+            // 备注
+            remark2: this[formName].remark2,
           }).then(res => {
-            if (res && res.code === '00000' && res.value) {
+            if (res && res.code === '00000') {
               this.$message({
-                message: `平仓询价单创建成功`,
+                message: `创建滚单成功`,
                 type: 'success'
               })
               this.$emit('change', {
@@ -241,36 +385,49 @@ export default {
       apiAdmin.realTradeUserList({ realTradeIdList }).then(response => {
         if (response && response.code === '00000' && response.value) {
           this.tradeUsersOption = response.value
-          this.coverForm.tradeuserId = response.value[0].userId
+          this.rollForm.userId = response.value[0].userId
+          this.rollForm.userId2 = response.value[0].userId
         }
       })
     },
     // 加载初始值
     loadInitData() {
-      console.log(this.row)
-      this.coverForm.direction = this.row.direction === 'bond_1' ? 'bond_0' : (this.row.direction === 'bond_0' ? 'bond_1' : '')
-      this.coverForm.tscode = this.row.tscode
-      this.coverForm.price = this.row.price
-      this.coverForm.volume = parseFloat(this.row.volume)
-      this.coverForm.deliveryTime2 = this.row.deliveryTime
-      if (moment(this.row.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
-        this.coverForm.deliveryTime = moment(this.row.deliveryTime).format('YYYY-MM-DD')
-        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.row.deliveryTime).format('YYYY-MM-DD')
-      } else if (moment(this.row.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
-        this.coverForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+      this.rollForm.direction = this.overRow.direction === 'bond_1' ? 'bond_0' : (this.overRow.direction === 'bond_0' ? 'bond_1' : '')
+      this.rollForm.tscode = this.overRow.tscode
+      this.rollForm.price = this.overRow.price
+      this.rollForm.volume = parseFloat(this.overRow.volume)
+      if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
+        this.rollForm.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
+        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
+      } else if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
+        this.rollForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
         this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
       } else {
         this.getNextDealDay()
       }
-      this.coverForm.realTradeIdList = this.row.realTradeIdList
-      this.getTradeUserList(this.row.realTradeIdList)
+      this.rollForm.direction2 = this.openRow.direction === 'bond_0' ? 'bond_0' : (this.openRow.direction === 'bond_1' ? 'bond_1' : '')
+      this.rollForm.tscode2 = this.openRow.tscode
+      this.rollForm.price2 = this.openRow.price
+      this.rollForm.volume2 = parseFloat(this.openRow.volume)
+      if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
+        this.rollForm.deliveryTime2 = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
+        this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
+      } else if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
+        this.rollForm.deliveryTime2 = moment(new Date()).format('YYYY-MM-DD')
+        this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+      } else {
+        this.getNextDealDay()
+      }
+
+      this.getTradeUserList(this.overRow.realTradeIdList)
     },
     // 获取下个交易日
     getNextDealDay() {
       apiCanlendar.nextDealDay().then(response => {
         if (response && response.code === '00000') {
-          this.coverForm.deliveryTime = response.value
+          this.rollForm.deliveryTime = response.value
           this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
+          this.$refs.deliveryCanlendarUpdate2.deliveryTime2 = response.value
         }
       })
     },

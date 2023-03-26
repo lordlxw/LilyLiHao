@@ -590,6 +590,10 @@ export default {
     handleBondsCoverDialogVisible(obj) {
       this.dialogBondsCoverFormVisible = obj.dialogVisible
     },
+    // 滚单弹框回参接收
+    handleBondsRollDialogVisible(obj) {
+      this.dialogBondsRollFormVisible = obj.dialogVisible
+    },
     // 数据格式化
     funcFormat(row, column) {
       switch (column.property) {
@@ -717,28 +721,28 @@ export default {
     },
     // 滚单卖出，买入数据
     initBondsRollBusinessList(params) {
-      // const self = this
-      // apiBondPool.businessList(params).then(res => {
-      //   if (res.code === '00000') {
-      //     switch (params.bidtype) {
-      //       case 1:
-      //         self.businessOutList = res.value
-      //         if (row.direction === 'bond_1') {
-      //           self.overRow.price = self.funcGetBestPrice('max', res.value)
-      //           self.openRow.price = self.funcGetBestPrice('min', res.value)
-      //         }
-      //         break;
-      //       case 0:
-      //         self.businessInList = res.value
-      //         if (row.direction === 'bond_0') {
-      //           self.overRow.price = self.funcGetBestPrice('min', res.value)
-      //           self.openRow.price = self.funcGetBestPrice('max', res.value)
-      //         }
-      //         break;
-      //     }
-      //     self.dialogBondsRollFormVisible = true
-      //   }
-      // })
+      const self = this
+      apiBondPool.businessList(params).then(res => {
+        if (res.code === '00000') {
+          switch (params.bidtype) {
+            case 1:
+              self.businessOutList = res.value
+              if (params.direction === 'bond_1') {
+                self.overRow.price = self.funcGetBestPrice('max', res.value)
+                self.openRow.price = self.funcGetBestPrice('min', res.value)
+              }
+              break;
+            case 0:
+              self.businessInList = res.value
+              if (params.direction === 'bond_0') {
+                self.overRow.price = self.funcGetBestPrice('min', res.value)
+                self.openRow.price = self.funcGetBestPrice('max', res.value)
+              }
+              break;
+          }
+          self.dialogBondsRollFormVisible = true
+        }
+      })
     },
     // 买卖最优值(type:min最小，type:max最大;arr:初始数组;)
     funcGetBestPrice(type, arr) {

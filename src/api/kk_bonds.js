@@ -109,7 +109,29 @@ export default {
   dealRoll(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/gundan`,
-      method: 'post'
+      method: 'post',
+      data: {
+        first: {
+          deliverySpeed: params.deliverySpeed,
+          deliveryTime: params.deliveryTime,
+          direction: params.direction,
+          price: params.price,
+          remark: params.remark,
+          tscode: params.tscode,
+          userId: params.userId,
+          volume: params.volume
+        },
+        second: {
+          deliverySpeed: params.deliverySpeed2,
+          deliveryTime: params.deliveryTime2,
+          direction: params.direction2,
+          price: params.price2,
+          remark: params.remark2,
+          tscode: params.tscode2,
+          userId: params.userId2,
+          volume: params.volume2
+        }
+      }
     })
   },
   // 已平仓交割
