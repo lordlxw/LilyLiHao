@@ -179,7 +179,7 @@
       </div>
       <!-- 中间 -->
       <div class="center">
-        <div ref="refKline" if="data0.length>0" style="height: 500px"></div>
+        <div ref="refKline" if="data0.length>0" class="kline"></div>
         <div class="volume"></div>
         <!-- 交易框 -->
         <div class="chatbox">
@@ -333,14 +333,8 @@
                       >1</el-button
                     >
                   </el-button-group> -->
-                  <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span
-                  ><br />
-                  <el-button
-                    v-if="setAuth('inquiry:insert')"
-                    class="btn-green mt10"
-                    @click="submitForm('buyForm')"
-                    >发送</el-button
-                  >
+                  <br />
+                  <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
                 </el-form-item>
                 <el-form-item label="交易员" prop="tradeuserId">
                   <el-select
@@ -356,6 +350,13 @@
                     >
                     </el-option>
                   </el-select>
+                  <br />
+                  <el-button
+                    v-if="setAuth('inquiry:insert')"
+                    class="btn-green mt10"
+                    @click="submitForm('buyForm')"
+                    >发送</el-button
+                  >
                 </el-form-item>
                 <el-form-item label="备注">
                   <el-input
@@ -363,8 +364,8 @@
                     v-model="buyForm.remark"
                     placeholder="请输入内容"
                     resize="none"
-                    rows="5"
-                    style="width: 360px"
+                    rows="3"
+                    class="ipt-remark"
                   ></el-input>
                 </el-form-item>
               </el-form>
@@ -453,14 +454,8 @@
                       >1</el-button
                     >
                   </el-button-group> -->
-                  <span class="txt-red">{{ saleForm.deliveryTimeMsg }}</span>
                   <br />
-                  <el-button
-                    v-if="setAuth('inquiry:insert')"
-                    class="btn-red mt10"
-                    @click="submitForm('saleForm')"
-                    >发送</el-button
-                  >
+                  <span class="txt-red">{{ saleForm.deliveryTimeMsg }}</span>
                 </el-form-item>
                 <el-form-item label="交易员" prop="tradeuserId">
                   <el-select
@@ -476,6 +471,13 @@
                     >
                     </el-option>
                   </el-select>
+                  <br />
+                  <el-button
+                    v-if="setAuth('inquiry:insert')"
+                    class="btn-red mt10"
+                    @click="submitForm('saleForm')"
+                    >发送</el-button
+                  >
                 </el-form-item>
                 <el-form-item label="备注">
                   <el-input
@@ -483,8 +485,8 @@
                     v-model="saleForm.remark"
                     placeholder="请输入内容"
                     resize="none"
-                    rows="5"
-                    style="width: 360px"
+                    rows="3"
+                    class="ipt-remark"
                   ></el-input>
                 </el-form-item>
               </el-form>
@@ -3008,7 +3010,15 @@ export default {
 }
 
 .slt-user {
-  width: 110px;
+  width: 130px;
+}
+
+.kline {
+  height: 500px;
+}
+
+.ipt-remark {
+  width: 500px;
 }
 
 .container {
@@ -3109,7 +3119,7 @@ export default {
     }
     .chatbox {
       width: 100%;
-      height: 200px;
+      height: 180px;
       position: relative;
       bottom: 0;
       color: #ec0000;
