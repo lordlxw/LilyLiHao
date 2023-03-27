@@ -82,11 +82,12 @@
 <script>
 import api from "@/api/kk_break";
 import { pageMixin } from '@/utils/pageMixin'
+import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
 import moment from 'moment'
 export default {
-  mixins: [pageMixin],
+  mixins: [pageMixin, commMixin],
   data() {
     return {
       tableHead: [
@@ -166,11 +167,6 @@ export default {
           return row.tscode.replace(/.IB/, '')
       }
       return row[column.property]
-    },
-    // 计算高度
-    initFrameH(obj, val) {
-      const clientHeight = document.body.clientHeight
-      this[obj] = Math.floor(clientHeight - val)
     }
   },
   mounted() {

@@ -1,11 +1,8 @@
 <template>
   <div style="background-color: #202020">
-    <div
-      class="head"
-      :style="{ height: `${headH}px`, lineHeight: `${headH}px` }"
-    >
+    <div class="head">
       <ul class="k-nav">
-        <li style="width: 190px">
+        <li class="top-type">
           <el-row class="slt-type">
             <el-col :span="14">
               <div class="grid-content">
@@ -53,7 +50,7 @@
         >
           {{ item }}
         </li>
-        <li style="font-weight: bold; font-size: 20px; color: #ec0000">
+        <li class="tscode">
           {{ tscode }}
         </li>
         <li class="nav-right">
@@ -111,7 +108,7 @@
       <div
         class="left-group"
         :style="{
-          width: leftWith,
+          width: leftWith + 'px',
         }"
       >
         <!-- 关闭和打开左侧侧面板 -->
@@ -158,9 +155,8 @@
                 @click="handlerTscode(item)"
                 :class="{ active: activeTscode == item.tscode }"
               >
-                {{ item.bondname }}<br /><strong style="font-size: 16px">{{
-                  item.tscode
-                }}</strong>
+                {{ item.bondname }}<br />
+                <strong class="l-strong">{{ item.tscode }}</strong>
               </li>
             </ul>
           </el-scrollbar>
@@ -175,7 +171,7 @@
                 @click="handlerTscode(item)"
                 :class="{ active: activeTscode == item.tscode }"
               >
-                <strong style="font-size: 16px">{{ item.tscode }}</strong>
+                <strong class="l-strong">{{ item.tscode }}</strong>
               </li>
             </ul>
           </el-scrollbar>
@@ -202,7 +198,7 @@
                   :rules="setFormRules"
                   label-width="100px"
                 >
-                  <el-form-item label="交易量（万）" prop="volume">
+                  <el-form-item label="交易量" prop="volume">
                     <el-input v-model="setForm.volume"></el-input>
                   </el-form-item>
                   <el-form-item label="快速提交">
@@ -277,9 +273,9 @@
                     buyForm.price | moneyFormat(4)
                   }}</span> -->
                 </el-form-item>
-                <el-form-item label="交易量(万)" prop="volume">
+                <el-form-item label="交易量" prop="volume">
                   <el-input
-                    style="width: 160px"
+                    class="ipt-volume"
                     v-model="buyForm.volume"
                     placeholder="请输入交易量"
                   ></el-input
@@ -350,7 +346,7 @@
                   <el-select
                     v-model="buyForm.tradeuserId"
                     placeholder="请选择交易员"
-                    style="width: 110px"
+                    class="slt-user"
                   >
                     <el-option
                       v-for="item in tradeUsersOption"
@@ -397,9 +393,9 @@
                     @input="handleMaxWait('saleForm')"
                   ></el-input-number>
                 </el-form-item>
-                <el-form-item label="交易量(万)" prop="volume">
+                <el-form-item label="交易量" prop="volume">
                   <el-input
-                    style="width: 160px"
+                    class="ipt-volume"
                     v-model="saleForm.volume"
                     placeholder="请输入交易量"
                   ></el-input
@@ -470,7 +466,7 @@
                   <el-select
                     v-model="saleForm.tradeuserId"
                     placeholder="请选择交易员"
-                    style="width: 110px"
+                    class="slt-user"
                   >
                     <el-option
                       v-for="item in tradeUsersOption"
@@ -500,7 +496,7 @@
       <div
         class="right-group"
         :style="{
-          width: rightWith,
+          width: rightWith + 'px',
         }"
       >
         <!-- 关闭和打开右侧面板 -->
@@ -730,12 +726,13 @@ import * as util from '@/utils/util'
 import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 import { pageMixin } from '@/utils/pageMixin'
+import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
 import moment from 'moment'
 let socket
 let lockReconnect = false
 export default {
-  mixins: [pageMixin],
+  mixins: [pageMixin, commMixin],
   components: {
     ComTscodeSelect,
     TradeEnquiry,
@@ -761,8 +758,6 @@ export default {
     return {
       config,
       dialogVisible: false,
-      // 框架
-      headH: 50,
       // k线栏目
       klineactive: '日线',
       loopmethodskey: ['1分钟', '5分钟', '日线'],
@@ -798,10 +793,10 @@ export default {
       noForward: null,
       data0: [],
       myChart: '',
-      leftWith: '200px',
+      leftWith: '',
       leftFold: 'el-icon-s-fold',
       rightFold: 'el-icon-s-unfold',
-      rightWith: '360px',
+      rightWith: '',
       optionTSType: [],
       optionYear: [
         {
@@ -1015,6 +1010,8 @@ export default {
     if (!this.setAuth('kline:view')) {
       this.$router.push({ path: '/main' })
     }
+    this.initFrameW('leftWith', 200)
+    this.initFrameW('rightWith', 360)
     this.keyDown()
     this.initSocket()
   },
@@ -1809,27 +1806,27 @@ export default {
     handleLeftOpenOrClose() {
       if (this.leftFold === 'el-icon-s-fold') {
         this.leftFold = 'el-icon-s-unfold'
-        this.leftWith = '0px'
+        this.leftWith = 0
       } else {
         this.leftFold = 'el-icon-s-fold'
-        this.leftWith = '200px'
+        this.leftWith = this.returnFrameW(200)
       }
       setTimeout(() => {
         this.myChart.resize()
-      }, 600)
+      }, 50)
     },
     // 右侧面板关闭打开
     handleRightOpenOrClose() {
       if (this.rightFold === 'el-icon-s-unfold') {
         this.rightFold = 'el-icon-s-fold'
-        this.rightWith = '0px'
+        this.rightWith = '0'
       } else {
         this.rightFold = 'el-icon-s-unfold'
-        this.rightWith = '360px'
+        this.rightWith = this.returnFrameW(360)
       }
       setTimeout(() => {
         this.myChart.resize()
-      }, 600)
+      }, 50)
     },
     // 初始化债券类型
     initTSType() {
@@ -2925,9 +2922,13 @@ export default {
 
     this.initPriceWait()
     window.onresize = () => {
-      if (this.myChart) {
-        this.myChart.resize()
-      }
+      this.initFrameW('leftWith', 200)
+      this.initFrameW('rightWith', 360)
+      setTimeout(() => {
+        if (this.myChart) {
+          this.myChart.resize()
+        }
+      }, 300)
     }
   },
   unmounted() {
@@ -2944,9 +2945,21 @@ export default {
 // @import "@/assets/css/kline.scss";
 .head {
   border-bottom: 1px solid #ec0000;
+  height: 50px;
+  line-height: 50px;
 
   .k-nav {
     overflow: hidden;
+
+    .top-type {
+      width: 190px;
+    }
+
+    .tscode {
+      font-weight: bold;
+      font-size: 20px;
+      color: #ec0000;
+    }
 
     .slt-type {
       .grid-content {
@@ -2987,6 +3000,17 @@ export default {
   }
 }
 
+.l-strong {
+  font-size: 16px;
+}
+.ipt-volume {
+  width: 160px;
+}
+
+.slt-user {
+  width: 110px;
+}
+
 .container {
   position: absolute;
   width: 100%;
@@ -2997,7 +3021,6 @@ export default {
   .left-group {
     border-right: 1px solid #ec0000;
     position: relative;
-    transition: width 0.5s;
 
     .open-colse {
       position: absolute;
@@ -3105,7 +3128,6 @@ export default {
           line-height: 40px;
           float: right;
           padding: 0 10px;
-          line-height: 40px;
         }
         li.chat-set:hover {
           cursor: pointer;
@@ -3121,7 +3143,6 @@ export default {
     position: relative;
     border-top: 1px solid #ec0000;
     border-left: 1px solid #ec0000;
-    transition: width 0.5s;
     .open-colse {
       position: absolute;
       width: 16px;

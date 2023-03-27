@@ -74,11 +74,12 @@
 <script>
 import api from "@/api/kk_reward"
 import { pageMixin } from '@/utils/pageMixin'
+import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
 import moment from 'moment'
 export default {
-  mixins: [pageMixin],
+  mixins: [pageMixin, commMixin],
   data() {
     return {
       config,
@@ -184,11 +185,6 @@ export default {
       return !moment(
         moment(scope.row.deliveryTime).format('YYYY-MM-DD')
       ).isBefore(moment(new Date()).format('YYYY-MM-DD'))
-    },
-    // 计算高度
-    initFrameH(obj, val) {
-      const clientHeight = document.body.clientHeight
-      this[obj] = Math.floor(clientHeight - val)
     }
   },
   mounted() {

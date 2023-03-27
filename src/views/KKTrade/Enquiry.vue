@@ -376,12 +376,12 @@ import apiAdmin from '@/api/kk_power_admin'
 import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
 import { pageMixin } from '@/utils/pageMixin'
-import { animationMixin } from '@/utils/animationMixin'
+import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
 import moment from 'moment'
 export default {
-  mixins: [animationMixin, pageMixin],
+  mixins: [pageMixin, commMixin],
   props: {
     status: ''
   },
@@ -705,11 +705,6 @@ export default {
     },
     handleDialogVisible(obj) {
       this.dialogEnquiryFormVisible = obj.dialogVisible
-    },
-    // 计算高度
-    initFrameH(obj, val) {
-      const clientHeight = document.body.clientHeight
-      this[obj] = Math.floor(clientHeight - val)
     }
   },
   mounted() {

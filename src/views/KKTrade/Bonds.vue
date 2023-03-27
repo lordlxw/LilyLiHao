@@ -336,7 +336,7 @@ import api from "@/api/kk_bonds"
 import apiAdmin from '@/api/kk_power_admin'
 import apiBondPool from '@/api/kk_bond_pool'
 import { pageMixin } from '@/utils/pageMixin'
-import { animationMixin } from '@/utils/animationMixin'
+import { commMixin } from '@/utils/commMixin'
 import BondsCover from '@/components/BondsCover.vue'
 import NoBondsEdit from '@/components/NoBondsEdit.vue'
 import BondsEdit from '@/components/BondsEdit.vue'
@@ -350,7 +350,7 @@ let currentFinishCode = ''
 let finishCode = ''
 let finishCodeSameCount = 0
 export default {
-  mixins: [animationMixin, pageMixin],
+  mixins: [commMixin, pageMixin],
   components: {
     BondsCover,
     NoBondsEdit,
@@ -913,17 +913,6 @@ export default {
       return moment(
         moment(scope.row.deliveryTime).format('YYYY-MM-DD')
       ).isSameOrAfter(moment(new Date()).format('YYYY-MM-DD'))
-    },
-    // 计算宽度
-    initFrameW(obj, val) {
-      const width = 1920
-      const clientWith = document.body.clientWidth
-      this[obj] = Math.floor(clientWith / width * val)
-    },
-    // 计算高度
-    initFrameH(obj, val) {
-      const clientHeight = document.body.clientHeight
-      this[obj] = Math.floor(clientHeight - val)
     }
   },
   mounted() {
