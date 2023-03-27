@@ -17,6 +17,12 @@ export const commMixin = {
       const clientHeight = document.body.clientHeight
       this[obj] = Math.floor(clientHeight - val)
     },
+    // 带返回值的高度
+    returnFrameH(val) {
+      const height = 1080
+      const clientHeight = document.body.clientHeight
+      return Math.floor(clientHeight / height * val)
+    },
     // 计算百分比高度
     initFramePH(obj, val) {
       const height = 1080

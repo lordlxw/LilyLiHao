@@ -1535,18 +1535,18 @@ export default {
                 splitLine: { show: false }
               }],
               grid: [{
-                left: 0,
-                right: 5,
-                bottom: 70,
-                top: 10,
+                left: '0%',
+                right: '2%',
+                bottom: '12%',
+                top: '2%',
                 containLabel: true,
                 show: true,
                 borderColor: '#ec0000'
               }, {
-                left: 0,
-                right: 30,
-                bottom: 1,
-                top: 420,
+                left: '0%',
+                right: '4%',
+                bottom: '1%',
+                top: '85%',
               }],
               visualMap: {
                 show: false,
