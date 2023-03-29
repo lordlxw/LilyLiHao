@@ -371,6 +371,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import api from "@/api/kk_trade";
 import apiAdmin from '@/api/kk_power_admin'
 import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
@@ -451,6 +452,17 @@ export default {
   },
   created() {
     this.initFrameH('enquiryH', 200)
+  },
+  watch: {
+    enquiryInfo() {
+      console.log(999999999999)
+      this.loadInitData()
+    }
+  },
+  computed: {
+    ...mapState({
+      enquiryInfo: (state) => state.enquiryInfo
+    })
   },
   methods: {
     // 搜索事件

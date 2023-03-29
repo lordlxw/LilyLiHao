@@ -27,7 +27,8 @@ const store = new Vuex.Store({
     urlParams: {},
     // 询价单的一些默认设置默认设置
     defaultSet: {},
-    userInfo: {}
+    userInfo: {},
+    enquiryInfo: ""
   },
   getters: {
     getMenus(state) {
@@ -205,7 +206,12 @@ const store = new Vuex.Store({
     SET_DEFAULT_SET(state, params) {
       state.defaultSet = params
       localStorage.setItem(config.keys.defaultSet, params)
-    }
+    },
+    // 设置询价信息变化
+    SET_ENQUIRY_INFO(state, enquiryInfo) {
+      console.log(32323)
+      state.enquiryInfo = JSON.stringify(enquiryInfo)
+    },
   }
 })
 export default store

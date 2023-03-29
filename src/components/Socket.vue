@@ -1,9 +1,9 @@
 <template>
   <div>
-    <el-dialog title="消息框" width="80%" :visible.sync="dialogTableVisible">
+    <!-- <el-dialog title="消息框" width="80%" :visible.sync="dialogTableVisible">
       <trade-enquiry ref="tradeEnquiry"></trade-enquiry>
       <div class="both-clear"></div>
-    </el-dialog>
+    </el-dialog> -->
     <audio controls ref="playAudio" style="display: none">
       <source src="@/assets/audio/1.wav" type="audio/wav" />
     </audio>
@@ -14,13 +14,14 @@
 import Vue from 'vue'
 import Router from '@/router'
 import configUtil from '@/utils/config.js'
-import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
+// import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
 import api from "@/api/kk_trade";
+
 let socket
 let lockReconnect = false
 export default {
   components: {
-    TradeEnquiry
+    // TradeEnquiry
   },
   data() {
     return {
@@ -33,15 +34,15 @@ export default {
   },
   methods: {
     // 消息
-    showMsg() {
-      Promise.all([
-        this.dialogTableVisible = true
-      ]).then(() => {
-        if (this.dialogTableVisible) {
-          this.$refs.tradeEnquiry.loadInitData()
-        }
-      })
-    },
+    // showMsg() {
+    //   Promise.all([
+    //     this.dialogTableVisible = true
+    //   ]).then(() => {
+    //     if (this.dialogTableVisible) {
+    //       this.$refs.tradeEnquiry.loadInitData()
+    //     }
+    //   })
+    // },
     // ************websocket start**************************
     // 初始化
     initSocket() {
@@ -73,6 +74,7 @@ export default {
           let msgJson = JSON.parse(msg.data)
           console.log(msgJson.dataType)
           const h = self.$createElement
+          let notify = null
           if (msgJson) {
             switch (msgJson.dataType) {
               case 'bid_1':
@@ -86,36 +88,100 @@ export default {
                 // self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
                 break
               // 返回研究员待接收询价单（买）
-              case 'start_bond_0':
-                console.log('周佳洪：' + msgJson.data)
-                console.log(msgJson.data)
-                msgJson.data.status = 'start_bond'
-                self.showMsg()
-                break
-              case 'start_bond_1':
-                msgJson.data.status = 'start_bond'
-                self.showMsg()
-                break
+              // case 'start_bond_0':
+              //   console.log('周佳洪：' + msgJson.data)
+              //   console.log(msgJson.data)
+              //   msgJson.data.status = 'start_bond'
+              //   self.showMsg()
+              //   break
+              // case 'start_bond_1':
+              //   msgJson.data.status = 'start_bond'
+              //   self.showMsg()
+              //   break
               // 交易员待接收询价单（买）
-              case 'delegate_bond_0':
-                msgJson.data.status = 'delegate_bond_0'
-                self.showMsg()
-                break
+              // case 'delegate_bond_0':
+              //   msgJson.data.status = 'delegate_bond_0'
+              //   self.showMsg()
+              //   break
               // 交易员待接收询价单（卖）
+              // case 'delegate_bond_1':
+              //   msgJson.data.status = 'delegate_bond_1'
+              //   self.showMsg()
+              //   break
+              // 交易员待接收询价单（买）
+              // 交易员待接收询价单（卖）
+              case 'delegate_bond_0':
               case 'delegate_bond_1':
-                msgJson.data.status = 'delegate_bond_1'
-                self.showMsg()
+                notify = self.$notify({
+                  title: `${msgJson.data.createUserName} 发起询价单`,
+                  dangerouslyUseHTMLString: true,
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "创建时间"),
+                        h("dd", null, `${msgJson.data.createTime}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.tscode}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交价"),
+                        h("dd", null, `${msgJson.data.price}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交量"),
+                        h("dd", null, `${msgJson.data.volume}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}`)
+                      ]),
+                      h("dl", { style: "margin-top:20px;" }, [
+                        h("dt", null, ""),
+                        h("dd", { style: "padding-left:76px;" }, [
+                          h("button", {
+                            class: "notigy-agree",
+                            on: {
+                              click: function () {
+                                self.handleAcceptEnquiryClick(msgJson.data.userTradeId)
+                              }
+                            }
+                          }, "接收"),
+                          h("button", {
+                            class: "notigy-cancel",
+                            on: {
+                              click: function () {
+                                self.handleNotAcceptEnquiryClick(msgJson.data.userTradeId)
+                              }
+                            }
+                          }, "拒收")
+                        ])
+                      ]),
+                    ],
+                  ),
+                  duration: 0
+                });
+                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
+                self.$refs.playAudio.play()
+                self.notifyRejection[msgJson.data.userTradeId] = notify
                 break
               // 通知研究员确认接收(买)
-              case 'accept_bond_0':
-                msgJson.data.status = 'accept_bond_0'
-                self.showMsg()
-                break
+              // case 'accept_bond_0':
+              //   msgJson.data.status = 'accept_bond_0'
+              //   self.showMsg()
+              //   break
               // 通知研究员确认接收（卖）
-              case 'accept_bond_1':
-                msgJson.data.status = 'accept_bond_1'
-                self.showMsg()
-                break
+              // case 'accept_bond_1':
+              //   msgJson.data.status = 'accept_bond_1'
+              //   self.showMsg()
+              //   break
               case 'error':
                 if (msgJson.data.errorCode === '0001') {
                   Router.push({ path: '/login' })
@@ -153,6 +219,7 @@ export default {
                   `,
                   duration: 0
                 });
+                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
                 self.tryPlay()
                 break
               case 'deny_bond_0':
@@ -186,12 +253,13 @@ export default {
                   `,
                   duration: 0
                 });
+                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
                 self.tryPlay()
                 break
               // 撤单确认
               case 'request_cancel_bond_0':
               case 'request_cancel_bond_1':
-                const notify = self.$notify({
+                notify = self.$notify({
                   title: `${msgJson.data.tradeuser} 发起撤单`,
                   dangerouslyUseHTMLString: true,
                   message: h(
@@ -247,11 +315,12 @@ export default {
                   ),
                   duration: 0
                 });
+                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
                 self.$refs.playAudio.play()
                 self.notifyRejection[msgJson.data.userTradeId] = notify
-                if (self.dialogTableVisible) {
-                  self.$refs.tradeEnquiry.loadInitData()
-                }
+                // if (self.dialogTableVisible) {
+                //   self.$refs.tradeEnquiry.loadInitData()
+                // }
                 break
               case 'deny_deal_bond_0':
               case 'deny_deal_bond_1':
@@ -284,6 +353,7 @@ export default {
                   `,
                   duration: 0
                 });
+                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
                 self.tryPlay()
                 break
               case 'weipingchangeconfirm_bond_0':
@@ -325,6 +395,7 @@ export default {
                   `,
                   duration: 0
                 });
+                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
                 self.tryPlay()
                 break;
               case 'weipingchangedeny_bond_0':
@@ -366,6 +437,7 @@ export default {
                   `,
                   duration: 0
                 });
+                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
                 self.tryPlay()
                 break;
               case 'yipingchangeconfirm_bond_0':
@@ -486,6 +558,44 @@ export default {
         })
       }, 5000)
     },
+    // 接收询价单
+    handleAcceptEnquiryClick(usertradeId) {
+      const self = this
+      api.inquiryAccept({ usertradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: '已接收',
+            type: 'success'
+          })
+          self.notifyRejection[parseInt(usertradeId)].close()
+          delete self.notifyRejection[parseInt(usertradeId)]
+        } else {
+          this.$message({
+            message: response.message,
+            type: 'error'
+          })
+        }
+      })
+    },
+    // 拒收询价单
+    handleNotAcceptEnquiryClick(usertradeId) {
+      const self = this
+      api.inquiryRejection({ usertradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: '已拒收',
+            type: 'info'
+          })
+          self.notifyRejection[parseInt(usertradeId)].close()
+          delete self.notifyRejection[parseInt(usertradeId)]
+        } else {
+          this.$message({
+            message: response.message,
+            type: 'error'
+          })
+        }
+      })
+    },
     // 确认撤单
     handleInquiryCancelConfirmClick(usertradeId) {
       const self = this
@@ -497,9 +607,9 @@ export default {
           })
           self.notifyRejection[parseInt(usertradeId)].close()
           delete self.notifyRejection[parseInt(usertradeId)]
-          if (self.dialogTableVisible) {
-            self.$refs.tradeEnquiry.loadInitData()
-          }
+          // if (self.dialogTableVisible) {
+          //   self.$refs.tradeEnquiry.loadInitData()
+          // }
         }
       })
     },
@@ -514,9 +624,9 @@ export default {
           })
           self.notifyRejection[parseInt(usertradeId)].close()
           delete self.notifyRejection[parseInt(usertradeId)]
-          if (self.dialogTableVisible) {
-            self.$refs.tradeEnquiry.loadInitData()
-          }
+          // if (self.dialogTableVisible) {
+          //   self.$refs.tradeEnquiry.loadInitData()
+          // }
         }
       })
     },
@@ -524,9 +634,9 @@ export default {
     tryPlay() {
       const self = this
       try {
-        if (self.dialogTableVisible) {
-          self.$refs.tradeEnquiry.loadInitData()
-        }
+        // if (self.dialogTableVisible) {
+        //   self.$refs.tradeEnquiry.loadInitData()
+        // }
         self.$refs.playAudio.play()
       } catch (error) {
         console.log(error)

@@ -85,13 +85,13 @@
             <i :class="favoriteTscodeIconList[1]"></i>
           </span>
         </li>
-        <li class="nav-right">
+        <!-- <li class="nav-right">
           <span class="i-text" style="color: white">
             <el-badge is-dot class="item">
               <i class="el-icon-message-solid" @click="showMsg()"></i>
             </el-badge>
           </span>
-        </li>
+        </li> -->
         <li class="nav-right">
           <router-link
             target="_blank"
@@ -680,10 +680,11 @@
       </el-table>
     </el-dialog> -->
 
-    <el-dialog title="消息框" width="80%" :visible.sync="dialogTableVisible">
+    <!-- 暂时不用 -->
+    <!-- <el-dialog title="消息框" width="80%" :visible.sync="dialogTableVisible">
       <trade-enquiry ref="tradeEnquiry"></trade-enquiry>
       <div class="both-clear"></div>
-    </el-dialog>
+    </el-dialog> -->
     <audio controls ref="playAudio" style="display: none">
       <source src="@/assets/audio/1.wav" type="audio/wav" />
     </audio>
@@ -725,7 +726,7 @@ import ComTscodeSelect from '@/components/ComTscodeSelect.vue'
 import * as echarts from 'echarts'
 import configUtil from '@/utils/config.js'
 import * as util from '@/utils/util'
-import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
+// import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
@@ -737,7 +738,7 @@ export default {
   mixins: [pageMixin, commMixin],
   components: {
     ComTscodeSelect,
-    TradeEnquiry,
+    // TradeEnquiry,
     DeliveryCanlendar
   },
   data() {
@@ -978,8 +979,8 @@ export default {
         ],
       },
       popoverSetVisible: false,
-      gridDataMsg: [],
-      dialogTableVisible: false,
+      // gridDataMsg: [],
+      // dialogTableVisible: false,
       tradeUsersOption: [],
       // 消息通知
       notifyRejection: {},
@@ -2154,35 +2155,35 @@ export default {
           } else {
             switch (msgJson.dataType) {
               // 返回研究员待接收询价单（买）
-              case 'start_bond_0':
-                console.log('周佳洪：' + msgJson.data)
-                console.log(msgJson.data)
-                msgJson.data.status = 'start_bond'
-                self.gridDataMsg.unshift(msgJson.data)
-                self.showMsg()
-                break
-              case 'start_bond_1':
-                msgJson.data.status = 'start_bond'
-                self.gridDataMsg.unshift(msgJson.data)
-                self.showMsg()
-                break
+              // case 'start_bond_0':
+              //   console.log(msgJson.data)
+              //   msgJson.data.status = 'start_bond'
+              //   self.gridDataMsg.unshift(msgJson.data)
+              //   self.showMsg()
+              //   break
+              // case 'start_bond_1':
+              //   msgJson.data.status = 'start_bond'
+              //   self.gridDataMsg.unshift(msgJson.data)
+              //   self.showMsg()
+              //   break
               // 交易员待接收询价单（买）
-              case 'delegate_bond_0':
-                msgJson.data.status = 'delegate_bond_0'
-                self.gridDataMsg.unshift(msgJson.data)
-                self.showMsg()
-                break
+              // case 'delegate_bond_0':
+              //   msgJson.data.status = 'delegate_bond_0'
+              //   self.gridDataMsg.unshift(msgJson.data)
+              //   self.showMsg()
+              //   break
               // 交易员待接收询价单（卖）
-              case 'delegate_bond_1':
-                msgJson.data.status = 'delegate_bond_1'
-                self.gridDataMsg.unshift(msgJson.data)
-                self.showMsg()
-                break
+              // case 'delegate_bond_1':
+              //   msgJson.data.status = 'delegate_bond_1'
+              //   self.gridDataMsg.unshift(msgJson.data)
+              //   self.showMsg()
+              //   break
               case 'accept_bond_0':
               case 'accept_bond_1':
                 self.$notify({
                   title: `${msgJson.data.tradeuser} 已接收`,
                   dangerouslyUseHTMLString: true,
+                  position: 'top-left',
                   message: `
                   <div class="notify">
                     <dl>
@@ -2211,7 +2212,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 3000
                 });
                 self.tryPlay()
                 break;
@@ -2226,6 +2227,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.tradeuser} 已成交`,
                   dangerouslyUseHTMLString: true,
+                  position: 'top-left',
                   message: `
                   <div class="notify">
                     <dl>
@@ -2255,7 +2257,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 3000
                 });
                 self.tryPlay()
                 break
@@ -2264,6 +2266,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.tradeuser} 已拒收`,
                   dangerouslyUseHTMLString: true,
+                  position: 'top-left',
                   message: `
                   <div class="notify">
                     <dl>
@@ -2293,7 +2296,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 3000
                 });
                 self.tryPlay()
                 break
@@ -2302,6 +2305,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.tradeuser} 拒绝撤单`,
                   dangerouslyUseHTMLString: true,
+                  position: 'top-left',
                   message: `
                   <div class="notify">
                     <dl>
@@ -2326,7 +2330,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 3000
                 });
                 self.tryPlay()
                 break
@@ -2335,6 +2339,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.tradeuser} 已接受撤单`,
                   dangerouslyUseHTMLString: true,
+                  position: 'top-left',
                   message: `
                   <div class="notify">
                     <dl>
@@ -2359,7 +2364,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 3000
                 });
                 self.tryPlay()
                 break
@@ -2368,6 +2373,7 @@ export default {
                 notify = self.$notify({
                   title: `${msgJson.data.ut.tradeuser} 等待确认成交`,
                   dangerouslyUseHTMLString: true,
+                  position: 'top-left',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -2438,6 +2444,7 @@ export default {
                 notify = self.$notify({
                   title: `${msgJson.data.changer} 等待未平仓修改审核`,
                   dangerouslyUseHTMLString: true,
+                  position: 'top-left',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -2543,6 +2550,7 @@ export default {
                 notify = self.$notify({
                   title: `${msgJson.data.changer} 等待已平仓修改审核`,
                   dangerouslyUseHTMLString: true,
+                  position: 'top-left',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -2671,9 +2679,9 @@ export default {
     tryPlay() {
       const self = this
       try {
-        if (self.dialogTableVisible) {
-          self.$refs.tradeEnquiry.loadInitData()
-        }
+        // if (self.dialogTableVisible) {
+        //   self.$refs.tradeEnquiry.loadInitData()
+        // }
         self.$refs.playAudio.play()
       } catch (error) {
         console.log(error)
@@ -2743,9 +2751,9 @@ export default {
           })
           self.notifyRejection[parseInt(userTradeId)].close()
           delete self.notifyRejection[parseInt(userTradeId)]
-          if (self.dialogTableVisible) {
-            self.$refs.tradeEnquiry.loadInitData()
-          }
+          // if (self.dialogTableVisible) {
+          //   self.$refs.tradeEnquiry.loadInitData()
+          // }
         }
       })
     },
@@ -2760,9 +2768,9 @@ export default {
           })
           self.notifyRejection[parseInt(userTradeId)].close()
           delete self.notifyRejection[parseInt(userTradeId)]
-          if (self.dialogTableVisible) {
-            self.$refs.tradeEnquiry.loadInitData()
-          }
+          // if (self.dialogTableVisible) {
+          //   self.$refs.tradeEnquiry.loadInitData()
+          // }
         }
       })
     },
@@ -2829,7 +2837,7 @@ export default {
       } else if (row.status === 'delegate_bond_1') {
         socket.send(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_1' }))
       }
-      this.dialogTableVisible = false
+      // this.dialogTableVisible = false
     },
     // 获取交易员列表
     getTradeUserList() {
@@ -2858,13 +2866,13 @@ export default {
       }
     },
     // 消息
-    showMsg() {
-      Promise.all([
-        this.dialogTableVisible = true
-      ]).then(() => {
-        this.$refs.tradeEnquiry.loadInitData()
-      })
-    },
+    // showMsg() {
+    //   Promise.all([
+    //     this.dialogTableVisible = true
+    //   ]).then(() => {
+    //     this.$refs.tradeEnquiry.loadInitData()
+    //   })
+    // },
     /* 下拉指令 */
     handleCommand(command) {
       switch (command) {
@@ -3041,7 +3049,7 @@ export default {
       color: #54ffff;
       font-size: 16px;
       cursor: pointer;
-      z-index: 999999;
+      z-index: 1000;
     }
     .left-tabs {
       overflow: hidden;
