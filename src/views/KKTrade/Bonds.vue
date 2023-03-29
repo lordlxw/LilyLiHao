@@ -55,7 +55,7 @@
                 fixed="right"
                 align="center"
                 label="操作"
-                width="120"
+                width="150"
               >
                 <template slot-scope="scope">
                   <el-button
@@ -115,6 +115,41 @@
                     </div>
                     <el-button type="text" slot="reference" class="ml10"
                       >修改审核</el-button
+                    >
+                  </el-popover>
+                  <el-popover
+                    v-if="
+                      setAuth('nobonds:saybreak') &&
+                      scope.row.realTradeId !== null
+                    "
+                    placement="bottom-end"
+                    :ref="`popover-nobondssaybreak-${scope.$index}`"
+                  >
+                    <p>
+                      确认要<span class="color-red">口头违约</span>“<span
+                        class="color-main"
+                        >{{ scope.row.tradeNum }}</span
+                      >”{{ scope.row.tscode }}？
+                    </p>
+                    <div style="text-align: right">
+                      <el-button
+                        type="text"
+                        @click="
+                          handlePopoverClose(
+                            scope,
+                            `popover-nobondssaybreak-${scope.$index}`
+                          )
+                        "
+                        >取消</el-button
+                      >
+                      <el-button
+                        type="text"
+                        @click="handleNoBondsSayBreakClick(scope)"
+                        >确认</el-button
+                      >
+                    </div>
+                    <el-button type="text" slot="reference" class="ml10"
+                      >口头违约</el-button
                     >
                   </el-popover>
                 </template>
@@ -789,13 +824,14 @@ export default {
     },
     // 交割
     handleDeliveryClick(scope) {
+      let eyiweiyueIdlist = []
       let jiaogeIdlist = []
-      let weiyueIdlist = []
+      let jishuweiyueIdlist = []
       let flag = false
       for (let i = 0; i < this.tableDataFinish.length; i++) {
         if (scope.row.finishCode === this.tableDataFinish[i].finishCode) {
           if (this.tableDataFinish[i].breakStatus) {
-            weiyueIdlist.push(this.tableDataFinish[i].realTradeId)
+            jishuweiyueIdlist.push(this.tableDataFinish[i].realTradeId)
           } else {
             jiaogeIdlist.push(this.tableDataFinish[i].realTradeId)
           }
@@ -806,7 +842,11 @@ export default {
           }
         }
       }
-      api.dealDelivery({ jiaogeIdlist: jiaogeIdlist, weiyueIdlist: weiyueIdlist }).then(response => {
+      api.dealDelivery({
+        eyiweiyueIdlist: eyiweiyueIdlist,
+        jiaogeIdlist: jiaogeIdlist,
+        jishuweiyueIdlist: jishuweiyueIdlist
+      }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
             message: '操作成功',
@@ -832,6 +872,24 @@ export default {
           })
           this.handlePopoverClose(scope, `popover-break-${scope.$index}`)
           this.loadInitDataBreak()
+        } else {
+          this.$message({
+            message: response.data.message,
+            type: 'error'
+          })
+        }
+      })
+    },
+    // 口头违约
+    handleNoBondsSayBreakClick(scope) {
+      api.bondsSayBreak({ realTradeId: scope.row.realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: '处理成功',
+            type: 'success'
+          })
+          this.handlePopoverClose(scope, `popover-nobondssaybreak-${scope.$index}`)
+          this.loadInitData()
         } else {
           this.$message({
             message: response.data.message,
@@ -938,7 +996,7 @@ export default {
           this.loadInitData()
           break
         case this.tablist[1]:
-          this.loadInitDataBreak()
+          this.loadInitDataFinish()
           break
       }
     }

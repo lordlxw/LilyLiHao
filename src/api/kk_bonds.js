@@ -145,13 +145,18 @@ export default {
   //     }
   //   })
   // },
+  // 已平仓交割
   dealDelivery(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/jiaoge`,
       method: 'post',
       data: {
+        // 恶意违约id数组列表
+        eyiweiyueIdlist: params.eyiweiyueIdlist,
+        // 交割id数组列表
         jiaogeIdlist: params.jiaogeIdlist,
-        weiyueIdlist: params.weiyueIdlist
+        // 技术违约id数组列表
+        jishuweiyueIdlist: params.jishuweiyueIdlist
       }
     })
   },
@@ -283,6 +288,16 @@ export default {
       url: `${Vue.prototype.$apiUrl}/realtrade/export`,
       method: 'get',
       responseType: 'arraybuffer'
+    })
+  },
+  // 口头违约
+  bondsSayBreak(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/koutouweiyue`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
     })
   }
 }

@@ -150,7 +150,7 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleAcceptEnquiryClick(msgJson.data.userTradeId)
+                                self.handleAcceptEnquiryClick(msgJson.data)
                               }
                             }
                           }, "接收"),
@@ -158,7 +158,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleNotAcceptEnquiryClick(msgJson.data.userTradeId)
+                                self.handleNotAcceptEnquiryClick(msgJson.data)
                               }
                             }
                           }, "拒收")
@@ -168,7 +168,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
+                console.log(2222)
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.$refs.playAudio.play()
                 self.notifyRejection[msgJson.data.userTradeId] = notify
                 break
@@ -184,7 +185,7 @@ export default {
               //   break
               case 'accept_bond_0':
               case 'accept_bond_1':
-                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 break;
               case 'error':
                 if (msgJson.data.errorCode === '0001') {
@@ -216,13 +217,13 @@ export default {
                     </dl>
                     <dl>
                       <dt>交割日期</dt>
-                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}（T+${msgJson.data.deliverySpeed}）</dd>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 3000
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
                 break
               case 'deny_bond_0':
@@ -254,10 +255,15 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 3000
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
+                break
+              // 直接撤单
+              case 'cancel_bond_0':
+              case 'cancel_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 break
               // 撤单确认
               case 'request_cancel_bond_0':
@@ -318,7 +324,7 @@ export default {
                   ),
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.$refs.playAudio.play()
                 self.notifyRejection[msgJson.data.userTradeId] = notify
                 // if (self.dialogTableVisible) {
@@ -354,9 +360,9 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 3000
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
                 break
               case 'weipingchangeconfirm_bond_0':
@@ -396,9 +402,9 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 3000
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
                 break;
               case 'weipingchangedeny_bond_0':
@@ -438,9 +444,9 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 3000
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
                 break;
               case 'yipingchangeconfirm_bond_0':
@@ -480,7 +486,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 3000
                 });
                 self.tryPlay()
                 break;
@@ -521,7 +527,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 3000
                 });
                 self.tryPlay()
                 break
@@ -562,16 +568,17 @@ export default {
       }, 5000)
     },
     // 接收询价单
-    handleAcceptEnquiryClick(usertradeId) {
+    handleAcceptEnquiryClick(obj) {
       const self = this
-      api.inquiryAccept({ usertradeId }).then(response => {
+      api.inquiryAccept({ usertradeId: obj.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
             message: '已接收',
             type: 'success'
           })
-          self.notifyRejection[parseInt(usertradeId)].close()
-          delete self.notifyRejection[parseInt(usertradeId)]
+          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+          self.notifyRejection[parseInt(obj.userTradeId)].close()
+          delete self.notifyRejection[parseInt(obj.userTradeId)]
         } else {
           this.$message({
             message: response.message,
@@ -581,16 +588,17 @@ export default {
       })
     },
     // 拒收询价单
-    handleNotAcceptEnquiryClick(usertradeId) {
+    handleNotAcceptEnquiryClick(obj) {
       const self = this
-      api.inquiryRejection({ usertradeId }).then(response => {
+      api.inquiryRejection({ usertradeId: obj.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
             message: '已拒收',
             type: 'info'
           })
-          self.notifyRejection[parseInt(usertradeId)].close()
-          delete self.notifyRejection[parseInt(usertradeId)]
+          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+          self.notifyRejection[parseInt(obj.userTradeId)].close()
+          delete self.notifyRejection[parseInt(obj.userTradeId)]
         } else {
           this.$message({
             message: response.message,
@@ -608,6 +616,7 @@ export default {
             message: "已撤单",
             type: 'success'
           })
+          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
           self.notifyRejection[parseInt(usertradeId)].close()
           delete self.notifyRejection[parseInt(usertradeId)]
           // if (self.dialogTableVisible) {
@@ -625,6 +634,7 @@ export default {
             message: "已拒绝",
             type: 'success'
           })
+          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
           self.notifyRejection[parseInt(usertradeId)].close()
           delete self.notifyRejection[parseInt(usertradeId)]
           // if (self.dialogTableVisible) {
