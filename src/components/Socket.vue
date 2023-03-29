@@ -182,6 +182,10 @@ export default {
               //   msgJson.data.status = 'accept_bond_1'
               //   self.showMsg()
               //   break
+              case 'accept_bond_0':
+              case 'accept_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', msgJson.data)
+                break;
               case 'error':
                 if (msgJson.data.errorCode === '0001') {
                   Router.push({ path: '/login' })
@@ -189,7 +193,6 @@ export default {
                 break
               case 'deal_bond_0':
               case 'deal_bond_1':
-              case 'deal_null':
                 self.$notify({
                   title: `${msgJson.data.xunjiayuanName} 已确认成交`,
                   dangerouslyUseHTMLString: true,

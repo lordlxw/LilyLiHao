@@ -2224,7 +2224,6 @@ export default {
                 break
               case 'deal_bond_0':
               case 'deal_bond_1':
-              case 'deal_null':
                 self.$notify({
                   title: `${msgJson.data.tradeuser} 已成交`,
                   dangerouslyUseHTMLString: true,
