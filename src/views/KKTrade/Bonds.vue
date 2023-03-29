@@ -174,7 +174,7 @@
                 >
                 </el-table-column>
               </template>
-              <!-- <el-table-column></el-table-column> -->
+              <el-table-column></el-table-column>
               <el-table-column align="center" label="操作" width="100">
                 <template slot-scope="scope">
                   <el-button
@@ -678,11 +678,19 @@ export default {
     },
     // 合并单元格
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0) {
+        // 解决重复渲染问题，清空之前的数据
+        finishCode = ''
+      }
       if (column.label === '交割操作') {
         // 1、根据当前finishCode查找个数作为合并行数
         finishCodeSameCount = 0
         let flag = false
-        if (finishCode !== row.finishCode) {
+        console.log({
+          rowspan: finishCodeSameCount,
+          colspan: columnIndex
+        })
+        if (finishCode.toString() !== row.finishCode) {
           finishCode = row.finishCode
           for (let i = 0; i < this.tableDataFinish.length; i++) {
             if (this.tableDataFinish[i].finishCode === row.finishCode) {
@@ -702,7 +710,7 @@ export default {
           return {
             rowspan: 0,
             colspan: columnIndex
-          };
+          }
         }
       }
     },

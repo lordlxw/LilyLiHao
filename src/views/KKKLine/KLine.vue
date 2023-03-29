@@ -345,7 +345,7 @@
                     <el-option
                       v-for="item in tradeUsersOption"
                       :key="item.userId"
-                      :label="item.userName"
+                      :label="item.nickName"
                       :value="item.userId"
                     >
                     </el-option>
@@ -466,7 +466,7 @@
                     <el-option
                       v-for="item in tradeUsersOption"
                       :key="item.userId"
-                      :label="item.userName"
+                      :label="item.nickName"
                       :value="item.userId"
                     >
                     </el-option>

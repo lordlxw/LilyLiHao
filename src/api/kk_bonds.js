@@ -135,6 +135,16 @@ export default {
     })
   },
   // 已平仓交割
+  // dealDelivery(params) {
+  //   return request({
+  //     url: `${Vue.prototype.$apiUrl}/realtrade/jiaoge`,
+  //     method: 'post',
+  //     data: {
+  //       jiaogeIdlist: params.jiaogeIdlist,
+  //       weiyueIdlist: params.weiyueIdlist
+  //     }
+  //   })
+  // },
   dealDelivery(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/jiaoge`,
