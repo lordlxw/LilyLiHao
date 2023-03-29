@@ -2032,7 +2032,8 @@ export default {
               const h = this.$createElement;
               this.$notify({
                 title: '提醒',
-                message: h('i', { style: 'color: teal' }, '询价单发送成功')
+                message: h('i', { style: 'color: teal' }, '询价单发送成功'),
+                position: 'top-left'
               });
               this.dialogVisible = false
             }
