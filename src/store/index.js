@@ -118,6 +118,8 @@ const store = new Vuex.Store({
           permissions: [],
           // 用户名
           userName: '',
+          // 角色名称
+          roleName: '',
           // 菜单
           menutree: []
         }

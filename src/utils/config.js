@@ -38,6 +38,8 @@ export default {
     '8': '已拒撤',
     '9': '待确认'
   },
+  // 角色名称未平仓展开收起配置
+  externalRoleName: ['交易员', '交割员'],
   // 交易方向
   directionMeta: {
     'bond_0': '买入',

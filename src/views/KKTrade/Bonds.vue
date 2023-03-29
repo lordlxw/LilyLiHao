@@ -332,6 +332,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import api from "@/api/kk_bonds"
 import apiAdmin from '@/api/kk_power_admin'
 import apiBondPool from '@/api/kk_bond_pool'
@@ -397,6 +398,11 @@ export default {
   created() {
     this.initFrameH('nobondsH', 200)
     this.initFrameH('bondsH', 200)
+  },
+  computed: {
+    ...mapGetters({
+      userInfo: "getUserInfo"
+    })
   },
   methods: {
     // 搜索事件
@@ -928,6 +934,9 @@ export default {
           break
       }
     }
+    console.log(1111)
+    console.log(this.userInfo, config.externalRoleName)
+    this.defaultExpandAll = config.externalRoleName.indexOf(this.userInfo.roleName) !== -1
   }
 }
 </script>
