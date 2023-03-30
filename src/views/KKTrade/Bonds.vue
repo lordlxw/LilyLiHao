@@ -292,25 +292,6 @@
                   </el-popover>
                 </template>
               </el-table-column>
-              <!-- <el-table-column
-                align="center"
-                label="违约"
-                width="240"
-                v-if="setAuth('bonds:delivery')"
-              >
-                <template slot-scope="scope">
-                  <el-checkbox
-                    v-if="funcIsBreak(scope)"
-                    v-model="scope.row.breakStatus"
-                    >技术</el-checkbox
-                  >
-                  <el-checkbox
-                    v-if="funcIsBreak(scope)"
-                    v-model="scope.row.breakStatus"
-                    >恶意</el-checkbox
-                  >
-                </template>
-              </el-table-column> -->
               <el-table-column
                 align="center"
                 label="交割操作"
@@ -318,34 +299,6 @@
                 v-if="setAuth('bonds:delivery')"
               >
                 <template slot-scope="scope">
-                  <!-- <el-popover
-                    placement="bottom-end"
-                    :ref="`popover-delivery-${scope.$index}`"
-                  >
-                    <p>
-                      确认要<span class="color-red"> 交割 </span> "{{
-                        scope.row.tscode
-                      }}"？
-                    </p>
-                    <div style="text-align: right">
-                      <el-button
-                        type="text"
-                        @click="
-                          handlePopoverClose(
-                            scope,
-                            `popover-delivery-${scope.$index}`
-                          )
-                        "
-                        >取消</el-button
-                      >
-                      <el-button type="text" @click="handleDeliveryClick(scope)"
-                        >确认</el-button
-                      >
-                    </div>
-                    <el-button type="text" slot="reference" class="ml10"
-                      >交割</el-button
-                    >
-                  </el-popover> -->
                   <el-button type="text" @click="handleDeliveryClick(scope)"
                     >交割</el-button
                   >
@@ -900,7 +853,7 @@ export default {
           const row = JSON.parse(JSON.stringify(this.tableDataFinish[i]))
           if (row.jiaogeStatus === 1) {
             row.mySelected = [1]
-            row.mySelectedDisabled = true
+            row.mySelectedDisabled = false
           } else {
             row.mySelected = []
             row.mySelectedDisabled = false
