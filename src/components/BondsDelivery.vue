@@ -159,7 +159,7 @@ export default {
           })
         } else {
           this.$message({
-            message: response.data.message,
+            message: response.message,
             type: 'error'
           })
         }
