@@ -27,5 +27,25 @@ export default {
         realTradeId: params.realTradeId
       }
     })
+  },
+  // 违约续作
+  dealBreakRedo(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/weiyuexuzuo`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
+  },
+  // 违约增改
+  dealBreakAddUpdate(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/weiyuezenggai`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
   }
 }

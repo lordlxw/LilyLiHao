@@ -38,7 +38,7 @@
             fixed="right"
             align="center"
             label="操作"
-            width="120"
+            width="150"
           >
             <template slot-scope="scope">
               <el-popover
@@ -69,6 +69,65 @@
                 </div>
                 <el-button type="text" slot="reference" class="ml10"
                   >改交割</el-button
+                >
+              </el-popover>
+              <el-popover
+                v-if="setAuth('break:redo')"
+                placement="bottom-end"
+                :ref="`popover-redo-${scope.$index}`"
+              >
+                <p>
+                  确认"{{ scope.row.tscode }}"<span class="color-red">
+                    违约续作
+                  </span>
+                  ？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      handlePopoverClose(scope, `popover-redo-${scope.$index}`)
+                    "
+                    >取消</el-button
+                  >
+                  <el-button type="text" @click="handleBreakRedoClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >续作</el-button
+                >
+              </el-popover>
+              <el-popover
+                v-if="setAuth('break:addupdate')"
+                placement="bottom-end"
+                :ref="`popover-addupdate-${scope.$index}`"
+              >
+                <p>
+                  确认"{{ scope.row.tscode }}"<span class="color-red">
+                    违约增改
+                  </span>
+                  ？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      handlePopoverClose(
+                        scope,
+                        `popover-addupdate-${scope.$index}`
+                      )
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="handleBreakAddUpdateClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >增改</el-button
                 >
               </el-popover>
             </template>
@@ -137,6 +196,42 @@ export default {
             type: 'success'
           })
           this.handlePopoverClose(scope, `popover-breakback-${scope.$index}`)
+          this.loadInitData()
+        } else {
+          this.$message({
+            message: response.data.message,
+            type: 'error'
+          })
+        }
+      })
+    },
+    // 违约续作
+    handleBreakRedoClick(scope) {
+      api.dealBreakRedo({ realTradeId: scope.row.realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.handlePopoverClose(scope, `popover-redo-${scope.$index}`)
+          this.loadInitData()
+        } else {
+          this.$message({
+            message: response.data.message,
+            type: 'error'
+          })
+        }
+      })
+    },
+    // 违约增改
+    handleBreakAddUpdateClick(scope) {
+      api.dealBreakAddUpdate({ realTradeId: scope.row.realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.handlePopoverClose(scope, `popover-addupdate-${scope.$index}`)
           this.loadInitData()
         } else {
           this.$message({

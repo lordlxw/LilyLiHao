@@ -84,7 +84,7 @@ export default {
       errorMsg: '',
       deliveryFinishDataHead: [
         { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '100', align: 'left', show: true },
-        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
+        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
         { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '100', align: 'right', show: true },
         { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
         { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true }
