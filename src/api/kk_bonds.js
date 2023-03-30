@@ -299,5 +299,26 @@ export default {
         realTradeId: params.realTradeId
       }
     })
+  },
+  // 未平持仓修改内容查看
+  nobondsUpdateContent(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/weipingchangecheck`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
+  },
+  // 已平持仓修改内容查看
+  bondsUpdateContent(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/yipingchangecheck`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
   }
+
 }

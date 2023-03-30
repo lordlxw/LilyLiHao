@@ -72,12 +72,20 @@
                 >
               </el-popover>
               <el-button
+                v-if="
+                  [3].indexOf(scope.row.jiaogeStatus) !== -1 &&
+                  setAuth('break:redo')
+                "
                 type="text"
                 @click="handleOpenBreakEditDialog(1, scope.row)"
                 class="ml10"
                 >续作</el-button
               >
               <el-button
+                v-if="
+                  [2].indexOf(scope.row.jiaogeStatus) !== -1 &&
+                  setAuth('break:addupdate')
+                "
                 type="text"
                 @click="handleOpenBreakEditDialog(2, scope.row)"
                 class="ml10"
@@ -120,6 +128,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       tableHead: [
         { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '130', align: 'left', show: true },
         { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },

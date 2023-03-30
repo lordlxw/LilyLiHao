@@ -28,9 +28,10 @@
         <el-input
           v-model="breakEditForm.volume"
           placeholder="请输入交易量"
+          disabled="type===1"
         ></el-input>
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-if="type === 2">
         <el-button-group>
           <el-button
             type="primary"
@@ -46,7 +47,11 @@
         </el-button-group>
       </el-form-item>
       <el-form-item label="交割日期" prop="deliveryTime">
+        <div v-show="type === 1">
+          {{ breakEditForm.deliveryTime }}
+        </div>
         <delivery-canlendar-update
+          v-show="type === 2"
           ref="deliveryCanlendarUpdate"
           @change="handleDeliveryCanlendarUpdate"
         ></delivery-canlendar-update>
@@ -69,18 +74,21 @@
         <el-input
           v-model="breakEditForm.counterParty"
           autocomplete="off"
+          disabled="type===1"
         ></el-input>
       </el-form-item>
       <el-form-item label="联系人" prop="contactPerson">
         <el-input
           v-model="breakEditForm.contactPerson"
           autocomplete="off"
+          disabled="type===1"
         ></el-input>
       </el-form-item>
       <el-form-item label="联系方式" prop="contactType">
         <el-input
           v-model="breakEditForm.contactType"
           autocomplete="off"
+          disabled="type===1"
         ></el-input>
       </el-form-item>
       <el-form-item label="备注">
@@ -296,15 +304,20 @@ export default {
       this.breakEditForm.price = this.row.price
       this.breakEditForm.volume = parseFloat(this.row.volume)
       this.breakEditForm.tscode = this.row.tscode
-      if (moment(this.row.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
-        this.breakEditForm.deliveryTime = moment(this.row.deliveryTime).format('YYYY-MM-DD')
-        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.row.deliveryTime).format('YYYY-MM-DD')
-      } else if (moment(this.row.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
-        this.breakEditForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
-        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
-      } else {
+      if (this.type === 1) {
         this.getNextDealDay()
+      } else {
+        if (moment(this.row.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
+          this.breakEditForm.deliveryTime = moment(this.row.deliveryTime).format('YYYY-MM-DD')
+          this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.row.deliveryTime).format('YYYY-MM-DD')
+        } else if (moment(this.row.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
+          this.breakEditForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+          this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+        } else {
+          this.getNextDealDay()
+        }
       }
+
       this.breakEditForm.remark = this.row.remark
       this.breakEditForm.counterParty = this.row.counterParty
       this.breakEditForm.contactPerson = this.row.contactPerson
@@ -317,13 +330,17 @@ export default {
       apiCanlendar.nextDealDay().then(response => {
         if (response && response.code === '00000') {
           this.breakEditForm.deliveryTime = response.value
-          this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
+          if (this.type !== 1) {
+            this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
+          }
         }
       })
     },
   },
   mounted() {
-    this.loadInitData()
+    this.$nextTick(() => {
+      this.loadInitData()
+    })
   }
 }
 </script>

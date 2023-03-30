@@ -113,7 +113,11 @@
                         >拒绝</el-button
                       >
                     </div>
-                    <el-button type="text" slot="reference" class="ml10"
+                    <el-button
+                      type="text"
+                      slot="reference"
+                      class="ml10"
+                      @click="handlViewNobondsUpdateContent(scope)"
                       >修改审核</el-button
                     >
                   </el-popover>
@@ -249,7 +253,11 @@
                         >拒绝</el-button
                       >
                     </div>
-                    <el-button type="text" slot="reference" class="ml10"
+                    <el-button
+                      type="text"
+                      slot="reference"
+                      class="ml10"
+                      @click="handlViewBondsUpdateContent(scope)"
                       >修改审核</el-button
                     >
                   </el-popover>
@@ -590,6 +598,12 @@ export default {
         }
         this.loading = false;
       });
+    },
+    handlViewNobondsUpdateContent(scope) {
+      api.nobondsUpdateContent({ realTradeId: scope.row.realTradeId }).then(response => { })
+    },
+    handlViewBondsUpdateContent(scope) {
+      api.bondsUpdateContent({ realTradeId: scope.row.realTradeId }).then(response => { })
     },
     handleTabsClick(tab, event) {
       finishCode = ''
