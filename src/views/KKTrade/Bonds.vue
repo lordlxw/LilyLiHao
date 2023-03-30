@@ -121,7 +121,8 @@
                     v-if="
                       setAuth('nobonds:saybreak') &&
                       scope.row.realTradeId !== null &&
-                      [1].indexOf(scope.row.jiaogeStatus) === -1
+                      [1].indexOf(scope.row.jiaogeStatus) === -1 &&
+                      funcIsBreak(scope)
                     "
                     placement="bottom-end"
                     :ref="`popover-nobondssaybreak-${scope.$index}`"
@@ -256,7 +257,8 @@
                     v-if="
                       setAuth('bonds:saybreak') &&
                       scope.row.realTradeId !== null &&
-                      [1].indexOf(scope.row.jiaogeStatus) === -1
+                      [1].indexOf(scope.row.jiaogeStatus) === -1 &&
+                      funcIsBreak(scope)
                     "
                     placement="bottom-end"
                     :ref="`popover-bondssaybreak-${scope.$index}`"
@@ -290,28 +292,33 @@
                   </el-popover>
                 </template>
               </el-table-column>
-              <el-table-column
+              <!-- <el-table-column
                 align="center"
-                label="是否违约"
-                width="80"
+                label="违约"
+                width="240"
                 v-if="setAuth('bonds:delivery')"
               >
                 <template slot-scope="scope">
                   <el-checkbox
                     v-if="funcIsBreak(scope)"
                     v-model="scope.row.breakStatus"
-                    >违约</el-checkbox
+                    >技术</el-checkbox
+                  >
+                  <el-checkbox
+                    v-if="funcIsBreak(scope)"
+                    v-model="scope.row.breakStatus"
+                    >恶意</el-checkbox
                   >
                 </template>
-              </el-table-column>
+              </el-table-column> -->
               <el-table-column
                 align="center"
                 label="交割操作"
-                width="100"
+                width="90"
                 v-if="setAuth('bonds:delivery')"
               >
                 <template slot-scope="scope">
-                  <el-popover
+                  <!-- <el-popover
                     placement="bottom-end"
                     :ref="`popover-delivery-${scope.$index}`"
                   >
@@ -338,7 +345,10 @@
                     <el-button type="text" slot="reference" class="ml10"
                       >交割</el-button
                     >
-                  </el-popover>
+                  </el-popover> -->
+                  <el-button type="text" @click="handleDeliveryClick(scope)"
+                    >交割</el-button
+                  >
                 </template>
               </el-table-column>
             </el-table>
@@ -400,6 +410,19 @@
         @change="handleBondsRollDialogVisible"
       ></bonds-roll>
     </el-dialog>
+    <el-dialog
+      title="今天（交割确认）"
+      width="650px;"
+      :visible.sync="dialogBondsDeliveryFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <bonds-delivery
+        :deliveryFinishData="deliveryFinishData"
+        @change="handleBondsDeliveryDialogVisible"
+      ></bonds-delivery>
+    </el-dialog>
   </div>
 </template>
 
@@ -414,6 +437,7 @@ import BondsCover from '@/components/BondsCover.vue'
 import NoBondsEdit from '@/components/NoBondsEdit.vue'
 import BondsEdit from '@/components/BondsEdit.vue'
 import BondsRoll from '@/components/BondsRoll.vue'
+import BondsDelivery from '@/components/BondsDelivery.vue'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
 import moment from 'moment'
@@ -428,7 +452,8 @@ export default {
     BondsCover,
     NoBondsEdit,
     BondsEdit,
-    BondsRoll
+    BondsRoll,
+    BondsDelivery
   },
   data() {
     return {
@@ -464,7 +489,10 @@ export default {
       // 平Row
       overRow: {},
       // 开Row
-      openRow: {}
+      openRow: {},
+      // 交割弹框
+      dialogBondsDeliveryFormVisible: false,
+      deliveryFinishData: []
     }
   },
   created() {
@@ -601,9 +629,6 @@ export default {
         userTradeId: null
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
-          response.rows.forEach(element => {
-            element.breakStatus = false
-          });
           this.tableDataFinish = response.rows;
           this.totalCount = response.total;
         } else {
@@ -672,6 +697,11 @@ export default {
     handleBondsRollDialogVisible(obj) {
       this.dialogBondsRollFormVisible = obj.dialogVisible
     },
+    // 交割弹框回参接收
+    handleBondsDeliveryDialogVisible(obj) {
+      this.dialogBondsDeliveryFormVisible = obj.dialogVisible
+      this.loadInitDataFinish()
+    },
     // 数据格式化
     funcFormat(row, column) {
       switch (column.property) {
@@ -691,6 +721,8 @@ export default {
           return row.realVolume ? row.realVolume : "--"
         case "tscode":
           return row.tscode.replace(/.IB/, '')
+        case "jiaogeStatus":
+          return config.bondStatus[row.jiaogeStatus]
       }
       return row[column.property]
     },
@@ -861,43 +893,23 @@ export default {
     },
     // 交割
     handleDeliveryClick(scope) {
-      let eyiweiyueIdlist = []
-      let jiaogeIdlist = []
-      let jishuweiyueIdlist = []
-      let flag = false
+      let deliveryFinishData = []
+      // 处理数据
       for (let i = 0; i < this.tableDataFinish.length; i++) {
         if (scope.row.finishCode === this.tableDataFinish[i].finishCode) {
-          if (this.tableDataFinish[i].breakStatus) {
-            jishuweiyueIdlist.push(this.tableDataFinish[i].realTradeId)
+          const row = JSON.parse(JSON.stringify(this.tableDataFinish[i]))
+          if (row.jiaogeStatus === 1) {
+            row.mySelected = [1]
+            row.mySelectedDisabled = true
           } else {
-            jiaogeIdlist.push(this.tableDataFinish[i].realTradeId)
+            row.mySelected = []
+            row.mySelectedDisabled = false
           }
-          flag = true
-        } else {
-          if (flag) {
-            break
-          }
+          deliveryFinishData.push(row)
         }
       }
-      api.dealDelivery({
-        eyiweiyueIdlist: eyiweiyueIdlist,
-        jiaogeIdlist: jiaogeIdlist,
-        jishuweiyueIdlist: jishuweiyueIdlist
-      }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-          this.handlePopoverClose(scope, `popover-delivery-${scope.$index}`)
-          this.loadInitDataFinish()
-        } else {
-          this.$message({
-            message: response.data.message,
-            type: 'error'
-          })
-        }
-      })
+      this.deliveryFinishData = deliveryFinishData
+      this.dialogBondsDeliveryFormVisible = true
     },
     // 违约
     handleBreakClick(scope) {

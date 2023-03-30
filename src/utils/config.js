@@ -109,7 +109,7 @@ export default {
     tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true }
     // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
   },
-  // 未平仓表头
+  // 未平仓，已平表头
   bondsHead: {
     // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
     createBy: { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
@@ -131,7 +131,8 @@ export default {
     createTime: { label: '成交时间', prop: 'createTime', width: '150', align: 'left', show: true },
     counterParty: { label: '交易对手', prop: 'counterParty', width: '90', align: 'left', show: true },
     contactPerson: { label: '联系人', prop: 'contactPerson', width: '120', align: 'left', show: true },
-    contactType: { label: '联系方式', prop: 'contactType', width: '110', align: 'left', show: true }
+    contactType: { label: '联系方式', prop: 'contactType', width: '110', align: 'left', show: true },
+    jiaogeStatus: { label: '交割状态', prop: 'jiaogeStatus', width: '100', align: 'left', show: true }
     // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
   }
 }
