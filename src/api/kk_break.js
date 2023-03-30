@@ -34,7 +34,17 @@ export default {
       url: `${Vue.prototype.$apiUrl}/realtrade/weiyuexuzuo`,
       method: 'post',
       data: {
-        realTradeId: params.realTradeId
+        realTradeId: params.realTradeId,
+        tscode: params.tscode,
+        direction: params.direction,
+        deliverySpeed: params.deliverySpeed,
+        deliveryTime: params.deliveryTime,
+        price: params.price,
+        volume: params.volume,
+        remark: params.remark,
+        contactPerson: params.contactPerson,
+        contactType: params.contactType,
+        counterParty: params.counterParty
       }
     })
   },
@@ -44,7 +54,17 @@ export default {
       url: `${Vue.prototype.$apiUrl}/realtrade/weiyuezenggai`,
       method: 'post',
       data: {
-        realTradeId: params.realTradeId
+        realTradeId: params.realTradeId,
+        tscode: params.tscode,
+        direction: params.direction,
+        deliverySpeed: params.deliverySpeed,
+        deliveryTime: params.deliveryTime,
+        price: params.price,
+        volume: params.volume,
+        remark: params.remark,
+        contactPerson: params.contactPerson,
+        contactType: params.contactType,
+        counterParty: params.counterParty
       }
     })
   }

@@ -71,70 +71,37 @@
                   >改交割</el-button
                 >
               </el-popover>
-              <el-popover
-                v-if="setAuth('break:redo')"
-                placement="bottom-end"
-                :ref="`popover-redo-${scope.$index}`"
+              <el-button
+                type="text"
+                @click="handleOpenBreakEditDialog(1, scope.row)"
+                class="ml10"
+                >续作</el-button
               >
-                <p>
-                  确认"{{ scope.row.tscode }}"<span class="color-red">
-                    违约续作
-                  </span>
-                  ？
-                </p>
-                <div style="text-align: right">
-                  <el-button
-                    type="text"
-                    @click="
-                      handlePopoverClose(scope, `popover-redo-${scope.$index}`)
-                    "
-                    >取消</el-button
-                  >
-                  <el-button type="text" @click="handleBreakRedoClick(scope)"
-                    >确认</el-button
-                  >
-                </div>
-                <el-button type="text" slot="reference" class="ml10"
-                  >续作</el-button
-                >
-              </el-popover>
-              <el-popover
-                v-if="setAuth('break:addupdate')"
-                placement="bottom-end"
-                :ref="`popover-addupdate-${scope.$index}`"
+              <el-button
+                type="text"
+                @click="handleOpenBreakEditDialog(2, scope.row)"
+                class="ml10"
+                >增改</el-button
               >
-                <p>
-                  确认"{{ scope.row.tscode }}"<span class="color-red">
-                    违约增改
-                  </span>
-                  ？
-                </p>
-                <div style="text-align: right">
-                  <el-button
-                    type="text"
-                    @click="
-                      handlePopoverClose(
-                        scope,
-                        `popover-addupdate-${scope.$index}`
-                      )
-                    "
-                    >取消</el-button
-                  >
-                  <el-button
-                    type="text"
-                    @click="handleBreakAddUpdateClick(scope)"
-                    >确认</el-button
-                  >
-                </div>
-                <el-button type="text" slot="reference" class="ml10"
-                  >增改</el-button
-                >
-              </el-popover>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </div>
+    <el-dialog
+      :title="currentType === 1 ? '违约续作' : '违约增改'"
+      width="500px;"
+      :visible.sync="dialogBreakEditFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <break-edit
+        :row="currentRow"
+        :type="currentType"
+        @change="handleBreakEditDialogVisible"
+      ></break-edit>
+    </el-dialog>
   </div>
 </template>
 
@@ -142,11 +109,15 @@
 import api from "@/api/kk_break";
 import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
+import BreakEdit from '@/components/BreakEdit.vue'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
 import moment from 'moment'
 export default {
   mixins: [pageMixin, commMixin],
+  components: {
+    BreakEdit
+  },
   data() {
     return {
       tableHead: [
@@ -160,7 +131,12 @@ export default {
         { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true }
       ],
       tableData: [],
-      breakH: '0'
+      breakH: '0',
+      // 违约续作和违约增改行
+      dialogBreakEditFormVisible: false,
+      currentRow: [],
+      // 当前类型
+      currentType: ''
     }
   },
   created() {
@@ -205,42 +181,6 @@ export default {
         }
       })
     },
-    // 违约续作
-    handleBreakRedoClick(scope) {
-      api.dealBreakRedo({ realTradeId: scope.row.realTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-          this.handlePopoverClose(scope, `popover-redo-${scope.$index}`)
-          this.loadInitData()
-        } else {
-          this.$message({
-            message: response.data.message,
-            type: 'error'
-          })
-        }
-      })
-    },
-    // 违约增改
-    handleBreakAddUpdateClick(scope) {
-      api.dealBreakAddUpdate({ realTradeId: scope.row.realTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-          this.handlePopoverClose(scope, `popover-addupdate-${scope.$index}`)
-          this.loadInitData()
-        } else {
-          this.$message({
-            message: response.data.message,
-            type: 'error'
-          })
-        }
-      })
-    },
     // 数据格式化
     funcFormat(row, column) {
       switch (column.property) {
@@ -262,6 +202,16 @@ export default {
           return row.tscode.replace(/.IB/, '')
       }
       return row[column.property]
+    },
+    // 违约修改
+    handleOpenBreakEditDialog(type, row) {
+      this.currentType = type
+      this.currentRow = JSON.parse(JSON.stringify(row))
+      this.dialogBreakEditFormVisible = true
+    },
+    handleBreakEditDialogVisible(obj) {
+      this.dialogBreakEditFormVisible = obj.dialogVisible
+      this.loadInitData()
     }
   },
   mounted() {

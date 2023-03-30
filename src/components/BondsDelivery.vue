@@ -69,11 +69,7 @@ const doList = [
   {
     label: '恶意违约',
     value: 3
-  },
-  {
-    label: '不动',
-    value: 4
-  },
+  }
 ]
 export default {
   props: ['deliveryFinishData'],
@@ -149,7 +145,7 @@ export default {
         jiaogeIdlist: jiaogeIdlist,
         jishuweiyueIdlist: jishuweiyueIdlist
       }).then(response => {
-        if (response && response.code === 200) {
+        if (response && response.code === '00000') {
           this.$message({
             message: '操作成功',
             type: 'success'
