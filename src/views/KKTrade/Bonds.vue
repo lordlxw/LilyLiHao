@@ -1066,8 +1066,6 @@ export default {
           break
       }
     }
-    console.log(1111)
-    console.log(this.userInfo, config.externalRoleName)
     this.defaultExpandAll = config.externalRoleName.indexOf(this.userInfo.roleName) !== -1
   }
 }

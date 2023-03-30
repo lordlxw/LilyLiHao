@@ -285,31 +285,25 @@
       :visible.sync="dialogDealFormVisible"
       append-to-body
     >
-      <div class="notify" style="margin-bottom: 20px">
-        <dl>
-          <dt>债券代码</dt>
-          <dd>{{ dealRows.tscode }}</dd>
-        </dl>
-        <dl>
-          <dt>交易方向</dt>
-          <dd>
-            {{
-              dealRows.direction === "bond_0"
-                ? "买入"
-                : dealRows.direction === "bond_1"
-                ? "卖出"
-                : ""
-            }}
-          </dd>
-        </dl>
-      </div>
       <el-form
         :model="dealForm"
         :rules="rulesDealForm"
         ref="dealForm"
-        label-width="90px"
+        :label-width="formLabelWidth + 'px'"
         :close-on-click-modal="false"
       >
+        <el-form-item label="债券代码" prop="tscode">
+          {{ dealRows.tscode }}
+        </el-form-item>
+        <el-form-item label="交易方向" prop="direction">
+          {{
+            dealRows.direction === "bond_0"
+              ? "买入"
+              : dealRows.direction === "bond_1"
+              ? "卖出"
+              : ""
+          }}
+        </el-form-item>
         <el-form-item label="成交价格" prop="price">
           <el-input v-model="dealForm.price" autocomplete="off"></el-input>
         </el-form-item>
@@ -444,10 +438,14 @@ export default {
         deliveryTime: [
           { required: true, message: '交割日期必选', trigger: 'blur' }
         ],
+        counterParty: [
+          { required: true, message: '交易对手必填', trigger: 'blur' }
+        ]
       },
       dealRows: {},
       dialogEnquiryFormVisible: false,
-      enquiryH: '0'
+      enquiryH: '0',
+      formLabelWidth: '0'
     }
   },
   created() {
@@ -720,6 +718,10 @@ export default {
   },
   mounted() {
     this.dispatchUserColumn()
+    this.initFrameW('formLabelWidth', 120)
+    window.onresize = () => {
+      this.initFrameW('formLabelWidth', 120)
+    }
   }
 }
 </script>
@@ -792,11 +794,6 @@ export default {
   }
   .table-height {
     height: 800px !important;
-  }
-}
-.notify {
-  dl {
-    line-height: 24px;
   }
 }
 </style>
