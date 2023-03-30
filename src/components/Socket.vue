@@ -263,6 +263,8 @@ export default {
               // 直接撤单
               case 'cancel_bond_0':
               case 'cancel_bond_1':
+              case 'delegate_feedback_bond_0':
+              case 'delegate_feedback_bond_1':
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 break
               // 撤单确认

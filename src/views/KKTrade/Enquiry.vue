@@ -455,7 +455,6 @@ export default {
   },
   watch: {
     enquiryInfo() {
-      console.log(999999999999)
       this.loadInitData()
     }
   },
