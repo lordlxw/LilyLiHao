@@ -117,7 +117,7 @@ export default {
     direction: { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
     price: { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
     volume: { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
-    deliverySpeed: { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: true },
+    deliverySpeed: { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
     deliveryTime: { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
     floatProfit: { label: '浮动盈亏', prop: 'floatProfit', width: '100', align: 'right', show: true },
     profit: { label: '已平盈亏', prop: 'profit', width: '100', align: 'right', show: true },

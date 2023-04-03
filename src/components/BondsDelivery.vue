@@ -28,7 +28,7 @@
         >
         </el-table-column>
       </template>
-      <el-table-column label="操作">
+      <el-table-column label="选择">
         <template slot-scope="scope">
           <el-checkbox-group
             v-model="scope.row.mySelected"
@@ -42,6 +42,18 @@
               >{{ item.label }}</el-checkbox
             >
           </el-checkbox-group>
+        </template>
+      </el-table-column>
+      <el-table-column label="做市商" width="120">
+        <template slot-scope="scope">
+          <el-input
+            size="mini"
+            v-if="
+              scope.row.mySelected.length > 0 &&
+              [2, 3].indexOf(scope.row.mySelected[0]) !== -1
+            "
+            width="90"
+          ></el-input>
         </template>
       </el-table-column>
     </el-table>
@@ -79,8 +91,8 @@ export default {
       doListOption: doList,
       errorMsg: '',
       deliveryFinishDataHead: [
-        { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '100', align: 'left', show: true },
-        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
+        { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '90', align: 'left', show: true },
+        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
         { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '100', align: 'right', show: true },
         { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
         { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true }
