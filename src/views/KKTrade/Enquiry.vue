@@ -518,32 +518,6 @@ export default {
         this.loading = false;
       });
     },
-    // 单位换算
-    unitChange(volume) {
-      if (volume.toString().indexOf('.') === -1) {
-        if (volume.toString().length < 4) {
-          return volume
-        }
-        if (volume.toString().length === 4) {
-          return volume * 1.0 / 1000 + 'k'
-        }
-        if (volume.toString().length > 4) {
-          return volume * 1.0 / 10000 + 'e'
-        }
-      }
-    },
-    copy(scope, flag) {
-      let copyContent = ''
-      copyContent += scope.row.direction === 'bond_0' ? 'bid ' : (scope.row.direction === 'bond_1' ? 'ofr ' : '')
-      copyContent += scope.row.tscode.replace(/.IB/, '') + ' '
-      copyContent += this.unitChange(scope.row.volume) + ' '
-      if (moment(moment(scope.row.deliveryTime).format('YYYY-MM-DD')).isAfter(moment(new Date()).format('YYYY-MM-DD'))) {
-        copyContent += moment(scope.row.deliveryTime).format('MM月DD日')
-      }
-      copyContent += '+' + scope.row.deliverySpeed + ' '
-      copyContent += scope.row.price
-      this.copyContent(copyContent, flag)
-    },
     // 接受
     handleAcceptClick(scope) {
       api.inquiryAccept({ usertradeId: scope.row.userTradeId }).then(response => {

@@ -14,6 +14,7 @@
 import Vue from 'vue'
 import Router from '@/router'
 import configUtil from '@/utils/config.js'
+import { pageMixin } from '@/utils/pageMixin'
 import * as util from '@/utils/util'
 // import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
 import api from "@/api/kk_trade";
@@ -21,6 +22,7 @@ import api from "@/api/kk_trade";
 let socket
 let lockReconnect = false
 export default {
+  mixins: [pageMixin],
   components: {
     // TradeEnquiry
   },
@@ -154,7 +156,7 @@ export default {
                                 self.handleAcceptEnquiryClick(msgJson.data)
                               }
                             }
-                          }, "接收"),
+                          }, "接收并复制"),
                           h("button", {
                             class: "notigy-cancel",
                             on: {
@@ -576,9 +578,10 @@ export default {
       api.inquiryAccept({ usertradeId: obj.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
-            message: '已接收',
+            message: '已接收并复制成功',
             type: 'success'
           })
+          self.copySocket(obj)
           self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
           self.notifyRejection[parseInt(obj.userTradeId)].close()
           delete self.notifyRejection[parseInt(obj.userTradeId)]

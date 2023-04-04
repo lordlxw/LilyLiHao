@@ -143,6 +143,44 @@ export const pageMixin = {
         })
       }
     },
+    // 单位换算
+    unitChange(volume) {
+      if (volume.toString().indexOf('.') === -1) {
+        if (volume.toString().length < 4) {
+          return volume
+        }
+        if (volume.toString().length === 4) {
+          return volume * 1.0 / 1000 + 'k'
+        }
+        if (volume.toString().length > 4) {
+          return volume * 1.0 / 10000 + 'e'
+        }
+      }
+    },
+    copy(scope, flag) {
+      let copyContent = ''
+      copyContent += scope.row.direction === 'bond_0' ? 'bid ' : (scope.row.direction === 'bond_1' ? 'ofr ' : '')
+      copyContent += scope.row.tscode.replace(/.IB/, '') + ' '
+      copyContent += this.unitChange(scope.row.volume) + ' '
+      if (moment(moment(scope.row.deliveryTime).format('YYYY-MM-DD')).isAfter(moment(new Date()).format('YYYY-MM-DD'))) {
+        copyContent += moment(scope.row.deliveryTime).format('MM月DD日')
+      }
+      copyContent += '+' + scope.row.deliverySpeed + ' '
+      copyContent += scope.row.price
+      this.copyContent(copyContent, flag)
+    },
+    copySocket(data, flag) {
+      let copyContent = ''
+      copyContent += data.direction === 'bond_0' ? 'bid ' : (data.direction === 'bond_1' ? 'ofr ' : '')
+      copyContent += data.tscode.replace(/.IB/, '') + ' '
+      copyContent += this.unitChange(data.volume) + ' '
+      if (moment(moment(data.deliveryTime).format('YYYY-MM-DD')).isAfter(moment(new Date()).format('YYYY-MM-DD'))) {
+        copyContent += moment(data.deliveryTime).format('MM月DD日')
+      }
+      copyContent += '+' + data.deliverySpeed + ' '
+      copyContent += data.price
+      this.copyContent(copyContent, flag)
+    },
     handleNavigator(val1, val2, val3) {
       const params = {
         val1,
