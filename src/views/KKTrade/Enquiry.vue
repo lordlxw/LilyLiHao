@@ -50,14 +50,20 @@
             fixed="right"
             align="center"
             label="操作"
-            width="160"
+            width="180"
           >
             <template slot-scope="scope">
               <el-button
                 type="text"
                 v-if="setAuth('inquiry:accept') && scope.row.status === 0"
                 @click="handleAcceptClick(scope)"
-                >接收</el-button
+                >接收并复制</el-button
+              >
+              <el-button
+                type="text"
+                v-if="setAuth('inquiry:accept') && scope.row.status !== 0"
+                @click="copy(scope)"
+                >复制</el-button
               >
               <el-popover
                 v-if="setAuth('inquiry:rejection') && scope.row.status === 0"
@@ -512,6 +518,32 @@ export default {
         this.loading = false;
       });
     },
+    // 单位换算
+    unitChange(volume) {
+      if (volume.toString().indexOf('.') === -1) {
+        if (volume.toString().length < 4) {
+          return volume
+        }
+        if (volume.toString().length === 4) {
+          return volume * 1.0 / 1000 + 'k'
+        }
+        if (volume.toString().length > 4) {
+          return volume * 1.0 / 10000 + 'e'
+        }
+      }
+    },
+    copy(scope) {
+      let copyContent = ''
+      copyContent += scope.row.direction === 'bond_0' ? 'bid ' : (scope.row.direction === 'bond_1' ? 'ofr ' : '')
+      copyContent += scope.row.tscode.replace(/.IB/, '') + ' '
+      copyContent += this.unitChange(scope.row.volume) + ' '
+      if (moment(moment(scope.row.deliveryTime).format('YYYY-MM-DD')).isAfter(moment(new Date()).format('YYYY-MM-DD'))) {
+        copyContent += moment(scope.row.deliveryTime).format('YYYY-MM-DD')
+      }
+      copyContent += '+' + scope.row.deliverySpeed + ' '
+      copyContent += scope.row.price
+      this.copyContent(copyContent)
+    },
     // 接受
     handleAcceptClick(scope) {
       api.inquiryAccept({ usertradeId: scope.row.userTradeId }).then(response => {
@@ -520,6 +552,7 @@ export default {
             message: '已接收',
             type: 'success'
           })
+          this.copy(scope)
           this.loadInitData()
         } else {
           this.$message({
