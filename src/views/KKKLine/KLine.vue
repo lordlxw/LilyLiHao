@@ -262,16 +262,20 @@
                     buyForm.tscode.replace(/.IB/, "")
                   }}</span>
                 </el-form-item>
-                <el-form-item label="价格" prop="price">
+                <el-form-item label="价格 | 允许浮动" prop="price">
                   <el-input-number
                     v-model="buyForm.price"
-                    step="0.001"
+                    :step="buyForm.allowFoat"
                     placeholder="请输入价格"
                     @input="handleMaxWait('buyForm')"
+                  ></el-input-number
+                  ><br />
+                  <el-input-number
+                    v-model="buyForm.allowFoat"
+                    step="0.001"
+                    @input="handleMaxWait('buyForm')"
+                    class="mt10"
                   ></el-input-number>
-                  <!-- <span class="txt-green">{{
-                    buyForm.price | moneyFormat(4)
-                  }}</span> -->
                 </el-form-item>
                 <el-form-item label="交易量" prop="volume">
                   <el-input
@@ -388,10 +392,17 @@
                 </el-form-item>
                 <el-form-item label="价格" prop="price">
                   <el-input-number
-                    v-model="saleForm.price"
-                    step="0.001"
+                    v-model="saleForm.allowFoat"
+                    :step="saleForm.allowFoat"
                     placeholder="请输入价格"
                     @input="handleMaxWait('saleForm')"
+                  ></el-input-number
+                  ><br />
+                  <el-input-number
+                    v-model="saleForm.allowFoat"
+                    step="0.001"
+                    @input="handleMaxWait('buyForm')"
+                    class="mt10"
                   ></el-input-number>
                 </el-form-item>
                 <el-form-item label="交易量" prop="volume">
@@ -896,7 +907,9 @@ export default {
         // 交割日期消息
         deliveryTimeMsg: '',
         // 等待时长
-        maxWait: 0
+        maxWait: 0,
+        // 允许浮动
+        allowFoat: 0.001
       },
       saleFormRules: {
         direction: [
@@ -940,7 +953,9 @@ export default {
         // 交割日期消息
         deliveryTimeMsg: '',
         // 等待时长
-        maxWait: 0
+        maxWait: 0,
+        // 允许浮动
+        allowFoat: 0.001
       },
       buyFormRules: {
         direction: [
@@ -1538,7 +1553,7 @@ export default {
               grid: [{
                 left: '0%',
                 right: '2%',
-                bottom: '12%',
+                bottom: '15%',
                 top: '2%',
                 containLabel: true,
                 show: true,
@@ -1892,11 +1907,11 @@ export default {
           switch (params.bidtype) {
             case 1:
               self.businessOutList = res.value
-              self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', res.value)
+              self.buyFormForwardPrice = self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', res.value)
               break;
             case 0:
               self.businessInList = res.value
-              self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', res.value)
+              self.saleFormForwardPrice = self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', res.value)
               break;
             default:
               self.businessAllList = res.value
@@ -2135,6 +2150,9 @@ export default {
                 break
               case 'isforward_0':
                 self.businessForwardInList = msgJson.data
+                console.log(2222222)
+                console.log(self.businessInList)
+                console.log(msgJson.data)
                 self.saleFormForwardPrice = self.funcGetBestPrice('min', msgJson.data.concat(self.businessInList))
                 self.calcuDiffPrice(2)
                 // if (self.saleForm.maxWait <= 0) {
