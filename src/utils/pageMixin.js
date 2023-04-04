@@ -127,13 +127,15 @@ export const pageMixin = {
       }
     },
     // 复制内容
-    copyContent(content) {
+    copyContent(content, flag) {
       try {
         copy(content);
-        this.$message({
-          message: '复制成功',
-          type: 'success'
-        })
+        if (flag) {
+          this.$message({
+            message: '复制成功',
+            type: 'success'
+          })
+        }
       } catch (error) {
         this.$message({
           message: '复制失败',

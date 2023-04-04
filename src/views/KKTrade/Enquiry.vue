@@ -62,7 +62,7 @@
               <el-button
                 type="text"
                 v-if="setAuth('inquiry:accept') && scope.row.status !== 0"
-                @click="copy(scope)"
+                @click="copy(scope, true)"
                 >复制</el-button
               >
               <el-popover
@@ -532,7 +532,7 @@ export default {
         }
       }
     },
-    copy(scope) {
+    copy(scope, flag) {
       let copyContent = ''
       copyContent += scope.row.direction === 'bond_0' ? 'bid ' : (scope.row.direction === 'bond_1' ? 'ofr ' : '')
       copyContent += scope.row.tscode.replace(/.IB/, '') + ' '
@@ -542,17 +542,17 @@ export default {
       }
       copyContent += '+' + scope.row.deliverySpeed + ' '
       copyContent += scope.row.price
-      this.copyContent(copyContent)
+      this.copyContent(copyContent, flag)
     },
     // 接受
     handleAcceptClick(scope) {
       api.inquiryAccept({ usertradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
+          this.copy(scope)
           this.$message({
-            message: '已接收',
+            message: '已接收并复制成功',
             type: 'success'
           })
-          this.copy(scope)
           this.loadInitData()
         } else {
           this.$message({
