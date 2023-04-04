@@ -390,7 +390,7 @@
                     saleForm.tscode.replace(/.IB/, "")
                   }}</span>
                 </el-form-item>
-                <el-form-item label="价格" prop="price">
+                <el-form-item label="价格 | 允许浮动" prop="price">
                   <el-input-number
                     v-model="saleForm.allowFoat"
                     :step="saleForm.allowFoat"
