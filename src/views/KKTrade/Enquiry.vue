@@ -538,7 +538,7 @@ export default {
       copyContent += scope.row.tscode.replace(/.IB/, '') + ' '
       copyContent += this.unitChange(scope.row.volume) + ' '
       if (moment(moment(scope.row.deliveryTime).format('YYYY-MM-DD')).isAfter(moment(new Date()).format('YYYY-MM-DD'))) {
-        copyContent += moment(scope.row.deliveryTime).format('YYYY-MM-DD')
+        copyContent += moment(scope.row.deliveryTime).format('MM月DD日')
       }
       copyContent += '+' + scope.row.deliverySpeed + ' '
       copyContent += scope.row.price
