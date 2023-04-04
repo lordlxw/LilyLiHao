@@ -392,7 +392,7 @@
                 </el-form-item>
                 <el-form-item label="价格 | 允许浮动" prop="price">
                   <el-input-number
-                    v-model="saleForm.allowFoat"
+                    v-model="saleForm.price"
                     :step="saleForm.allowFoat"
                     placeholder="请输入价格"
                     @input="handleMaxWait('saleForm')"
