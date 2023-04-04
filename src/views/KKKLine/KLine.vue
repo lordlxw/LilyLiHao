@@ -272,7 +272,7 @@
                   ><br />
                   <el-input-number
                     v-model="buyForm.allowFoat"
-                    step="0.001"
+                    step="0.0005"
                     @input="handleMaxWait('buyForm')"
                     class="mt10"
                   ></el-input-number>
@@ -400,7 +400,7 @@
                   ><br />
                   <el-input-number
                     v-model="saleForm.allowFoat"
-                    step="0.001"
+                    step="0.0005"
                     @input="handleMaxWait('buyForm')"
                     class="mt10"
                   ></el-input-number>

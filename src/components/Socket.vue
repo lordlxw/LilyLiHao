@@ -14,6 +14,7 @@
 import Vue from 'vue'
 import Router from '@/router'
 import configUtil from '@/utils/config.js'
+import * as util from '@/utils/util'
 // import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
 import api from "@/api/kk_trade";
 
@@ -132,11 +133,11 @@ export default {
                         h("dd", null, `${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`)
                       ]),
                       h("dl", null, [
-                        h("dt", null, "成交价"),
-                        h("dd", null, `${msgJson.data.price}`)
+                        h("dt", null, "询价"),
+                        h("dd", null, `${util.moneyFormat(msgJson.data.price, 4)}`)
                       ]),
                       h("dl", null, [
-                        h("dt", null, "成交量"),
+                        h("dt", null, "询量"),
                         h("dd", null, `${msgJson.data.volume}`)
                       ]),
                       h("dl", null, [
