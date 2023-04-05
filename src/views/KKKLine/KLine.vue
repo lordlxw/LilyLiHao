@@ -2433,7 +2433,7 @@ export default {
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
                         h("dt", null, ""),
-                        h("dd", { style: "padding-left:76px;" }, [
+                        h("dd", null, [
                           h("button", {
                             class: "notigy-agree",
                             on: {
@@ -2539,7 +2539,7 @@ export default {
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
                         h("dt", null, ""),
-                        h("dd", { style: "padding-left:76px;" }, [
+                        h("dd", null, [
                           h("button", {
                             class: "notigy-agree",
                             on: {
@@ -2645,7 +2645,7 @@ export default {
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
                         h("dt", null, ""),
-                        h("dd", { style: "padding-left:76px;" }, [
+                        h("dd", null, [
                           h("button", {
                             class: "notigy-agree",
                             on: {
@@ -2714,7 +2714,7 @@ export default {
                         h("dd", null, `${msgJson.data.remark}`)]),
                       h("dl", { style: "margin-top:20px;" }, [
                         h("dt", null, ""),
-                        h("dd", { style: "padding-left:76px;" }, [
+                        h("dd", null, [
                           h("button", {
                             class: "notigy-agree",
                             on: {
@@ -2771,12 +2771,12 @@ export default {
                         h("dd", null, `${msgJson.data.remark}`)
                       ]),
                       h("dl", null, [
-                        h("dt", null, "难成原因"),
-                        h("dd", null, `${msgJson.data.reason}`)
+                        h("dt", { style: "color: #ec0000;" }, "难成原因"),
+                        h("dd", { style: "color: #ec0000;" }, `${msgJson.data.reason}`)
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
                         h("dt", null, ""),
-                        h("dd", { style: "padding-left:56px;" }, [
+                        h("dd", null, [
                           // h("button", {
                           //   class: "notigy-agree",
                           //   on: {

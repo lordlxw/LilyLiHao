@@ -148,7 +148,7 @@ export default {
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
                         h("dt", null, ""),
-                        h("dd", { style: "padding-left:76px;" }, [
+                        h("dd", null, [
                           h("button", {
                             class: "notigy-agree",
                             on: {
@@ -306,7 +306,7 @@ export default {
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
                         h("dt", null, ""),
-                        h("dd", { style: "padding-left:76px;" }, [
+                        h("dd", null, [
                           h("button", {
                             class: "notigy-agree",
                             on: {
