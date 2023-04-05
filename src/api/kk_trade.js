@@ -27,7 +27,9 @@ export default {
         // 成交量
         volume: params.volume,
         // 备注
-        remark: params.remark
+        remark: params.remark,
+        // 允许浮动
+        worstPrice: params.worstPrice
       }
     })
   },
@@ -161,6 +163,38 @@ export default {
   inquiryDealRejection(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/denydeal`,
+      method: 'post',
+      data: {
+        userTradeId: params.userTradeId
+      }
+    })
+  },
+  // 难成
+  difficultAcheve(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/nancheng`,
+      method: 'post',
+      data: {
+        // 难成原因
+        reason: params.reason,
+        userTradeId: params.userTradeId
+      }
+    })
+  },
+  // 难成保留
+  difficultStay(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/nanchengbaoliu`,
+      method: 'post',
+      data: {
+        userTradeId: params.userTradeId
+      }
+    })
+  },
+  // 难成撤单
+  difficultAcheveCannel(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/nanchengchedan`,
       method: 'post',
       data: {
         userTradeId: params.userTradeId

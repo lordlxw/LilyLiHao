@@ -99,6 +99,17 @@
                 >
               </el-popover>
               <el-button
+                @click="handleEnquiryDifficultClick(scope.row)"
+                type="text"
+                size="small"
+                v-if="
+                  ['1', '4', '8'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:difficult')
+                "
+                class="ml10"
+                >难成</el-button
+              >
+              <el-button
                 @click="handleDealClick(scope.row)"
                 type="text"
                 size="small"
@@ -370,6 +381,19 @@
     >
       <enquiry-edit @change="handleDialogVisible"></enquiry-edit>
     </el-dialog>
+    <el-dialog
+      title="难成"
+      width="500px;"
+      :visible.sync="dialogEnquiryDifficultFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <enquiry-difficult
+        :row="currentDifficultRow"
+        @change="handleDialogDifficultVisible"
+      ></enquiry-difficult>
+    </el-dialog>
   </div>
 </template>
 
@@ -379,6 +403,7 @@ import api from "@/api/kk_trade";
 import apiAdmin from '@/api/kk_power_admin'
 import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
+import EnquiryDifficult from '@/components/EnquiryDifficult.vue'
 import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
@@ -391,7 +416,8 @@ export default {
   },
   components: {
     DeliveryCanlendarUpdate,
-    EnquiryEdit
+    EnquiryEdit,
+    EnquiryDifficult
   },
   data() {
     // 金额格式验证
@@ -454,7 +480,10 @@ export default {
       dealRows: {},
       dialogEnquiryFormVisible: false,
       enquiryH: '0',
-      formLabelWidth: '0'
+      formLabelWidth: '0',
+      // 难成
+      dialogEnquiryDifficultFormVisible: false,
+      currentDifficultRow: []
     }
   },
   created() {
@@ -724,7 +753,19 @@ export default {
     },
     handleDialogVisible(obj) {
       this.dialogEnquiryFormVisible = obj.dialogVisible
-    }
+    },
+    // 难成点击事件
+    handleEnquiryDifficultClick(row) {
+      Promise.all([
+        this.currentDifficultRow = JSON.parse(JSON.stringify(row))
+      ]).then(() => {
+        this.dialogEnquiryDifficultFormVisible = true
+      })
+    },
+    // 关闭难成弹出框
+    handleDialogDifficultVisible(obj) {
+      this.dialogEnquiryDifficultFormVisible = obj.dialogVisible
+    },
   },
   mounted() {
     this.dispatchUserColumn()

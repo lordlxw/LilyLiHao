@@ -271,7 +271,7 @@
                   ></el-input-number
                   ><br />
                   <el-input-number
-                    v-model="buyForm.allowFoat"
+                    v-model="buyForm.worstPrice"
                     step="0.0005"
                     @input="handleMaxWait('buyForm')"
                     class="mt10"
@@ -399,7 +399,7 @@
                   ></el-input-number
                   ><br />
                   <el-input-number
-                    v-model="saleForm.allowFoat"
+                    v-model="saleForm.worstPrice"
                     step="0.0005"
                     @input="handleMaxWait('buyForm')"
                     class="mt10"
@@ -909,7 +909,7 @@ export default {
         // 等待时长
         maxWait: 0,
         // 允许浮动
-        allowFoat: 0.001
+        worstPrice: 0.001
       },
       saleFormRules: {
         direction: [
@@ -955,7 +955,7 @@ export default {
         // 等待时长
         maxWait: 0,
         // 允许浮动
-        allowFoat: 0.001
+        worstPrice: 0.001
       },
       buyFormRules: {
         direction: [
@@ -2041,7 +2041,9 @@ export default {
             // 成交量
             volume: this[formName].volume,
             // 备注
-            remark: this[formName].remark
+            remark: this[formName].remark,
+            // 允许浮动
+            worstPrice: this[formName].worstPrice
           }).then(res => {
             if (res && res.code === '00000' && res.value) {
               const h = this.$createElement;
@@ -2730,6 +2732,84 @@ export default {
                 self.tryPlay()
                 self.notifyRejection[msgJson.data.realTradeId] = notify
                 break
+              case 'nancheng_bond_0':
+              case 'nancheng_bond_1':
+                notify = self.$notify({
+                  title: `${msgJson.data.tradeuser} 发起难成`,
+                  dangerouslyUseHTMLString: true,
+                  position: 'top-left',
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "创建时间"),
+                        h("dd", null, `${msgJson.data.createTime}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.tscode.replace(/.IB/, '')}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交价"),
+                        h("dd", null, `${util.moneyFormat(msgJson.data.price, 4)}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交量"),
+                        h("dd", null, `${msgJson.data.volume}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "备注"),
+                        h("dd", null, `${msgJson.data.remark}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "难成原因"),
+                        h("dd", null, `${msgJson.data.reason}`)
+                      ]),
+                      h("dl", { style: "margin-top:20px;" }, [
+                        h("dt", null, ""),
+                        h("dd", { style: "padding-left:56px;" }, [
+                          // h("button", {
+                          //   class: "notigy-agree",
+                          //   on: {
+                          //     click: function () {
+                          //       self.handleEnquiryDifficultAddClick(msgJson.data)
+                          //     }
+                          //   }
+                          // }, "新建"),
+                          h("button", {
+                            class: "notigy-cancel",
+                            on: {
+                              click: function () {
+                                self.handleEnquiryDifficultCanncelClick(msgJson.data)
+                              }
+                            }
+                          }, "撤单"),
+                          h("button", {
+                            class: "notigy-cancel",
+                            on: {
+                              click: function () {
+                                self.handleEnquiryDifficultDotMoveClick(msgJson.data)
+                              }
+                            }
+                          }, "保留")
+                        ])
+                      ]),
+                    ],
+                  ),
+                  duration: 0
+                });
+                self.tryPlay()
+                self.notifyRejection[msgJson.data.userTradeId] = notify
+                break
             }
           }
         }
@@ -2920,6 +3000,34 @@ export default {
           })
           self.notifyRejection[parseInt(realTradeId)].close()
           delete self.notifyRejection[parseInt(realTradeId)]
+        }
+      })
+    },
+    // 询价单难成撤单
+    handleEnquiryDifficultCanncelClick(data) {
+      const self = this
+      apiTrade.difficultAcheveCannel({ userTradeId: data.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已难成撤单",
+            type: 'warning'
+          })
+          self.notifyRejection[parseInt(data.userTradeId)].close()
+          delete self.notifyRejection[parseInt(data.userTradeId)]
+        }
+      })
+    },
+    // 询价单难成保留
+    handleEnquiryDifficultDotMoveClick(data) {
+      const self = this
+      apiTrade.difficultStay({ userTradeId: data.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已难成保留",
+            type: 'warning'
+          })
+          self.notifyRejection[parseInt(data.userTradeId)].close()
+          delete self.notifyRejection[parseInt(data.userTradeId)]
         }
       })
     },
