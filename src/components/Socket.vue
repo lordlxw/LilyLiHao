@@ -536,6 +536,47 @@ export default {
                 });
                 self.tryPlay()
                 break
+              case 'nancheng_cancel_bond_0':
+              case 'nancheng_cancel_bond_1':
+                self.$notify({
+                  title: `${msgJson.data.createuser} 难成已撤单`,
+                  dangerouslyUseHTMLString: true,
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode.replace(/.IB/, '')}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${msgJson.data.price}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                    </dl>
+                    <dl>
+                      <dt>单据号</dt>
+                      <dd>${msgJson.data.tradeNum}</dd>
+                    </dl>
+                    <dl>
+                      <dt>备注</dt>
+                      <dd>${msgJson.data.remark}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 3000
+                });
+                self.tryPlay()
+                break
             }
           }
         }

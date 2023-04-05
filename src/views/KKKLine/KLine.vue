@@ -3009,7 +3009,7 @@ export default {
       apiTrade.difficultAcheveCannel({ userTradeId: data.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
-            message: "已难成撤单",
+            message: "难成已撤单",
             type: 'warning'
           })
           self.notifyRejection[parseInt(data.userTradeId)].close()
@@ -3023,7 +3023,7 @@ export default {
       apiTrade.difficultStay({ userTradeId: data.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
-            message: "已难成保留",
+            message: "难成已保留",
             type: 'warning'
           })
           self.notifyRejection[parseInt(data.userTradeId)].close()

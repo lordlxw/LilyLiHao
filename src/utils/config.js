@@ -36,7 +36,8 @@ export default {
     '6': '部分撤单',
     '7': '待确认',
     '8': '已拒撤',
-    '9': '待确认'
+    '9': '待确认',
+    '19': '待确认', // 难成待确认
   },
   // 交易单
   bondStatus: {
@@ -99,6 +100,7 @@ export default {
     userTradeId: { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
     createTime: { label: '询价时间', prop: 'createTime', width: '190', align: 'left', show: true },
     price: { label: '询价', prop: 'price', width: '90', align: 'right', show: true },
+    worstPrice: { label: '允许浮动', prop: 'worstPrice', width: '90', align: 'right', show: true },
     realPrice: { label: '成交价', prop: 'realPrice', width: '120', align: 'right', show: true },
     volume: { label: '询量', prop: 'volume', width: '100', align: 'right', show: true },
     restVolume: { label: '剩余询量', prop: 'restVolume', width: '100', align: 'left', show: true },

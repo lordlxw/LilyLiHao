@@ -109,6 +109,72 @@
                 class="ml10"
                 >难成</el-button
               >
+              <el-popover
+                v-if="
+                  setAuth('inquiry:difficultcanncel') && scope.row.status === 19
+                "
+                placement="bottom-end"
+                :ref="`popover-difficultcanncel-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">难成撤单</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      handlePopoverClose(
+                        scope,
+                        `popover-difficultcanncel-${scope.$index}`
+                      )
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="handleEnquiryDifficultCanncelClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >难成撤单</el-button
+                >
+              </el-popover>
+              <el-popover
+                v-if="setAuth('inquiry:notmove') && scope.row.status === 19"
+                placement="bottom-end"
+                :ref="`popover-notmove-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">难成保留</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      handlePopoverClose(
+                        scope,
+                        `popover-notmove-${scope.$index}`
+                      )
+                    "
+                    >取消</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="handleEnquiryDifficultDotMoveClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >保留</el-button
+                >
+              </el-popover>
               <el-button
                 @click="handleDealClick(scope.row)"
                 type="text"
@@ -725,6 +791,40 @@ export default {
         }
       })
     },
+    // 难成撤单
+    handleEnquiryDifficultCanncelClick(scope) {
+      const self = this
+      api.difficultAcheveCannel({ userTradeId: scope.row.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "难成已撤单",
+            type: 'warning'
+          })
+          this.handlePopoverClose(
+            scope,
+            `popover-difficultcanncel-${scope.$index}`
+          )
+          self.loadInitData()
+        }
+      })
+    },
+    // 保留
+    handleEnquiryDifficultDotMoveClick(scope) {
+      const self = this
+      api.difficultStay({ userTradeId: scope.row.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "难成已保留",
+            type: 'warning'
+          })
+          this.handlePopoverClose(
+            scope,
+            `popover-notmove-${scope.$index}`
+          )
+          self.loadInitData()
+        }
+      })
+    },
     // 交割日期
     handleDeliveryCanlendarUpdate(obj) {
       this.dealForm.deliveryTime = obj.value
@@ -765,6 +865,7 @@ export default {
     // 关闭难成弹出框
     handleDialogDifficultVisible(obj) {
       this.dialogEnquiryDifficultFormVisible = obj.dialogVisible
+      this.loadInitData()
     },
   },
   mounted() {
