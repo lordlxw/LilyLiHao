@@ -896,30 +896,30 @@ export default {
         }
       })
     },
-    // 口头违约
+    // 已平仓口头违约
     handleNoBondsSayBreakClick(scope) {
-      api.bondsSayBreak({ realTradeId: scope.row.realTradeId }).then(response => {
+      api.bondsSayBreakApply({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
-            message: '处理成功',
+            message: '已提交口头违约申请',
             type: 'success'
           })
           this.handlePopoverClose(scope, `popover-nobondssaybreak-${scope.$index}`)
           this.loadInitData()
         } else {
           this.$message({
-            message: response.data.message,
+            message: response.message,
             type: 'error'
           })
         }
       })
     },
     handleBondsSayBreakClick(scope) {
-      api.bondsSayBreak({ realTradeId: scope.row.realTradeId }).then(response => {
+      api.bondsSayBreakApply({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
-            message: '处理成功',
-            type: 'success'
+            message: '已提交口头违约申请',
+            type: 'info'
           })
           this.handlePopoverClose(scope, `popover-bondssaybreak-${scope.$index}`)
           this.loadInitDataFinish()

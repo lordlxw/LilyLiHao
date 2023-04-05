@@ -61,7 +61,10 @@
               >
               <el-button
                 type="text"
-                v-if="setAuth('inquiry:accept') && scope.row.status !== 0"
+                v-if="
+                  setAuth('inquiry:accept') &&
+                  [1, 4, 6, 9].indexOf(scope.row.status) !== -1
+                "
                 @click="copy(scope, true)"
                 >复制</el-button
               >
