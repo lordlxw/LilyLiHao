@@ -2671,6 +2671,64 @@ export default {
                 break
               case 'koutouweiyuerequest_bond_0':
               case 'koutouweiyuerequest_bond_1':
+                notify = self.$notify({
+                  title: `${msgJson.data.tradeuser} 发起口头违约`,
+                  dangerouslyUseHTMLString: true,
+                  position: 'top-left',
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "创建时间"),
+                        h("dd", null, `${msgJson.data.createTime}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.tscode.replace(/.IB/, '')}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交价"),
+                        h("dd", null, `${util.moneyFormat(msgJson.data.price, 4)}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交量"),
+                        h("dd", null, `${msgJson.data.volume}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交易对手"),
+                        h("dd", null, `${msgJson.data.counterParty}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "备注"),
+                        h("dd", null, `${msgJson.data.remark}`)]),
+                      h("dl", { style: "margin-top:20px;" }, [
+                        h("dt", null, ""),
+                        h("dd", { style: "padding-left:76px;" }, [
+                          h("button", {
+                            class: "notigy-agree",
+                            on: {
+                              click: function () {
+                                self.handleSayBreakConfirmClick(msgJson.data.realTradeId)
+                              }
+                            }
+                          }, "同意")
+                        ])
+                      ]),
+                    ],
+                  ),
+                  duration: 0
+                });
+                self.tryPlay()
+                self.notifyRejection[msgJson.data.realTradeId] = notify
                 break
             }
           }
@@ -2830,6 +2888,20 @@ export default {
         if (response && response.code === '00000') {
           this.$message({
             message: "已审核",
+            type: 'success'
+          })
+          self.notifyRejection[parseInt(realTradeId)].close()
+          delete self.notifyRejection[parseInt(realTradeId)]
+        }
+      })
+    },
+    // 口头违约确认
+    handleSayBreakConfirmClick(realTradeId) {
+      const self = this
+      apiBonds.bondsSyBreakConfirm({ realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已确认",
             type: 'success'
           })
           self.notifyRejection[parseInt(realTradeId)].close()

@@ -126,7 +126,8 @@
                       setAuth('nobonds:saybreak') &&
                       scope.row.realTradeId !== null &&
                       [1].indexOf(scope.row.jiaogeStatus) === -1 &&
-                      funcIsBreak(scope)
+                      funcIsBreak(scope) &&
+                      [18].indexOf(scope.row.status) === -1
                     "
                     placement="bottom-end"
                     :ref="`popover-nobondssaybreak-${scope.$index}`"
@@ -156,6 +157,43 @@
                     </div>
                     <el-button type="text" slot="reference" class="ml10"
                       >口头违约</el-button
+                    >
+                  </el-popover>
+                  <el-popover
+                    v-if="
+                      setAuth('nobonds:saybreakok') &&
+                      scope.row.realTradeId !== null &&
+                      funcIsBreak(scope) &&
+                      [18].indexOf(scope.row.status) !== -1
+                    "
+                    placement="bottom-end"
+                    :ref="`popover-nobondssaybreakok-${scope.$index}`"
+                  >
+                    <p>
+                      确认要<span class="color-red">同意口头违约</span>“<span
+                        class="color-main"
+                        >{{ scope.row.tradeNum }}</span
+                      >”{{ scope.row.tscode }}？
+                    </p>
+                    <div style="text-align: right">
+                      <el-button
+                        type="text"
+                        @click="
+                          handlePopoverClose(
+                            scope,
+                            `popover-nobondssaybreakok-${scope.$index}`
+                          )
+                        "
+                        >取消</el-button
+                      >
+                      <el-button
+                        type="text"
+                        @click="handleNoBondsSayBreakOKClick(scope)"
+                        >确认</el-button
+                      >
+                    </div>
+                    <el-button type="text" slot="reference" class="ml10"
+                      >确认违约</el-button
                     >
                   </el-popover>
                 </template>
@@ -270,7 +308,8 @@
                       setAuth('bonds:saybreak') &&
                       scope.row.realTradeId !== null &&
                       [1].indexOf(scope.row.jiaogeStatus) === -1 &&
-                      funcIsBreak(scope)
+                      funcIsBreak(scope) &&
+                      [18].indexOf(scope.row.status) === -1
                     "
                     placement="bottom-end"
                     :ref="`popover-bondssaybreak-${scope.$index}`"
@@ -300,6 +339,43 @@
                     </div>
                     <el-button type="text" slot="reference" class="ml10"
                       >口头违约</el-button
+                    >
+                  </el-popover>
+                  <el-popover
+                    v-if="
+                      setAuth('bonds:saybreakok') &&
+                      scope.row.realTradeId !== null &&
+                      funcIsBreak(scope) &&
+                      [18].indexOf(scope.row.status) !== -1
+                    "
+                    placement="bottom-end"
+                    :ref="`popover-bondssaybreakok-${scope.$index}`"
+                  >
+                    <p>
+                      确认要<span class="color-red">同意口头违约</span>“<span
+                        class="color-main"
+                        >{{ scope.row.tradeNum }}</span
+                      >”{{ scope.row.tscode }}？
+                    </p>
+                    <div style="text-align: right">
+                      <el-button
+                        type="text"
+                        @click="
+                          handlePopoverClose(
+                            scope,
+                            `popover-bondssaybreakok-${scope.$index}`
+                          )
+                        "
+                        >取消</el-button
+                      >
+                      <el-button
+                        type="text"
+                        @click="handleBondsSayBreakOKClick(scope)"
+                        >确认</el-button
+                      >
+                    </div>
+                    <el-button type="text" slot="reference" class="ml10"
+                      >确认违约</el-button
                     >
                   </el-popover>
                 </template>
@@ -392,7 +468,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import api from "@/api/kk_bonds"
 import apiAdmin from '@/api/kk_power_admin'
 import apiBondPool from '@/api/kk_bond_pool'
@@ -464,9 +540,26 @@ export default {
     this.initFrameH('nobondsH', 200)
     this.initFrameH('bondsH', 200)
   },
+  watch: {
+    enquiryInfo() {
+      if (this.$refs.eltabs.panes.length > 0) {
+        switch (this.$refs.eltabs.panes[0].label) {
+          case this.tablist[0]:
+            this.loadInitData()
+            break
+          case this.tablist[1]:
+            this.loadInitDataFinish()
+            break
+        }
+      }
+    }
+  },
   computed: {
     ...mapGetters({
       userInfo: "getUserInfo"
+    }),
+    ...mapState({
+      enquiryInfo: (state) => state.enquiryInfo
     })
   },
   methods: {
@@ -677,7 +770,7 @@ export default {
     funcFormat(row, column) {
       switch (column.property) {
         case "status":
-          return config.funcKeyValue(row.status.toString(), "inquiryStatus");
+          return config.funcKeyValue(row.status ? row.status.toString() : '', "bondsCommonStatus");
         case "direction":
           return config.funcKeyValue(row.direction, "directionMeta")
         case "deliveryTime":
@@ -882,25 +975,7 @@ export default {
       this.deliveryFinishData = deliveryFinishData
       this.dialogBondsDeliveryFormVisible = true
     },
-    // 违约
-    handleBreakClick(scope) {
-      api.dealBreak({ realTradeId: scope.row.realTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-          this.handlePopoverClose(scope, `popover-break-${scope.$index}`)
-          this.loadInitDataBreak()
-        } else {
-          this.$message({
-            message: response.data.message,
-            type: 'error'
-          })
-        }
-      })
-    },
-    // 已平仓口头违约
+    // 未平仓口头违约申请
     handleNoBondsSayBreakClick(scope) {
       api.bondsSayBreakApply({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -918,6 +993,7 @@ export default {
         }
       })
     },
+    // 已平仓口头违约申请
     handleBondsSayBreakClick(scope) {
       api.bondsSayBreakApply({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -929,7 +1005,43 @@ export default {
           this.loadInitDataFinish()
         } else {
           this.$message({
-            message: response.data.message,
+            message: response.message,
+            type: 'error'
+          })
+        }
+      })
+    },
+    // 未平仓口头违约确认
+    handleNoBondsSayBreakOKClick(scope) {
+      api.bondsSyBreakConfirm({ realTradeId: scope.row.realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: '已确认口头违约',
+            type: 'success'
+          })
+          this.handlePopoverClose(scope, `popover-nobondssaybreakok-${scope.$index}`)
+          this.loadInitDataFinish()
+        } else {
+          this.$message({
+            message: response.message,
+            type: 'error'
+          })
+        }
+      })
+    },
+    // 已平仓口头确认
+    handleBondsSayBreakOKClick(scope) {
+      api.bondsSyBreakConfirm({ realTradeId: scope.row.realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: '已确认口头违约',
+            type: 'success'
+          })
+          this.handlePopoverClose(scope, `popover-bondssaybreakok-${scope.$index}`)
+          this.loadInitDataFinish()
+        } else {
+          this.$message({
+            message: response.message,
             type: 'error'
           })
         }

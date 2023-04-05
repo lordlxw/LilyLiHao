@@ -44,7 +44,18 @@ export default {
     '1': '已交割',
     '2': '口头违约',
     '3': '技术违约',
-    '4': '恶意违约'
+    '4': '恶意违约',
+    '5': '包含做市商垫付的技术违约'
+  },
+  // 平仓状态
+  bondsCommonStatus: {
+    '10': '待确认', // 交易单待确认
+    '11': '待平仓', // 交易单待平仓
+    '12': '已平仓', // 交易单已平仓
+    '13': '已作废', // 作废
+    '16': '修改中', // 已平修改中
+    '17': '修改中', // 未平修改中
+    '18': '待确认', // 口头违约待确认
   },
   // 角色名称未平仓展开收起配置
   externalRoleName: ['交易员', '交割员'],
@@ -111,7 +122,6 @@ export default {
   },
   // 未平仓，已平表头
   bondsHead: {
-    // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
     createBy: { label: '研究员id', prop: 'createBy', width: 'auto', align: 'left', show: false },
     tscode: { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '130', align: 'left', show: true },
     direction: { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
@@ -125,14 +135,14 @@ export default {
     remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
     tradeNum: { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
     tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
-    userTradeId: { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
-    xunjiayuanId: { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
-    xunjiayuanName: { label: '研究员', prop: 'xunjiayuanName', width: '120', align: 'left', show: true },
+    // userTradeId: { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
+    // xunjiayuanId: { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
+    // xunjiayuanName: { label: '研究员', prop: 'xunjiayuanName', width: '120', align: 'left', show: true },
     createTime: { label: '成交时间', prop: 'createTime', width: '150', align: 'left', show: true },
     counterParty: { label: '交易对手', prop: 'counterParty', width: '90', align: 'left', show: true },
     contactPerson: { label: '联系人', prop: 'contactPerson', width: '120', align: 'left', show: true },
     contactType: { label: '联系方式', prop: 'contactType', width: '110', align: 'left', show: true },
-    jiaogeStatus: { label: '交割状态', prop: 'jiaogeStatus', width: '100', align: 'left', show: true }
-    // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
+    jiaogeStatus: { label: '交割状态', prop: 'jiaogeStatus', width: '100', align: 'left', show: true },
+    status: { label: '平仓状态', prop: 'status', width: '100', align: 'left', show: true }
   }
 }

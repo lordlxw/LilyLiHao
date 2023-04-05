@@ -289,6 +289,16 @@ export default {
       }
     })
   },
+  // 口头违约确认
+  bondsSyBreakConfirm(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/koutouweiyueConfirm`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
+  },
   // 未平持仓修改内容查看
   nobondsUpdateContent(params) {
     return request({
