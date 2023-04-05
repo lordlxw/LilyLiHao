@@ -2669,6 +2669,9 @@ export default {
                 self.tryPlay()
                 self.notifyRejection[msgJson.data.rt.realTradeId] = notify
                 break
+              case 'koutouweiyuerequest_bond_0':
+              case 'koutouweiyuerequest_bond_1':
+                break
             }
           }
         }

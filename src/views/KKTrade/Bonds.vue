@@ -222,7 +222,11 @@
                     @click="handleBondsEditClick(scope.row)"
                     type="text"
                     size="small"
-                    v-if="setAuth('bonds:update') && scope.row.status === 12"
+                    v-if="
+                      setAuth('bonds:update') &&
+                      scope.row.status === 12 &&
+                      scope.row.jiaogeStatus === 0
+                    "
                     class="ml10"
                     >修改</el-button
                   >
