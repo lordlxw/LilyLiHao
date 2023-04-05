@@ -534,6 +534,7 @@ export default {
                   `,
                   duration: 3000
                 });
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
                 break
               case 'nancheng_cancel_bond_0':
@@ -575,6 +576,7 @@ export default {
                   `,
                   duration: 3000
                 });
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
                 break
             }
