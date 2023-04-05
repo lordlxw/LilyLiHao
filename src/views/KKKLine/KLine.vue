@@ -2432,7 +2432,7 @@ export default {
                         ])
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
-                        h("dt", null, ""),
+                        // h("dt", null, ""),
                         h("dd", null, [
                           h("button", {
                             class: "notigy-agree",
@@ -2538,7 +2538,7 @@ export default {
                         ])
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
-                        h("dt", null, ""),
+                        // h("dt", null, ""),
                         h("dd", null, [
                           h("button", {
                             class: "notigy-agree",
@@ -2644,7 +2644,7 @@ export default {
                         ])
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
-                        h("dt", null, ""),
+                        // h("dt", null, ""),
                         h("dd", null, [
                           h("button", {
                             class: "notigy-agree",
@@ -2713,7 +2713,7 @@ export default {
                         h("dt", null, "备注"),
                         h("dd", null, `${msgJson.data.remark}`)]),
                       h("dl", { style: "margin-top:20px;" }, [
-                        h("dt", null, ""),
+                        // h("dt", null, ""),
                         h("dd", null, [
                           h("button", {
                             class: "notigy-agree",
@@ -2775,7 +2775,7 @@ export default {
                         h("dd", { style: "color: #ec0000;" }, `${msgJson.data.reason}`)
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
-                        h("dt", null, ""),
+                        // h("dt", null, ""),
                         h("dd", null, [
                           // h("button", {
                           //   class: "notigy-agree",
