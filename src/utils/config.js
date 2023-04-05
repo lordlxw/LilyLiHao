@@ -96,7 +96,7 @@ export default {
     realDeliveryTime: { label: '成交交割', prop: 'realDeliveryTime', width: '100', align: 'left', show: true },
     tscode: { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
     direction: { label: '方向', prop: 'direction', width: '80', align: 'left', show: true },
-    status: { label: '状态', prop: 'status', width: '60', align: 'left', show: true },
+    status: { label: '状态', prop: 'status', width: '90', align: 'left', show: true },
     remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
     tradeNum: { label: '单据号', prop: 'tradeNum', width: '140', align: 'left', show: true },
     deliverySpeed: { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
