@@ -720,6 +720,19 @@
         >
       </span>
     </el-dialog>
+    <el-dialog
+      title="新建询价单"
+      :visible.sync="dialogEnquiryAddVisible"
+      width="40%"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <enquiry-edit
+        :row="currentDifficultData"
+        @change="handleDialogEnquiryAddVisible"
+      ></enquiry-edit>
+    </el-dialog>
   </div>
 </template>
 
@@ -738,6 +751,7 @@ import * as echarts from 'echarts'
 import configUtil from '@/utils/config.js'
 import * as util from '@/utils/util'
 // import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
+import EnquiryEdit from '@/components/EnquiryEdit.vue'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
@@ -750,7 +764,8 @@ export default {
   components: {
     ComTscodeSelect,
     // TradeEnquiry,
-    DeliveryCanlendar
+    DeliveryCanlendar,
+    EnquiryEdit
   },
   data() {
     // 金额格式验证
@@ -1004,7 +1019,10 @@ export default {
       // 价格变动定时器
       timer: null,
       // socket timer
-      socketTimer: null
+      socketTimer: null,
+      // 难成撤单新建询价单
+      dialogEnquiryAddVisible: false,
+      currentDifficultData: {}
     }
   },
   computed: {
@@ -2775,14 +2793,14 @@ export default {
                       h("dl", { style: "margin-top:20px;" }, [
                         // h("dt", null, ""),
                         h("dd", null, [
-                          // h("button", {
-                          //   class: "notigy-agree",
-                          //   on: {
-                          //     click: function () {
-                          //       self.handleEnquiryDifficultAddClick(msgJson.data)
-                          //     }
-                          //   }
-                          // }, "新建"),
+                          h("button", {
+                            class: "notigy-agree",
+                            on: {
+                              click: function () {
+                                self.handleEnquiryDifficultAddClick(msgJson.data)
+                              }
+                            }
+                          }, "新建"),
                           h("button", {
                             class: "notigy-cancel",
                             on: {
@@ -2967,7 +2985,7 @@ export default {
         if (response && response.code === '00000') {
           this.$message({
             message: "已拒绝修改",
-            type: 'warning'
+            type: 'success'
           })
           self.notifyRejection[parseInt(realTradeId)].close()
           delete self.notifyRejection[parseInt(realTradeId)]
@@ -3024,12 +3042,34 @@ export default {
         if (response && response.code === '00000') {
           this.$message({
             message: "已拒绝修改",
-            type: 'warning'
+            type: 'success'
           })
           self.notifyRejection[parseInt(realTradeId)].close()
           delete self.notifyRejection[parseInt(realTradeId)]
         } else {
           this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
+        }
+      })
+    },
+    handleEnquiryDifficultAddClick(data) {
+      // 撤单
+      const self = this
+      apiTrade.difficultAcheveCannel({ userTradeId: data.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          // 锁住方向
+          data.lockDirection = true
+          Promise.all([
+            self.currentDifficultData = JSON.parse(JSON.stringify(data)),
+            self.notifyRejection[parseInt(data.userTradeId)].close(),
+            delete self.notifyRejection[parseInt(data.userTradeId)]
+          ]).then(() => {
+            self.dialogEnquiryAddVisible = true
+          })
+        } else {
+          self.$message({
             message: `${response.message}`,
             type: 'warning'
           })
@@ -3043,7 +3083,7 @@ export default {
         if (response && response.code === '00000') {
           this.$message({
             message: "难成已撤单",
-            type: 'warning'
+            type: 'success'
           })
           self.notifyRejection[parseInt(data.userTradeId)].close()
           delete self.notifyRejection[parseInt(data.userTradeId)]
@@ -3062,7 +3102,7 @@ export default {
         if (response && response.code === '00000') {
           this.$message({
             message: "难成已保留",
-            type: 'warning'
+            type: 'success'
           })
           self.notifyRejection[parseInt(data.userTradeId)].close()
           delete self.notifyRejection[parseInt(data.userTradeId)]
@@ -3108,6 +3148,10 @@ export default {
       } else {
         this.saleForm.deliveryTimeMsg = ''
       }
+    },
+    // 难成撤单询价弹出框
+    handleDialogEnquiryAddVisible(obj) {
+      this.dialogEnquiryAddVisible = obj.dialogVisible
     },
     // 消息
     // showMsg() {

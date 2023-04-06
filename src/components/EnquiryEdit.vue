@@ -25,10 +25,17 @@
       <el-form-item label="价格" prop="price">
         <el-input
           v-model="enquiryForm.price"
+          step="0.001"
           placeholder="请输入价格"
         ></el-input>
       </el-form-item>
-      <el-form-item label="交易量(万)" prop="volume">
+      <el-form-item label="允许浮动" prop="worstPrice">
+        <el-input-number
+          v-model="enquiryForm.worstPrice"
+          step="0.0005"
+        ></el-input-number>
+      </el-form-item>
+      <el-form-item label="交易量" prop="volume">
         <el-input
           v-model="enquiryForm.volume"
           placeholder="请输入交易量"
@@ -49,20 +56,20 @@
           ref="buyDeliveryCanlendar"
           @change="handleBuyDeliveryCanlendar"
         ></delivery-canlendar>
-        <el-button-group>
+        <!-- <el-button-group>
           <el-button
             icon="el-icon-plus"
             :class="funcDeliverySpeed(0)"
             @click="handleDelivertySpeed(0)"
             >0</el-button
           >
-          <!-- <el-button
-                      icon="el-icon-plus"
-                      :class="funcDeliverySpeed('enquiryForm', 1)"
-                      @click="handleDelivertySpeed('enquiryForm', 1)"
-                      >1</el-button
-                    > -->
-        </el-button-group>
+          <el-button
+            icon="el-icon-plus"
+            :class="funcDeliverySpeed('enquiryForm', 1)"
+            @click="handleDelivertySpeed('enquiryForm', 1)"
+            >1</el-button
+          >
+        </el-button-group> -->
       </el-form-item>
       <el-form-item label="交易员" prop="tradeuserId">
         <el-select v-model="enquiryForm.tradeuserId" placeholder="请选择交易员">
@@ -104,6 +111,13 @@ export default {
   components: {
     DeliveryCanlendar
   },
+  watch: {
+    row() {
+      if (this.row) {
+        this.initEnquiryForm(this.row)
+      }
+    }
+  },
   data() {
     // 金额格式验证
     const moneyTest = async (rule, value, callback) => {
@@ -124,6 +138,8 @@ export default {
     return {
       tradeUsersOption: [],
       enquiryForm: {
+        // 锁住方向
+        lockDirection: '',
         // 交易类型
         direction: '买',
         // 价格
@@ -141,7 +157,9 @@ export default {
         // 备注
         remark: '',
         // 快速交易
-        quickSubmit: false
+        quickSubmit: false,
+        // 允许浮动
+        worstPrice: 0.001
       },
       enquiryFormRules: {
         direction: [
@@ -200,7 +218,9 @@ export default {
     },
     // 点击交易方向
     handleDirection(val) {
-      this.enquiryForm.direction = val
+      if (!this.enquiryForm.lockDirection) {
+        this.enquiryForm.direction = val
+      }
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -221,7 +241,9 @@ export default {
             // 成交量
             volume: this[formName].volume,
             // 备注
-            remark: this[formName].remark
+            remark: this[formName].remark,
+            // 允许浮动
+            worstPrice: this[formName].worstPrice
           }).then(res => {
             if (res && res.code === '00000' && res.value) {
               const h = this.$createElement;
@@ -237,6 +259,19 @@ export default {
         }
       })
     },
+    // 初始化数据
+    initEnquiryForm(obj) {
+      this.enquiryForm.direction = obj.direction === 'bond_0' ? '买' : (obj.direction === 'bond_1' ? '卖' : '')
+      this.enquiryForm.price = obj.price
+      this.enquiryForm.volume = parseFloat(obj.volume)
+      this.enquiryForm.tscode = obj.tscode
+      this.enquiryForm.deliverySpeed = obj.deliverySpeed
+      this.enquiryForm.deliveryTime = obj.deliveryTime
+      this.enquiryForm.tradeuserId = obj.userId
+      this.enquiryForm.remark = obj.remark
+      this.enquiryForm.lockDirection = obj.lockDirection
+      this.enquiryForm.worstPrice = obj.worstPrice
+    },
     // 获取交易员列表
     getTradeUserList() {
       apiAdmin.tradeUserList().then(response => {
@@ -248,6 +283,7 @@ export default {
   },
   mounted() {
     this.getTradeUserList()
+    this.initEnquiryForm(this.row)
   }
 }
 </script>
