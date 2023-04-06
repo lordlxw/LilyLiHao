@@ -48,9 +48,36 @@
         <template slot-scope="scope">
           <el-input
             size="mini"
+            v-model="scope.row.doMarketName"
             v-if="
               scope.row.mySelected.length > 0 &&
-              [2, 3].indexOf(scope.row.mySelected[0]) !== -1
+              [2].indexOf(scope.row.mySelected[0]) !== -1
+            "
+            width="90"
+          ></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="联系人" width="120">
+        <template slot-scope="scope">
+          <el-input
+            size="mini"
+            v-model="scope.row.doMarketContacts"
+            v-if="
+              scope.row.mySelected.length > 0 &&
+              [2].indexOf(scope.row.mySelected[0]) !== -1
+            "
+            width="90"
+          ></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="联系方式" width="120">
+        <template slot-scope="scope">
+          <el-input
+            size="mini"
+            v-model="scope.row.doMarketContactsWay"
+            v-if="
+              scope.row.mySelected.length > 0 &&
+              [2].indexOf(scope.row.mySelected[0]) !== -1
             "
             width="90"
           ></el-input>
@@ -114,15 +141,17 @@ export default {
       let isHalfSelect = false
       let eyiweiyueIdlist = []
       let jiaogeIdlist = []
-      let jishuweiyueIdlist = []
+      let jishuweiyueIdmap = {}
+      let finishCode = ''
       for (let i = 0; i < this.deliveryFinishData.length; i++) {
+        finishCode = this.deliveryFinishData[i].finishCode
         if (this.deliveryFinishData[i].mySelected.length > 0) {
           switch (this.deliveryFinishData[i].mySelected[0]) {
             case 1:
               jiaogeIdlist.push(this.deliveryFinishData[i].realTradeId)
               break
             case 2:
-              jishuweiyueIdlist.push(this.deliveryFinishData[i].realTradeId)
+              jishuweiyueIdmap[this.deliveryFinishData[i].realTradeId] = [this.deliveryFinishData[i].doMarketName, this.deliveryFinishData[i].doMarketContacts, this.deliveryFinishData[i].doMarketContactsWay]
               break
             case 3:
               eyiweiyueIdlist.push(this.deliveryFinishData[i].realTradeId)
@@ -139,23 +168,24 @@ export default {
           jiaogeIdlist.push(this.deliveryFinishData[i].realTradeId)
         }
         // 全未选，直接提交
-        this.dispacthSubmit(eyiweiyueIdlist, jiaogeIdlist, jishuweiyueIdlist)
+        this.dispacthSubmit(finishCode, eyiweiyueIdlist, jiaogeIdlist, jishuweiyueIdmap)
       } else {
         if (isHalfSelect) {
           // 做出提示：未选完整
           this.errorMsg = '需要选择完整'
         } else {
           // 提交
-          this.dispacthSubmit(eyiweiyueIdlist, jiaogeIdlist, jishuweiyueIdlist)
+          this.dispacthSubmit(finishCode, eyiweiyueIdlist, jiaogeIdlist, jishuweiyueIdmap)
         }
       }
     },
     // 提交动作
-    dispacthSubmit(eyiweiyueIdlist, jiaogeIdlist, jishuweiyueIdlist) {
+    dispacthSubmit(finishCode, eyiweiyueIdlist, jiaogeIdlist, jishuweiyueIdmap) {
       api.dealDelivery({
-        eyiweiyueIdlist: eyiweiyueIdlist,
-        jiaogeIdlist: jiaogeIdlist,
-        jishuweiyueIdlist: jishuweiyueIdlist
+        finishCode,
+        eyiweiyueIdlist,
+        jiaogeIdlist,
+        jishuweiyueIdmap
       }).then(response => {
         if (response && response.code === '00000') {
           this.$message({

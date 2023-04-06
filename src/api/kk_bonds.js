@@ -145,7 +145,9 @@ export default {
         // 交割id数组列表
         jiaogeIdlist: params.jiaogeIdlist,
         // 技术违约id数组列表
-        jishuweiyueIdlist: params.jishuweiyueIdlist
+        jishuweiyueIdmap: params.jishuweiyueIdmap,
+        // finishCode
+        finishCode: params.finishCode
       }
     })
   },

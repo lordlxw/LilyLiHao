@@ -453,7 +453,7 @@
     </el-dialog>
     <el-dialog
       title="今天（交割确认）"
-      width="650px;"
+      width="70%"
       :visible.sync="dialogBondsDeliveryFormVisible"
       append-to-body
       :destroy-on-close="true"
@@ -969,6 +969,10 @@ export default {
             row.mySelected = []
             row.mySelectedDisabled = false
           }
+          // 做市商名称，联系人，联系方式
+          row.doMarketName = ''
+          row.doMarketContacts = ''
+          row.doMarketContactsWay = ''
           deliveryFinishData.push(row)
         }
       }
