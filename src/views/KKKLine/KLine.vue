@@ -2293,7 +2293,6 @@ export default {
                       <dd>${msgJson.data.createTime}</dd>
                     </dl>
                     <dl>
-                    <dl>
                       <dt>债券码</dt>
                       <dd>${msgJson.data.tscode}</dd>
                     </dl>
