@@ -2901,7 +2901,7 @@ export default {
     handleInquiryDealConfirmClick(userTradeId) {
       const self = this
       apiTrade.inquiryDealConfirm({ userTradeId }).then(response => {
-        if (response && response.code === '00001') {
+        if (response && response.code === '00000') {
           this.$message({
             message: "已成交",
             type: 'success'
