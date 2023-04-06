@@ -2411,22 +2411,22 @@ export default {
                       h("dl", null, [
                         h("dt", null, "成交价"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red;padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
-                          h("span", null, util.moneyFormat(msgJson.data.dto.price, 4))
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
+                          h("span", { style: "color:#ec0000" }, util.moneyFormat(msgJson.data.dto.price, 4))
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交量"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? msgJson.data.ut.restVolume + ' ' : ''),
-                          h("span", null, msgJson.data.dto.volume)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? msgJson.data.ut.restVolume + ' ' : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.volume)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割日期"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.substr(0, 10) + ' ' : ''),
-                          h("span", null, msgJson.data.dto.deliveryTime.substr(0, 10))
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.substr(0, 10) + ' ' : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.deliveryTime.substr(0, 10))
                         ])
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
@@ -2482,57 +2482,57 @@ export default {
                       h("dl", null, [
                         h("dt", null, "成交价"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red;padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.rt.price, 4) + ' ' : ''),
-                          h("span", null, util.moneyFormat(msgJson.data.dto.price, 4))
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.rt.price, 4) + ' ' : ''),
+                          h("span", { style: "color:#ec0000" }, util.moneyFormat(msgJson.data.dto.price, 4))
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交量"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.rt.volume + ' ' : ''),
-                          h("span", null, msgJson.data.dto.volume)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.rt.volume + ' ' : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.volume)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割日期"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
-                          h("span", null, msgJson.data.dto.deliveryTime.substr(0, 10))
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.deliveryTime.substr(0, 10))
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割速度"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliverySpeed') !== -1 ? msgJson.data.rt.deliverySpeed : ''),
-                          h("span", null, msgJson.data.dto.deliverySpeed)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliverySpeed') !== -1 ? msgJson.data.rt.deliverySpeed : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.deliverySpeed)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交易对手"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('counterParty') !== -1 ? msgJson.data.rt.counterParty : ''),
-                          h("span", null, msgJson.data.dto.counterParty)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('counterParty') !== -1 ? msgJson.data.rt.counterParty : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.counterParty)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "联系人"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactPerson') !== -1 ? msgJson.data.rt.contactPerson : ''),
-                          h("span", null, msgJson.data.dto.contactPerson)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactPerson') !== -1 ? msgJson.data.rt.contactPerson : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.contactPerson)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "联系方式"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactType') !== -1 ? msgJson.data.rt.contactType : ''),
-                          h("span", null, msgJson.data.dto.contactType)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactType') !== -1 ? msgJson.data.rt.contactType : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.contactType)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "备注"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('remark') !== -1 ? msgJson.data.rt.remark : ''),
-                          h("span", null, msgJson.data.dto.remark)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('remark') !== -1 ? msgJson.data.rt.remark : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.remark)
                         ])
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
@@ -2588,57 +2588,57 @@ export default {
                       h("dl", null, [
                         h("dt", null, "成交价"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red;padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.rt.price, 4) + ' ' : ''),
-                          h("span", null, util.moneyFormat(msgJson.data.dto.price, 4))
+                          h("span", { style: "text-decoration: line-through #ec0000;padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.rt.price, 4) + ' ' : ''),
+                          h("span", { style: "color:#ec0000" }, util.moneyFormat(msgJson.data.dto.price, 4))
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交量"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.rt.volume + ' ' : ''),
-                          h("span", null, msgJson.data.dto.volume)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.rt.volume + ' ' : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.volume)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割日期"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
-                          h("span", null, msgJson.data.dto.deliveryTime.substr(0, 10))
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.deliveryTime.substr(0, 10))
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割速度"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliverySpeed') !== -1 ? msgJson.data.rt.deliverySpeed : ''),
-                          h("span", null, msgJson.data.dto.deliverySpeed)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliverySpeed') !== -1 ? msgJson.data.rt.deliverySpeed : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.deliverySpeed)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交易对手"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('counterParty') !== -1 ? msgJson.data.rt.counterParty : ''),
-                          h("span", null, msgJson.data.dto.counterParty)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('counterParty') !== -1 ? msgJson.data.rt.counterParty : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.counterParty)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "联系人"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactPerson') !== -1 ? msgJson.data.rt.contactPerson : ''),
-                          h("span", null, msgJson.data.dto.contactPerson)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactPerson') !== -1 ? msgJson.data.rt.contactPerson : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.contactPerson)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "联系方式"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactType') !== -1 ? msgJson.data.rt.contactType : ''),
-                          h("span", null, msgJson.data.dto.contactType)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactType') !== -1 ? msgJson.data.rt.contactType : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.contactType)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "备注"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through; color:red; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('remark') !== -1 ? msgJson.data.rt.remark : ''),
-                          h("span", null, msgJson.data.dto.remark)
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('remark') !== -1 ? msgJson.data.rt.remark : ''),
+                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.remark)
                         ])
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
