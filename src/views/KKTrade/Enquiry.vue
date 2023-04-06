@@ -63,7 +63,7 @@
                 type="text"
                 v-if="
                   setAuth('inquiry:accept') &&
-                  [1, 4, 7, 9].indexOf(scope.row.status) !== -1
+                  [1, 4, 7, 8, 9].indexOf(scope.row.status) !== -1
                 "
                 @click="copy(scope, true)"
                 >复制</el-button
@@ -103,7 +103,7 @@
                 type="text"
                 size="small"
                 v-if="
-                  ['1', '4', '8'].indexOf(scope.row.status.toString()) !== -1 &&
+                  [1, 4, 8].indexOf(scope.row.status) !== -1 &&
                   setAuth('inquiry:difficult')
                 "
                 class="ml10"
