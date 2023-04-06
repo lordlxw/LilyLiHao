@@ -19,7 +19,7 @@
         {{ row.price }}
       </el-form-item>
       <el-form-item label="交易量">
-        {{ row.volume }}
+        {{ row.restVolume }}
       </el-form-item>
       <el-form-item label="交易速度">
         {{ row.deliveryTime | dateFormat("YYYY-MM-DD") }}

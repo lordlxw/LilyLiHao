@@ -2170,8 +2170,6 @@ export default {
                 break
               case 'isforward_0':
                 self.businessForwardInList = msgJson.data
-                console.log(2222222)
-                console.log(self.businessInList)
                 console.log(msgJson.data)
                 self.saleFormForwardPrice = self.funcGetBestPrice('min', msgJson.data.concat(self.businessInList))
                 self.calcuDiffPrice(2)
@@ -2430,21 +2428,21 @@ export default {
                         h("dt", null, "成交价"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
-                          h("span", { style: "color:#ec0000" }, util.moneyFormat(msgJson.data.dto.price, 4))
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交量"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? msgJson.data.ut.restVolume + ' ' : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.volume)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割日期"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.substr(0, 10) + ' ' : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.deliveryTime.substr(0, 10))
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
                         ])
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
@@ -2501,56 +2499,56 @@ export default {
                         h("dt", null, "成交价"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.rt.price, 4) + ' ' : ''),
-                          h("span", { style: "color:#ec0000" }, util.moneyFormat(msgJson.data.dto.price, 4))
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交量"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.rt.volume + ' ' : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.volume)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割日期"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.deliveryTime.substr(0, 10))
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割速度"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliverySpeed') !== -1 ? msgJson.data.rt.deliverySpeed : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.deliverySpeed)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliverySpeed') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliverySpeed)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交易对手"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('counterParty') !== -1 ? msgJson.data.rt.counterParty : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.counterParty)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('counterParty') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.counterParty)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "联系人"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactPerson') !== -1 ? msgJson.data.rt.contactPerson : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.contactPerson)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('contactPerson') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.contactPerson)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "联系方式"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactType') !== -1 ? msgJson.data.rt.contactType : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.contactType)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('contactType') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.contactType)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "备注"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('remark') !== -1 ? msgJson.data.rt.remark : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.remark)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('remark') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.remark)
                         ])
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
@@ -2607,56 +2605,56 @@ export default {
                         h("dt", null, "成交价"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000;padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.rt.price, 4) + ' ' : ''),
-                          h("span", { style: "color:#ec0000" }, util.moneyFormat(msgJson.data.dto.price, 4))
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交量"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.rt.volume + ' ' : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.volume)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割日期"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.deliveryTime.substr(0, 10))
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割速度"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliverySpeed') !== -1 ? msgJson.data.rt.deliverySpeed : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.deliverySpeed)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliverySpeed') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliverySpeed)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交易对手"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('counterParty') !== -1 ? msgJson.data.rt.counterParty : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.counterParty)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('counterParty') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.counterParty)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "联系人"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactPerson') !== -1 ? msgJson.data.rt.contactPerson : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.contactPerson)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('contactPerson') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.contactPerson)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "联系方式"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactType') !== -1 ? msgJson.data.rt.contactType : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.contactType)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('contactType') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.contactType)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "备注"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('remark') !== -1 ? msgJson.data.rt.remark : ''),
-                          h("span", { style: "color:#ec0000" }, msgJson.data.dto.remark)
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('remark') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.remark)
                         ])
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
@@ -2776,7 +2774,7 @@ export default {
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交量"),
-                        h("dd", null, `${msgJson.data.volume}`)
+                        h("dd", null, `${msgJson.data.restVolume}`)
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割日期"),
@@ -2924,8 +2922,6 @@ export default {
             message: "已成交",
             type: 'success'
           })
-          self.notifyRejection[parseInt(userTradeId)].close()
-          delete self.notifyRejection[parseInt(userTradeId)]
           // if (self.dialogTableVisible) {
           //   self.$refs.tradeEnquiry.loadInitData()
           // }
@@ -2935,6 +2931,8 @@ export default {
             type: 'warning'
           })
         }
+        self.notifyRejection[parseInt(userTradeId)].close()
+        delete self.notifyRejection[parseInt(userTradeId)]
       })
     },
     // 拒绝成交
@@ -2946,8 +2944,6 @@ export default {
             message: "已拒绝",
             type: 'success'
           })
-          self.notifyRejection[parseInt(userTradeId)].close()
-          delete self.notifyRejection[parseInt(userTradeId)]
           // if (self.dialogTableVisible) {
           //   self.$refs.tradeEnquiry.loadInitData()
           // }
@@ -2957,6 +2953,8 @@ export default {
             type: 'warning'
           })
         }
+        self.notifyRejection[parseInt(userTradeId)].close()
+        delete self.notifyRejection[parseInt(userTradeId)]
       })
     },
     // 同意修改未平仓单
@@ -2968,14 +2966,14 @@ export default {
             message: "已审核",
             type: 'success'
           })
-          self.notifyRejection[parseInt(realTradeId)].close()
-          delete self.notifyRejection[parseInt(realTradeId)]
         } else {
           this.$message({
             message: `${response.message}`,
             type: 'warning'
           })
         }
+        self.notifyRejection[parseInt(realTradeId)].close()
+        delete self.notifyRejection[parseInt(realTradeId)]
       })
     },
     // 拒绝修改未平仓单
@@ -2987,14 +2985,14 @@ export default {
             message: "已拒绝修改",
             type: 'success'
           })
-          self.notifyRejection[parseInt(realTradeId)].close()
-          delete self.notifyRejection[parseInt(realTradeId)]
         } else {
           this.$message({
             message: `${response.message}`,
             type: 'warning'
           })
         }
+        self.notifyRejection[parseInt(realTradeId)].close()
+        delete self.notifyRejection[parseInt(realTradeId)]
       })
     },
     // 同意修改已平仓单
@@ -3006,14 +3004,14 @@ export default {
             message: "已审核",
             type: 'success'
           })
-          self.notifyRejection[parseInt(realTradeId)].close()
-          delete self.notifyRejection[parseInt(realTradeId)]
         } else {
           this.$message({
             message: `${response.message}`,
             type: 'warning'
           })
         }
+        self.notifyRejection[parseInt(realTradeId)].close()
+        delete self.notifyRejection[parseInt(realTradeId)]
       })
     },
     // 口头违约确认
@@ -3025,14 +3023,14 @@ export default {
             message: "已确认",
             type: 'success'
           })
-          self.notifyRejection[parseInt(realTradeId)].close()
-          delete self.notifyRejection[parseInt(realTradeId)]
         } else {
           this.$message({
             message: `${response.message}`,
             type: 'warning'
           })
         }
+        self.notifyRejection[parseInt(realTradeId)].close()
+        delete self.notifyRejection[parseInt(realTradeId)]
       })
     },
     // 拒绝修改已平仓单
@@ -3044,14 +3042,14 @@ export default {
             message: "已拒绝修改",
             type: 'success'
           })
-          self.notifyRejection[parseInt(realTradeId)].close()
-          delete self.notifyRejection[parseInt(realTradeId)]
         } else {
           this.$message({
             message: `${response.message}`,
             type: 'warning'
           })
         }
+        self.notifyRejection[parseInt(realTradeId)].close()
+        delete self.notifyRejection[parseInt(realTradeId)]
       })
     },
     handleEnquiryDifficultAddClick(data) {
@@ -3063,8 +3061,7 @@ export default {
           data.lockDirection = true
           Promise.all([
             self.currentDifficultData = JSON.parse(JSON.stringify(data)),
-            self.notifyRejection[parseInt(data.userTradeId)].close(),
-            delete self.notifyRejection[parseInt(data.userTradeId)]
+            self.currentDifficultData.volume = self.currentDifficultData.restVolume
           ]).then(() => {
             self.dialogEnquiryAddVisible = true
           })
@@ -3074,6 +3071,8 @@ export default {
             type: 'warning'
           })
         }
+        self.notifyRejection[parseInt(data.userTradeId)].close()
+        delete self.notifyRejection[parseInt(data.userTradeId)]
       })
     },
     // 询价单难成撤单
@@ -3085,14 +3084,14 @@ export default {
             message: "难成已撤单",
             type: 'success'
           })
-          self.notifyRejection[parseInt(data.userTradeId)].close()
-          delete self.notifyRejection[parseInt(data.userTradeId)]
         } else {
           this.$message({
             message: `${response.message}`,
             type: 'warning'
           })
         }
+        self.notifyRejection[parseInt(data.userTradeId)].close()
+        delete self.notifyRejection[parseInt(data.userTradeId)]
       })
     },
     // 询价单难成保留
@@ -3104,14 +3103,14 @@ export default {
             message: "难成已保留",
             type: 'success'
           })
-          self.notifyRejection[parseInt(data.userTradeId)].close()
-          delete self.notifyRejection[parseInt(data.userTradeId)]
         } else {
           this.$message({
             message: `${response.message}`,
             type: 'warning'
           })
         }
+        self.notifyRejection[parseInt(data.userTradeId)].close()
+        delete self.notifyRejection[parseInt(data.userTradeId)]
       })
     },
     // 接收单据

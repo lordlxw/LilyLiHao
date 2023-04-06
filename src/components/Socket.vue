@@ -703,14 +703,14 @@ export default {
           })
           self.copySocket(obj)
           self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
-          self.notifyRejection[parseInt(obj.userTradeId)].close()
-          delete self.notifyRejection[parseInt(obj.userTradeId)]
         } else {
           this.$message({
             message: response.message,
             type: 'error'
           })
         }
+        self.notifyRejection[parseInt(obj.userTradeId)].close()
+        delete self.notifyRejection[parseInt(obj.userTradeId)]
       })
     },
     // 拒收询价单
@@ -723,14 +723,14 @@ export default {
             type: 'info'
           })
           self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
-          self.notifyRejection[parseInt(obj.userTradeId)].close()
-          delete self.notifyRejection[parseInt(obj.userTradeId)]
         } else {
           this.$message({
             message: response.message,
             type: 'error'
           })
         }
+        self.notifyRejection[parseInt(obj.userTradeId)].close()
+        delete self.notifyRejection[parseInt(obj.userTradeId)]
       })
     },
     // 确认撤单
@@ -743,12 +743,14 @@ export default {
             type: 'success'
           })
           self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
-          self.notifyRejection[parseInt(usertradeId)].close()
-          delete self.notifyRejection[parseInt(usertradeId)]
-          // if (self.dialogTableVisible) {
-          //   self.$refs.tradeEnquiry.loadInitData()
-          // }
+        } else {
+          self.$message({
+            message: `${response.message}`,
+            type: 'error'
+          })
         }
+        self.notifyRejection[parseInt(usertradeId)].close()
+        delete self.notifyRejection[parseInt(usertradeId)]
       })
     },
     // 拒绝撤单
@@ -761,12 +763,14 @@ export default {
             type: 'success'
           })
           self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
-          self.notifyRejection[parseInt(usertradeId)].close()
-          delete self.notifyRejection[parseInt(usertradeId)]
-          // if (self.dialogTableVisible) {
-          //   self.$refs.tradeEnquiry.loadInitData()
-          // }
+        } else {
+          self.$message({
+            message: `${response.message}`,
+            type: 'error'
+          })
         }
+        self.notifyRejection[parseInt(usertradeId)].close()
+        delete self.notifyRejection[parseInt(usertradeId)]
       })
     },
     // 播放提示音

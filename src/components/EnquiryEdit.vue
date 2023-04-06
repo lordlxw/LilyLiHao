@@ -7,7 +7,7 @@
       label-width="100px"
     >
       <el-form-item label="方向" prop="direction">
-        <el-button-group>
+        <el-button-group v-if="!this.enquiryForm.lockDirection">
           <el-button @click="handleDirection('买')" :class="funcDirection('买')"
             >买</el-button
           >
@@ -15,6 +15,11 @@
             >卖</el-button
           >
         </el-button-group>
+        <template v-else>
+          <div>
+            {{ enquiryForm.direction }}
+          </div>
+        </template>
       </el-form-item>
       <el-form-item label="券码" prop="tscode">
         <el-input
@@ -218,9 +223,7 @@ export default {
     },
     // 点击交易方向
     handleDirection(val) {
-      if (!this.enquiryForm.lockDirection) {
-        this.enquiryForm.direction = val
-      }
+      this.enquiryForm.direction = val
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
