@@ -21,6 +21,10 @@ body {
     background-color: white;
     margin          : 0;
 
+    .el-notification {
+        width: 360px;
+    }
+
     .notify {
         dl {
             margin-block-start: 0;
