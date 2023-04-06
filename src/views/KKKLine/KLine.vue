@@ -2901,7 +2901,7 @@ export default {
     handleInquiryDealConfirmClick(userTradeId) {
       const self = this
       apiTrade.inquiryDealConfirm({ userTradeId }).then(response => {
-        if (response && response.code === '00000') {
+        if (response && response.code === '00001') {
           this.$message({
             message: "已成交",
             type: 'success'
@@ -2911,6 +2911,11 @@ export default {
           // if (self.dialogTableVisible) {
           //   self.$refs.tradeEnquiry.loadInitData()
           // }
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
         }
       })
     },
@@ -2928,6 +2933,11 @@ export default {
           // if (self.dialogTableVisible) {
           //   self.$refs.tradeEnquiry.loadInitData()
           // }
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
         }
       })
     },
@@ -2942,6 +2952,11 @@ export default {
           })
           self.notifyRejection[parseInt(realTradeId)].close()
           delete self.notifyRejection[parseInt(realTradeId)]
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
         }
       })
     },
@@ -2956,6 +2971,11 @@ export default {
           })
           self.notifyRejection[parseInt(realTradeId)].close()
           delete self.notifyRejection[parseInt(realTradeId)]
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
         }
       })
     },
@@ -2970,6 +2990,11 @@ export default {
           })
           self.notifyRejection[parseInt(realTradeId)].close()
           delete self.notifyRejection[parseInt(realTradeId)]
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
         }
       })
     },
@@ -2984,6 +3009,11 @@ export default {
           })
           self.notifyRejection[parseInt(realTradeId)].close()
           delete self.notifyRejection[parseInt(realTradeId)]
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
         }
       })
     },
@@ -2998,6 +3028,11 @@ export default {
           })
           self.notifyRejection[parseInt(realTradeId)].close()
           delete self.notifyRejection[parseInt(realTradeId)]
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
         }
       })
     },
@@ -3012,6 +3047,11 @@ export default {
           })
           self.notifyRejection[parseInt(data.userTradeId)].close()
           delete self.notifyRejection[parseInt(data.userTradeId)]
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
         }
       })
     },
@@ -3026,6 +3066,11 @@ export default {
           })
           self.notifyRejection[parseInt(data.userTradeId)].close()
           delete self.notifyRejection[parseInt(data.userTradeId)]
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
         }
       })
     },
