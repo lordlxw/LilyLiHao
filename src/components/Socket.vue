@@ -224,7 +224,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 3000
+                  duration: 0
                 });
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
@@ -258,7 +258,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 3000
+                  duration: 0
                 });
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
@@ -365,7 +365,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 3000
+                  duration: 0
                 });
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
@@ -407,7 +407,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 3000
+                  duration: 0
                 });
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
@@ -449,7 +449,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 3000
+                  duration: 0
                 });
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
@@ -491,7 +491,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 3000
+                  duration: 0
                 });
                 self.tryPlay()
                 break;
@@ -532,7 +532,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 3000
+                  duration: 0
                 });
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
@@ -574,7 +574,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 3000
+                  duration: 0
                 });
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
@@ -616,7 +616,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 3000
+                  duration: 0
                 });
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
