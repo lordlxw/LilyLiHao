@@ -212,6 +212,11 @@ body {
         }
     }
 
+    // tabs-pane
+    .is-active {
+        font-weight: bold;
+    }
+
     .avatar {
         width: 100px;
         height: 100px;

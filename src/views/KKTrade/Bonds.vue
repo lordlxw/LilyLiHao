@@ -431,7 +431,7 @@
     </el-dialog>
     <el-dialog
       title="已平仓修改申请"
-      width="500px;"
+      width="50%"
       :visible.sync="dialogBondsFormVisible"
       append-to-body
       :destroy-on-close="true"
@@ -444,7 +444,7 @@
     </el-dialog>
     <el-dialog
       title="滚单"
-      width="650px;"
+      width="50%"
       :visible.sync="dialogBondsRollFormVisible"
       append-to-body
       :destroy-on-close="true"
@@ -458,7 +458,7 @@
     </el-dialog>
     <el-dialog
       title="今天（交割确认）"
-      width="70%"
+      width="80%"
       :visible.sync="dialogBondsDeliveryFormVisible"
       append-to-body
       :destroy-on-close="true"
