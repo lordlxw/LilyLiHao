@@ -262,7 +262,8 @@
                     v-if="
                       setAuth('bonds:update') &&
                       scope.row.status === 12 &&
-                      scope.row.jiaogeStatus === 0
+                      scope.row.jiaogeStatus === 0 &&
+                      funcIsBreak(scope)
                     "
                     class="ml10"
                     >修改</el-button
@@ -1132,7 +1133,7 @@ export default {
     handleDefaultExpandAll() {
       this.defaultExpandAll = !this.defaultExpandAll
     },
-    // 是否可违约
+    // 是否可违约,可以修改
     funcIsBreak(scope) {
       return moment(
         moment(scope.row.deliveryTime).format('YYYY-MM-DD')
