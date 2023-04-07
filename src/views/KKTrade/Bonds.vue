@@ -253,7 +253,12 @@
                 </el-table-column>
               </template>
               <el-table-column></el-table-column>
-              <el-table-column align="center" label="操作" width="150">
+              <el-table-column
+                fixed="right"
+                align="center"
+                label="操作"
+                width="150"
+              >
                 <template slot-scope="scope">
                   <el-button
                     @click="handleBondsEditClick(scope.row)"
@@ -380,6 +385,7 @@
                 </template>
               </el-table-column>
               <el-table-column
+                fixed="right"
                 align="center"
                 label="交割操作"
                 width="90"
@@ -853,10 +859,6 @@ export default {
         // 1、根据当前finishCode查找个数作为合并行数
         finishCodeSameCount = 0
         let flag = false
-        console.log({
-          rowspan: finishCodeSameCount,
-          colspan: columnIndex
-        })
         if (finishCode.toString() !== row.finishCode) {
           finishCode = row.finishCode
           for (let i = 0; i < this.tableDataFinish.length; i++) {
