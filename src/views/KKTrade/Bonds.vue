@@ -307,9 +307,8 @@
                     v-if="
                       setAuth('bonds:saybreak') &&
                       scope.row.realTradeId !== null &&
-                      [1].indexOf(scope.row.jiaogeStatus) === -1 &&
-                      funcIsBreak(scope) &&
-                      [18].indexOf(scope.row.status) === -1
+                      [1, 6].indexOf(scope.row.jiaogeStatus) === -1 &&
+                      funcIsBreak(scope)
                     "
                     placement="bottom-end"
                     :ref="`popover-bondssaybreak-${scope.$index}`"
@@ -346,7 +345,7 @@
                       setAuth('bonds:saybreakok') &&
                       scope.row.realTradeId !== null &&
                       funcIsBreak(scope) &&
-                      [18].indexOf(scope.row.status) !== -1
+                      [6].indexOf(scope.row.jiaogeStatus) !== -1
                     "
                     placement="bottom-end"
                     :ref="`popover-bondssaybreakok-${scope.$index}`"

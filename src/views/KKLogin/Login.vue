@@ -160,7 +160,7 @@ export default {
 .login-wrapper {
   height: 100%;
   padding-top: 100px;
-  background-color: $main-color;
+  background-color: $hover-color;
 
   .logo {
     width: 60px;
@@ -182,7 +182,7 @@ export default {
     box-shadow: 0 0 10px #333;
 
     .tit {
-      color: $main-color;
+      color: $hover-color;
       text-align: center;
       font-size: 18px;
       line-height: 60px;

@@ -15,7 +15,7 @@
           :key="index"
         >
           <template slot="title">
-            <i :class="item.icon" class="mr10"></i>
+            <i :class="item.icon" class="mr10 menu-icon"></i>
             <span class="menu-tit">{{ item.menuName }}</span>
           </template>
           <el-menu-item
@@ -30,7 +30,7 @@
                 `${item2.component}`
               )
             "
-            >{{ item2.menuName }}</el-menu-item
+            ><i :class="item2.icon" class="mr10"></i>{{ item2.menuName }}</el-menu-item
           >
         </el-submenu>
         <el-menu-item
@@ -46,7 +46,7 @@
             )
           "
         >
-          <i :class="item.icon" class="mr10"></i>
+          <i :class="item.icon" class="mr10 menu-icon"></i>
           <span slot="title" class="menu-tit">{{ item.menuName }}</span>
         </el-menu-item>
       </template>
@@ -102,3 +102,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.menu-icon,
+.menu-tit {
+  font-weight: bold;
+  font-size: 14px;
+}
+</style>

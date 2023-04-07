@@ -82,7 +82,7 @@ export default {
   }
   .aside-left {
     height: 100%;
-    background-color: #202020;
+    background-color: $main-black;
     box-sizing: border-box;
     .scrollbar-aside {
       height: 100%;
