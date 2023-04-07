@@ -656,6 +656,48 @@ export default {
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
                 break
+              case 'koutouweiyueconfirm_bond_0':
+              case 'koutouweiyueconfirm_bond_1':
+                self.$notify({
+                  title: `${msgJson.data.createuser} 已确认口头违约`,
+                  dangerouslyUseHTMLString: true,
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode.replace(/.IB/, '')}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${msgJson.data.price}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                    </dl>
+                    <dl>
+                      <dt>单据号</dt>
+                      <dd>${msgJson.data.tradeNum}</dd>
+                    </dl>
+                    <dl>
+                      <dt>备注</dt>
+                      <dd>${msgJson.data.remark}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 0
+                });
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.tryPlay()
+                break
             }
           }
         }

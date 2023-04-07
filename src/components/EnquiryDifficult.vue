@@ -7,10 +7,13 @@
       label-width="100px"
     >
       <el-form-item label="方向" prop="direction">
-        <el-button-group>
-          <el-button :class="funcDirection('bond_0')">买</el-button>
-          <el-button :class="funcDirection('bond_1')">卖</el-button>
-        </el-button-group>
+        {{
+          row.direction === "bond_0"
+            ? "买"
+            : row.direction === "bond_1"
+            ? "卖"
+            : ""
+        }}
       </el-form-item>
       <el-form-item label="券码">
         {{ row.tscode }}

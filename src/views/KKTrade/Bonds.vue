@@ -125,9 +125,8 @@
                     v-if="
                       setAuth('nobonds:saybreak') &&
                       scope.row.realTradeId !== null &&
-                      [1].indexOf(scope.row.jiaogeStatus) === -1 &&
-                      funcIsBreak(scope) &&
-                      [18].indexOf(scope.row.status) === -1
+                      [1, 6].indexOf(scope.row.jiaogeStatus) === -1 &&
+                      funcIsBreak(scope)
                     "
                     placement="bottom-end"
                     :ref="`popover-nobondssaybreak-${scope.$index}`"
@@ -163,8 +162,8 @@
                     v-if="
                       setAuth('nobonds:saybreakok') &&
                       scope.row.realTradeId !== null &&
-                      funcIsBreak(scope) &&
-                      [18].indexOf(scope.row.status) !== -1
+                      [1, 6].indexOf(scope.row.jiaogeStatus) === -1 &&
+                      funcIsBreak(scope)
                     "
                     placement="bottom-end"
                     :ref="`popover-nobondssaybreakok-${scope.$index}`"
