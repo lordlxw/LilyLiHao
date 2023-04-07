@@ -754,6 +754,10 @@ export default {
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
                 break
+              case 'koutouweiyuerequest_bond_0':
+              case 'koutouweiyuerequest_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                break
             }
           }
         }

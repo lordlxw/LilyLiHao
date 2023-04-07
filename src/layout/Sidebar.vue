@@ -107,6 +107,6 @@ export default {
 .menu-icon,
 .menu-tit {
   font-weight: bold;
-  font-size: 14px;
+  font-size: 15px;
 }
 </style>
