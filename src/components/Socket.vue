@@ -118,6 +118,7 @@ export default {
                 notify = self.$notify({
                   title: `${msgJson.data.createUserName} 发起询价单`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -200,6 +201,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.xunjiayuanName} 已确认成交`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: `
                   <div class="notify">
                     <dl>
@@ -234,6 +236,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.tradeuser} 已拒收`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: `
                   <div class="notify">
                     <dl>
@@ -276,6 +279,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.xunjiayuanName} 已部分成交`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: `
                   <div class="notify">
                     <dl>
@@ -311,6 +315,7 @@ export default {
                 notify = self.$notify({
                   title: `${msgJson.data.tradeuser} 发起撤单`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -376,6 +381,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.xunjiayuanName} 已拒绝成交`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: `
                   <div class="notify">
                     <dl>
@@ -410,6 +416,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.xunjiayuanName} 已同意未平仓修改`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: `
                   <div class="notify">
                     <dl>
@@ -452,6 +459,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.xunjiayuanName} 已拒绝未平仓修改`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: `
                   <div class="notify">
                     <dl>
@@ -494,6 +502,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.xunjiayuanName} 已同意已平仓修改`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: `
                   <div class="notify">
                     <dl>
@@ -535,6 +544,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.xunjiayuanName} 已拒绝已平仓修改`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: `
                   <div class="notify">
                     <dl>
@@ -577,6 +587,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.createuser} 难成已撤单`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: `
                   <div class="notify">
                     <dl>
@@ -619,6 +630,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.createuser} 难成已保留`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: `
                   <div class="notify">
                     <dl>
@@ -661,6 +673,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.xunjiayuanName} 已确认口头违约`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: `
                   <div class="notify">
                     <dl>
@@ -703,6 +716,7 @@ export default {
                 self.$notify({
                   title: `${msgJson.data.xunjiayuanName} 已拒绝口头违约`,
                   dangerouslyUseHTMLString: true,
+                  position: 'bottom-right',
                   message: `
                   <div class="notify">
                     <dl>
