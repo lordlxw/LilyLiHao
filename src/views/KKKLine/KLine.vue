@@ -320,6 +320,7 @@
                 </el-form-item>
                 <el-form-item label="交割日期" prop="deliveryTime">
                   <delivery-canlendar
+                    :w="`${canlendarW}px`"
                     ref="buyDeliveryCanlendar"
                     @change="handleBuyDeliveryCanlendar"
                   ></delivery-canlendar>
@@ -448,6 +449,7 @@
                 </el-form-item>
                 <el-form-item label="交割日期" prop="deliveryTime">
                   <delivery-canlendar
+                    :w="`${canlendarW}px`"
                     ref="saleDeliveryCanlendar"
                     @change="handleSaleDeliveryCanlendar"
                   ></delivery-canlendar>
@@ -866,36 +868,8 @@ export default {
       inOutLength: 26,
       // 所有
       businessAllList: [],
-      // {
-      //       "tscode": "220019.IB",
-      //       "volume": "5000",
-      //       "price": 2.9500,
-      //       "updatetime": "17:41:20",
-      //       "updatedatetime": "2023-01-18 17:41:20",
-      //       "brokerid": 2,
-      //       "brokerName": null,
-      //       "bidtype": 0,
-      //       "barginflag": 0,
-      //       "volumecomment": "5000(明天+0)",
-      //       "lasttransaction": 2.9375,
-      //       "netprice": 0.0000
-      //   },
       // 交易数据
       transactionAllList: [],
-      // {
-      //       "id": 675851,
-      //       "tscode": "220019.IB",
-      //       "tradetime": "13:52:22",
-      //       "tradedate": "2023-01-19 13:52:22",
-      //       "tradeprice": 2.9425,
-      //       "brokerid": 1,
-      //       "dealtype": "TKN",
-      //       "forwardcontact": true,
-      //       "tradeid": "TPSHe1065629800410025985",
-      //       "duration": "8.3392",
-      //       "changebp": "+0.5",
-      //       "netprice": 97.1486
-      //   },
       createSocketIO: null,
       createSocketEmitter: null,
       activeName: 'buy',
@@ -991,6 +965,7 @@ export default {
           { required: true, message: '交易员必选', trigger: 'change' }
         ]
       },
+      canlendarW: 150,
       buyFormPrice: '',
       saleFormForwardPrice: '',
       buyFormForwardPrice: '',
@@ -2736,7 +2711,15 @@ export default {
                                 self.handleSayBreakConfirmClick(msgJson.data.realTradeId)
                               }
                             }
-                          }, "同意")
+                          }, "同意"),
+                          h("button", {
+                            class: "notigy-cancel",
+                            on: {
+                              click: function () {
+                                self.handleSayBreakRejectionClick(msgJson.data.realTradeId)
+                              }
+                            }
+                          }, "拒绝")
                         ])
                       ]),
                     ],
@@ -3017,10 +3000,29 @@ export default {
     // 口头违约确认
     handleSayBreakConfirmClick(realTradeId) {
       const self = this
-      apiBonds.bondsSyBreakConfirm({ realTradeId }).then(response => {
+      apiBonds.bondsSayBreakConfirm({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
-            message: "已确认",
+            message: "口头违约已确认",
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
+        }
+        self.notifyRejection[parseInt(realTradeId)].close()
+        delete self.notifyRejection[parseInt(realTradeId)]
+      })
+    },
+    // 口头违约拒绝
+    handleSayBreakRejectionClick(realTradeId) {
+      const self = this
+      apiBonds.bondsSayBreakRejection({ realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "口头违约已拒绝",
             type: 'success'
           })
         } else {
@@ -3221,6 +3223,7 @@ export default {
     window.onresize = () => {
       this.initFrameW('leftWith', 200)
       this.initFrameW('rightWith', 360)
+      this.initFrameW('canlendarW', 150)
       setTimeout(() => {
         if (this.myChart) {
           this.myChart.resize()

@@ -292,9 +292,19 @@ export default {
     })
   },
   // 口头违约确认
-  bondsSyBreakConfirm(params) {
+  bondsSayBreakConfirm(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/koutouweiyueConfirm`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
+  },
+  // 口头违约拒绝
+  bondsSayBreakRejection(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/koutouweiyuedeny`,
       method: 'post',
       data: {
         realTradeId: params.realTradeId

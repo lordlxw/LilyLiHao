@@ -659,7 +659,7 @@ export default {
               case 'koutouweiyueconfirm_bond_0':
               case 'koutouweiyueconfirm_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.createuser} 已确认口头违约`,
+                  title: `${msgJson.data.xunjiayuanName} 已确认口头违约`,
                   dangerouslyUseHTMLString: true,
                   message: `
                   <div class="notify">
