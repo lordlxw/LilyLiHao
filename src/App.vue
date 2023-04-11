@@ -8,8 +8,10 @@
 import Vue from 'vue'
 export default {
   name: 'App',
-  data: {
-    testWaterText: false
+  data() {
+    return {
+      testWaterText: false
+    }
   },
   unmounted() {
     sessionStorage.clear()
@@ -28,7 +30,7 @@ export default {
   color: rgb(163, 28, 205);
   z-index: 0;
   content: "测试";
-  opacity: 0.3;
+  opacity: 0.2;
   rotate: -45deg;
   z-index: 1;
 }

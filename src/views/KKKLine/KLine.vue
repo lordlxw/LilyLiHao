@@ -270,13 +270,15 @@
                     @input="handleMaxWait('buyForm')"
                   ></el-input-number
                   ><br />
-                  <el-input-number
-                    v-model="buyForm.worstPrice"
-                    step="0.05"
-                    @input="handleMaxWait('buyForm')"
-                    class="mt10 numbw"
-                  ></el-input-number>
-                  <span class="txt-green">BP</span>
+                  <el-form-item prop="worstPrice">
+                    <el-input-number
+                      v-model="buyForm.worstPrice"
+                      step="0.05"
+                      @input="handleMaxWait('buyForm')"
+                      class="mt10 numbw"
+                    ></el-input-number>
+                    <span class="txt-green">BP</span>
+                  </el-form-item>
                 </el-form-item>
                 <el-form-item label="交易量" prop="volume">
                   <el-input
@@ -400,13 +402,15 @@
                     @input="handleMaxWait('saleForm')"
                   ></el-input-number
                   ><br />
-                  <el-input-number
-                    v-model="saleForm.worstPrice"
-                    step="0.05"
-                    @input="handleMaxWait('buyForm')"
-                    class="mt10 numbw"
-                  ></el-input-number>
-                  <span class="txt-red">BP</span>
+                  <el-form-item prop="worstPrice">
+                    <el-input-number
+                      v-model="saleForm.worstPrice"
+                      step="0.05"
+                      @input="handleMaxWait('buyForm')"
+                      class="mt10 numbw"
+                    ></el-input-number>
+                    <span class="txt-red">BP</span>
+                  </el-form-item>
                 </el-form-item>
                 <el-form-item label="交易量" prop="volume">
                   <el-input
@@ -775,7 +779,16 @@ export default {
     // 金额格式验证
     const moneyTest = async (rule, value, callback) => {
       if (!config.regExpSet.money.test(value)) {
-        callback(new Error('大于0的格式（-.----）'))
+        callback(new Error('大于0的格式-.----'))
+      } else {
+        callback()
+      }
+    }
+    // 金额格式验证
+    const floatTest = async (rule, value, callback) => {
+      console.log(rule)
+      if (!config.regExpSet.floatPrice.test(value)) {
+        callback(new Error('大于0的格式-.--'))
       } else {
         callback()
       }
@@ -919,6 +932,10 @@ export default {
         ],
         tradeuserId: [
           { required: true, message: '交易员必选', trigger: 'change' }
+        ],
+        worstPrice: [
+          { required: true, message: '允许浮动必填', trigger: 'blur' },
+          { validator: floatTest, trigger: 'blur' }
         ]
       },
       saleFormPrice: '',
@@ -965,6 +982,10 @@ export default {
         ],
         tradeuserId: [
           { required: true, message: '交易员必选', trigger: 'change' }
+        ],
+        worstPrice: [
+          { required: true, message: '允许浮动必填', trigger: 'blur' },
+          { validator: floatTest, trigger: 'blur' }
         ]
       },
       canlendarW: 150,
@@ -1952,7 +1973,10 @@ export default {
         case 'TKN':
           return 'txt-green'
         case 'TRD':
-          return 'txt-yellow'
+        case 'REF':
+          return 'txt-orange'
+        default:
+          return 'txt-orange'
       }
     },
     // 买卖最优值(type:min最小，type:max最大;arr:初始数组;)
@@ -3571,6 +3595,9 @@ export default {
 }
 .txt-yellow {
   color: yellow !important;
+}
+.txt-orange {
+  color: orange !important;
 }
 .txt-white {
   color: white !important;

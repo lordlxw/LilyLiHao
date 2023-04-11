@@ -848,6 +848,8 @@ export default {
           return row.realVolume ? row.realVolume : "--"
         case "tscode":
           return row.tscode.replace(/.IB/, '')
+        case "worstPrice":
+          return row.worstPrice ? util.moneyFormat(row.worstPrice, 2) : "--"
       }
       return row[column.property]
     },
