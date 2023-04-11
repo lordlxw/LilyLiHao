@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view />
+    <router-view style="z-index: 2" />
     <div class="test" v-if="testWaterText"></div>
   </div>
 </template>
@@ -21,14 +21,15 @@ export default {
 </script>
 <style lang="scss" scoped>
 .test::after {
-  position: absolute;
-  top: 38%;
-  left: 40%;
-  font-size: 100px;
-  color: red;
+  position: fixed;
+  top: 30%;
+  left: 30%;
+  font-size: 300px;
+  color: rgb(163, 28, 205);
   z-index: 0;
   content: "测试";
-  opacity: 0.5;
+  opacity: 0.3;
   rotate: -45deg;
+  z-index: 1;
 }
 </style>
