@@ -31,7 +31,8 @@ export default {
   z-index: 0;
   content: "测试";
   opacity: 0.2;
-  rotate: -45deg;
+  transform: rotate(-45deg);
   z-index: 1;
+  pointer-events: none;
 }
 </style>
