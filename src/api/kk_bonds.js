@@ -265,6 +265,14 @@ export default {
       }
     })
   },
+  // 未平全量导出
+  nobondsAllExport() {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/weipingexport`,
+      method: 'get',
+      responseType: 'arraybuffer'
+    })
+  },
   // 已平全量导出
   bondsAllExport() {
     return request({

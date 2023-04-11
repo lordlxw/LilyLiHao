@@ -14,6 +14,13 @@
             <el-button size="mini" @click="handleDefaultExpandAll">{{
               defaultExpandAll ? "全收" : "全展"
             }}</el-button>
+            <el-button
+              v-if="setAuth('nobonds:allexport')"
+              type="primary"
+              size="mini"
+              @click="handleNobondsAllExport"
+              >全量导出</el-button
+            >
           </div>
           <div class="table mt10" ref="noBondsDo">
             <el-table
@@ -654,6 +661,21 @@ export default {
       ]).then(() => {
         this.handleSearch()
       })
+    },
+    // 未平全量导出
+    handleNobondsAllExport() {
+      api.nobondsAllExport().then((response) => {
+        var blob = new Blob([response], { type: `application/vnd.ms-excel` });
+        var objectUrl = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.setAttribute("style", "display:none");
+        a.setAttribute("href", objectUrl);
+        var filename = `未平仓_全量_${moment().format("YYYY-MM-DD HH:mm:ss")}.xlsx`;
+        a.setAttribute("download", filename);
+        a.click();
+        URL.revokeObjectURL(objectUrl);
+      });
     },
     // 全量导出
     handleAllExport() {
