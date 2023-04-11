@@ -272,7 +272,7 @@
                   ><br />
                   <el-input-number
                     v-model="buyForm.worstPrice"
-                    step="0.0005"
+                    step="0.05"
                     @input="handleMaxWait('buyForm')"
                     class="mt10"
                   ></el-input-number>
@@ -401,7 +401,7 @@
                   ><br />
                   <el-input-number
                     v-model="saleForm.worstPrice"
-                    step="0.0005"
+                    step="0.05"
                     @input="handleMaxWait('buyForm')"
                     class="mt10"
                   ></el-input-number>
@@ -898,7 +898,7 @@ export default {
         // 等待时长
         maxWait: 0,
         // 允许浮动
-        worstPrice: 0.001
+        worstPrice: 0.1
       },
       saleFormRules: {
         direction: [
@@ -944,7 +944,7 @@ export default {
         // 等待时长
         maxWait: 0,
         // 允许浮动
-        worstPrice: 0.001
+        worstPrice: 0.1
       },
       buyFormRules: {
         direction: [
