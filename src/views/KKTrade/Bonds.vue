@@ -81,7 +81,8 @@
                     v-if="
                       setAuth('nobonds:update') &&
                       scope.row.realTradeId !== null &&
-                      scope.row.status === 11
+                      scope.row.status === 11 &&
+                      funcIsBreak(scope)
                     "
                     >修改</el-button
                   >

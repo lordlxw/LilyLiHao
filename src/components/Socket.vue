@@ -313,7 +313,7 @@ export default {
               case 'request_cancel_bond_0':
               case 'request_cancel_bond_1':
                 notify = self.$notify({
-                  title: `${msgJson.data.tradeuser} 发起撤单`,
+                  title: `${msgJson.data.createuser} 发起撤单`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: h(

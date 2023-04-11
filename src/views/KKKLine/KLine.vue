@@ -227,7 +227,7 @@
               </li>
             </el-popover>
             <li class="txt-red txt-bold">
-              总差 {{ forwardDiffPrice ? forwardDiffPrice : "0.00bp" }}
+              总差 {{ forwardDiffPrice ? forwardDiffPrice : "0.00BP" }}
             </li>
             <li class="txt-red txt-bold">
               总卖 {{ saleFormForwardPrice | moneyFormat(4) }}
@@ -236,7 +236,7 @@
               总买 {{ buyFormForwardPrice | moneyFormat(4) }}
             </li>
             <li class="txt-red txt-bold">
-              近差 {{ currentDiffPrice ? currentDiffPrice : "0.00bp" }}
+              近差 {{ currentDiffPrice ? currentDiffPrice : "0.00BP" }}
             </li>
             <li class="txt-red txt-bold">
               近卖 {{ saleFormPrice | moneyFormat(4) }}
@@ -274,8 +274,9 @@
                     v-model="buyForm.worstPrice"
                     step="0.05"
                     @input="handleMaxWait('buyForm')"
-                    class="mt10"
+                    class="mt10 numbw"
                   ></el-input-number>
+                  <span class="txt-green">BP</span>
                 </el-form-item>
                 <el-form-item label="交易量" prop="volume">
                   <el-input
@@ -403,8 +404,9 @@
                     v-model="saleForm.worstPrice"
                     step="0.05"
                     @input="handleMaxWait('buyForm')"
-                    class="mt10"
+                    class="mt10 numbw"
                   ></el-input-number>
+                  <span class="txt-red">BP</span>
                 </el-form-item>
                 <el-form-item label="交易量" prop="volume">
                   <el-input
@@ -3198,10 +3200,10 @@ export default {
     // 计算近差和总差 1:近差；2：总差
     calcuDiffPrice(type) {
       if (type === 1) {
-        this.currentDiffPrice = (util.moneyFormat((this.buyFormPrice - this.saleFormPrice) * 100, 2)) + 'bp'
+        this.currentDiffPrice = (util.moneyFormat((this.buyFormPrice - this.saleFormPrice) * 100, 2)) + 'BP'
       }
       if (type === 2) {
-        this.forwardDiffPrice = (util.moneyFormat((this.buyFormForwardPrice - this.saleFormForwardPrice) * 100, 2)) + 'bp'
+        this.forwardDiffPrice = (util.moneyFormat((this.buyFormForwardPrice - this.saleFormForwardPrice) * 100, 2)) + 'BP'
       }
     }
   },
@@ -3442,6 +3444,9 @@ export default {
           background: #333131;
         }
       }
+      .numbw {
+        width: 110px;
+      }
     }
   }
 
@@ -3642,7 +3647,7 @@ export default {
     }
   }
   .el-tabs__item {
-    color: white;
+    color: rgb(113, 112, 112);
     font-size: 12px;
     padding: 0 10px;
     font-weight: bold;
