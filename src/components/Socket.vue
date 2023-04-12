@@ -199,7 +199,7 @@ export default {
               case 'deal_bond_0':
               case 'deal_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.xunjiayuanName} 已确认成交`,
+                  title: `${msgJson.data.tradeuser} 已确认成交`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: `
