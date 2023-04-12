@@ -36,6 +36,9 @@
       <el-form-item label="角色" prop="roleIds">
         <role-select @change="handleSelectRole"></role-select>
       </el-form-item>
+      <el-form-item label="默认券号" prop="tscode">
+        <el-input v-model="ruleForm.tscode" class="w200"></el-input>
+      </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input
           type="textarea"
@@ -91,7 +94,8 @@ export default {
         remark: "",
         roleIds: [],
         password: "",
-        checkPassword: ''
+        checkPassword: '',
+        tscode: ''
       },
       rules: {
         userName: [
@@ -127,7 +131,8 @@ export default {
             phonenumber: this.ruleForm.phonenumber,
             password: this.ruleForm.password,
             roleIds: this.ruleForm.roleIds,
-            remark: this.ruleForm.remark
+            remark: this.ruleForm.remark,
+            tscode: this.ruleForm.tscode
           }).then((response) => {
             if (response && response.code === "00000") {
               this.$message({

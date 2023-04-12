@@ -31,7 +31,8 @@ export default {
         password: params.password,
         nickName: params.nickName,
         phonenumber: params.phonenumber,
-        remark: params.remark
+        remark: params.remark,
+        tscode: params.tscode
       }
     })
   },
@@ -46,7 +47,8 @@ export default {
         roleIds: params.roleIds,
         nickName: params.nickName,
         phonenumber: params.phonenumber,
-        remark: params.remark
+        remark: params.remark,
+        tscode: params.tscode
       }
     })
   },

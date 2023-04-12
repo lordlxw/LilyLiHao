@@ -59,7 +59,7 @@
             fixed="right"
             align="center"
             label="操作"
-            width="210"
+            width="230"
           >
             <template slot-scope="scope">
               <el-button

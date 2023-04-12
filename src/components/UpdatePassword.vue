@@ -91,7 +91,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.updatePassword({
-            newPassword: this[formName].newPassword,
+            newPassword: this[formName].pass,
             oldPassword: this[formName].oldPassword
           }).then(response => {
             if (response && response.code === '00000') {

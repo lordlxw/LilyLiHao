@@ -1,4 +1,4 @@
 {
-  "apiUrl": "https://apitest.quants.top",
-  "wsUrl": "wss://apitest.quants.top/websocket"
+  "apiUrl": "http://172.16.10.193:8004",
+  "wsUrl": "ws://172.16.10.193/websocket"
 }
