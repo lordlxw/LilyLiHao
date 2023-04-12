@@ -172,6 +172,7 @@ export default {
                   duration: 0
                 });
                 console.log(2222)
+                console.log(msgJson.data)
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.$refs.playAudio.play()
                 self.notifyRejection[msgJson.data.userTradeId] = notify
@@ -755,6 +756,14 @@ export default {
                 break
               case 'koutouweiyuerequest_bond_0':
               case 'koutouweiyuerequest_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                break
+              case 'confirm_cancel_bond_0':
+              case 'confirm_cancel_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                break
+              case 'deny_cancel_bond_0':
+              case 'deny_cancel_bond_1':
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 break
             }
