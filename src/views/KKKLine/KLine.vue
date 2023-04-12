@@ -60,9 +60,9 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <!-- <el-dropdown-item command="updatePassword"
+              <el-dropdown-item command="updatePassword"
                 >修改密码</el-dropdown-item
-              > -->
+              >
               <el-dropdown-item divided command="logout">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -741,6 +741,19 @@
         @change="handleDialogEnquiryAddVisible"
       ></enquiry-edit>
     </el-dialog>
+    <el-dialog
+      title="修改密码"
+      :visible.sync="dialogUpdatePasswordVisible"
+      width="30%"
+      center
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <update-password
+        @change="handleDialogUpdatePasswordVisible"
+      ></update-password>
+    </el-dialog>
   </div>
 </template>
 
@@ -760,6 +773,7 @@ import configUtil from '@/utils/config.js'
 import * as util from '@/utils/util'
 // import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
+import UpdatePassword from '@/components/UpdatePassword.vue'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
@@ -773,7 +787,8 @@ export default {
     ComTscodeSelect,
     // TradeEnquiry,
     DeliveryCanlendar,
-    EnquiryEdit
+    EnquiryEdit,
+    UpdatePassword
   },
   data() {
     // 金额格式验证
@@ -1020,7 +1035,9 @@ export default {
       socketTimer: null,
       // 难成撤单新建询价单
       dialogEnquiryAddVisible: false,
-      currentDifficultData: {}
+      currentDifficultData: {},
+      // 修改密码
+      dialogUpdatePasswordVisible: false
     }
   },
   computed: {
@@ -3205,7 +3222,14 @@ export default {
             }
           })
           break;
+        case "updatePassword":
+          this.dialogUpdatePasswordVisible = true
+          break;
       }
+    },
+    // 修改密码弹出框
+    handleDialogUpdatePasswordVisible(obj) {
+      this.dialogUpdatePasswordVisible = obj.dialogVisable
     },
     // 价格修改等待时间
     initPriceWait() {

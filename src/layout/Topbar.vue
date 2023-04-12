@@ -37,6 +37,19 @@
       </ul>
     </div>
     <main-socket></main-socket>
+    <el-dialog
+      title="修改密码"
+      :visible.sync="dialogUpdatePasswordVisible"
+      width="30%"
+      append-to-body
+      center
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <update-password
+        @change="handleDialogUpdatePasswordVisible"
+      ></update-password>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -44,12 +57,14 @@ import { mapMutations, mapState, mapGetters } from "vuex";
 import screenfull from "screenfull";
 import apiLogin from '@/api/kk_login'
 import MainSocket from '@/components/Socket.vue'
+import UpdatePassword from '@/components/UpdatePassword.vue'
 import { pageMixin } from '@/utils/pageMixin'
 import config from "@/utils/config.js";
 export default {
   mixins: [pageMixin],
   components: {
-    MainSocket
+    MainSocket,
+    UpdatePassword
   },
   data() {
     return {
@@ -58,6 +73,8 @@ export default {
       screenfullClass: "fa-arrows-alt",
       loginName: sessionStorage.getItem(config.keys.loginNameKey),
       dialogFormVisible: false,
+      // 修改密码弹出框
+      dialogUpdatePasswordVisible: false
     };
   },
   created() {
@@ -114,7 +131,14 @@ export default {
             }
           })
           break;
+        case "updatePassword":
+          this.dialogUpdatePasswordVisible = true
+          break;
       }
+    },
+    // 修改密码弹出框
+    handleDialogUpdatePasswordVisible(obj) {
+      this.dialogUpdatePasswordVisible = obj.dialogVisable
     },
     // 计算宽度
     initFrameW(val) {

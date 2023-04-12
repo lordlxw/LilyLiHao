@@ -88,6 +88,17 @@ export default {
       }
     })
   },
+  // 修改密码
+  updatePassword(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/system/user/changePwd`,
+      method: 'put',
+      data: {
+        newPassword: params.newPassword,
+        oldPassword: params.oldPassword
+      }
+    })
+  },
   // 交易员选择列表
   tradeUserList() {
     return request({

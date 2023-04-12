@@ -249,13 +249,17 @@ export default {
             worstPrice: this[formName].worstPrice
           }).then(res => {
             if (res && res.code === '00000' && res.value) {
-              const h = this.$createElement;
-              this.$notify({
-                title: '提醒',
-                message: h('i', { style: 'color: teal' }, '询价单发送成功')
-              });
+              this.$message({
+                message: `询价单发送成功`,
+                type: 'success'
+              })
               this.$emit('change', {
                 dialogVisible: false
+              })
+            } else {
+              this.$message({
+                message: `${res.message}`,
+                type: 'error'
               })
             }
           })
