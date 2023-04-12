@@ -2,7 +2,7 @@
   "name": "vue-kuanke",
   "version": "1.0.0",
   "description": "宽客量化管理系统",
-  "author": "zhoujiahong <747993619@qq.com>",
+  "author": "xxx",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",

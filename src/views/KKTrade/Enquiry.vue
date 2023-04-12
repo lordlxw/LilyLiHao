@@ -26,6 +26,9 @@
           header-row-style="height:30px;line-height:30px;"
           header-cell-style="background:#f8f8f8;"
           :key="Math.random()"
+          :row-class-name="tableRowClassName"
+          :cell-style="cellStyle"
+          :span-method="objectSpanMethod"
         >
           <template v-for="itemHead in tableHead">
             <el-table-column
@@ -181,7 +184,8 @@
                 size="small"
                 v-if="
                   ['1', '4', '8'].indexOf(scope.row.status.toString()) !== -1 &&
-                  setAuth('inquiry:deal')
+                  setAuth('inquiry:deal') &&
+                  scope.row.relativeNum.indexOf('GD_') === -1
                 "
                 >成交</el-button
               >
@@ -362,6 +366,26 @@
               </el-popover>
             </template>
           </el-table-column>
+          <el-table-column
+            fixed="right"
+            align="center"
+            label="滚单成交"
+            width="80"
+          >
+            <template slot-scope="scope">
+              <el-button
+                @click="handleRollDealClick(scope.row)"
+                type="text"
+                size="small"
+                v-if="
+                  ['1', '4', '8'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:rolldeal') &&
+                  scope.row.relativeNum.indexOf('GD_') !== -1
+                "
+                >滚单</el-button
+              >
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </div>
@@ -370,6 +394,8 @@
       width="500px;"
       :visible.sync="dialogDealFormVisible"
       append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
     >
       <el-form
         :model="dealForm"
@@ -438,6 +464,20 @@
       </div>
     </el-dialog>
     <el-dialog
+      title="滚单成交"
+      width="50%"
+      :visible.sync="dialogBondsRollFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <real-enquiry-roll
+        :overRow="overRow"
+        :openRow="openRow"
+        @change="handleBondsRollDialogVisible"
+      ></real-enquiry-roll>
+    </el-dialog>
+    <el-dialog
       title="询价"
       width="500px;"
       :visible.sync="dialogEnquiryFormVisible"
@@ -468,6 +508,7 @@ import { mapState } from 'vuex'
 import api from "@/api/kk_trade";
 import apiAdmin from '@/api/kk_power_admin'
 import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
+import RealEnquiryRoll from '@/components/RealEnquiryRoll.vue';
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
 import EnquiryDifficult from '@/components/EnquiryDifficult.vue'
 import { pageMixin } from '@/utils/pageMixin'
@@ -475,6 +516,11 @@ import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
 import moment from 'moment'
+let tableCurrentRelativeNum = ''
+let currentRelativeNum = ''
+// 合并单元格
+let relativeNum = ''
+let relativeNumSameCount = 0
 export default {
   mixins: [pageMixin, commMixin],
   props: {
@@ -483,7 +529,8 @@ export default {
   components: {
     DeliveryCanlendarUpdate,
     EnquiryEdit,
-    EnquiryDifficult
+    EnquiryDifficult,
+    RealEnquiryRoll
   },
   data() {
     // 金额格式验证
@@ -549,7 +596,11 @@ export default {
       formLabelWidth: '0',
       // 难成
       dialogEnquiryDifficultFormVisible: false,
-      currentDifficultRow: []
+      currentDifficultRow: [],
+      // 滚单
+      dialogBondsRollFormVisible: false,
+      overRow: {},
+      openRow: {}
     }
   },
   created() {
@@ -868,6 +919,78 @@ export default {
     handleDialogDifficultVisible(obj) {
       this.dialogEnquiryDifficultFormVisible = obj.dialogVisible
       this.loadInitData()
+    },
+    // 滚单成交颜色框
+    tableRowClassName({ row, rowIndex }) {
+      if (row.relativeNum.indexOf('GD_') !== -1) {
+        if (rowIndex === 0) {
+          tableCurrentRelativeNum = 'gd-odd-row'
+          currentRelativeNum = row.relativeNum
+        }
+        if (currentRelativeNum !== row.relativeNum) {
+          currentRelativeNum = row.relativeNum
+          if (tableCurrentRelativeNum === 'gd-even-row') {
+            tableCurrentRelativeNum = 'gd-odd-row'
+          } else {
+            tableCurrentRelativeNum = 'gd-even-row'
+          }
+        }
+      } else {
+        tableCurrentRelativeNum = ''
+      }
+      return tableCurrentRelativeNum
+    },
+    // 滚单成交弹出框
+    handleRollDealClick(row) {
+      console.log(11111)
+      console.log(row)
+      for (let i = 0; i < this.tableData.length; i++) {
+        if (row.relativeNum === this.tableData[i].relativeNum) {
+          this.overRow = JSON.parse(JSON.stringify(this.tableData[i]))
+          this.openRow = JSON.parse(JSON.stringify(this.tableData[i + 1]))
+          break
+        }
+      }
+      this.dialogBondsRollFormVisible = true
+    },
+    handleBondsRollDialogVisible(obj) {
+      this.dialogBondsRollFormVisible = obj.dialogVisible
+    },
+    // 合并单元格
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (rowIndex === 0) {
+        // 解决重复渲染问题，清空之前的数据
+        relativeNum = ''
+      }
+      if (column.label === '滚单成交') {
+        if (row.relativeNum.indexOf('GD_') !== -1) {
+          // 1、根据当前finishCode查找个数作为合并行数
+          relativeNumSameCount = 0
+          let flag = false
+          if (relativeNum.toString() !== row.relativeNum) {
+            relativeNum = row.relativeNum
+            for (let i = 0; i < this.tableData.length; i++) {
+              if (this.tableData[i].relativeNum === row.relativeNum) {
+                relativeNumSameCount = relativeNumSameCount + 1
+                flag = true
+              } else {
+                if (flag) {
+                  break
+                }
+              }
+            }
+            return {
+              rowspan: relativeNumSameCount,
+              colspan: columnIndex
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: columnIndex
+            }
+          }
+        }
+      }
     },
   },
   mounted() {

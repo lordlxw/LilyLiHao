@@ -1,40 +1,6 @@
 <!--用户管理-->
 <template>
   <div class="content">
-    <!-- <div class="filter-condition">
-      <div class="item mr30">
-        <label>用户名</label>
-        <el-input
-          v-model="userName"
-          placeholder="请输入关键字"
-          clearable
-          style="width: 200px"
-        ></el-input>
-      </div>
-      <div class="item mr30">
-        <label>角色</label>
-        <select-role ref="selectRole" @change="handleSelectRole"></select-role>
-      </div>
-      <div class="item mr30">
-        <label>禁用状态</label>
-        <el-select v-model="disabled" placeholder="---请选择---">
-          <el-option key="全部" label="全部" value=""> </el-option>
-          <el-option
-            v-for="(value, key) in config.disabledStatus"
-            :key="key"
-            :label="value"
-            :value="key"
-          >
-          </el-option>
-        </el-select>
-      </div>
-      <div class="item btn-box">
-        <el-button type="primary" @click="handleSearch">搜索</el-button>
-        <el-button type="default" @click="handleClearCondition">重置</el-button>
-        <el-button type="primary" @click="handleExport">导出</el-button>
-      </div>
-      <div class="clearboth"></div>
-    </div> -->
     <div class="list">
       <div class="do">
         <router-link v-if="setAuth('system:user:add')" to="/power/admin/add">
@@ -93,7 +59,7 @@
             fixed="right"
             align="center"
             label="操作"
-            width="170"
+            width="210"
           >
             <template slot-scope="scope">
               <el-button
@@ -133,6 +99,12 @@
                   scope.row.status === "1" ? "启用" : "禁用"
                 }}</el-button>
               </el-popover>
+              <el-button
+                v-if="setAuth('system:user:resetpass')"
+                type="text"
+                @click="handleResetPasswordDialog(scope)"
+                >重置密码</el-button
+              >
               <el-button
                 v-if="setAuth('system:user:edit')"
                 type="text"
@@ -184,27 +156,86 @@
         </el-pagination>
       </div>
     </div>
-    <el-drawer
-      title="详情"
-      :visible.sync="drawer"
-      :direction="direction"
-      @closed="closedDrawer"
-      :size="drawerSize + '%'"
+    <el-dialog
+      title="重置密码"
+      :visible.sync="centerDialogResetPasswordVisible"
+      width="30%"
+      center
+      :close-on-click-modal="false"
     >
-      <detail ref="detail" :id="id"></detail>
-      <el-slider v-model="drawerSize" class="w100 slider" :min="40"></el-slider>
-    </el-drawer>
+      <el-form
+        :model="resetPassForm"
+        status-icon
+        :rules="resetPassRules"
+        ref="resetPassForm"
+        :label-width="`${resetPassFormLabelWidth}px`"
+      >
+        <el-form-item label="用户名">
+          {{ resetPassForm.userName }}
+        </el-form-item>
+        <el-form-item label="昵称">
+          {{ resetPassForm.nickName }}
+        </el-form-item>
+        <el-form-item label="密码" prop="pass">
+          <el-input
+            type="password"
+            v-model="resetPassForm.pass"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="checkPass">
+          <el-input
+            type="password"
+            v-model="resetPassForm.checkPass"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <!-- <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')"
+            >提交</el-button
+          >
+          <el-button @click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item> -->
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogResetPasswordVisible = false"
+          >取 消</el-button
+        >
+        <el-button type="primary" @click="submitForm('resetPassForm')"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import api from "@/api/kk_power_admin";
 import { pageMixin } from "@/utils/pageMixin";
-import { authMixin } from "@/utils/authMixin";
+import { commMixin } from "@/utils/commMixin";
 import config from "@/utils/config";
 export default {
-  mixins: [pageMixin, authMixin],
+  mixins: [pageMixin, commMixin],
   data() {
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'));
+      } else {
+        if (this.resetPassForm.checkPass !== '') {
+          this.$refs.resetPassForm.validateField('checkPass');
+        }
+        callback();
+      }
+    };
+    var validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (value !== this.resetPassForm.pass) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
     return {
       // 公共配置
       config,
@@ -220,6 +251,26 @@ export default {
       ],
       tableData: [],
       loading: true,
+      centerDialogResetPasswordVisible: false,
+      resetPassForm: {
+        userId: '',
+        userName: '',
+        nickName: '',
+        pass: '',
+        checkPass: ''
+      },
+      resetPassRules: {
+        pass: [
+          { required: true, message: '密码必填', trigger: 'blur' },
+          { validator: validatePass, trigger: 'blur' }
+        ],
+        checkPass: [
+          { required: true, message: '确认密码必填', trigger: 'blur' },
+          { validator: validatePass2, trigger: 'blur' }
+        ]
+      },
+      // 重置密码表单label宽度
+      resetPassFormLabelWidth: 100
     };
   },
   methods: {
@@ -252,11 +303,43 @@ export default {
         }
       });
     },
-    // 点击详情
-    handleDetailClick(row) {
-      Promise.all([(this.id = row.id), (this.drawer = true)]).then(() => {
-        this.$refs.multipleTable.setCurrentRow(row);
-        this.$refs.detail.detail();
+    // 重置密码
+    handleResetPasswordDialog(scope) {
+      Promise.all([
+        this.resetPassForm.userId = scope.row.userId,
+        this.resetPassForm.userName = scope.row.userName,
+        this.resetPassForm.nickName = scope.row.nickName,
+        this.resetPassForm.pass = '',
+        this.resetPassForm.checkPass = ''
+      ]).then(() => {
+        this.centerDialogResetPasswordVisible = true
+      })
+    },
+    // 提交重置密码
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          api.resetPassword({
+            userId: this.resetPassForm.userId,
+            password: this.resetPassForm.pass
+          }).then(response => {
+            if (response && response.code === '00000') {
+              this.$message({
+                message: '密码重置成功',
+                type: 'success'
+              })
+              this.centerDialogResetPasswordVisible = false
+              this.loadInitData()
+            } else {
+              this.$message({
+                message: `${response.message}`,
+                type: 'error'
+              })
+            }
+          })
+        } else {
+          return false;
+        }
       });
     },
     // 初始化数据
@@ -279,7 +362,11 @@ export default {
     },
   },
   mounted() {
+    this.initFrameW('resetPassFormLabelWidth', 100)
     this.loadInitData();
+    window.onresize = () => {
+      this.initFrameW('resetPassFormLabelWidth', 100)
+    }
   },
 };
 </script>

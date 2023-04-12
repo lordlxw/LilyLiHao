@@ -78,6 +78,16 @@ export default {
     })
   },
   // 重置用户密码
+  resetPassword(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/system/user/resetPwd`,
+      method: 'put',
+      data: {
+        userId: params.userId,
+        password: params.password
+      }
+    })
+  },
   // 交易员选择列表
   tradeUserList() {
     return request({

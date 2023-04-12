@@ -128,7 +128,7 @@
             :class="activeTab == tabList[1] ? 'active' : ''"
             @click="handleClickTab(tabList[1])"
           >
-            价差
+            JC
           </li>
           <li
             :class="activeTab == tabList[2] ? 'active' : ''"

@@ -92,7 +92,6 @@ export default {
                 break
               // 返回研究员待接收询价单（买）
               // case 'start_bond_0':
-              //   console.log('周佳洪：' + msgJson.data)
               //   console.log(msgJson.data)
               //   msgJson.data.status = 'start_bond'
               //   self.showMsg()

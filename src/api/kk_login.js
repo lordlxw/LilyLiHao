@@ -4,7 +4,6 @@ import request from '@/utils/request'
 export default {
   // 登录
   login(params) {
-    console.log(params)
     return request({
       url: `${Vue.prototype.$apiUrl}/login`,
       method: 'post',
