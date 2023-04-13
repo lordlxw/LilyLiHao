@@ -28,7 +28,7 @@
               :data="tableData"
               tooltip-effect="dark"
               style="width: 100%"
-              :height="nobondsH"
+              :max-height="nobondsH"
               border
               row-key="rowId"
               :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -38,6 +38,8 @@
               :default-expand-all="defaultExpandAll"
               header-row-style="height:30px;line-height:30px;"
               header-cell-style="background:#f8f8f8;"
+              show-summary
+              :summary-method="getBondsSummmaries"
             >
               <template v-for="itemHead in tableHead">
                 <el-table-column
@@ -269,7 +271,7 @@
               :data="tableDataFinish"
               tooltip-effect="dark"
               style="width: 100%"
-              :height="bondsH"
+              :max-height="bondsH"
               border
               row-key="rowId"
               :row-class-name="tableRowFinishClassName"
@@ -278,6 +280,8 @@
               :span-method="objectSpanMethod"
               header-row-style="height:30px;line-height:30px;"
               header-cell-style="background:#f8f8f8;"
+              show-summary
+              :summary-method="getBondsSummmaries"
             >
               <template v-for="itemHead in tableHeadFinish">
                 <el-table-column
@@ -1272,6 +1276,32 @@ export default {
       return moment(
         moment(scope.row.deliveryTime).format('YYYY-MM-DD')
       ).isSameOrAfter(moment(new Date()).format('YYYY-MM-DD'))
+    },
+    // 持仓求和
+    getBondsSummmaries(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计';
+          return;
+        }
+        const values = data.map(item => Number(item[column.property]));
+        if (!values.every(value => isNaN(value)) && (column.property === 'floatProfit' || column.property === 'profit')) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          }, 0);
+          // sums[index]
+        } else {
+          sums[index] = ''
+        }
+      })
+      return sums
     }
   },
   mounted() {

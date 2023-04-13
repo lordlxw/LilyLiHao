@@ -418,3 +418,12 @@ a:hover {
 .el-table--small .el-table__cell {
     padding: 3px 0;
 }
+
+/*
+表格底部合计颜色
+*/
+.el-table__footer-wrapper tbody td,
+.el-table__header-wrapper tbody td {
+    color      : #ec0000;
+    font-weight: bold;
+}
