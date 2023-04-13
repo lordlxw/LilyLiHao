@@ -185,6 +185,7 @@
                 v-if="
                   ['1', '4', '8'].indexOf(scope.row.status.toString()) !== -1 &&
                   setAuth('inquiry:deal') &&
+                  scope.row.relativeNum &&
                   scope.row.relativeNum.indexOf('GD_') === -1
                 "
                 >成交</el-button
@@ -380,6 +381,7 @@
                 v-if="
                   ['1', '4', '8'].indexOf(scope.row.status.toString()) !== -1 &&
                   setAuth('inquiry:rolldeal') &&
+                  scope.row.relativeNum &&
                   scope.row.relativeNum.indexOf('GD_') !== -1
                 "
                 >滚单</el-button
@@ -922,7 +924,7 @@ export default {
     },
     // 滚单成交颜色框
     tableRowClassName({ row, rowIndex }) {
-      if (row.relativeNum.indexOf('GD_') !== -1) {
+      if (row.relativeNum && row.relativeNum.indexOf('GD_') !== -1) {
         if (rowIndex === 0) {
           tableCurrentRelativeNum = 'gd-odd-row'
           currentRelativeNum = row.relativeNum
@@ -963,7 +965,7 @@ export default {
         relativeNum = ''
       }
       if (column.label === '滚单成交') {
-        if (row.relativeNum.indexOf('GD_') !== -1) {
+        if (row.relativeNum && row.relativeNum.indexOf('GD_') !== -1) {
           // 1、根据当前finishCode查找个数作为合并行数
           relativeNumSameCount = 0
           let flag = false
