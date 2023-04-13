@@ -38,8 +38,6 @@
               :default-expand-all="defaultExpandAll"
               header-row-style="height:30px;line-height:30px;"
               header-cell-style="background:#f8f8f8;"
-              show-summary
-              :summary-method="getBondsSummmaries"
             >
               <template v-for="itemHead in tableHead">
                 <el-table-column
@@ -280,8 +278,6 @@
               :span-method="objectSpanMethod"
               header-row-style="height:30px;line-height:30px;"
               header-cell-style="background:#f8f8f8;"
-              show-summary
-              :summary-method="getBondsSummmaries"
             >
               <template v-for="itemHead in tableHeadFinish">
                 <el-table-column
@@ -758,7 +754,16 @@ export default {
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
           let rowId = 0
-          response.rows.forEach(element => {
+          // 获取表格第一行汇总的数据字段
+          let firstRow = {}
+          let totalFloatProfit = 0
+          response.rows.forEach((element, index) => {
+            if (index === 0) {
+              firstRow = JSON.parse(JSON.stringify(element))
+              Object.keys(firstRow).forEach(key => {
+                firstRow[key] = ''
+              })
+            }
             if (element.children && element.children.length > 0) {
               const realTradeIdList = []
               element.children.forEach(element => {
@@ -770,9 +775,14 @@ export default {
               element.realTradeIdList = realTradeIdList
               element.rowId = rowId
             }
+            if (!isNaN(element.floatProfit)) {
+              totalFloatProfit += element.floatProfit
+            }
           });
           this.tableData = response.rows;
           this.totalCount = response.total;
+          firstRow["floatProfit"] = util.moneyFormat(totalFloatProfit, 2)
+          this.tableData.unshift(firstRow)
         } else {
           this.tableData = [];
           this.totalCount = 0;
@@ -793,8 +803,24 @@ export default {
         userTradeId: null
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
+          // 获取表格第一行汇总的数据字段
+          let firstRow = {}
+          let totalProfit = 0
+          response.rows.forEach((element, index) => {
+            if (index === 0) {
+              firstRow = JSON.parse(JSON.stringify(element))
+              Object.keys(firstRow).forEach(key => {
+                firstRow[key] = ''
+              })
+            }
+            if (!isNaN(element.profit)) {
+              totalProfit += element.profit
+            }
+          });
           this.tableDataFinish = response.rows;
           this.totalCount = response.total;
+          firstRow["profit"] = util.moneyFormat(totalProfit, 2)
+          this.tableDataFinish.unshift(firstRow)
         } else {
           this.tableDataFinish = [];
           this.totalCount = 0;
@@ -880,11 +906,11 @@ export default {
         case "direction":
           return config.funcKeyValue(row.direction, "directionMeta")
         case "deliveryTime":
-          return moment(row.deliveryTime).format('YYYY-MM-DD') // + `（T+${row.deliverySpeed}）`
+          return row.deliveryTime ? moment(row.deliveryTime).format('YYYY-MM-DD') : '' // + `（T+${row.deliverySpeed}）`
         case "realDeliveryTime":
           return row.realDeliveryTime ? moment(row.realDeliveryTime).format('YYYY-MM-DD') : "--"
         case "price":
-          return util.moneyFormat(row.price, 4)
+          return row.price ? util.moneyFormat(row.price, 4) : ''
         case "realPrice":
           return row.realPrice ? util.moneyFormat(row.realPrice, 4) : "--"
         case "realVolume":
@@ -1276,32 +1302,6 @@ export default {
       return moment(
         moment(scope.row.deliveryTime).format('YYYY-MM-DD')
       ).isSameOrAfter(moment(new Date()).format('YYYY-MM-DD'))
-    },
-    // 持仓求和
-    getBondsSummmaries(param) {
-      const { columns, data } = param;
-      const sums = [];
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '合计';
-          return;
-        }
-        const values = data.map(item => Number(item[column.property]));
-        if (!values.every(value => isNaN(value)) && (column.property === 'floatProfit' || column.property === 'profit')) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr);
-            if (!isNaN(value)) {
-              return prev + curr;
-            } else {
-              return prev;
-            }
-          }, 0);
-          // sums[index]
-        } else {
-          sums[index] = ''
-        }
-      })
-      return sums
     }
   },
   mounted() {
