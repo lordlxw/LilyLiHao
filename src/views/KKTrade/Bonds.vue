@@ -21,7 +21,9 @@
               @click="handleNobondsAllExport"
               >全量导出</el-button
             >
-            <span class="ml20">浮动盈亏：{{ totalFloatProfit }}</span>
+            <el-tag type="warning" class="ml20"
+              >浮动盈亏：<b>{{ totalFloatProfit }}</b></el-tag
+            >
           </div>
           <div class="table mt10" ref="noBondsDo">
             <el-table
@@ -287,9 +289,15 @@
               @click="handleAddExport"
               >增量导出</el-button
             >
-            <span class="ml20">已平盈亏：{{ totalProfit }}</span>
-            <span class="ml20">买：{{ buyVolumn }}</span>
-            <span class="ml20">卖：{{ saleVolumn }}</span>
+            <el-tag type="warning" class="ml20"
+              >已平盈亏：<b>{{ totalProfit }}</b></el-tag
+            >
+            <el-tag type="success" class="ml20"
+              >买：<b>{{ buyVolumn }}</b></el-tag
+            >
+            <el-tag type="danger" class="ml20"
+              >卖：<b>{{ saleVolumn }}</b></el-tag
+            >
           </div>
           <div class="table mt10">
             <el-table

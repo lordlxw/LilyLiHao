@@ -4,8 +4,12 @@
     <!-- <div class="filter-condition"></div> -->
     <div class="list">
       <div class="do mb10">
-        <span>交割总量：{{ rewardTotalVolume }}</span>
-        <span class="ml20">交割盈亏：{{ rewardFloatProfit }}</span>
+        <el-tag type="warning"
+          >交割总量：<b>{{ rewardTotalVolume }}</b></el-tag
+        >
+        <el-tag type="danger" class="ml20"
+          >交割盈亏：<b>{{ rewardFloatProfit }}</b></el-tag
+        >
       </div>
       <el-table
         v-loading="loading"
