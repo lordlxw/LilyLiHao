@@ -3,10 +3,13 @@ import request from '@/utils/request'
 
 export default {
   // 下个工作日
-  nextDealDay() {
+  nextDealDay(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/holidays/getNextWorkday`,
-      method: 'get'
+      method: 'get',
+      params: {
+        date: params.deliveryTime
+      }
     })
   },
   // 一月内节假日

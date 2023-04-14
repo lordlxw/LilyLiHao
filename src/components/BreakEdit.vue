@@ -310,7 +310,7 @@ export default {
         if (moment(this.row.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
           this.breakEditForm.deliveryTime = moment(this.row.deliveryTime).format('YYYY-MM-DD')
           this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.row.deliveryTime).format('YYYY-MM-DD')
-        } else if (moment(this.row.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
+        } else if (moment(this.row.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 15:30:00'))) {
           this.breakEditForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
           this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
         } else {
@@ -327,7 +327,7 @@ export default {
     },
     // 获取下个交易日
     getNextDealDay() {
-      apiCanlendar.nextDealDay().then(response => {
+      apiCanlendar.nextDealDay({ deliveryTime: this.row.deliveryTime }).then(response => {
         if (response && response.code === '00000') {
           this.breakEditForm.deliveryTime = response.value
           if (this.type !== 1) {

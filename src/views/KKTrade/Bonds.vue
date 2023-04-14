@@ -21,6 +21,7 @@
               @click="handleNobondsAllExport"
               >全量导出</el-button
             >
+            <span class="ml20">浮动盈亏：{{ totalFloatProfit }}</span>
           </div>
           <div class="table mt10" ref="noBondsDo">
             <el-table
@@ -286,6 +287,9 @@
               @click="handleAddExport"
               >增量导出</el-button
             >
+            <span class="ml20">已平盈亏：{{ totalProfit }}</span>
+            <span class="ml20">买：{{ buyVolumn }}</span>
+            <span class="ml20">卖：{{ saleVolumn }}</span>
           </div>
           <div class="table mt10">
             <el-table
@@ -675,7 +679,14 @@ export default {
         { label: '修改项', prop: 'fieldName', width: '150', align: 'left', show: true },
         { label: '旧值', prop: 'oldValue', width: '200', align: 'left', show: true },
         { label: '新值', prop: 'newValue', width: '200', align: 'left', show: true }
-      ]
+      ],
+      // 未平浮动盈亏
+      totalFloatProfit: '',
+      // 已平盈亏
+      totalProfit: '',
+      // 已平买卖
+      buyVolumn: '',
+      saleVolumn: ''
     }
   },
   created() {
@@ -810,15 +821,15 @@ export default {
         if (response && response.code === 200 && response.rows) {
           let rowId = 0
           // 获取表格第一行汇总的数据字段
-          let firstRow = {}
+          // let firstRow = {}
           let totalFloatProfit = 0
           response.rows.forEach((element, index) => {
-            if (index === 0) {
-              firstRow = JSON.parse(JSON.stringify(element))
-              Object.keys(firstRow).forEach(key => {
-                firstRow[key] = ''
-              })
-            }
+            // if (index === 0) {
+            //   firstRow = JSON.parse(JSON.stringify(element))
+            //   Object.keys(firstRow).forEach(key => {
+            //     firstRow[key] = ''
+            //   })
+            // }
             if (element.children && element.children.length > 0) {
               const realTradeIdList = []
               element.children.forEach(element => {
@@ -836,8 +847,9 @@ export default {
           });
           this.tableData = response.rows;
           this.totalCount = response.total;
-          firstRow["floatProfit"] = util.moneyFormat(totalFloatProfit, 2)
-          this.tableData.unshift(firstRow)
+          this.totalFloatProfit = util.moneyFormat(totalFloatProfit, 2)
+          // firstRow["floatProfit"] = util.moneyFormat(totalFloatProfit, 2)
+          // this.tableData.unshift(firstRow)
         } else {
           this.tableData = [];
           this.totalCount = 0;
@@ -859,23 +871,34 @@ export default {
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
           // 获取表格第一行汇总的数据字段
-          let firstRow = {}
+          // let firstRow = {}
           let totalProfit = 0
+          let buyVolumn = 0
+          let saleVolumn = 0
           response.rows.forEach((element, index) => {
-            if (index === 0) {
-              firstRow = JSON.parse(JSON.stringify(element))
-              Object.keys(firstRow).forEach(key => {
-                firstRow[key] = ''
-              })
-            }
+            // if (index === 0) {
+            //   firstRow = JSON.parse(JSON.stringify(element))
+            //   Object.keys(firstRow).forEach(key => {
+            //     firstRow[key] = ''
+            //   })
+            // }
             if (!isNaN(element.profit)) {
               totalProfit += element.profit
+            }
+            if (element.direction === 'bond_0' && !isNaN(element.volume)) {
+              buyVolumn += Number(element.volume)
+            }
+            if (element.direction === 'bond_1' && !isNaN(element.volume)) {
+              saleVolumn += Number(element.volume)
             }
           });
           this.tableDataFinish = response.rows;
           this.totalCount = response.total;
-          firstRow["profit"] = util.moneyFormat(totalProfit, 2)
-          this.tableDataFinish.unshift(firstRow)
+          this.totalProfit = util.moneyFormat(totalProfit, 2)
+          this.buyVolumn = buyVolumn
+          this.saleVolumn = saleVolumn
+          // firstRow["profit"] = util.moneyFormat(totalProfit, 2)
+          // this.tableDataFinish.unshift(firstRow)
         } else {
           this.tableDataFinish = [];
           this.totalCount = 0;
@@ -1225,7 +1248,7 @@ export default {
         if (response && response.code === '00000') {
           this.$message({
             message: '已提交口头违约申请',
-            type: 'info'
+            type: 'success'
           })
           this.handlePopoverClose(scope, `popover-bondssaybreak-${scope.$index}`)
           this.loadInitDataFinish()

@@ -38,7 +38,7 @@ export default {
           self.pickerOptions = {
             disabledDate(time) {
               const date = new Date()
-              return (time.getTime() + 3600 * 1000 * 16 * 1 + 3600 * 100 * 5) < Date.now() || time.getTime() > (date.getTime() + 3600 * 1000 * 24 * 30) || response.value.indexOf(util.dateFormat(time, 'YYYY-MM-DD')) !== -1;
+              return (time.getTime() + 3600 * 1000 * 15 * 1 + 3600 * 100 * 5) < Date.now() || time.getTime() > (date.getTime() + 3600 * 1000 * 24 * 30) || response.value.indexOf(util.dateFormat(time, 'YYYY-MM-DD')) !== -1;
             }
           }
         }
@@ -46,7 +46,7 @@ export default {
     },
     // 获取下个交易日
     getNextDealDay() {
-      api.nextDealDay().then(response => {
+      api.nextDealDay({}).then(response => {
         if (response && response.code === '00000') {
           this.deliveryTime = response.value
           this.$emit('change', {

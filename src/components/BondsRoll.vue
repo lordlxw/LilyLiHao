@@ -399,7 +399,7 @@ export default {
       if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
         this.rollForm.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
         this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
-      } else if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
+      } else if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 15:30:00'))) {
         this.rollForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
         this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
       } else {
@@ -412,7 +412,7 @@ export default {
       if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
         this.rollForm.deliveryTime2 = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
         this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
-      } else if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
+      } else if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 15:30:00'))) {
         this.rollForm.deliveryTime2 = moment(new Date()).format('YYYY-MM-DD')
         this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
       } else {
@@ -423,7 +423,7 @@ export default {
     },
     // 获取下个交易日
     getNextDealDay() {
-      apiCanlendar.nextDealDay().then(response => {
+      apiCanlendar.nextDealDay({}).then(response => {
         if (response && response.code === '00000') {
           this.rollForm.deliveryTime = response.value
           this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value

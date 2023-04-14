@@ -252,7 +252,7 @@ export default {
     },
     // 获取下个交易日
     getNextDealDay() {
-      apiCanlendar.nextDealDay().then(response => {
+      apiCanlendar.nextDealDay({}).then(response => {
         if (response && response.code === '00000') {
           this.noBondsForm.deliveryTime = response.value
           this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
