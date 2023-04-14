@@ -890,7 +890,11 @@ export default {
           if (response.value.compareResult.fieldlist && response.value.compareResult.fieldlist.length > 0) {
             let fieldlist = response.value.compareResult.fieldlist
             for (let i = 0; i < fieldlist.length; i++) {
-              diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': response.value.rt[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
+              if (fieldlist[i] === 'deliveryTime') {
+                diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD'), 'newValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD') })
+              } else {
+                diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': response.value.rt[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
+              }
             }
           }
           this.diffTableData = diffTableData
@@ -909,7 +913,6 @@ export default {
               } else {
                 diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': response.value.rt[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
               }
-
             }
           }
           this.diffTableData = diffTableData

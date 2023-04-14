@@ -770,6 +770,10 @@ export default {
               case 'yipingchangerequest_bond_1':
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 break;
+              case 'weipingchangerequest_bond_0':
+              case 'weipingchangerequest_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                break;
             }
           }
         }
