@@ -129,7 +129,7 @@
                         </el-table-column>
                       </template>
                     </el-table>
-                    <div style="text-align: right">
+                    <div style="text-align: center" class="mt20">
                       <el-button
                         type="primary"
                         @click="handleAgreeNoBondsUpdateClick(scope)"
@@ -373,7 +373,7 @@
                         </el-table-column>
                       </template>
                     </el-table>
-                    <div style="text-align: right">
+                    <div style="text-align: center" class="mt20">
                       <el-button
                         type="primary"
                         @click="handleAgreeBondsUpdateClick(scope)"
@@ -677,7 +677,7 @@ export default {
   watch: {
     enquiryInfo() {
       if (this.$refs.eltabs.panes.length > 0) {
-        switch (this.$refs.eltabs.panes[0].label) {
+        switch (this.$refs.eltabs.panes[this.$refs.eltabs.currentName].label) {
           case this.tablist[0]:
             this.loadInitData()
             break
@@ -1329,7 +1329,7 @@ export default {
         if (response && response.code === '00000') {
           this.$message({
             message: "已拒绝修改",
-            type: 'warning'
+            type: 'success'
           })
           this.handlePopoverClose(scope, `popover-agreeupdatenobonds-${scope.$index}`)
           this.loadInitData()
@@ -1355,7 +1355,7 @@ export default {
         if (response && response.code === '00000') {
           this.$message({
             message: "已拒绝修改",
-            type: 'warning'
+            type: 'success'
           })
           this.handlePopoverClose(scope, `popover-agreeupdatebonds-${scope.$index}`)
           this.loadInitDataFinish()
