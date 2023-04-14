@@ -48,7 +48,27 @@ export default {
       }
     })
   },
-  // 违约增改
+  // 违约续作确认
+  dealBreakRedoConfirm(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/xuzuoconfirm`,
+      method: 'post',
+      data: {
+        userTradeId: params.userTradeId
+      }
+    })
+  },
+  // 违约续作拒绝
+  dealBreakRedoRejection(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/xuzuodeny`,
+      method: 'post',
+      data: {
+        userTradeId: params.userTradeId
+      }
+    })
+  },
+  // 违约增改 - 作废
   dealBreakAddUpdate(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/weiyuezenggai`,

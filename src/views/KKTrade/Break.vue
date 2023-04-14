@@ -42,7 +42,10 @@
           >
             <template slot-scope="scope">
               <el-popover
-                v-if="setAuth('break:back')"
+                v-if="
+                  setAuth('break:back') &&
+                  [3, 4].indexOf(scope.row.jiaogeStatus) !== -1
+                "
                 placement="bottom-end"
                 :ref="`popover-breakback-${scope.$index}`"
               >
