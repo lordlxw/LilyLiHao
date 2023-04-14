@@ -158,7 +158,8 @@
       </el-row>
 
       <el-form-item>
-        <span class="txt-red">价差：{{ rollForm.price - rollForm.price2 }}</span
+        <span class="txt-red"
+          >价差：{{ (rollForm.price - rollForm.price2) | moneyFormat(4) }}</span
         ><br />
         <el-button class="btn-green" @click="submitForm('rollForm')"
           >确认滚单</el-button
