@@ -4,7 +4,8 @@ $hover-color : #2cad98;
 $hover-color2: #5270bd;
 
 html {
-    overflow: hidden;
+    overflow                : hidden;
+    -webkit-text-size-adjust: none;
 }
 
 ul,

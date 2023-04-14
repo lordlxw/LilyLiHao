@@ -109,14 +109,34 @@
                         >{{ scope.row.tradeNum }}</span
                       >”{{ scope.row.tscode }}？
                     </p>
+                    <el-table border :data="diffTableData">
+                      <template v-for="itemHead in diffTableHead">
+                        <el-table-column
+                          v-if="itemHead.show"
+                          :key="itemHead.label"
+                          :align="itemHead.align"
+                          :prop="itemHead.prop"
+                          :formatter="
+                            itemHead.formatter
+                              ? itemHead.formatter
+                              : (row, column, cellValue, index) => {
+                                  return cellValue;
+                                }
+                          "
+                          :label="itemHead.label"
+                          :width="itemHead.width ? itemHead.width : ''"
+                        >
+                        </el-table-column>
+                      </template>
+                    </el-table>
                     <div style="text-align: right">
                       <el-button
-                        type="text"
+                        type="primary"
                         @click="handleAgreeNoBondsUpdateClick(scope)"
                         >同意</el-button
                       >
                       <el-button
-                        type="text"
+                        type="default"
                         @click="handleRejectNoBondsUpdateClick(scope)"
                         >拒绝</el-button
                       >
@@ -333,14 +353,34 @@
                         >{{ scope.row.tradeNum }}</span
                       >”{{ scope.row.tscode }}？
                     </p>
+                    <el-table border :data="diffTableData">
+                      <template v-for="itemHead in diffTableHead">
+                        <el-table-column
+                          v-if="itemHead.show"
+                          :key="itemHead.label"
+                          :align="itemHead.align"
+                          :prop="itemHead.prop"
+                          :formatter="
+                            itemHead.formatter
+                              ? itemHead.formatter
+                              : (row, column, cellValue, index) => {
+                                  return cellValue;
+                                }
+                          "
+                          :label="itemHead.label"
+                          :width="itemHead.width ? itemHead.width : ''"
+                        >
+                        </el-table-column>
+                      </template>
+                    </el-table>
                     <div style="text-align: right">
                       <el-button
-                        type="text"
+                        type="primary"
                         @click="handleAgreeBondsUpdateClick(scope)"
                         >同意</el-button
                       >
                       <el-button
-                        type="text"
+                        type="default"
                         @click="handleRejectBondsUpdateClick(scope)"
                         >拒绝</el-button
                       >
@@ -620,7 +660,14 @@ export default {
       openRow: {},
       // 交割弹框
       dialogBondsDeliveryFormVisible: false,
-      deliveryFinishData: []
+      deliveryFinishData: [],
+      // 修改对比数据
+      diffTableData: [],
+      diffTableHead: [
+        { label: '修改项', prop: 'fieldName', width: '150', align: 'left', show: true },
+        { label: '旧值', prop: 'oldValue', width: '200', align: 'left', show: true },
+        { label: '新值', prop: 'newValue', width: '200', align: 'left', show: true }
+      ]
     }
   },
   created() {
@@ -829,10 +876,32 @@ export default {
       });
     },
     handlViewNobondsUpdateContent(scope) {
-      api.nobondsUpdateContent({ realTradeId: scope.row.realTradeId }).then(response => { })
+      api.nobondsUpdateContent({ realTradeId: scope.row.realTradeId }).then(response => {
+        if (response && response.code === '00000' && response.value) {
+          let diffTableData = [];
+          if (response.value.compareResult.fieldlist && response.value.compareResult.fieldlist.length > 0) {
+            let fieldlist = response.value.compareResult.fieldlist
+            for (let i = 0; i < fieldlist.length; i++) {
+              diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': response.value.rt[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
+            }
+          }
+          this.diffTableData = diffTableData
+        }
+      })
     },
     handlViewBondsUpdateContent(scope) {
-      api.bondsUpdateContent({ realTradeId: scope.row.realTradeId }).then(response => { })
+      api.bondsUpdateContent({ realTradeId: scope.row.realTradeId }).then(response => {
+        if (response && response.code === '00000' && response.value) {
+          let diffTableData = [];
+          if (response.value.compareResult.fieldlist && response.value.compareResult.fieldlist.length > 0) {
+            let fieldlist = response.value.compareResult.fieldlist
+            for (let i = 0; i < fieldlist.length; i++) {
+              diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': response.value.rt[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
+            }
+          }
+          this.diffTableData = diffTableData
+        }
+      })
     },
     handleTabsClick(tab, event) {
       finishCode = ''
@@ -916,7 +985,7 @@ export default {
         case "realVolume":
           return row.realVolume ? row.realVolume : "--"
         case "tscode":
-          return row.tscode.replace(/.IB/, '')
+          return row.tscode ? row.tscode.replace(/.IB/, '') : ''
         case "jiaogeStatus":
           return config.bondStatus[row.jiaogeStatus]
       }
