@@ -823,7 +823,7 @@ export default {
           // 获取表格第一行汇总的数据字段
           // let firstRow = {}
           let totalFloatProfit = 0
-          response.rows.forEach((element, index) => {
+          response.rows.forEach(element => {
             // if (index === 0) {
             //   firstRow = JSON.parse(JSON.stringify(element))
             //   Object.keys(firstRow).forEach(key => {
@@ -875,7 +875,7 @@ export default {
           let totalProfit = 0
           let buyVolumn = 0
           let saleVolumn = 0
-          response.rows.forEach((element, index) => {
+          response.rows.forEach(element => {
             // if (index === 0) {
             //   firstRow = JSON.parse(JSON.stringify(element))
             //   Object.keys(firstRow).forEach(key => {

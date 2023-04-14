@@ -3,6 +3,10 @@
   <div class="content mt20">
     <!-- <div class="filter-condition"></div> -->
     <div class="list">
+      <div class="do mb10">
+        <span>交割总量：{{ rewardTotalVolume }}</span>
+        <span class="ml20">交割盈亏：{{ rewardFloatProfit }}</span>
+      </div>
       <el-table
         v-loading="loading"
         :data="tableData"
@@ -103,7 +107,9 @@ export default {
         { label: '备注', prop: 'remark', width: '500', align: 'left', show: true }
       ],
       tableData: [],
-      rewardH: '0'
+      rewardH: '0',
+      rewardTotalVolume: '',
+      rewardFloatProfit: ''
     }
   },
   created() {
@@ -151,7 +157,19 @@ export default {
         userTradeId: null
       }).then((response) => {
         if (response && response.code === '00000' && response.value) {
+          let rewardTotalVolume = 0
+          let rewardFloatProfit = 0
+          response.value.forEach(element => {
+            if (!isNaN(element.profit)) {
+              rewardFloatProfit += element.profit
+            }
+            if (!isNaN(element.profit)) {
+              rewardTotalVolume += Number(element.volume)
+            }
+          })
           this.tableData = response.value;
+          this.rewardFloatProfit = util.moneyFormat(rewardFloatProfit, 2)
+          this.rewardTotalVolume = rewardTotalVolume
         } else {
           this.tableData = [];
         }
