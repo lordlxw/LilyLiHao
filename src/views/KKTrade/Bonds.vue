@@ -11,17 +11,28 @@
         <!-- 未平仓 -->
         <el-tab-pane :label="tablist[0]" v-if="setAuth('nobonds:view')">
           <div class="do">
-            <el-button size="mini" @click="handleDefaultExpandAll">{{
-              defaultExpandAll ? "全收" : "全展"
-            }}</el-button>
+            <el-button
+              size="mini"
+              class="mr20"
+              @click="handleDefaultExpandAll"
+              >{{ defaultExpandAll ? "全收" : "全展" }}</el-button
+            >
             <el-button
               v-if="setAuth('nobonds:allexport')"
               type="primary"
               size="mini"
+              class="mr20"
               @click="handleNobondsAllExport"
               >全量导出</el-button
             >
-            <el-tag type="warning" class="ml20"
+            <el-tag
+              :type="
+                totalFloatProfit.toString().indexOf('-') !== -1
+                  ? 'danger'
+                  : 'success'
+              "
+              class="mr20"
+              v-if="setAuth('reward:datatotal')"
               >浮动盈亏：<b>{{ totalFloatProfit }}</b></el-tag
             >
           </div>
@@ -286,16 +297,24 @@
               v-if="setAuth('bonds:addexport')"
               type="primary"
               size="mini"
+              class="mr10"
               @click="handleAddExport"
               >增量导出</el-button
             >
-            <el-tag type="warning" class="ml20"
+            <el-tag
+              :type="
+                totalProfit.toString().indexOf('-') !== -1
+                  ? 'danger'
+                  : 'success'
+              "
+              class="mr20"
+              v-if="setAuth('reward:datatotal')"
               >已平盈亏：<b>{{ totalProfit }}</b></el-tag
             >
-            <el-tag type="success" class="ml20"
+            <el-tag type="success" class="mr20"
               >买：<b>{{ buyVolumn }}</b></el-tag
             >
-            <el-tag type="danger" class="ml20"
+            <el-tag type="danger" class="mr20"
               >卖：<b>{{ saleVolumn }}</b></el-tag
             >
           </div>

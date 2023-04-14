@@ -50,11 +50,11 @@
         <div v-show="type === 1">
           {{ breakEditForm.deliveryTime }}
         </div>
-        <delivery-canlendar-update
+        <!-- <delivery-canlendar-update
           v-show="type === 2"
           ref="deliveryCanlendarUpdate"
           @change="handleDeliveryCanlendarUpdate"
-        ></delivery-canlendar-update>
+        ></delivery-canlendar-update> -->
         <!-- <el-button-group>
           <el-button
             icon="el-icon-plus"
@@ -256,47 +256,47 @@ export default {
               }
             })
           }
-          if (this.type === 2) {
-            api.dealBreakAddUpdate({
-              // 券号
-              tscode: this[formName].tscode,
-              // 方向
-              direction: this[formName].direction,
-              // 交割速度
-              deliverySpeed: this[formName].deliverySpeed,
-              // 交割日期
-              deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD 00:00:00"),
-              // 成交价格
-              price: util.moneyFormat(this[formName].price, 4),
-              // 成交量
-              volume: this[formName].volume,
-              // 备注
-              remark: this[formName].remark,
-              // 联系人
-              contactPerson: this[formName].contactPerson,
-              // 联系方式
-              contactType: this[formName].contactType,
-              // 交易对手
-              counterParty: this[formName].counterParty,
-              // 交易id
-              realTradeId: this[formName].realTradeId
-            }).then(res => {
-              if (res && res.code === '00000') {
-                this.$message({
-                  message: '已发送修改 请等待研究员确认',
-                  type: 'success'
-                })
-                this.$emit('change', {
-                  dialogVisible: false
-                })
-              } else {
-                this.$message({
-                  message: `${res.message}`,
-                  type: 'error'
-                })
-              }
-            })
-          }
+          // if (this.type === 2) {
+          //   api.dealBreakAddUpdate({
+          //     // 券号
+          //     tscode: this[formName].tscode,
+          //     // 方向
+          //     direction: this[formName].direction,
+          //     // 交割速度
+          //     deliverySpeed: this[formName].deliverySpeed,
+          //     // 交割日期
+          //     deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD 00:00:00"),
+          //     // 成交价格
+          //     price: util.moneyFormat(this[formName].price, 4),
+          //     // 成交量
+          //     volume: this[formName].volume,
+          //     // 备注
+          //     remark: this[formName].remark,
+          //     // 联系人
+          //     contactPerson: this[formName].contactPerson,
+          //     // 联系方式
+          //     contactType: this[formName].contactType,
+          //     // 交易对手
+          //     counterParty: this[formName].counterParty,
+          //     // 交易id
+          //     realTradeId: this[formName].realTradeId
+          //   }).then(res => {
+          //     if (res && res.code === '00000') {
+          //       this.$message({
+          //         message: '已发送修改 请等待研究员确认',
+          //         type: 'success'
+          //       })
+          //       this.$emit('change', {
+          //         dialogVisible: false
+          //       })
+          //     } else {
+          //       this.$message({
+          //         message: `${res.message}`,
+          //         type: 'error'
+          //       })
+          //     }
+          //   })
+          // }
         }
       })
     },
@@ -327,7 +327,7 @@ export default {
     },
     // 获取下个交易日
     getNextDealDay() {
-      apiCanlendar.nextDealDay({ deliveryTime: this.row.deliveryTime }).then(response => {
+      apiCanlendar.nextDealDay({ deliveryTime: moment(this.row.deliveryTime).format('YYYY-MM-DD 00:00:00') }).then(response => {
         if (response && response.code === '00000') {
           this.breakEditForm.deliveryTime = response.value
           if (this.type !== 1) {

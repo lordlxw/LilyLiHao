@@ -81,7 +81,7 @@
                 class="ml10"
                 >续作</el-button
               >
-              <el-button
+              <!-- <el-button
                 v-if="
                   [2].indexOf(scope.row.jiaogeStatus) !== -1 &&
                   setAuth('break:addupdate')
@@ -90,14 +90,14 @@
                 @click="handleOpenBreakEditDialog(2, scope.row)"
                 class="ml10"
                 >增改</el-button
-              >
+              > -->
             </template>
           </el-table-column>
         </el-table>
       </div>
     </div>
     <el-dialog
-      :title="currentType === 1 ? '违约续作' : '违约增改'"
+      :title="currentType === 1 ? '违约续作' : ''"
       width="500px;"
       :visible.sync="dialogBreakEditFormVisible"
       append-to-body
@@ -135,6 +135,7 @@ export default {
         { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
         { label: '交易量', prop: 'volume', width: '100', align: 'right', show: true },
         { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '状态', prop: 'jiaogeStatus', formatter: this.funcFormat, width: '100', align: 'left', show: true },
         { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
         { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
         { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true }
@@ -198,7 +199,7 @@ export default {
         case "direction":
           return config.funcKeyValue(row.direction, "directionMeta")
         case "deliveryTime":
-          return moment(row.deliveryTime).format('YYYY-MM-DD') // + `（T+${row.deliverySpeed}）`
+          return moment(row.deliveryTime).format('YYYY-MM-DD')
         case "realDeliveryTime":
           return row.realDeliveryTime ? moment(row.realDeliveryTime).format('YYYY-MM-DD') : "--"
         case "price":
@@ -208,7 +209,9 @@ export default {
         case "realVolume":
           return row.realVolume ? row.realVolume : "--"
         case "tscode":
-          return row.tscode.replace(/.IB/, '')
+          return row.tscode ? row.tscode.replace(/.IB/, '') : ''
+        case 'jiaogeStatus':
+          return config.funcKeyValue(row.jiaogeStatus, 'bondStatus')
       }
       return row[column.property]
     },
