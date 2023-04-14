@@ -109,7 +109,11 @@
                         >{{ scope.row.tradeNum }}</span
                       >”{{ scope.row.tscode }}？
                     </p>
-                    <el-table border :data="diffTableData">
+                    <el-table
+                      border
+                      :data="diffTableData"
+                      :cell-style="cellStyleUpdate"
+                    >
                       <template v-for="itemHead in diffTableHead">
                         <el-table-column
                           v-if="itemHead.show"
@@ -353,7 +357,11 @@
                         >{{ scope.row.tradeNum }}</span
                       >”{{ scope.row.tscode }}？
                     </p>
-                    <el-table border :data="diffTableData">
+                    <el-table
+                      border
+                      :data="diffTableData"
+                      :cell-style="cellStyleUpdate"
+                    >
                       <template v-for="itemHead in diffTableHead">
                         <el-table-column
                           v-if="itemHead.show"
@@ -896,7 +904,12 @@ export default {
           if (response.value.compareResult.fieldlist && response.value.compareResult.fieldlist.length > 0) {
             let fieldlist = response.value.compareResult.fieldlist
             for (let i = 0; i < fieldlist.length; i++) {
-              diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': response.value.rt[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
+              if (fieldlist[i] === 'deliveryTime') {
+                diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD'), 'newValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD') })
+              } else {
+                diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': response.value.rt[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
+              }
+
             }
           }
           this.diffTableData = diffTableData
@@ -1043,6 +1056,15 @@ export default {
           case 'bond_0': // 买入
             return 'color:#00da3c';
         }
+      }
+    },
+    // 更新记录表
+    cellStyleUpdate(row, column, rowIndex, columnIndex) {
+      if (row.column.label === '旧值') {
+        return 'color:#2cad98'
+      }
+      if (row.column.label === '新值') {
+        return 'color:#ec0000'
       }
     },
     // 合并单元格
