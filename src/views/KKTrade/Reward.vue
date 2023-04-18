@@ -5,7 +5,10 @@
     <div class="list">
       <div class="do mb10">
         <el-tag type="success" class="mr20"
-          >交割总量：<b>{{ rewardTotalVolume }}</b></el-tag
+          >交割（买）：<b>{{ rewardBuyVolume }}</b></el-tag
+        >
+        <el-tag type="danger" class="mr20"
+          >交割（卖）：<b>{{ rewardSaleVolume }}</b></el-tag
         >
         <el-tag
           :type="
@@ -119,7 +122,8 @@ export default {
       ],
       tableData: [],
       rewardH: '0',
-      rewardTotalVolume: '',
+      rewardBuyVolume: '',
+      rewardSaleVolume: '',
       rewardFloatProfit: ''
     }
   },
@@ -168,19 +172,24 @@ export default {
         userTradeId: null
       }).then((response) => {
         if (response && response.code === '00000' && response.value) {
-          let rewardTotalVolume = 0
+          let rewardBuyVolume = 0
+          let rewardSaleVolume = 0
           let rewardFloatProfit = 0
           response.value.forEach(element => {
             if (!isNaN(element.profit)) {
               rewardFloatProfit += element.profit
             }
-            if (!isNaN(element.profit)) {
-              rewardTotalVolume += Number(element.volume)
+            if (!isNaN(element.profit) && element.direction === 'bond_0') {
+              rewardBuyVolume += Number(element.volume)
+            }
+            if (!isNaN(element.profit) && element.direction === 'bond_1') {
+              rewardSaleVolume += Number(element.volume)
             }
           })
           this.tableData = response.value;
           this.rewardFloatProfit = util.moneyFormat(rewardFloatProfit, 2)
-          this.rewardTotalVolume = rewardTotalVolume
+          this.rewardBuyVolume = rewardBuyVolume
+          this.rewardSaleVolume = rewardSaleVolume
         } else {
           this.tableData = [];
         }
