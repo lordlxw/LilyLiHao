@@ -1517,7 +1517,7 @@ export default {
               xAxis: [{
                 type: 'category',
                 data: this.data0.categoryData,
-                boundaryGap: false,
+                boundaryGap: true,
                 axisLine: {
                   show: true,
                   onZero: false,
@@ -1593,8 +1593,8 @@ export default {
                 show: true,
                 borderColor: '#ec0000'
               }, {
-                left: '0%',
-                right: '4%',
+                left: '1%',
+                right: '5.5%',
                 bottom: '1%',
                 top: '85%',
               }],
