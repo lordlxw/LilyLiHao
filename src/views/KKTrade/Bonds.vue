@@ -13,7 +13,6 @@
           <div class="do">
             <el-button
               size="mini"
-              class="mr20"
               @click="handleDefaultExpandAll"
               >{{ defaultExpandAll ? "全收" : "全展" }}</el-button
             >
@@ -34,6 +33,12 @@
               class="mr20"
               v-if="setAuth('reward:datatotal')"
               >浮动盈亏：<b>{{ totalFloatProfit }}</b></el-tag
+            >
+            <el-tag type="success" class="mr20"
+              >买：<b>{{ noBondsBuyVolumn }}</b></el-tag
+            >
+            <el-tag type="danger" class="mr20"
+              >卖：<b>{{ noBondsSaleVolumn }}</b></el-tag
             >
           </div>
           <div class="table mt10" ref="noBondsDo">
@@ -709,6 +714,9 @@ export default {
       ],
       // 未平浮动盈亏
       totalFloatProfit: '',
+      // 未平买卖
+      noBondsBuyVolumn: '',
+      noBondsSaleVolumn: '',
       // 已平盈亏
       totalProfit: '',
       // 已平买卖
@@ -833,7 +841,7 @@ export default {
         }
       })
     },
-    // 初始化数据
+    // 初始化数据（未平）
     loadInitData() {
       this.loading = true;
       api.get({
@@ -850,6 +858,8 @@ export default {
           // 获取表格第一行汇总的数据字段
           // let firstRow = {}
           let totalFloatProfit = 0
+          let noBondsBuyVolumn = 0
+          let noBondsSaleVolumn = 0
           response.rows.forEach(element => {
             // if (index === 0) {
             //   firstRow = JSON.parse(JSON.stringify(element))
@@ -871,10 +881,19 @@ export default {
             if (!isNaN(element.floatProfit)) {
               totalFloatProfit += element.floatProfit
             }
+
+            if (!isNaN(element.volume) && element.direction === 'bond_0') {
+              noBondsBuyVolumn += Number(element.volume)
+            }
+            if (!isNaN(element.volume) && element.direction === 'bond_1') {
+              noBondsSaleVolumn += Number(element.volume)
+            }
           });
           this.tableData = response.rows;
           this.totalCount = response.total;
           this.totalFloatProfit = util.moneyFormat(totalFloatProfit, 2)
+          this.noBondsBuyVolumn = noBondsBuyVolumn
+          this.noBondsSaleVolumn = noBondsSaleVolumn
           // firstRow["floatProfit"] = util.moneyFormat(totalFloatProfit, 2)
           // this.tableData.unshift(firstRow)
         } else {
