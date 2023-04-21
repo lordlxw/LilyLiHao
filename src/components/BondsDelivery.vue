@@ -24,11 +24,11 @@
                 }
           "
           :label="itemHead.label"
-          :width="itemHead.width ? itemHead.width : ''"
+          :width="itemHead.width ? returnFrameW(itemHead.width) : ''"
         >
         </el-table-column>
       </template>
-      <el-table-column label="选择" width="auto">
+      <el-table-column label="选择" :width="returnFrameW(200)">
         <template slot-scope="scope">
           <el-checkbox-group
             v-model="scope.row.mySelected"
@@ -43,7 +43,7 @@
           </el-checkbox-group>
         </template>
       </el-table-column>
-      <el-table-column label="违约方" width="120">
+      <el-table-column label="违约方" :width="returnFrameW(150)">
         <template slot-scope="scope">
           <el-select
             v-model="scope.row.weiyuePerson"
@@ -60,7 +60,7 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="违约量" width="120">
+      <el-table-column label="违约量" :width="returnFrameW(150)">
         <template slot-scope="scope">
           <el-input
             size="mini"
@@ -70,7 +70,7 @@
           ></el-input>
         </template>
       </el-table-column>
-      <el-table-column label="做市商" width="120">
+      <el-table-column label="做市商" :width="returnFrameW(150)">
         <template slot-scope="scope">
           <el-input
             size="mini"
@@ -115,7 +115,7 @@ export default {
         { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
         { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '100', align: 'right', show: true },
         { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
-        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true }
+        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '120', align: 'left', show: true }
       ],
       options: [{
         value: '1',

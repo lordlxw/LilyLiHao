@@ -118,9 +118,9 @@ export default {
         { label: '联系人', prop: 'contactPerson', width: '100', align: 'left', show: true },
         { label: '联系方式', prop: 'contactType', width: '110', align: 'left', show: true },
         { label: '创建人id', prop: 'createBy', width: 'auto', align: 'left', show: false },
-        { label: '交割时间', prop: 'createTime', width: '150', align: 'left', show: true },
+        { label: '交割时间', prop: 'createTime', width: '170', align: 'left', show: true },
         { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
-        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '120', align: 'left', show: true },
         { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: false },
         { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
         { label: '备注', prop: 'remark', width: '500', align: 'left', show: true }
