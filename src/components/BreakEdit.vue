@@ -77,7 +77,7 @@
           disabled="type===1"
         ></el-input>
       </el-form-item>
-      <el-form-item label="联系人" prop="contactPerson">
+      <!-- <el-form-item label="联系人" prop="contactPerson">
         <el-input
           v-model="breakEditForm.contactPerson"
           autocomplete="off"
@@ -90,7 +90,7 @@
           autocomplete="off"
           disabled="type===1"
         ></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="备注">
         <el-input
           type="textarea"
@@ -177,9 +177,9 @@ export default {
         deliveryTime: [
           { required: true, message: '交割时间必选', trigger: 'blur' }
         ],
-        counterParty: [
-          { required: true, message: '交易对手必填', trigger: 'blur' }
-        ]
+        // counterParty: [
+        //   { required: true, message: '交易对手必填', trigger: 'blur' }
+        // ]
       }
     }
   },

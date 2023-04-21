@@ -66,7 +66,7 @@
           autocomplete="off"
         ></el-input>
       </el-form-item>
-      <el-form-item label="联系人" prop="contactPerson">
+      <!-- <el-form-item label="联系人" prop="contactPerson">
         <el-input
           v-model="noBondsForm.contactPerson"
           autocomplete="off"
@@ -77,7 +77,7 @@
           v-model="noBondsForm.contactType"
           autocomplete="off"
         ></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="备注">
         <el-input
           type="textarea"

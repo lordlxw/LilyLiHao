@@ -436,7 +436,7 @@
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item label="联系人" prop="contactPerson">
+        <!-- <el-form-item label="联系人" prop="contactPerson">
           <el-input
             v-model="dealForm.contactPerson"
             autocomplete="off"
@@ -447,7 +447,7 @@
             v-model="dealForm.contactType"
             autocomplete="off"
           ></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="备注" prop="remark">
           <el-input
             type="textarea"
@@ -588,9 +588,9 @@ export default {
         deliveryTime: [
           { required: true, message: '交割日期必选', trigger: 'blur' }
         ],
-        counterParty: [
-          { required: true, message: '交易对手必填', trigger: 'blur' }
-        ]
+        // counterParty: [
+        //   { required: true, message: '交易对手必填', trigger: 'blur' }
+        // ]
       },
       dealRows: {},
       dialogEnquiryFormVisible: false,
