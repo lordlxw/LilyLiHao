@@ -902,7 +902,17 @@ export default {
         case "tscode":
           return row.tscode.replace(/.IB/, '')
         case "worstPrice":
-          return row.worstPrice ? util.moneyFormat(row.worstPrice, 2) : "--"
+          // 允许最差价格
+          let worstPrice = row.price
+          if (row.worstPrice) {
+            if (row.direction === 'bond_0') {
+              worstPrice = row.price - row.worstPrice / 100
+            }
+            if (row.direction === 'bond_1') {
+              worstPrice = row.price + row.worstPrice / 100
+            }
+          }
+          return util.moneyFormat(worstPrice, 4)
       }
       return row[column.property]
     },

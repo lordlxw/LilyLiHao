@@ -37,8 +37,9 @@
       <el-form-item label="允许浮动" prop="worstPrice">
         <el-input-number
           v-model="enquiryForm.worstPrice"
-          step="0.0005"
+          step="0.05"
         ></el-input-number>
+        BP
       </el-form-item>
       <el-form-item label="交易量" prop="volume">
         <el-input
@@ -132,6 +133,15 @@ export default {
         callback()
       }
     }
+    // 金额格式验证
+    const floatTest = async (rule, value, callback) => {
+      console.log(rule)
+      if (!config.regExpSet.floatPrice.test(value)) {
+        callback(new Error('大于0的格式-.--'))
+      } else {
+        callback()
+      }
+    }
     // 大于0格式验证
     const plusAmountTest = async (rule, value, callback) => {
       if (!config.regExpSet.gtzero.test(value)) {
@@ -164,7 +174,7 @@ export default {
         // 快速交易
         quickSubmit: false,
         // 允许浮动
-        worstPrice: 0.001
+        worstPrice: 0.1
       },
       enquiryFormRules: {
         direction: [
@@ -186,6 +196,10 @@ export default {
         ],
         tradeuserId: [
           { required: true, message: '交易员必选', trigger: 'change' }
+        ],
+        worstPrice: [
+          { required: true, message: '允许浮动必填', trigger: 'blur' },
+          { validator: floatTest, trigger: 'blur' }
         ]
       }
     }
