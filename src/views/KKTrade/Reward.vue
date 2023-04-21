@@ -31,6 +31,7 @@
         header-row-style="height:30px;line-height:30px;"
         header-cell-style="background:#f8f8f8;"
         :key="Math.random()"
+        highlight-current-row
       >
         <template v-for="itemHead in tableHead">
           <el-table-column
