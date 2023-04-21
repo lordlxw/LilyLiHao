@@ -75,7 +75,7 @@
                         }
                   "
                   :label="itemHead.label"
-                  :width="itemHead.width ? itemHead.width : ''"
+                  :width="itemHead.width ? returnFrameW(itemHead.width) : ''"
                 >
                 </el-table-column>
               </template>
@@ -365,7 +365,7 @@
                         }
                   "
                   :label="itemHead.label"
-                  :width="itemHead.width ? itemHead.width : ''"
+                  :width="itemHead.width ? returnFrameW(itemHead.width) : ''"
                 >
                 </el-table-column>
               </template>
