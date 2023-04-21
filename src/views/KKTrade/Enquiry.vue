@@ -44,7 +44,7 @@
                     }
               "
               :label="itemHead.label"
-              :width="itemHead.width ? itemHead.width : ''"
+              :width="itemHead.width ? returnFrameW(itemHead.width) : ''"
             >
             </el-table-column>
           </template>
@@ -393,7 +393,7 @@
     </div>
     <el-dialog
       title="成交信息"
-      width="500px;"
+      :width="returnFrameW(600) + 'px'"
       :visible.sync="dialogDealFormVisible"
       append-to-body
       :destroy-on-close="true"

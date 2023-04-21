@@ -30,7 +30,8 @@
                 `${item2.component}`
               )
             "
-            ><i :class="item2.icon" class="mr10"></i>{{ item2.menuName }}</el-menu-item
+            ><i :class="item2.icon" class="mr10"></i
+            >{{ item2.menuName }}</el-menu-item
           >
         </el-submenu>
         <el-menu-item
