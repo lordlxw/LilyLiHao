@@ -139,6 +139,10 @@ export default {
                         h("dd", null, `${util.moneyFormat(msgJson.data.price, 4)}`)
                       ]),
                       h("dl", null, [
+                        h("dt", null, "允许最差价格"),
+                        h("dd", null, `${util.moneyFormat((msgJson.data.direction === 'bond_0' ? (msgJson.data.price - msgJson.data.worstPrice / 100) : (msgJson.data.price + msgJson.data.worstPrice / 100)), 4)}`)
+                      ]),
+                      h("dl", null, [
                         h("dt", null, "询量"),
                         h("dd", null, `${msgJson.data.volume}`)
                       ]),
@@ -171,8 +175,6 @@ export default {
                   ),
                   duration: 0
                 });
-                console.log(2222)
-                console.log(msgJson.data)
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.$refs.playAudio.play()
                 self.notifyRejection[msgJson.data.userTradeId] = notify
