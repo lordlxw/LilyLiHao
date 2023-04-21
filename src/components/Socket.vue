@@ -779,6 +779,7 @@ export default {
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 break;
             }
+            socket.send(JSON.stringify({ "dataType": "ack", "data": { "dataKey": msgJson.dataKey, "dataType": msgJson.dataType } }))
           }
         }
         // 关闭事件

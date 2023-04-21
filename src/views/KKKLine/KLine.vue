@@ -2930,6 +2930,7 @@ export default {
                 self.notifyRejection[msgJson.data.ut.userTradeId] = notify
                 break
             }
+            socket.send(JSON.stringify({ "dataType": "ack", "data": { "dataKey": msgJson.dataKey, "dataType": msgJson.dataType } }))
           }
         }
         // 关闭事件
