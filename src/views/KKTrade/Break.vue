@@ -38,7 +38,7 @@
             fixed="right"
             align="center"
             label="操作"
-            width="150"
+            :width="returnFrameW(150)"
           >
             <template slot-scope="scope">
               <el-popover
@@ -101,7 +101,7 @@
     </div>
     <el-dialog
       :title="currentType === 1 ? '违约续作' : ''"
-      width="500px;"
+      :width="returnFrameW(600) + 'px'"
       :visible.sync="dialogBreakEditFormVisible"
       append-to-body
       :destroy-on-close="true"
@@ -137,11 +137,11 @@ export default {
         { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
         { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
         { label: '交易量', prop: 'volume', width: '100', align: 'right', show: true },
-        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '120', align: 'left', show: true },
         { label: '状态', prop: 'jiaogeStatus', formatter: this.funcFormat, width: '100', align: 'left', show: true },
         { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
         { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
-        { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true }
+        { label: '单据号', prop: 'tradeNum', width: '160', align: 'left', show: true }
       ],
       tableData: [],
       breakH: '0',

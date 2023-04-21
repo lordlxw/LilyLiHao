@@ -46,12 +46,17 @@
                   }
             "
             :label="itemHead.label"
-            :width="itemHead.width ? itemHead.width : ''"
+            :width="itemHead.width ? returnFrameW(itemHead.width) : ''"
           >
           </el-table-column>
         </template>
         <el-table-column></el-table-column>
-        <el-table-column fixed="right" align="center" label="操作" width="80">
+        <el-table-column
+          fixed="right"
+          align="center"
+          label="操作"
+          :width="returnFrameW(80)"
+        >
           <template slot-scope="scope">
             <el-popover
               v-if="setAuth('reward:back') && funcIsBreak(scope)"
