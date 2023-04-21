@@ -146,7 +146,6 @@ export default {
       for (let i = 0; i < len; i++) {
         if (this.deliveryFinishData[i].mySelected.length > 0) {
           wyList.push({
-            hasMarketMaker: this.deliveryFinishData[i].marketMakerName ? true : false,
             marketMakerName: this.deliveryFinishData[i].marketMakerName,
             realTradeId: this.deliveryFinishData[i].realTradeId,
             weiyueAmount: this.deliveryFinishData[i].weiyueAmount ? parseInt(this.deliveryFinishData[i].weiyueAmount) : '',
