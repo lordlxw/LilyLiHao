@@ -152,7 +152,9 @@
                                 }
                           "
                           :label="itemHead.label"
-                          :width="itemHead.width ? itemHead.width : ''"
+                          :width="
+                            itemHead.width ? returnFrameW(itemHead.width) : ''
+                          "
                         >
                         </el-table-column>
                       </template>
@@ -1261,7 +1263,7 @@ export default {
       }
     },
     // 交割
-    handleDeliveryClick(scope) {
+    handleDeliveryClick() {
       let deliveryFinishData = []
       // 处理数据
       for (let i = 0; i < this.tableDataFinish.length; i++) {

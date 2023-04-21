@@ -71,6 +71,12 @@ export default {
     '0': '正常',
     '1': '已禁用'
   },
+  // 违约类型
+  breakTypeOptions: {
+    '1': '对手方违约',
+    '2': '做市商违约',
+    '3': '我方违约'
+  },
   // 处理键值对信息转换
   funcKeyValue(key, type) {
     return this[`${type}`][`${key}`]

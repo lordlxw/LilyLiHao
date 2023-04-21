@@ -69,9 +69,90 @@
                   scope.row.tscode
                 }}"？
               </p>
-              <div style="text-align: right">
+              <el-table border :data="breakTableData">
+                <template v-for="itemHead in breakTableHead">
+                  <el-table-column
+                    v-if="itemHead.show"
+                    :key="itemHead.label"
+                    :align="itemHead.align"
+                    :prop="itemHead.prop"
+                    :formatter="
+                      itemHead.formatter
+                        ? itemHead.formatter
+                        : (row, column, cellValue, index) => {
+                            return cellValue;
+                          }
+                    "
+                    :label="itemHead.label"
+                    :width="itemHead.width ? returnFrameW(itemHead.width) : ''"
+                  >
+                  </el-table-column>
+                </template>
+                <el-table-column
+                  v-if="doListOption && doListOption.length > 0"
+                  label="选择"
+                  :width="returnFrameW(300)"
+                >
+                  <template slot-scope="scope">
+                    <el-checkbox-group
+                      v-model="scope.row.mySelected"
+                      @input="handleDoCheck"
+                    >
+                      <el-checkbox
+                        v-for="item in doListOption"
+                        :label="item.value"
+                        :key="item.value"
+                        >{{ item.label }}</el-checkbox
+                      >
+                    </el-checkbox-group>
+                  </template>
+                </el-table-column>
+                <el-table-column label="违约方" :width="returnFrameW(150)">
+                  <template slot-scope="scope">
+                    <el-select
+                      v-model="scope.row.weiyuePerson"
+                      v-if="
+                        scope.row.mySelected && scope.row.mySelected.length > 0
+                      "
+                      placeholder="请选择"
+                    >
+                      <el-option
+                        v-for="(value, key) in config.breakTypeOptions"
+                        :key="key"
+                        :label="value"
+                        :value="key"
+                      ></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column label="违约量" :width="returnFrameW(150)">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="mini"
+                      v-model="scope.row.weiyueAmount"
+                      v-if="
+                        scope.row.mySelected && scope.row.mySelected.length > 0
+                      "
+                      width="90"
+                    ></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column label="做市商" :width="returnFrameW(150)">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="mini"
+                      v-model="scope.row.marketMakerName"
+                      v-if="
+                        scope.row.mySelected && scope.row.mySelected.length > 0
+                      "
+                      width="90"
+                    ></el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <div style="text-align: right" class="mt20">
                 <el-button
-                  type="text"
+                  type="primary"
                   @click="
                     handlePopoverClose(
                       scope,
@@ -80,11 +161,17 @@
                   "
                   >取消</el-button
                 >
-                <el-button type="text" @click="handleDeliveryBackClick(scope)"
+                <el-button
+                  type="primary"
+                  @click="handleDeliveryBackClick(scope)"
                   >确认</el-button
                 >
               </div>
-              <el-button type="text" slot="reference" class="ml10"
+              <el-button
+                type="text"
+                slot="reference"
+                class="ml10"
+                @click="handleLoadCurrentRow(scope)"
                 >改违约</el-button
               >
             </el-popover>
@@ -105,6 +192,16 @@ import moment from 'moment'
 export default {
   mixins: [pageMixin, commMixin],
   data() {
+    const doList = [
+      {
+        label: '技术违约',
+        value: 0
+      },
+      {
+        label: '恶意违约',
+        value: 1
+      }
+    ]
     return {
       config,
       loading: false,
@@ -127,6 +224,16 @@ export default {
         { label: '备注', prop: 'remark', width: '500', align: 'left', show: true }
       ],
       tableData: [],
+      // 改违约表头
+      breakTableHead: [
+        { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '120', align: 'left', show: true },
+        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
+        { label: '交割价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
+        { label: '交割量', prop: 'volume', width: '100', align: 'right', show: true }
+      ],
+      breakTableData: [],
+      doListOption: doList,
+      errorMsg: '',
       rewardH: '0',
       rewardBuyVolume: '',
       rewardSaleVolume: '',
@@ -137,6 +244,12 @@ export default {
     this.initFrameH('rewardH', 200)
   },
   methods: {
+    handleDoCheck(val) {
+      this.errorMsg = ''
+      if (val.length > 1) {
+        val.shift()
+      }
+    },
     // 搜索事件
     handleSearch() {
       this.loadInitData()
@@ -152,18 +265,66 @@ export default {
     // 导出
     handleExport() {
     },
+    handleLoadCurrentRow(scope) {
+      scope.row.mySelected = []
+      scope.row.weiyuePerson = ''
+      scope.row.weiyueAmount = scope.row.volume
+      scope.row.marketMakerName = ''
+      this.breakTableData = [JSON.parse(JSON.stringify(scope.row))]
+    },
     // 改违约
     handleDeliveryBackClick(scope) {
-      api.deliverBreak({ realTradeId: scope.row.realTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: '操作成功',
-            type: 'success'
+      // const finishCodeList = [...new Set(this.breakTableData.map(item => item.finishCode))]
+      const wyList = []
+      const len = this.breakTableData.length
+      let flag = false
+      for (let i = 0; i < len; i++) {
+        if (this.breakTableData[i].mySelected.length > 0) {
+          wyList.push({
+            marketMakerName: this.breakTableData[i].marketMakerName,
+            realTradeId: this.breakTableData[i].realTradeId,
+            weiyueAmount: this.breakTableData[i].weiyueAmount ? parseInt(this.breakTableData[i].weiyueAmount) : '',
+            weiyuePerson: this.breakTableData[i].weiyuePerson,
+            weiyueType: this.breakTableData[i].mySelected[0]
           })
-          this.handlePopoverClose(scope, `popover-deliveryback-${scope.$index}`)
-          this.loadInitData()
+          if (!this.breakTableData[i].weiyuePerson) {
+            this.errorMsg = '违约方必须选全'
+            flag = true
+            break;
+          }
+          if (parseInt(this.breakTableData[i].weiyueAmount) > this.breakTableData[i].volume) {
+            this.errorMsg = '违约量不能超过持仓量'
+            flag = true
+            break;
+          }
+          if (isNaN(this.breakTableData[i].weiyueAmount) || Number(this.breakTableData[i].weiyueAmount) <= 0) {
+            this.errorMsg = '违约量必须大于0'
+            flag = true
+            break;
+          }
+        } else {
+          this.errorMsg = '请勾选违约类型'
+          flag = true
+          break;
         }
-      })
+      }
+      if (!flag) {
+        api.deliverBreak({ realTradeId: scope.row.realTradeId, wyList }).then(response => {
+          if (response && response.code === '00000') {
+            this.$message({
+              message: '操作成功',
+              type: 'success'
+            })
+            this.handlePopoverClose(scope, `popover-deliveryback-${scope.$index}`)
+            this.loadInitData()
+          }
+        })
+      } else {
+        this.$message({
+          message: `${this.errorMsg}`,
+          type: 'error'
+        })
+      }
     },
     // 初始化数据
     loadInitData() {

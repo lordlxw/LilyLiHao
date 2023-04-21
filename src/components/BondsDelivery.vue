@@ -51,12 +51,11 @@
             placeholder="请选择"
           >
             <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
+              v-for="(value, key) in config.breakTypeOptions"
+              :key="key"
+              :label="value"
+              :value="key"
+            ></el-option>
           </el-select>
         </template>
       </el-table-column>
@@ -118,18 +117,7 @@ export default {
         { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '100', align: 'right', show: true },
         { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
         { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '120', align: 'left', show: true }
-      ],
-      options: [{
-        value: '1',
-        label: '对手方违约'
-      }, {
-        value: '2',
-        label: '做市商违约'
-      }, {
-        value: '3',
-        label: '我方违约'
-      }],
-      value: ''
+      ]
     }
   },
   methods: {
