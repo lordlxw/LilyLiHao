@@ -44,6 +44,7 @@
           </div>
           <div class="table mt10" ref="noBondsDo">
             <el-table
+              ref="noBondsTable"
               v-loading="loading"
               :data="tableData"
               tooltip-effect="dark"
@@ -58,6 +59,7 @@
               :default-expand-all="defaultExpandAll"
               header-row-style="height:30px;line-height:30px;"
               header-cell-style="background:#f8f8f8;"
+              highlight-current-row
             >
               <template v-for="itemHead in tableHead">
                 <el-table-column
@@ -347,6 +349,7 @@
               :span-method="objectSpanMethod"
               header-row-style="height:30px;line-height:30px;"
               header-cell-style="background:#f8f8f8;"
+              highlight-current-row
             >
               <template v-for="itemHead in tableHeadFinish">
                 <el-table-column
