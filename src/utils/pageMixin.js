@@ -1,6 +1,7 @@
 import copy from 'clipboard-copy'
 import moment from 'moment'
 import { mapGetters } from 'vuex'
+import * as util from '@/utils/util'
 export const pageMixin = {
   data() {
     return {
@@ -166,7 +167,7 @@ export const pageMixin = {
         copyContent += moment(scope.row.deliveryTime).format('MM月DD日')
       }
       copyContent += '+' + scope.row.deliverySpeed + ' '
-      copyContent += scope.row.price
+      copyContent += util.moneyFormat(scope.row.price, 4)
       this.copyContent(copyContent, flag)
     },
     copySocket(data, flag) {
@@ -178,7 +179,7 @@ export const pageMixin = {
         copyContent += moment(data.deliveryTime).format('MM月DD日')
       }
       copyContent += '+' + data.deliverySpeed + ' '
-      copyContent += data.price
+      copyContent += util.moneyFormat(data.price, 4)
       this.copyContent(copyContent, flag)
     },
     handleNavigator(val1, val2, val3) {
