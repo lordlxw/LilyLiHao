@@ -425,10 +425,10 @@
           <el-input v-model="dealForm.volume" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="交割日期" prop="deliveryTime">
-          <delivery-canlendar-update
-            ref="deliveryCanlendarUpdate"
-            @change="handleDeliveryCanlendarUpdate"
-          ></delivery-canlendar-update>
+          <delivery-canlendar
+            ref="deliveryCanlendar"
+            @change="handleDeliveryCanlendar"
+          ></delivery-canlendar>
         </el-form-item>
         <el-form-item label="交易对手" prop="counterParty">
           <el-input
@@ -509,7 +509,7 @@
 import { mapState } from 'vuex'
 import api from "@/api/kk_trade";
 import apiAdmin from '@/api/kk_power_admin'
-import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
+import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 import RealEnquiryRoll from '@/components/RealEnquiryRoll.vue';
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
 import EnquiryDifficult from '@/components/EnquiryDifficult.vue'
@@ -529,7 +529,7 @@ export default {
     status: ''
   },
   components: {
-    DeliveryCanlendarUpdate,
+    DeliveryCanlendar,
     EnquiryEdit,
     EnquiryDifficult,
     RealEnquiryRoll
@@ -720,7 +720,7 @@ export default {
         this.dealForm.volume = row.restVolume
         this.dealForm.remark = row.remark
         this.dealForm.deliveryTime = row.deliveryTime
-        this.$refs.deliveryCanlendarUpdate.deliveryTime = row.deliveryTime
+        this.$refs.deliveryCanlendar.deliveryTime = row.deliveryTime
         this.dealForm.counterParty = row.counterParty
         this.dealForm.contactPerson = row.contactPerson
         this.dealForm.contactType = row.contactType
@@ -755,6 +755,11 @@ export default {
               this.dealForm.contactPerson = ''
               this.dealForm.contactType = ''
               this.loadInitData()
+            } else {
+              this.$message({
+                message: `${response.message}`,
+                type: "error",
+              })
             }
           });
         }
@@ -879,7 +884,7 @@ export default {
       })
     },
     // 交割日期
-    handleDeliveryCanlendarUpdate(obj) {
+    handleDeliveryCanlendar(obj) {
       this.dealForm.deliveryTime = obj.value
     },
     // 数据格式化
