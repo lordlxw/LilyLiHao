@@ -1277,7 +1277,7 @@ export default {
         // }
         const row = JSON.parse(JSON.stringify(this.tableDataFinish[i]))
         // 违约量
-        row.weiyueAmount = ''
+        row.weiyueAmount = this.tableDataFinish[i].volume
         // 做市商名称
         row.marketMakerName = ''
         // 违约方

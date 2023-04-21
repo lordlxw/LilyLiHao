@@ -142,35 +142,55 @@ export default {
       const finishCodeList = [...new Set(this.deliveryFinishData.map(item => item.finishCode))]
       const wyList = []
       const len = this.deliveryFinishData.length
+      let flag = false
       for (let i = 0; i < len; i++) {
-        wyList.push({
-          hasMarketMaker: this.deliveryFinishData[i].marketMakerName ? true : false,
-          marketMakerName: this.deliveryFinishData[i].marketMakerName,
-          realTradeId: this.deliveryFinishData[i].realTradeId,
-          weiyueAmount: this.deliveryFinishData[i].weiyueAmount,
-          weiyuePerson: this.deliveryFinishData[i].weiyuePerson,
-          weiyueType: this.deliveryFinishData[i].mySelected.length > 0 ? this.deliveryFinishData[i].mySelected[0] : ''
+        if (this.deliveryFinishData[i].mySelected.length > 0) {
+          wyList.push({
+            hasMarketMaker: this.deliveryFinishData[i].marketMakerName ? true : false,
+            marketMakerName: this.deliveryFinishData[i].marketMakerName,
+            realTradeId: this.deliveryFinishData[i].realTradeId,
+            weiyueAmount: this.deliveryFinishData[i].weiyueAmount ? parseInt(this.deliveryFinishData[i].weiyueAmount) : '',
+            weiyuePerson: this.deliveryFinishData[i].weiyuePerson,
+            weiyueType: this.deliveryFinishData[i].mySelected[0]
+          })
+          if (!this.deliveryFinishData[i].weiyuePerson) {
+            this.errorMsg = '违约方必须选全'
+            flag = true
+            break;
+          }
+          if (parseInt(this.deliveryFinishData[i].weiyueAmount) > this.deliveryFinishData[i].volume) {
+            this.errorMsg = '违约量不能超过持仓量'
+            flag = true
+            break;
+          }
+          if (isNaN(this.deliveryFinishData[i].weiyueAmount) || Number(this.deliveryFinishData[i].weiyueAmount) <= 0) {
+            this.errorMsg = '违约量必须大于0'
+            flag = true
+            break;
+          }
+        }
+      }
+      if (!flag) {
+        api.dealDelivery({
+          finishCodeList,
+          wyList
+        }).then(response => {
+          if (response && response.code === '00000') {
+            this.$message({
+              message: '操作成功',
+              type: 'success'
+            })
+            this.$emit('change', {
+              dialogVisible: false
+            })
+          } else {
+            this.$message({
+              message: response.message,
+              type: 'error'
+            })
+          }
         })
       }
-      api.dealDelivery({
-        finishCodeList,
-        wyList
-      }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-          this.$emit('change', {
-            dialogVisible: false
-          })
-        } else {
-          this.$message({
-            message: response.message,
-            type: 'error'
-          })
-        }
-      })
     },
     // 数据格式化
     funcFormat(row, column) {
