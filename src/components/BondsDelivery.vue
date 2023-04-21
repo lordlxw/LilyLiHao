@@ -28,12 +28,11 @@
         >
         </el-table-column>
       </template>
-      <el-table-column label="选择" width="280">
+      <el-table-column label="选择" width="auto">
         <template slot-scope="scope">
           <el-checkbox-group
             v-model="scope.row.mySelected"
             @input="handleDoCheck"
-            :disabled="scope.row.mySelectedDisabled"
           >
             <el-checkbox
               v-for="item in doListOption"
@@ -44,40 +43,11 @@
           </el-checkbox-group>
         </template>
       </el-table-column>
-      <el-table-column label="做市商" width="120">
-        <template slot-scope="scope">
-          <el-input
-            size="mini"
-            v-model="scope.row.marketMakerName"
-            v-if="
-              scope.row.mySelected.length > 0 &&
-              [2].indexOf(scope.row.mySelected[0]) !== -1
-            "
-            width="90"
-          ></el-input>
-        </template>
-      </el-table-column>
       <el-table-column label="违约方" width="120">
         <template slot-scope="scope">
-          <el-input
-            size="mini"
-            v-model="scope.row.weiyuePerson"
-            v-if="
-              scope.row.mySelected.length > 0 &&
-              [2].indexOf(scope.row.mySelected[0]) !== -1
-            "
-            width="90"
-          ></el-input>
-        </template>
-      </el-table-column>
-      <el-table-column label="违约类型" width="120">
-        <template slot-scope="scope">
           <el-select
-            v-model="scope.row.weiyueType"
-            v-if="
-              scope.row.mySelected.length > 0 &&
-              [2].indexOf(scope.row.mySelected[0]) !== -1
-            "
+            v-model="scope.row.weiyuePerson"
+            v-if="scope.row.mySelected.length > 0"
             placeholder="请选择"
           >
             <el-option
@@ -90,28 +60,22 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="联系人" width="120">
+      <el-table-column label="违约量" width="120">
         <template slot-scope="scope">
           <el-input
             size="mini"
-            v-model="scope.row.doMarketContacts"
-            v-if="
-              scope.row.mySelected.length > 0 &&
-              [2].indexOf(scope.row.mySelected[0]) !== -1
-            "
+            v-model="scope.row.weiyueAmount"
+            v-if="scope.row.mySelected.length > 0"
             width="90"
           ></el-input>
         </template>
       </el-table-column>
-      <el-table-column label="联系方式" width="120">
+      <el-table-column label="做市商" width="120">
         <template slot-scope="scope">
           <el-input
             size="mini"
-            v-model="scope.row.doMarketContactsWay"
-            v-if="
-              scope.row.mySelected.length > 0 &&
-              [2].indexOf(scope.row.mySelected[0]) !== -1
-            "
+            v-model="scope.row.marketMakerName"
+            v-if="scope.row.mySelected.length > 0"
             width="90"
           ></el-input>
         </template>
@@ -131,16 +95,12 @@ import * as util from '@/utils/util'
 import api from "@/api/kk_bonds"
 const doList = [
   {
-    label: '交割',
-    value: 1
-  },
-  {
     label: '技术违约',
-    value: 2
+    value: 0
   },
   {
     label: '恶意违约',
-    value: 3
+    value: 1
   }
 ]
 export default {
@@ -179,57 +139,22 @@ export default {
     },
     // 提交事件
     handleSubmit() {
-      // 是否全未选择
-      let isAllNoSelect = true
-      // 是否未选全
-      let isHalfSelect = false
-      let eyiweiyueIdlist = []
-      let jiaogeIdlist = []
-      let jishuweiyueIdmap = {}
-      let finishCode = ''
-      for (let i = 0; i < this.deliveryFinishData.length; i++) {
-        finishCode = this.deliveryFinishData[i].finishCode
-        if (this.deliveryFinishData[i].mySelected.length > 0) {
-          switch (this.deliveryFinishData[i].mySelected[0]) {
-            case 1:
-              jiaogeIdlist.push(this.deliveryFinishData[i].realTradeId)
-              break
-            case 2:
-              jishuweiyueIdmap[this.deliveryFinishData[i].realTradeId] = [this.deliveryFinishData[i].doMarketName, this.deliveryFinishData[i].doMarketContacts, this.deliveryFinishData[i].doMarketContactsWay]
-              break
-            case 3:
-              eyiweiyueIdlist.push(this.deliveryFinishData[i].realTradeId)
-              break
-          }
-          isAllNoSelect = false;
-        } else {
-          isHalfSelect = true
-        }
+      const finishCodeList = [...new Set(this.deliveryFinishData.map(item => item.finishCode))]
+      const wyList = []
+      const len = this.deliveryFinishData.length
+      for (let i = 0; i < len; i++) {
+        wyList.push({
+          hasMarketMaker: this.deliveryFinishData[i].marketMakerName ? true : false,
+          marketMakerName: this.deliveryFinishData[i].marketMakerName,
+          realTradeId: this.deliveryFinishData[i].realTradeId,
+          weiyueAmount: this.deliveryFinishData[i].weiyueAmount,
+          weiyuePerson: this.deliveryFinishData[i].weiyuePerson,
+          weiyueType: this.deliveryFinishData[i].mySelected.length > 0 ? this.deliveryFinishData[i].mySelected[0] : ''
+        })
       }
-      if (isAllNoSelect) {
-        // 组织数据
-        for (let i = 0; i < this.deliveryFinishData.length; i++) {
-          jiaogeIdlist.push(this.deliveryFinishData[i].realTradeId)
-        }
-        // 全未选，直接提交
-        this.dispacthSubmit(finishCode, eyiweiyueIdlist, jiaogeIdlist, jishuweiyueIdmap)
-      } else {
-        if (isHalfSelect) {
-          // 做出提示：未选完整
-          this.errorMsg = '需要选择完整'
-        } else {
-          // 提交
-          this.dispacthSubmit(finishCode, eyiweiyueIdlist, jiaogeIdlist, jishuweiyueIdmap)
-        }
-      }
-    },
-    // 提交动作
-    dispacthSubmit(finishCode, eyiweiyueIdlist, jiaogeIdlist, jishuweiyueIdmap) {
       api.dealDelivery({
-        finishCode,
-        eyiweiyueIdlist,
-        jiaogeIdlist,
-        jishuweiyueIdmap
+        finishCodeList,
+        wyList
       }).then(response => {
         if (response && response.code === '00000') {
           this.$message({

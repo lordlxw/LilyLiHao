@@ -1276,23 +1276,15 @@ export default {
         //   deliveryFinishData.push(row)
         // }
         const row = JSON.parse(JSON.stringify(this.tableDataFinish[i]))
-        if (row.jiaogeStatus === 1) {
-          row.mySelected = [1]
-        } else {
-          row.mySelected = []
-        }
-        row.mySelectedDisabled = false
-        // 做市商名称，联系人，联系方式（暂时保留）
-        row.doMarketName = ''
-        row.doMarketContacts = ''
-        row.doMarketContactsWay = ''
-        row.weiyueAmount = 0
+        // 违约量
+        row.weiyueAmount = ''
         // 做市商名称
         row.marketMakerName = ''
         // 违约方
         row.weiyuePerson = ''
         // 违约类型
         row.weiyueType = ''
+        row.mySelected = []
         deliveryFinishData.push(row)
       }
       this.deliveryFinishData = deliveryFinishData
