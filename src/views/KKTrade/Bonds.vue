@@ -13,6 +13,7 @@
           <div class="do">
             <el-button
               size="mini"
+              class="mr20"
               @click="handleDefaultExpandAll"
               >{{ defaultExpandAll ? "全收" : "全展" }}</el-button
             >
@@ -322,6 +323,14 @@
             <el-tag type="danger" class="mr20"
               >卖：<b>{{ saleVolumn }}</b></el-tag
             >
+            <el-button
+              style="float: right"
+              v-if="setAuth('bonds:delivery') && tableDataFinish.length > 0"
+              type="primary"
+              size="mini"
+              @click="handleDeliveryClick"
+              >交割</el-button
+            >
           </div>
           <div class="table mt10">
             <el-table
@@ -550,7 +559,7 @@
                   </el-popover>
                 </template>
               </el-table-column>
-              <el-table-column
+              <!-- <el-table-column
                 fixed="right"
                 align="center"
                 label="交割操作"
@@ -562,7 +571,7 @@
                     >交割</el-button
                   >
                 </template>
-              </el-table-column>
+              </el-table-column> -->
             </el-table>
           </div>
         </el-tab-pane>
@@ -1251,21 +1260,40 @@ export default {
       let deliveryFinishData = []
       // 处理数据
       for (let i = 0; i < this.tableDataFinish.length; i++) {
-        if (scope.row.finishCode === this.tableDataFinish[i].finishCode) {
-          const row = JSON.parse(JSON.stringify(this.tableDataFinish[i]))
-          if (row.jiaogeStatus === 1) {
-            row.mySelected = [1]
-            row.mySelectedDisabled = false
-          } else {
-            row.mySelected = []
-            row.mySelectedDisabled = false
-          }
-          // 做市商名称，联系人，联系方式
-          row.doMarketName = ''
-          row.doMarketContacts = ''
-          row.doMarketContactsWay = ''
-          deliveryFinishData.push(row)
+        // if (scope.row.finishCode === this.tableDataFinish[i].finishCode) {
+        //   const row = JSON.parse(JSON.stringify(this.tableDataFinish[i]))
+        //   if (row.jiaogeStatus === 1) {
+        //     row.mySelected = [1]
+        //     row.mySelectedDisabled = false
+        //   } else {
+        //     row.mySelected = []
+        //     row.mySelectedDisabled = false
+        //   }
+        //   // 做市商名称，联系人，联系方式
+        //   row.doMarketName = ''
+        //   row.doMarketContacts = ''
+        //   row.doMarketContactsWay = ''
+        //   deliveryFinishData.push(row)
+        // }
+        const row = JSON.parse(JSON.stringify(this.tableDataFinish[i]))
+        if (row.jiaogeStatus === 1) {
+          row.mySelected = [1]
+        } else {
+          row.mySelected = []
         }
+        row.mySelectedDisabled = false
+        // 做市商名称，联系人，联系方式（暂时保留）
+        row.doMarketName = ''
+        row.doMarketContacts = ''
+        row.doMarketContactsWay = ''
+        row.weiyueAmount = 0
+        // 做市商名称
+        row.marketMakerName = ''
+        // 违约方
+        row.weiyuePerson = ''
+        // 违约类型
+        row.weiyueType = ''
+        deliveryFinishData.push(row)
       }
       this.deliveryFinishData = deliveryFinishData
       this.dialogBondsDeliveryFormVisible = true

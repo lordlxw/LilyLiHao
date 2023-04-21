@@ -141,13 +141,15 @@ export default {
       method: 'post',
       data: {
         // 恶意违约id数组列表
-        eyiweiyueIdlist: params.eyiweiyueIdlist,
+        // eyiweiyueIdlist: params.eyiweiyueIdlist,
         // 交割id数组列表
-        jiaogeIdlist: params.jiaogeIdlist,
+        // jiaogeIdlist: params.jiaogeIdlist,
         // 技术违约id数组列表
-        jishuweiyueIdmap: params.jishuweiyueIdmap,
+        // jishuweiyueIdmap: params.jishuweiyueIdmap,
         // finishCode
-        finishCode: params.finishCode
+        // finishCode: params.finishCode
+        finishCodeList: params.finishCodeList,
+        wyList: params.wyList
       }
     })
   },

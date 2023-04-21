@@ -28,7 +28,7 @@
         >
         </el-table-column>
       </template>
-      <el-table-column label="选择">
+      <el-table-column label="选择" width="280">
         <template slot-scope="scope">
           <el-checkbox-group
             v-model="scope.row.mySelected"
@@ -48,13 +48,46 @@
         <template slot-scope="scope">
           <el-input
             size="mini"
-            v-model="scope.row.doMarketName"
+            v-model="scope.row.marketMakerName"
             v-if="
               scope.row.mySelected.length > 0 &&
               [2].indexOf(scope.row.mySelected[0]) !== -1
             "
             width="90"
           ></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="违约方" width="120">
+        <template slot-scope="scope">
+          <el-input
+            size="mini"
+            v-model="scope.row.weiyuePerson"
+            v-if="
+              scope.row.mySelected.length > 0 &&
+              [2].indexOf(scope.row.mySelected[0]) !== -1
+            "
+            width="90"
+          ></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="违约类型" width="120">
+        <template slot-scope="scope">
+          <el-select
+            v-model="scope.row.weiyueType"
+            v-if="
+              scope.row.mySelected.length > 0 &&
+              [2].indexOf(scope.row.mySelected[0]) !== -1
+            "
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
         </template>
       </el-table-column>
       <el-table-column label="联系人" width="120">
@@ -123,7 +156,18 @@ export default {
         { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '100', align: 'right', show: true },
         { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
         { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '100', align: 'left', show: true }
-      ]
+      ],
+      options: [{
+        value: '1',
+        label: '对手方违约'
+      }, {
+        value: '2',
+        label: '做市商违约'
+      }, {
+        value: '3',
+        label: '我方违约'
+      }],
+      value: ''
     }
   },
   methods: {

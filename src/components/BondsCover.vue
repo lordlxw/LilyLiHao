@@ -38,10 +38,10 @@
         </el-button-group>
       </el-form-item>
       <el-form-item label="交割日期" prop="deliveryTime">
-        <delivery-canlendar-update
+        <delivery-canlendar
           ref="deliveryCanlendarUpdate"
           @change="handleDeliveryCanlendarUpdate"
-        ></delivery-canlendar-update>
+        ></delivery-canlendar>
         <!-- <el-button-group>
           <el-button
             icon="el-icon-plus"
@@ -93,11 +93,11 @@ import apiAdmin from '@/api/kk_power_admin'
 import * as util from '@/utils/util'
 import config from '@/utils/config'
 import moment from 'moment'
-import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
+import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 export default {
   props: ['row'],
   components: {
-    DeliveryCanlendarUpdate
+    DeliveryCanlendar
   },
   data() {
     // 金额格式验证

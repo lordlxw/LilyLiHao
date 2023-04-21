@@ -63,13 +63,16 @@
                 >接收并复制</el-button
               >
               <el-button
+                @click="handleDealClick(scope.row)"
                 type="text"
+                size="small"
                 v-if="
-                  setAuth('inquiry:accept') &&
-                  [1, 4, 7, 8, 9].indexOf(scope.row.status) !== -1
+                  ['1', '4', '8'].indexOf(scope.row.status.toString()) !== -1 &&
+                  setAuth('inquiry:deal') &&
+                  scope.row.relativeNum &&
+                  scope.row.relativeNum.indexOf('GD_') === -1
                 "
-                @click="copy(scope, true)"
-                >复制</el-button
+                >成交</el-button
               >
               <el-popover
                 v-if="setAuth('inquiry:rejection') && scope.row.status === 0"
@@ -179,16 +182,13 @@
                 >
               </el-popover>
               <el-button
-                @click="handleDealClick(scope.row)"
                 type="text"
-                size="small"
                 v-if="
-                  ['1', '4', '8'].indexOf(scope.row.status.toString()) !== -1 &&
-                  setAuth('inquiry:deal') &&
-                  scope.row.relativeNum &&
-                  scope.row.relativeNum.indexOf('GD_') === -1
+                  setAuth('inquiry:accept') &&
+                  [1, 4, 7, 8, 9].indexOf(scope.row.status) !== -1
                 "
-                >成交</el-button
+                @click="copy(scope, true)"
+                >复制</el-button
               >
               <el-popover
                 v-if="
