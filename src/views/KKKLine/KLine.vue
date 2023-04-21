@@ -2014,6 +2014,10 @@ export default {
               }
             }
           }
+          // 与最近一笔交易对比
+          if (this.transactionAllList.length > 0 && this.transactionAllList[0].tradeprice < minVal) {
+            minVal = this.transactionAllList[0].tradeprice
+          }
           return minVal
         // return Math.min.apply(Math, arr.map(item => {
         //   self.saleForm.remark = item.tscode + " " + item.brokerName + " " + (item.volumecomment ? item.volumecomment : item.volume)
@@ -2031,6 +2035,10 @@ export default {
                 self.buyForm.remark = arr[i].tscode + " " + arr[i].brokerName + " " + (arr[i].volumecomment ? arr[i].volumecomment : arr[i].volume)
               }
             }
+          }
+          // 与最近一笔交易对比
+          if (this.transactionAllList.length > 0 && this.transactionAllList[0].tradeprice > maxVal) {
+            maxVal = this.transactionAllList[0].tradeprice
           }
           return maxVal
         // return Math.max.apply(Math, arr.map(item => {
