@@ -28,7 +28,7 @@
         >
         </el-table-column>
       </template>
-      <el-table-column label="选择" :width="returnFrameW(200)">
+      <el-table-column label="选择" :width="returnFrameW(300)">
         <template slot-scope="scope">
           <el-checkbox-group
             v-model="scope.row.mySelected"
@@ -93,6 +93,7 @@ import config from '@/utils/config'
 import moment from 'moment'
 import * as util from '@/utils/util'
 import api from "@/api/kk_bonds"
+import { commMixin } from '@/utils/commMixin'
 const doList = [
   {
     label: '技术违约',
@@ -105,6 +106,7 @@ const doList = [
 ]
 export default {
   props: ['deliveryFinishData'],
+  mixins: [commMixin],
   data() {
     return {
       config,
