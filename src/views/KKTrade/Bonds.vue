@@ -90,7 +90,9 @@
                   <el-button
                     type="text"
                     v-if="
-                      setAuth('bonds:cover') && scope.row.realTradeId === null
+                      setAuth('bonds:cover') &&
+                      scope.row.realTradeId === null &&
+                      scope.row.restVolume > 0
                     "
                     @click="handleBondsCover(scope.row)"
                     >平仓</el-button
