@@ -19,7 +19,7 @@ export default {
   props: {
     w: {
       type: String,
-      default: '150px'
+      default: '160px'
     }
   },
   data() {

@@ -102,7 +102,7 @@
       </el-form-item>
       <el-form-item>
         <el-button class="btn-green" @click="submitForm('breakEditForm')"
-          >申请修改</el-button
+          >申请违约续作</el-button
         >
       </el-form-item>
     </el-form>

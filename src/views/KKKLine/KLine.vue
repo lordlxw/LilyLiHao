@@ -1004,7 +1004,7 @@ export default {
           { validator: floatTest, trigger: 'blur' }
         ]
       },
-      canlendarW: 150,
+      canlendarW: 160,
       buyFormPrice: '',
       saleFormForwardPrice: '',
       buyFormForwardPrice: '',
@@ -2929,6 +2929,76 @@ export default {
                 self.tryPlay()
                 self.notifyRejection[msgJson.data.ut.userTradeId] = notify
                 break
+              case 'xuzuo_deal_bond_0':
+              case 'xuzuo_deal_bond_1':
+                notify = self.$notify({
+                  title: `${msgJson.data.ut.tradeuser} 发起违约续作`,
+                  dangerouslyUseHTMLString: true,
+                  position: 'top-left',
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "创建时间"),
+                        h("dd", null, `${msgJson.data.ut.createTime}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.ut.tscode}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.ut.direction === 'bond_0' ? '买入' : msgJson.data.ut.direction === 'bond_1' ? '卖出' : ''}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交价"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交量"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? msgJson.data.ut.restVolume + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.substr(0, 10) + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
+                        ])
+                      ]),
+                      h("dl", { style: "margin-top:20px;" }, [
+                        h("dd", null, [
+                          h("button", {
+                            class: "notigy-agree",
+                            on: {
+                              click: function () {
+                                self.handleDealBreakRedoConfirmClick(msgJson.data.ut.userTradeId)
+                              }
+                            }
+                          }, "同意"),
+                          h("button", {
+                            class: "notigy-cancel",
+                            on: {
+                              click: function () {
+                                self.handleDealBreakRedoRejectionClick(msgJson.data.ut.userTradeId)
+                              }
+                            }
+                          }, "拒绝")
+                        ])
+                      ]),
+                    ],
+                  ),
+                  duration: 0
+                });
+                self.tryPlay()
+                self.notifyRejection[msgJson.data.ut.userTradeId] = notify
+                break
             }
             socket.send(JSON.stringify({ "dataType": "ack", "data": { "dataKey": msgJson.dataKey, "dataType": msgJson.dataType } }))
           }
@@ -3063,7 +3133,7 @@ export default {
         delete self.notifyRejection[parseInt(userTradeId)]
       })
     },
-    // 违约同意
+    // 续作同意
     handleDealBreakRedoConfirmClick(userTradeId) {
       const self = this
       apiBreak.dealBreakRedoConfirm({ userTradeId }).then(response => {
@@ -3082,7 +3152,7 @@ export default {
         delete self.notifyRejection[parseInt(userTradeId)]
       })
     },
-    // 违约拒绝
+    // 续作拒绝
     handleDealBreakRedoRejectionClick(userTradeId) {
       const self = this
       apiBreak.dealBreakRedoRejection({ userTradeId }).then(response => {
