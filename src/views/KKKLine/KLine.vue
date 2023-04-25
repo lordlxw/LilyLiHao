@@ -196,7 +196,7 @@
                   ref="setForm"
                   :model="setForm"
                   :rules="setFormRules"
-                  label-width="100px"
+                  :label-width="`${widthList.w100}px`"
                 >
                   <el-form-item label="交易量" prop="volume">
                     <el-input v-model="setForm.volume"></el-input>
@@ -253,7 +253,7 @@
                 ref="buyForm"
                 :model="buyForm"
                 :rules="buyFormRules"
-                label-width="80px"
+                :label-width="`${widthList.w80}px`"
                 size="mini"
                 class="buy-form"
               >
@@ -385,7 +385,7 @@
                 ref="saleForm"
                 :model="saleForm"
                 :rules="saleFormRules"
-                label-width="80px"
+                :label-width="`${widthList.w80}px`"
                 size="mini"
                 class="sale-form"
               >
@@ -535,14 +535,18 @@
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
               >
-                <span style="width: 50px">{{ item.brokerName }}</span>
+                <span :style="`width: ${widthList.w50}px`">{{
+                  item.brokerName
+                }}</span>
                 <span style="flex: 1" class="ellipsis">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
-                <span style="width: 50px">{{
+                <span :style="`width: ${widthList.w50}px`">{{
                   item.price | moneyFormat(4)
                 }}</span>
-                <span style="width: 50px">{{ item.updatetime }}</span>
+                <span :style="`width: ${widthList.w60}px`">{{
+                  item.updatetime
+                }}</span>
               </li>
             </ul>
           </el-scrollbar>
@@ -556,14 +560,18 @@
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
               >
-                <span style="width: 50px">{{ item.brokerName }}</span>
+                <span :style="`width: ${widthList.w50}px`">{{
+                  item.brokerName
+                }}</span>
                 <span class="ellipsis" style="flex: 1">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
-                <span style="width: 50px">{{
+                <span :style="`width: ${widthList.w50}px`">{{
                   item.price | moneyFormat(4)
                 }}</span>
-                <span style="width: 50px">{{ item.updatetime }}</span>
+                <span :style="`width: ${widthList.w60}px`">{{
+                  item.updatetime
+                }}</span>
               </li>
             </ul>
           </el-scrollbar>
@@ -579,14 +587,18 @@
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
               >
-                <span style="width: 50px">{{ item.brokerName }}</span>
+                <span :style="`width: ${widthList.w50}px`">{{
+                  item.brokerName
+                }}</span>
                 <span style="flex: 1" class="ellipsis">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
-                <span style="width: 50px">{{
+                <span :style="`width: ${widthList.w50}px`">{{
                   item.price | moneyFormat(4)
                 }}</span>
-                <span style="width: 50px">{{ item.updatetime }}</span>
+                <span :style="`width: ${widthList.w60}px`">{{
+                  item.updatetime
+                }}</span>
               </li>
             </ul>
           </el-scrollbar>
@@ -602,14 +614,18 @@
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
               >
-                <span style="width: 50px">{{ item.brokerName }}</span>
+                <span :style="`width: ${widthList.w50}px`">{{
+                  item.brokerName
+                }}</span>
                 <span class="ellipsis" style="flex: 1">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
-                <span style="width: 50px">{{
+                <span :style="`width: ${widthList.w50}px`">{{
                   item.price | moneyFormat(4)
                 }}</span>
-                <span style="width: 50px">{{ item.updatetime }}</span>
+                <span :style="`width: ${widthList.w60}px`">{{
+                  item.updatetime
+                }}</span>
               </li>
             </ul>
           </el-scrollbar>
@@ -617,12 +633,12 @@
         <!-- 交易 -->
         <div class="r-trans" v-if="transactionAllList.length > 0">
           <el-scrollbar>
-            <ul style="margin-top: 20px">
+            <ul class="mt20">
               <li class="li-first">
-                <span style="width: 60px">方向</span>
-                <span style="width: 120px">价格</span>
-                <span style="width: 100px">中介</span>
-                <span style="width: 80px">交易时间</span>
+                <span class="colume1">方向</span>
+                <span class="colume2">价格</span>
+                <span class="colume3">中介</span>
+                <span class="colume4">交易时间</span>
                 <!-- <span style="width: 60px">净价</span> -->
               </li>
               <li
@@ -630,12 +646,12 @@
                 :key="index"
                 :class="funcSelectColor(item.dealtype)"
               >
-                <span style="width: 60px">{{ item.dealtype }}</span>
-                <span style="width: 120px">{{
+                <span class="colume1">{{ item.dealtype }}</span>
+                <span class="colume2">{{
                   item.tradeprice | moneyFormat(4)
                 }}</span>
-                <span style="width: 100px">{{ item.brokerName }}</span>
-                <span style="width: 80px">{{ item.tradetime }}</span>
+                <span class="colume3">{{ item.brokerName }}</span>
+                <span class="colume4">{{ item.tradetime }}</span>
                 <!-- <span style="width: 60px">{{ item.netprice }}</span> -->
               </li>
             </ul>
@@ -859,6 +875,13 @@ export default {
       leftFold: 'el-icon-s-fold',
       rightFold: 'el-icon-s-unfold',
       rightWith: '',
+      widthList: {
+        w50: 50,
+        w60: 60,
+        w80: 80,
+        w100: 100,
+        w120: 120
+      },
       optionTSType: [],
       optionYear: [
         {
@@ -3462,6 +3485,11 @@ export default {
       this.initFrameW('leftWith', 200)
       this.initFrameW('rightWith', 360)
       this.initFrameW('canlendarW', 150)
+      this.widthList.w50 = this.returnFrameW(50)
+      this.widthList.w60 = this.returnFrameW(60)
+      this.widthList.w80 = this.returnFrameW(80)
+      this.widthList.w100 = this.returnFrameW(100)
+      this.widthList.w120 = this.returnFrameW(120)
       setTimeout(() => {
         if (this.myChart) {
           this.myChart.resize()
@@ -3554,7 +3582,7 @@ export default {
 }
 
 .ipt-remark {
-  width: 500px;
+  width: 400px;
 }
 
 .container {
@@ -3759,6 +3787,19 @@ export default {
           ul li:last-child {
             border-bottom: none;
           }
+          .colume1 {
+            width: 60px;
+          }
+          .colume2 {
+            width: 100px;
+          }
+          .colume3 {
+            width: 100px;
+          }
+          .colume4 {
+            width: 100px;
+            text-align: center;
+          }
         }
       }
     }
@@ -3824,10 +3865,10 @@ export default {
   }
 }
 .chatbox {
-  .el-button--mini,
-  .el-button--mini.is-round {
-    padding: 6px 10px;
-  }
+  // .el-button--mini,
+  // .el-button--mini.is-round {
+  //   padding: 6px 10px;
+  // }
   .sale-form {
     .el-button--primary {
       background-color: #ec0000;
