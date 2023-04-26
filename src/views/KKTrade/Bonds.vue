@@ -91,8 +91,7 @@
                     type="text"
                     v-if="
                       setAuth('bonds:cover') &&
-                      scope.row.realTradeId === null &&
-                      scope.row.restVolume > 0
+                      scope.row.realTradeId === null
                     "
                     @click="handleBondsCover(scope.row)"
                     >平仓</el-button
