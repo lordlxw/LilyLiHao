@@ -747,11 +747,15 @@ export default {
   watch: {
     enquiryInfo() {
       if (this.$refs.eltabs.panes.length > 0) {
+        console.log(33443)
+        console.log(this.$refs.eltabs.panes[this.$refs.eltabs.currentName].label)
         switch (this.$refs.eltabs.panes[this.$refs.eltabs.currentName].label) {
           case this.tablist[0]:
+            console.log('1-1')
             this.loadInitData()
             break
           case this.tablist[1]:
+          console.log('2-1')
             this.loadInitDataFinish()
             break
         }

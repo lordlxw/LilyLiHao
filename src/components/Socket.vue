@@ -216,7 +216,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量</dt>
@@ -251,7 +251,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量</dt>
@@ -294,7 +294,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量</dt>
@@ -336,7 +336,7 @@ export default {
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交价"),
-                        h("dd", null, `${msgJson.data.price}`)
+                        h("dd", null, `${util.moneyFormat(msgJson.data.price, 4)}`)
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交量"),
@@ -396,7 +396,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量</dt>
@@ -431,7 +431,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量</dt>
@@ -474,7 +474,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量</dt>
@@ -517,7 +517,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量</dt>
@@ -559,7 +559,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量</dt>
@@ -602,7 +602,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量</dt>
@@ -645,7 +645,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量</dt>
@@ -688,7 +688,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量</dt>
@@ -731,7 +731,7 @@ export default {
                     </dl>
                     <dl>
                       <dt>成交价</dt>
-                      <dd>${msgJson.data.price}</dd>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
                     </dl>
                     <dl>
                       <dt>成交量</dt>
