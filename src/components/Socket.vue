@@ -778,6 +778,10 @@ export default {
                 break;
               case 'xuzuo_confirmdeal_bond_0':
               case 'xuzuo_confirmdeal_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
                 self.$notify({
                   title: `${msgJson.data.xunjiayuanName} 已确认续作`,
                   dangerouslyUseHTMLString: true,
@@ -809,7 +813,6 @@ export default {
                   duration: 0
                 });
                 self.tryPlay()
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 break
             }
             socket.send(JSON.stringify({ "dataType": "ack", "data": { "dataKey": msgJson.dataKey, "dataType": msgJson.dataType } }))

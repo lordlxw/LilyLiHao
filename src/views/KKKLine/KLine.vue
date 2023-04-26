@@ -2278,6 +2278,9 @@ export default {
               //   break
               case 'accept_bond_0':
               case 'accept_bond_1':
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
                 self.$notify({
                   title: `${msgJson.data.tradeuser} 已接收`,
                   dangerouslyUseHTMLString: true,
