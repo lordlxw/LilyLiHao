@@ -776,10 +776,41 @@ export default {
               case 'weipingchangerequest_bond_1':
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 break;
-              case 'xuzuo_confirmdeal_bond_1':
               case 'xuzuo_confirmdeal_bond_0':
+              case 'xuzuo_confirmdeal_bond_1':
+                self.$notify({
+                  title: `${msgJson.data.xunjiayuanName} 已确认续作`,
+                  dangerouslyUseHTMLString: true,
+                  position: 'top-left',
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 0
+                });
+                self.tryPlay()
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
-                break;
+                break
             }
             socket.send(JSON.stringify({ "dataType": "ack", "data": { "dataKey": msgJson.dataKey, "dataType": msgJson.dataType } }))
           }

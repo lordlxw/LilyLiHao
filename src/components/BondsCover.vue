@@ -21,6 +21,13 @@
       <el-form-item label="价格" prop="price">
         <el-input v-model="coverForm.price" placeholder="请输入价格"></el-input>
       </el-form-item>
+      <el-form-item label="允许浮动" prop="worstPrice">
+        <el-input-number
+          v-model="coverForm.worstPrice"
+          step="0.05"
+        ></el-input-number>
+        BP
+      </el-form-item>
       <el-form-item label="交易量(万)" prop="volume">
         <el-input
           v-model="coverForm.volume"
@@ -109,6 +116,15 @@ export default {
         callback()
       }
     }
+    // 允许浮动格式验证
+    const floatTest = async (rule, value, callback) => {
+      console.log(rule)
+      if (!config.regExpSet.floatPrice.test(value)) {
+        callback(new Error('大于0的格式-.--'))
+      } else {
+        callback()
+      }
+    }
     // 大于0格式验证
     const plusAmountTest = async (rule, value, callback) => {
       if (!config.regExpSet.gtzero.test(value)) {
@@ -124,6 +140,8 @@ export default {
         direction: '买入',
         // 价格
         price: '',
+        // 允许浮动
+        worstPrice: 0.1,
         // 交易量
         volume: '',
         // 债券号
@@ -162,6 +180,10 @@ export default {
         ],
         tradeuserId: [
           { required: true, message: '交易员必选', trigger: 'change' }
+        ],
+        worstPrice: [
+          { required: true, message: '允许浮动必填', trigger: 'blur' },
+          { validator: floatTest, trigger: 'blur' }
         ]
       }
     }
@@ -221,6 +243,8 @@ export default {
             volume: this[formName].volume,
             // 备注
             remark: this[formName].remark,
+            // 允许浮动
+            worstPrice: this[formName].worstPrice,
             //
             realTradeIdList: this[formName].realTradeIdList
           }).then(res => {

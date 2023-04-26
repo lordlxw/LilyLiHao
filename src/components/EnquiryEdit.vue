@@ -134,7 +134,7 @@ export default {
         callback()
       }
     }
-    // 金额格式验证
+    // 允许浮动格式验证
     const floatTest = async (rule, value, callback) => {
       console.log(rule)
       if (!config.regExpSet.floatPrice.test(value)) {

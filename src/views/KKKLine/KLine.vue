@@ -2941,7 +2941,7 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleDealBreakRedoConfirmClick(msgJson.data.rt.userTradeId)
+                                self.handleDealBreakRedoConfirmClick(msgJson.data.dto.userTradeId)
                               }
                             }
                           }, "同意"),
@@ -2949,7 +2949,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleDealBreakRedoRejectionClick(msgJson.data.rt.userTradeId)
+                                self.handleDealBreakRedoRejectionClick(msgJson.data.dto.userTradeId)
                               }
                             }
                           }, "拒绝")
@@ -2960,77 +2960,41 @@ export default {
                   duration: 0
                 });
                 self.tryPlay()
-                self.notifyRejection[msgJson.data.rt.userTradeId] = notify
+                self.notifyRejection[msgJson.data.dto.userTradeId] = notify
                 break
               case 'xuzuo_deal_bond_0':
               case 'xuzuo_deal_bond_1':
-                notify = self.$notify({
-                  title: `${msgJson.data.ut.tradeuser} 发起违约续作`,
+                self.$notify({
+                  title: `${msgJson.data.tradeuser} 续作交易已成功`,
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
-                  message: h(
-                    "div",
-                    { class: "notify" },
-                    [
-                      h("dl", null, [
-                        h("dt", null, "创建时间"),
-                        h("dd", null, `${msgJson.data.ut.createTime}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "债券码"),
-                        h("dd", null, `${msgJson.data.ut.tscode}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "方向"),
-                        h("dd", null, `${msgJson.data.ut.direction === 'bond_0' ? '买入' : msgJson.data.ut.direction === 'bond_1' ? '卖出' : ''}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "成交价"),
-                        h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
-                          h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
-                        ])
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "成交量"),
-                        h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? msgJson.data.ut.restVolume + ' ' : ''),
-                          h("span", msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
-                        ])
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "交割日期"),
-                        h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.substr(0, 10) + ' ' : ''),
-                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
-                        ])
-                      ]),
-                      h("dl", { style: "margin-top:20px;" }, [
-                        h("dd", null, [
-                          h("button", {
-                            class: "notigy-agree",
-                            on: {
-                              click: function () {
-                                self.handleDealBreakRedoConfirmClick(msgJson.data.ut.userTradeId)
-                              }
-                            }
-                          }, "同意"),
-                          h("button", {
-                            class: "notigy-cancel",
-                            on: {
-                              click: function () {
-                                self.handleDealBreakRedoRejectionClick(msgJson.data.ut.userTradeId)
-                              }
-                            }
-                          }, "拒绝")
-                        ])
-                      ]),
-                    ],
-                  ),
-                  duration: 0
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 5000
                 });
                 self.tryPlay()
-                self.notifyRejection[msgJson.data.ut.userTradeId] = notify
                 break
             }
             socket.send(JSON.stringify({ "dataType": "ack", "data": { "dataKey": msgJson.dataKey, "dataType": msgJson.dataType } }))

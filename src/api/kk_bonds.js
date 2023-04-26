@@ -84,7 +84,9 @@ export default {
         // 交易员ID
         userId: params.userId,
         // 成交量
-        volume: params.volume
+        volume: params.volume,
+        // 允许浮动
+        worstPrice: params.worstPrice
       }
     })
   },
