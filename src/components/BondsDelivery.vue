@@ -47,7 +47,9 @@
         <template slot-scope="scope">
           <el-select
             v-model="scope.row.weiyuePerson"
-            v-if="scope.row.mySelected.length > 0"
+            v-if="
+              scope.row.mySelected.length > 0 && scope.row.jiaogeStatus !== 1
+            "
             placeholder="请选择"
           >
             <el-option
