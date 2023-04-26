@@ -61,6 +61,7 @@
 import api from "@/api/kk_power_admin";
 import RoleSelect from '@/components/RoleSelect.vue'
 import config from "@/utils/config.js";
+import { debounce } from '@/utils/debounce'
 export default {
   components: {
     RoleSelect
@@ -122,7 +123,7 @@ export default {
       this.ruleForm.roleIds = obj.value;
     },
     // 提交
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.add({
@@ -144,7 +145,7 @@ export default {
           });
         }
       });
-    },
+    }),
   },
   mounted() { },
 };

@@ -188,6 +188,7 @@ import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
+import { debounce } from '@/utils/debounce'
 import moment from 'moment'
 export default {
   mixins: [pageMixin, commMixin],
@@ -273,7 +274,7 @@ export default {
       this.breakTableData = [JSON.parse(JSON.stringify(scope.row))]
     },
     // 改违约
-    handleDeliveryBackClick(scope) {
+    handleDeliveryBackClick: debounce(function (scope) {
       // const finishCodeList = [...new Set(this.breakTableData.map(item => item.finishCode))]
       const wyList = []
       const len = this.breakTableData.length
@@ -325,7 +326,7 @@ export default {
           type: 'error'
         })
       }
-    },
+    }),
     // 初始化数据
     loadInitData() {
       this.loading = true;

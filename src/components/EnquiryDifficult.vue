@@ -57,6 +57,7 @@
 import api from '@/api/kk_trade'
 import apiAdmin from '@/api/kk_power_admin'
 import config from '@/utils/config'
+import { debounce } from '@/utils/debounce'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 export default {
   props: ['row'],
@@ -111,7 +112,7 @@ export default {
     handleDelivertySpeed(val) {
       this.enquiryForm.deliverySpeed = val
     },
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.difficultAcheve({
@@ -130,7 +131,7 @@ export default {
           })
         }
       })
-    },
+    }),
     // 获取交易员列表
     getTradeUserList() {
       apiAdmin.tradeUserList().then(response => {

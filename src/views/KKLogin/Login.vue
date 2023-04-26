@@ -66,6 +66,7 @@
 <script>
 import Velocity from 'velocity-animate'
 import api from '@/api/kk_login'
+import { debounce } from '@/utils/debounce'
 export default {
   data() {
     return {
@@ -83,7 +84,7 @@ export default {
     }
   },
   methods: {
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.login({
@@ -115,7 +116,7 @@ export default {
           this.$message.error('验证失败')
         }
       })
-    },
+    }),
     handleBeforeEnter: (el) => {
       el.style.opacity = 0
     },

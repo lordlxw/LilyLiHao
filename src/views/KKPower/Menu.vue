@@ -39,7 +39,7 @@
               :formatter="
                 itemHead.formatter
                   ? itemHead.formatter
-                  : function (row, column, cellValue, index) {
+                  : (row, column, cellValue, index) => {
                       return cellValue;
                     }
               "
@@ -116,6 +116,7 @@ import config from "@/utils/config";
 import api from "@/api/kk_power_menu";
 import { pageMixin } from "@/utils/pageMixin";
 import { authMixin } from "@/utils/authMixin";
+import { debounce } from '@/utils/debounce'
 export default {
   mixins: [pageMixin, authMixin],
   data() {
@@ -156,7 +157,7 @@ export default {
       });
     },
     // 删除
-    handleDelete(scope) {
+    handleDelete: debounce(function (scope) {
       api.delete({ menuId: scope.row.menuId }).then((response) => {
         if (response && response.code === "00000") {
           this.$message({
@@ -170,7 +171,7 @@ export default {
           this.loadInitData();
         }
       });
-    },
+    }),
     funcFormat(row, column) {
       switch (column.property) {
         case "menuType":

@@ -53,6 +53,7 @@ import { mapGetters } from "vuex";
 import api from "@/api/kk_power_role";
 import apiMenu from "@/api/kk_power_menu";
 import config from "@/utils/config";
+import { debounce } from '@/utils/debounce'
 export default {
   data() {
     return {
@@ -87,7 +88,7 @@ export default {
   },
   methods: {
     // 提交
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       Promise.all([
         // 半选择加上全选择key
         (this.ruleForm.menuIds = this.$refs.tree
@@ -115,7 +116,7 @@ export default {
           }
         });
       })
-    },
+    }),
     getAllMenu() {
       const self = this
       apiMenu.getSystemMenuTree().then(response => {

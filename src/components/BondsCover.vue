@@ -92,6 +92,7 @@ import apiCanlendar from '@/api/kk_canlendar'
 import apiAdmin from '@/api/kk_power_admin'
 import * as util from '@/utils/util'
 import config from '@/utils/config'
+import { debounce } from '@/utils/debounce'
 import moment from 'moment'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 export default {
@@ -198,7 +199,7 @@ export default {
     handleDirection(val) {
       this.coverForm.direction = val
     },
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.bondsCover({
@@ -235,7 +236,7 @@ export default {
           })
         }
       })
-    },
+    }),
     // 获取交易员列表
     getTradeUserList(realTradeIdList) {
       apiAdmin.realTradeUserList({ realTradeIdList }).then(response => {

@@ -362,6 +362,8 @@
                   <el-button
                     v-if="setAuth('inquiry:insert')"
                     class="btn-green mt10"
+                    :disabled="loading"
+                    :loading="loading"
                     @click="submitForm('buyForm')"
                     >发送</el-button
                   >
@@ -494,6 +496,8 @@
                   <el-button
                     v-if="setAuth('inquiry:insert')"
                     class="btn-red mt10"
+                    :disabled="loading"
+                    :loading="loading"
                     @click="submitForm('saleForm')"
                     >发送</el-button
                   >
@@ -788,6 +792,7 @@ import ComTscodeSelect from '@/components/ComTscodeSelect.vue'
 import * as echarts from 'echarts'
 import configUtil from '@/utils/config.js'
 import * as util from '@/utils/util'
+import { debounce } from '@/utils/debounce'
 // import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
 import UpdatePassword from '@/components/UpdatePassword.vue'
@@ -927,7 +932,8 @@ export default {
       createSocketIO: null,
       createSocketEmitter: null,
       activeName: 'buy',
-      // chart
+      // 询价单提交表单
+      loading: false,
       saleForm: {
         // 交易类型
         direction: '卖',
@@ -1733,7 +1739,7 @@ export default {
       }
     },
     // 收藏事件
-    handleFavorite() {
+    handleFavorite: debounce(function () {
       if (this.activeTscode !== '') {
         api.favoriteAdd({
           tscode: this.activeTscode
@@ -1749,9 +1755,9 @@ export default {
       } else {
         this.$message('请选择一条收藏项');
       }
-    },
+    }),
     // 取消收藏事件
-    handleFavoriteCancel() {
+    handleFavoriteCancel: debounce(function () {
       if (this.activeTscode !== '') {
         api.favoriteDelete({
           tscode: this.activeTscode
@@ -1767,7 +1773,7 @@ export default {
       } else {
         this.$message('请选择一条取消收藏项');
       }
-    },
+    }),
     // 下拉框选择债券
     handlerTscodeSelect(obj) {
       Promise.all([
@@ -1779,7 +1785,7 @@ export default {
       })
     },
     // 债券点击事件
-    handlerTscode(item) {
+    handlerTscode: debounce(function (item) {
       Promise.all([
         this.activeId = item.id,
         this.tscode = item.tscode,
@@ -1790,7 +1796,7 @@ export default {
         this.calcFavoriteIcon()
         this.initCommonData()
       })
-    },
+    }),
     // 图表数据分类方法
     splitData(rawData, xAxisKey) {
       const categoryData = []
@@ -1878,7 +1884,7 @@ export default {
       }
     },
     // 左侧面板关闭打开
-    handleLeftOpenOrClose() {
+    handleLeftOpenOrClose: debounce(function () {
       if (this.leftFold === 'el-icon-s-fold') {
         this.leftFold = 'el-icon-s-unfold'
         this.leftWith = 0
@@ -1889,9 +1895,9 @@ export default {
       setTimeout(() => {
         this.myChart.resize()
       }, 50)
-    },
+    }),
     // 右侧面板关闭打开
-    handleRightOpenOrClose() {
+    handleRightOpenOrClose: debounce(function () {
       if (this.rightFold === 'el-icon-s-unfold') {
         this.rightFold = 'el-icon-s-fold'
         this.rightWith = '0'
@@ -1902,7 +1908,7 @@ export default {
       setTimeout(() => {
         this.myChart.resize()
       }, 50)
-    },
+    }),
     // 初始化债券类型
     initTSType() {
       Promise.all([
@@ -1949,12 +1955,12 @@ export default {
       })
     },
     // 左侧tab切换
-    handleClickTab(tab) {
+    handleClickTab: debounce(function (tab) {
       this.activeTab = tab;
       if (tab === this.tabList[2]) {
         this.favoriteList()
       }
-    },
+    }),
     // 右侧
     // 卖出，买入数据
     initRightBusinessList(params) {
@@ -2122,11 +2128,15 @@ export default {
               });
               this.dialogVisible = false
             }
+            this.loading = false;
           })
+        } else {
+          this.loading = false
         }
       })
     },
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
+      this.loading = true;
       switch (formName) {
         case 'setForm':
           this.$refs[formName].validate((valid) => {
@@ -2139,6 +2149,7 @@ export default {
               this.$refs['popover-set'].doClose()
             }
           })
+          this.loading = false
           break
         case 'buyForm':
         case 'saleForm':
@@ -2149,7 +2160,7 @@ export default {
           }
           break
       }
-    },
+    }),
     // ************websocket start**************************
     // 初始化
     initSocket() {
@@ -2496,7 +2507,6 @@ export default {
                         ])
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
-                        // h("dt", null, ""),
                         h("dd", null, [
                           h("button", {
                             class: "notigy-agree",
@@ -2885,7 +2895,7 @@ export default {
               case 'xuzuo_tradecompare_bond_0':
               case 'xuzuo_tradecompare_bond_1':
                 notify = self.$notify({
-                  title: `${msgJson.data.ut.tradeuser} 发起违约续作`,
+                  title: `${msgJson.data.rt.tradeuser} 发起违约续作`,
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
                   message: h(
@@ -2894,34 +2904,34 @@ export default {
                     [
                       h("dl", null, [
                         h("dt", null, "创建时间"),
-                        h("dd", null, `${msgJson.data.ut.createTime}`)
+                        h("dd", null, `${msgJson.data.rt.createTime}`)
                       ]),
                       h("dl", null, [
                         h("dt", null, "债券码"),
-                        h("dd", null, `${msgJson.data.ut.tscode}`)
+                        h("dd", null, `${msgJson.data.rt.tscode}`)
                       ]),
                       h("dl", null, [
                         h("dt", null, "方向"),
-                        h("dd", null, `${msgJson.data.ut.direction === 'bond_0' ? '买入' : msgJson.data.ut.direction === 'bond_1' ? '卖出' : ''}`)
+                        h("dd", null, `${msgJson.data.rt.direction === 'bond_0' ? '买入' : msgJson.data.rt.direction === 'bond_1' ? '卖出' : ''}`)
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交价"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.rt.price, 4) + ' ' : ''),
                           h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "成交量"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? msgJson.data.ut.restVolume + ' ' : ''),
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? msgJson.data.rt.restVolume + ' ' : ''),
                           h("span", msgJson.data.compareResult.fieldlist.indexOf('restVolume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
                         ])
                       ]),
                       h("dl", null, [
                         h("dt", null, "交割日期"),
                         h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.substr(0, 10) + ' ' : ''),
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
                           h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
                         ])
                       ]),
@@ -2931,7 +2941,7 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleDealBreakRedoConfirmClick(msgJson.data.ut.userTradeId)
+                                self.handleDealBreakRedoConfirmClick(msgJson.data.rt.userTradeId)
                               }
                             }
                           }, "同意"),
@@ -2939,7 +2949,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleDealBreakRedoRejectionClick(msgJson.data.ut.userTradeId)
+                                self.handleDealBreakRedoRejectionClick(msgJson.data.rt.userTradeId)
                               }
                             }
                           }, "拒绝")
@@ -2950,7 +2960,7 @@ export default {
                   duration: 0
                 });
                 self.tryPlay()
-                self.notifyRejection[msgJson.data.ut.userTradeId] = notify
+                self.notifyRejection[msgJson.data.rt.userTradeId] = notify
                 break
               case 'xuzuo_deal_bond_0':
               case 'xuzuo_deal_bond_1':
@@ -3112,20 +3122,18 @@ export default {
         }
       }))
     },
+
     // 同意成交
-    handleInquiryDealConfirmClick(userTradeId) {
+    handleInquiryDealConfirmClick: debounce(function (userTradeId) {
       const self = this
       apiTrade.inquiryDealConfirm({ userTradeId }).then(response => {
         if (response && response.code === '00000') {
-          this.$message({
+          self.$message({
             message: "已成交",
             type: 'success'
           })
-          // if (self.dialogTableVisible) {
-          //   self.$refs.tradeEnquiry.loadInitData()
-          // }
         } else {
-          this.$message({
+          self.$message({
             message: `${response.message}`,
             type: 'warning'
           })
@@ -3133,21 +3141,18 @@ export default {
         self.notifyRejection[parseInt(userTradeId)].close()
         delete self.notifyRejection[parseInt(userTradeId)]
       })
-    },
+    }),
     // 拒绝成交
-    handleInquiryDealRejectionClick(userTradeId) {
+    handleInquiryDealRejectionClick: debounce(function (userTradeId) {
       const self = this
       apiTrade.inquiryDealRejection({ userTradeId }).then(response => {
         if (response && response.code === '00000') {
-          this.$message({
+          self.$message({
             message: "已拒绝",
             type: 'success'
           })
-          // if (self.dialogTableVisible) {
-          //   self.$refs.tradeEnquiry.loadInitData()
-          // }
         } else {
-          this.$message({
+          self.$message({
             message: `${response.message}`,
             type: 'warning'
           })
@@ -3155,9 +3160,9 @@ export default {
         self.notifyRejection[parseInt(userTradeId)].close()
         delete self.notifyRejection[parseInt(userTradeId)]
       })
-    },
+    }),
     // 续作同意
-    handleDealBreakRedoConfirmClick(userTradeId) {
+    handleDealBreakRedoConfirmClick: debounce(function (userTradeId) {
       const self = this
       apiBreak.dealBreakRedoConfirm({ userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3174,9 +3179,9 @@ export default {
         self.notifyRejection[parseInt(userTradeId)].close()
         delete self.notifyRejection[parseInt(userTradeId)]
       })
-    },
+    }),
     // 续作拒绝
-    handleDealBreakRedoRejectionClick(userTradeId) {
+    handleDealBreakRedoRejectionClick: debounce(function (userTradeId) {
       const self = this
       apiBreak.dealBreakRedoRejection({ userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3193,9 +3198,9 @@ export default {
         self.notifyRejection[parseInt(userTradeId)].close()
         delete self.notifyRejection[parseInt(userTradeId)]
       })
-    },
+    }),
     // 同意修改未平仓单
-    handleAgreeNoBondsUpdateClick(realTradeId) {
+    handleAgreeNoBondsUpdateClick: debounce(function (realTradeId) {
       const self = this
       apiBonds.dealNoBondsEditComfirm({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3212,9 +3217,9 @@ export default {
         self.notifyRejection[parseInt(realTradeId)].close()
         delete self.notifyRejection[parseInt(realTradeId)]
       })
-    },
+    }),
     // 拒绝修改未平仓单
-    handleRejectNoBondsUpdateClick(realTradeId) {
+    handleRejectNoBondsUpdateClick: debounce(function (realTradeId) {
       const self = this
       apiBonds.dealNoBondsEditRejection({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3231,9 +3236,9 @@ export default {
         self.notifyRejection[parseInt(realTradeId)].close()
         delete self.notifyRejection[parseInt(realTradeId)]
       })
-    },
+    }),
     // 同意修改已平仓单
-    handleAgreeBondsUpdateClick(realTradeId) {
+    handleAgreeBondsUpdateClick: debounce(function (realTradeId) {
       const self = this
       apiBonds.dealBondsEditComfirm({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3250,9 +3255,9 @@ export default {
         self.notifyRejection[parseInt(realTradeId)].close()
         delete self.notifyRejection[parseInt(realTradeId)]
       })
-    },
+    }),
     // 口头违约确认
-    handleSayBreakConfirmClick(realTradeId) {
+    handleSayBreakConfirmClick: debounce(function (realTradeId) {
       const self = this
       apiBonds.bondsSayBreakConfirm({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3269,9 +3274,9 @@ export default {
         self.notifyRejection[parseInt(realTradeId)].close()
         delete self.notifyRejection[parseInt(realTradeId)]
       })
-    },
+    }),
     // 口头违约拒绝
-    handleSayBreakRejectionClick(realTradeId) {
+    handleSayBreakRejectionClick: debounce(function (realTradeId) {
       const self = this
       apiBonds.bondsSayBreakRejection({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3288,9 +3293,9 @@ export default {
         self.notifyRejection[parseInt(realTradeId)].close()
         delete self.notifyRejection[parseInt(realTradeId)]
       })
-    },
+    }),
     // 拒绝修改已平仓单
-    handleRejectBondsUpdateClick(realTradeId) {
+    handleRejectBondsUpdateClick: debounce(function (realTradeId) {
       const self = this
       apiBonds.dealBondsEditRejection({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3307,8 +3312,8 @@ export default {
         self.notifyRejection[parseInt(realTradeId)].close()
         delete self.notifyRejection[parseInt(realTradeId)]
       })
-    },
-    handleEnquiryDifficultAddClick(data) {
+    }),
+    handleEnquiryDifficultAddClick: debounce(function (data) {
       // 撤单
       const self = this
       apiTrade.difficultAcheveCannel({ userTradeId: data.userTradeId }).then(response => {
@@ -3330,9 +3335,9 @@ export default {
         self.notifyRejection[parseInt(data.userTradeId)].close()
         delete self.notifyRejection[parseInt(data.userTradeId)]
       })
-    },
+    }),
     // 询价单难成撤单
-    handleEnquiryDifficultCanncelClick(data) {
+    handleEnquiryDifficultCanncelClick: debounce(function (data) {
       const self = this
       apiTrade.difficultAcheveCannel({ userTradeId: data.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3349,9 +3354,9 @@ export default {
         self.notifyRejection[parseInt(data.userTradeId)].close()
         delete self.notifyRejection[parseInt(data.userTradeId)]
       })
-    },
+    }),
     // 询价单难成保留
-    handleEnquiryDifficultDotMoveClick(data) {
+    handleEnquiryDifficultDotMoveClick: debounce(function (data) {
       const self = this
       apiTrade.difficultStay({ userTradeId: data.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3368,16 +3373,16 @@ export default {
         self.notifyRejection[parseInt(data.userTradeId)].close()
         delete self.notifyRejection[parseInt(data.userTradeId)]
       })
-    },
+    }),
     // 接收单据
-    handleReceiveClick(row) {
+    handleReceiveClick: debounce(function (row) {
       if (row.status === 'delegate_bond_0') {
         socket.send(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_0' }))
       } else if (row.status === 'delegate_bond_1') {
         socket.send(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_1' }))
       }
       // this.dialogTableVisible = false
-    },
+    }),
     // 获取交易员列表
     getTradeUserList() {
       apiAdmin.tradeUserList().then(response => {
@@ -3417,7 +3422,7 @@ export default {
     //   })
     // },
     /* 下拉指令 */
-    handleCommand(command) {
+    handleCommand: debounce(function (command) {
       switch (command) {
         case "logout":
           apiLogin.logout().then(response => {
@@ -3437,7 +3442,7 @@ export default {
           this.dialogUpdatePasswordVisible = true
           break;
       }
-    },
+    }),
     // 修改密码弹出框
     handleDialogUpdatePasswordVisible(obj) {
       this.dialogUpdatePasswordVisible = obj.dialogVisable

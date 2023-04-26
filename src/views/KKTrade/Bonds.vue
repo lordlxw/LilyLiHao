@@ -668,6 +668,7 @@ import BondsRoll from '@/components/BondsRoll.vue'
 import BondsDelivery from '@/components/BondsDelivery.vue'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
+import { debounce } from '@/utils/debounce'
 import moment from 'moment'
 let tableFinishClassName = ''
 let currentFinishCode = ''
@@ -780,7 +781,7 @@ export default {
       })
     },
     // 未平全量导出
-    handleNobondsAllExport() {
+    handleNobondsAllExport: debounce(function () {
       api.nobondsAllExport().then((response) => {
         var blob = new Blob([response], { type: `application/vnd.ms-excel` });
         var objectUrl = URL.createObjectURL(blob);
@@ -793,9 +794,9 @@ export default {
         a.click();
         URL.revokeObjectURL(objectUrl);
       });
-    },
+    }),
     // 全量导出
-    handleAllExport() {
+    handleAllExport: debounce(function () {
       api.bondsAllExport().then((response) => {
         var blob = new Blob([response], { type: `application/vnd.ms-excel` });
         var objectUrl = URL.createObjectURL(blob);
@@ -808,9 +809,9 @@ export default {
         a.click();
         URL.revokeObjectURL(objectUrl);
       });
-    },
+    }),
     // 增量导出
-    handleAddExport() {
+    handleAddExport: debounce(function () {
       api.bondsAddExport().then((response) => {
         var blob = new Blob([response], { type: `application/vnd.ms-excel` });
         var objectUrl = URL.createObjectURL(blob);
@@ -823,7 +824,7 @@ export default {
         a.click();
         URL.revokeObjectURL(objectUrl);
       });
-    },
+    }),
     // 获取用户模版id下设置的column
     dispatchUserColumn() {
       apiAdmin.getUserColumn({
@@ -968,7 +969,7 @@ export default {
         this.loading = false;
       });
     },
-    handlViewNobondsUpdateContent(scope) {
+    handlViewNobondsUpdateContent: debounce(function (scope) {
       api.nobondsUpdateContent({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000' && response.value) {
           let diffTableData = [];
@@ -985,8 +986,8 @@ export default {
           this.diffTableData = diffTableData
         }
       })
-    },
-    handlViewBondsUpdateContent(scope) {
+    }),
+    handlViewBondsUpdateContent: debounce(function (scope) {
       api.bondsUpdateContent({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000' && response.value) {
           let diffTableData = [];
@@ -1003,8 +1004,8 @@ export default {
           this.diffTableData = diffTableData
         }
       })
-    },
-    handleTabsClick(tab, event) {
+    }),
+    handleTabsClick: debounce(function (tab, event) {
       finishCode = ''
       finishCodeSameCount = 0
       if (tab.label === this.tablist[0]) {
@@ -1015,9 +1016,9 @@ export default {
         this.tableDataFinish = []
         this.loadInitDataFinish()
       }
-    },
+    }),
     // 平仓弹框
-    handleBondsCover(row) {
+    handleBondsCover: debounce(function (row) {
       Promise.all([this.currentRow = JSON.parse(JSON.stringify(row))]).then(() => {
         switch (row.direction) {
           case 'bond_0':
@@ -1036,7 +1037,7 @@ export default {
             break
         }
       })
-    },
+    }),
     // 滚单弹框
     handleRoll(row) {
       Promise.all([
@@ -1263,7 +1264,7 @@ export default {
       }
     },
     // 交割
-    handleDeliveryClick() {
+    handleDeliveryClick: debounce(function () {
       let deliveryFinishData = []
       // 处理数据
       for (let i = 0; i < this.tableDataFinish.length; i++) {
@@ -1281,9 +1282,9 @@ export default {
       }
       this.deliveryFinishData = deliveryFinishData
       this.dialogBondsDeliveryFormVisible = true
-    },
+    }),
     // 未平仓口头违约申请
-    handleNoBondsSayBreakClick(scope) {
+    handleNoBondsSayBreakClick: debounce(function (scope) {
       api.bondsSayBreakApply({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -1299,9 +1300,9 @@ export default {
           })
         }
       })
-    },
+    }),
     // 已平仓口头违约申请
-    handleBondsSayBreakClick(scope) {
+    handleBondsSayBreakClick: debounce(function (scope) {
       api.bondsSayBreakApply({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -1317,9 +1318,9 @@ export default {
           })
         }
       })
-    },
+    }),
     // 未平仓口头违约确认
-    handleNoBondsSayBreakOKClick(scope) {
+    handleNoBondsSayBreakOKClick: debounce(function (scope) {
       api.bondsSayBreakConfirm({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -1335,9 +1336,9 @@ export default {
           })
         }
       })
-    },
+    }),
     // 未平仓口头违约拒绝
-    handleNoBondsSayBreakRejectionClick(scope) {
+    handleNoBondsSayBreakRejectionClick: debounce(function (scope) {
       api.bondsSayBreakRejection({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -1353,9 +1354,9 @@ export default {
           })
         }
       })
-    },
+    }),
     // 已平仓口头确认
-    handleBondsSayBreakOKClick(scope) {
+    handleBondsSayBreakOKClick: debounce(function (scope) {
       api.bondsSayBreakConfirm({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -1371,9 +1372,9 @@ export default {
           })
         }
       })
-    },
+    }),
     // 已平仓口头拒绝
-    handleBondsSayBreakRejectionClick(scope) {
+    handleBondsSayBreakRejectionClick: debounce(function (scope) {
       api.bondsSayBreakRejection({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -1389,7 +1390,7 @@ export default {
           })
         }
       })
-    },
+    }),
     // 未平仓弹框变化
     handleNoBondsDialogVisible(obj) {
       this.dialogNoBondsFormVisible = obj.dialogVisible
@@ -1417,7 +1418,7 @@ export default {
       })
     },
     // 同意修改未平仓单
-    handleAgreeNoBondsUpdateClick(scope) {
+    handleAgreeNoBondsUpdateClick: debounce(function (scope) {
       api.dealNoBondsEditComfirm({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -1428,9 +1429,9 @@ export default {
           this.loadInitData()
         }
       })
-    },
+    }),
     // 拒绝修改未平仓单
-    handleRejectNoBondsUpdateClick(scope) {
+    handleRejectNoBondsUpdateClick: debounce(function (scope) {
       api.dealNoBondsEditRejection({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -1441,9 +1442,9 @@ export default {
           this.loadInitData()
         }
       })
-    },
+    }),
     // 同意修改已平仓单
-    handleAgreeBondsUpdateClick(scope) {
+    handleAgreeBondsUpdateClick: debounce(function (scope) {
       api.dealBondsEditComfirm({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -1454,9 +1455,9 @@ export default {
           this.loadInitDataFinish()
         }
       })
-    },
+    }),
     // 拒绝修改已平仓单
-    handleRejectBondsUpdateClick(scope) {
+    handleRejectBondsUpdateClick: debounce(function (scope) {
       api.dealBondsEditRejection({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -1467,11 +1468,11 @@ export default {
           this.loadInitDataFinish()
         }
       })
-    },
+    }),
     // 全展 ， 全收
-    handleDefaultExpandAll() {
+    handleDefaultExpandAll: debounce(function () {
       this.defaultExpandAll = !this.defaultExpandAll
-    },
+    }),
     // 是否可违约,可以修改
     funcIsBreak(scope) {
       return moment(

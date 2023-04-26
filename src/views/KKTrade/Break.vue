@@ -124,6 +124,7 @@ import { commMixin } from '@/utils/commMixin'
 import BreakEdit from '@/components/BreakEdit.vue'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
+import { debounce } from '@/utils/debounce'
 import moment from 'moment'
 export default {
   mixins: [pageMixin, commMixin],
@@ -178,7 +179,7 @@ export default {
       });
     },
     // 改交割
-    handleBreakBackClick(scope) {
+    handleBreakBackClick: debounce(function (scope) {
       api.dealBreakReturn({ realTradeId: scope.row.realTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -194,7 +195,7 @@ export default {
           })
         }
       })
-    },
+    }),
     // 数据格式化
     funcFormat(row, column) {
       switch (column.property) {

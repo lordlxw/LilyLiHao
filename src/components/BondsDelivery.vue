@@ -93,6 +93,7 @@ import moment from 'moment'
 import * as util from '@/utils/util'
 import api from "@/api/kk_bonds"
 import { commMixin } from '@/utils/commMixin'
+import { debounce } from '@/utils/debounce'
 const doList = [
   {
     label: '技术违约',
@@ -128,7 +129,7 @@ export default {
       }
     },
     // 提交事件
-    handleSubmit() {
+    handleSubmit: debounce(function () {
       const finishCodeList = [...new Set(this.deliveryFinishData.map(item => item.finishCode))]
       const wyList = []
       const len = this.deliveryFinishData.length
@@ -180,7 +181,7 @@ export default {
           }
         })
       }
-    },
+    }),
     // 数据格式化
     funcFormat(row, column) {
       switch (column.property) {

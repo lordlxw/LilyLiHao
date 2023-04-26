@@ -52,6 +52,7 @@
 import { mapGetters } from "vuex";
 import api from "@/api/kk_power_menu";
 import config from "@/utils/config.js";
+import { debounce } from '@/utils/debounce'
 export default {
   data() {
     // 非零正整数
@@ -90,7 +91,7 @@ export default {
   },
   methods: {
     // 提交
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api
@@ -114,7 +115,7 @@ export default {
             });
         }
       });
-    },
+    }),
   },
   mounted() {
     Promise.all([

@@ -111,6 +111,7 @@ import api from '@/api/kk_trade'
 import apiAdmin from '@/api/kk_power_admin'
 import * as util from '@/utils/util'
 import config from '@/utils/config'
+import { debounce } from '@/utils/debounce'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 export default {
   props: ['row'],
@@ -239,7 +240,7 @@ export default {
     handleDirection(val) {
       this.enquiryForm.direction = val
     },
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.inquirySheetAdd({
@@ -279,7 +280,7 @@ export default {
           })
         }
       })
-    },
+    }),
     // 初始化数据
     initEnquiryForm(obj) {
       this.enquiryForm.direction = obj.direction === 'bond_0' ? '买' : (obj.direction === 'bond_1' ? '卖' : '')

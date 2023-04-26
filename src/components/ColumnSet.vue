@@ -15,6 +15,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import api from '@/api/kk_power_admin'
+import { debounce } from '@/utils/debounce'
 export default {
   props: ['templateId'],
   data() {
@@ -46,7 +47,7 @@ export default {
       })
     },
     // 保存模版id下设置的column
-    handleSaveColumn() {
+    handleSaveColumn: debounce(function () {
       api.saveColumn({
         fieldValue: this.value.join(),
         headContent: JSON.stringify(this.value),
@@ -60,7 +61,7 @@ export default {
           })
         }
       })
-    },
+    }),
     // 获取用户模版id下设置的column
     dispatchUserColumn() {
       api.getUserColumn({

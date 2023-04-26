@@ -196,6 +196,7 @@ import apiCanlendar from '@/api/kk_canlendar'
 import api from '@/api/kk_trade'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
+import { debounce } from '@/utils/debounce'
 import moment from 'moment'
 import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 export default {
@@ -338,7 +339,7 @@ export default {
       this.openForm.deliveryTime = obj.value
     },
     // 表单提交
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.inquiryDeal({
@@ -366,7 +367,7 @@ export default {
           })
         }
       })
-    },
+    }),
     // 加载初始值
     loadInitData() {
       this.overForm.direction = this.overRow.direction

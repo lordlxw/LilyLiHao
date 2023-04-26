@@ -33,7 +33,7 @@
               :formatter="
                 itemHead.formatter
                   ? itemHead.formatter
-                  : function (row, column, cellValue, index) {
+                  : (row, column, cellValue, index) => {
                       return cellValue;
                     }
               "
@@ -102,6 +102,7 @@
 import api from "@/api/kk_power_role";
 import { pageMixin } from "@/utils/pageMixin";
 import { authMixin } from "@/utils/authMixin";
+import { debounce } from '@/utils/debounce'
 export default {
   mixins: [pageMixin, authMixin],
   data() {
@@ -121,7 +122,7 @@ export default {
   },
   methods: {
     // 删除
-    handleDelete(scope) {
+    handleDelete: debounce(function (scope) {
       api.delete({ roleIds: scope.row.roleId }).then((response) => {
         if (response && response.code === "00000") {
           this.$message({
@@ -135,7 +136,7 @@ export default {
           this.loadInitData();
         }
       });
-    },
+    }),
     // 初始化数据
     loadInitData() {
       this.loading = true;

@@ -41,6 +41,7 @@
 <script>
 import api from "@/api/kk_power_admin"
 import { commMixin } from "@/utils/commMixin"
+import { debounce } from '@/utils/debounce'
 export default {
   mixins: [commMixin],
   data() {
@@ -87,7 +88,7 @@ export default {
   },
   methods: {
     // 提交表单
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.updatePassword({
@@ -111,7 +112,7 @@ export default {
           return false;
         }
       });
-    },
+    }),
     handleCancel() {
       this.$emit('change', { dialogVisible: false })
     }

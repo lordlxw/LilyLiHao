@@ -214,6 +214,7 @@ import api from "@/api/kk_power_admin";
 import { pageMixin } from "@/utils/pageMixin";
 import { commMixin } from "@/utils/commMixin";
 import config from "@/utils/config";
+import { debounce } from '@/utils/debounce'
 export default {
   mixins: [pageMixin, commMixin],
   data() {
@@ -275,7 +276,7 @@ export default {
   },
   methods: {
     // 禁用与启用
-    handleDisabling(scope) {
+    handleDisabling: debounce(function (scope) {
       api.updateStatus({
         userId: scope.row.userId,
         status: scope.row.status === '1' ? '0' : '1',
@@ -289,9 +290,9 @@ export default {
           this.loadInitData();
         }
       });
-    },
+    }),
     // 删除
-    handleDelete(scope) {
+    handleDelete: debounce(function (scope) {
       api.delete({ userIds: scope.row.userId }).then((response) => {
         if (response && response.code === "00000") {
           this.$message({
@@ -302,7 +303,7 @@ export default {
           this.loadInitData();
         }
       });
-    },
+    }),
     // 重置密码
     handleResetPasswordDialog(scope) {
       Promise.all([
@@ -316,7 +317,7 @@ export default {
       })
     },
     // 提交重置密码
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.resetPassword({
@@ -341,7 +342,7 @@ export default {
           return false;
         }
       });
-    },
+    }),
     // 初始化数据
     loadInitData() {
       this.loading = true;

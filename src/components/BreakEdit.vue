@@ -114,6 +114,7 @@ import api from "@/api/kk_break";
 import apiCanlendar from '@/api/kk_canlendar'
 import * as util from '@/utils/util'
 import config from '@/utils/config'
+import { debounce } from '@/utils/debounce'
 import moment from 'moment'
 import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 export default {
@@ -212,7 +213,7 @@ export default {
     handleDelivertySpeed(val) {
       this.breakEditForm.deliverySpeed = val
     },
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.type === 1) {
@@ -299,7 +300,7 @@ export default {
           // }
         }
       })
-    },
+    }),
     loadInitData() {
       this.breakEditForm.price = this.row.price
       this.breakEditForm.volume = parseFloat(this.row.volume)

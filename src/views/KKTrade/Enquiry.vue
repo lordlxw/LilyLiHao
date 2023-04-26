@@ -517,6 +517,7 @@ import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
+import { debounce } from '@/utils/debounce'
 import moment from 'moment'
 let tableCurrentRelativeNum = ''
 let currentRelativeNum = ''
@@ -670,7 +671,7 @@ export default {
       });
     },
     // 接受
-    handleAcceptClick(scope) {
+    handleAcceptClick: debounce(function (scope) {
       api.inquiryAccept({ usertradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.copy(scope)
@@ -686,9 +687,9 @@ export default {
           })
         }
       })
-    },
+    }),
     // 拒收
-    handleNotAcceptClick(scope) {
+    handleNotAcceptClick: debounce(function (scope) {
       api.inquiryRejection({ usertradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -707,9 +708,9 @@ export default {
           })
         }
       })
-    },
+    }),
     // 点击成交
-    handleDealClick(row) {
+    handleDealClick: debounce(function (row) {
       Promise.all([
         this.dialogDealFormVisible = true
       ]).then(() => {
@@ -725,9 +726,9 @@ export default {
         this.dealForm.contactPerson = row.contactPerson
         this.dealForm.contactType = row.contactType
       })
-    },
+    }),
     // 表单提交
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log(this.ruleForm)
@@ -764,9 +765,9 @@ export default {
           });
         }
       })
-    },
+    }),
     // 提交撤单申请
-    handleInquiryCancelClick(scope) {
+    handleInquiryCancelClick: debounce(function (scope) {
       api.inquiryCancel({ usertradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
@@ -780,9 +781,9 @@ export default {
           this.loadInitData()
         }
       })
-    },
+    }),
     // 确认撤单
-    handleInquiryCancelConfirmClick(scope) {
+    handleInquiryCancelConfirmClick: debounce(function (scope) {
       const self = this
       api.inquiryCancelConfirm({ usertradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -797,9 +798,9 @@ export default {
           self.loadInitData()
         }
       })
-    },
+    }),
     // 拒绝撤单
-    handleInquiryCancelRejectionClick(scope) {
+    handleInquiryCancelRejectionClick: debounce(function (scope) {
       const self = this
       api.inquiryCancelRejection({ usertradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -814,9 +815,9 @@ export default {
           self.loadInitData()
         }
       })
-    },
+    }),
     // 同意成交
-    handleInquiryDealConfirmClick(scope) {
+    handleInquiryDealConfirmClick: debounce(function (scope) {
       const self = this
       api.inquiryDealConfirm({ userTradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -831,9 +832,9 @@ export default {
           self.loadInitData()
         }
       })
-    },
+    }),
     // 拒绝成交
-    handleInquiryDealRejectionClick(scope) {
+    handleInquiryDealRejectionClick: debounce(function (scope) {
       const self = this
       api.inquiryDealRejection({ userTradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -848,9 +849,9 @@ export default {
           self.loadInitData()
         }
       })
-    },
+    }),
     // 难成撤单
-    handleEnquiryDifficultCanncelClick(scope) {
+    handleEnquiryDifficultCanncelClick: debounce(function (scope) {
       const self = this
       api.difficultAcheveCannel({ userTradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -865,9 +866,9 @@ export default {
           self.loadInitData()
         }
       })
-    },
+    }),
     // 保留
-    handleEnquiryDifficultDotMoveClick(scope) {
+    handleEnquiryDifficultDotMoveClick: debounce(function (scope) {
       const self = this
       api.difficultStay({ userTradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -882,7 +883,7 @@ export default {
           self.loadInitData()
         }
       })
-    },
+    }),
     // 交割日期
     handleDeliveryCanlendar(obj) {
       this.dealForm.deliveryTime = obj.value
@@ -925,13 +926,13 @@ export default {
       this.dialogEnquiryFormVisible = obj.dialogVisible
     },
     // 难成点击事件
-    handleEnquiryDifficultClick(row) {
+    handleEnquiryDifficultClick: debounce(function (row) {
       Promise.all([
         this.currentDifficultRow = JSON.parse(JSON.stringify(row))
       ]).then(() => {
         this.dialogEnquiryDifficultFormVisible = true
       })
-    },
+    }),
     // 关闭难成弹出框
     handleDialogDifficultVisible(obj) {
       this.dialogEnquiryDifficultFormVisible = obj.dialogVisible
@@ -959,8 +960,6 @@ export default {
     },
     // 滚单成交弹出框
     handleRollDealClick(row) {
-      console.log(11111)
-      console.log(row)
       for (let i = 0; i < this.tableData.length; i++) {
         if (row.relativeNum === this.tableData[i].relativeNum) {
           this.overRow = JSON.parse(JSON.stringify(this.tableData[i]))

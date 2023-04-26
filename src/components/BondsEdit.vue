@@ -29,7 +29,12 @@
       </el-form-item>
       <el-form-item>
         <el-button-group>
-          <el-button type="primary" @click="funcVolumeAdd(0)" style="background: white; color:#333333">清零</el-button>
+          <el-button
+            type="primary"
+            @click="funcVolumeAdd(0)"
+            style="background: white; color: #333333"
+            >清零</el-button
+          >
           <el-button type="primary" @click="funcVolumeAdd(5000)">5</el-button>
           <el-button type="primary" @click="funcVolumeAdd(3000)">3</el-button>
           <el-button type="primary" @click="funcVolumeAdd(10000)">10</el-button>
@@ -95,6 +100,7 @@ import api from '@/api/kk_bonds'
 import apiCanlendar from '@/api/kk_canlendar'
 import * as util from '@/utils/util'
 import config from '@/utils/config'
+import { debounce } from '@/utils/debounce'
 import moment from 'moment'
 import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 export default {
@@ -189,7 +195,7 @@ export default {
     handleDelivertySpeed(val) {
       this.bondsForm.deliverySpeed = val
     },
-    submitForm(formName) {
+    submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.dealBondsEdit({
@@ -224,7 +230,7 @@ export default {
           })
         }
       })
-    },
+    }),
     loadInitData() {
       this.bondsForm.price = this.row.price
       this.bondsForm.volume = parseFloat(this.row.volume)
