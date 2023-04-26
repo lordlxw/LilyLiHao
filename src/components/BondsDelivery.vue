@@ -33,6 +33,7 @@
           <el-checkbox-group
             v-model="scope.row.mySelected"
             @input="handleDoCheck"
+            v-if="scope.row.jiaogeStatus !== 1"
           >
             <el-checkbox
               v-for="item in doListOption"
@@ -48,7 +49,7 @@
           <el-select
             v-model="scope.row.weiyuePerson"
             v-if="
-              scope.row.mySelected.length > 0 && scope.row.jiaogeStatus !== 1
+              scope.row.mySelected.length > 0
             "
             placeholder="请选择"
           >
