@@ -165,6 +165,7 @@ export default {
     direction: { label: '方向', prop: 'direction', width: '60', align: 'left', show: true },
     price: { label: '交割价', prop: 'price', width: '120', align: 'right', show: true },
     volume: { label: '交割量', prop: 'volume', width: '100', align: 'right', show: true },
+    chengjiaoAmount: { label: '成交量', prop: 'chengjiaoAmount', width: '100', align: 'right', show: true },
     profit: { label: '交割盈亏', prop: 'profit', width: '100', align: 'right', show: true },
     counterParty: { label: '对手方', prop: 'counterParty', width: '100', align: 'left', show: true },
     contactPerson: { label: '联系人', prop: 'contactPerson', width: '100', align: 'left', show: true },
@@ -193,5 +194,7 @@ export default {
     remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
     tradeNum: { label: '单据号', prop: 'tradeNum', width: '180', align: 'left', show: true },
     updateTime: { label: '修改时间', prop: 'updateTime', width: '180', align: 'left', show: true },
+    createTime: { label: '创建时间', prop: 'createTime', width: '180', align: 'left', show: true },
+    contactPerson: { label: '交易对手', prop: 'contactPerson', width: '120', align: 'left', show: true },
   }
 }
