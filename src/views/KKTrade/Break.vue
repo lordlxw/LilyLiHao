@@ -176,7 +176,7 @@ export default {
         { label: '状态', prop: 'jiaogeStatus', formatter: this.funcFormat, width: '100', align: 'left', show: true },
         { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
         { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
-        { label: '单据号', prop: 'tradeNum', width: '160', align: 'left', show: true }
+        { label: '单据号', prop: 'tradeNum', width: '180', align: 'left', show: true }
       ],
       tableData: [],
       breakH: '0',
