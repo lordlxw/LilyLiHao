@@ -164,6 +164,7 @@
 
 <script>
 import api from "@/api/kk_break";
+import apiAdmin from '@/api/kk_power_admin'
 import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
 import BreakEdit from '@/components/BreakEdit.vue'
@@ -179,20 +180,7 @@ export default {
   data() {
     return {
       loading: false,
-      tableHead: [
-        { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '130', align: 'left', show: true },
-        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
-        { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
-        { label: '交易量', prop: 'volume', width: '100', align: 'right', show: true },
-        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '120', align: 'left', show: true },
-        { label: '违约量', prop: 'weiyueAmount', width: '100', align: 'right', show: true },
-        { label: '违约方', prop: 'weiyuePerson', width: '120', align: 'left', show: true },
-        { label: '做市商', prop: 'marketMakerName', width: '120', align: 'left', show: true },
-        { label: '状态', prop: 'jiaogeStatus', formatter: this.funcFormat, width: '100', align: 'left', show: true },
-        { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
-        { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
-        { label: '单据号', prop: 'tradeNum', width: '180', align: 'left', show: true }
-      ],
+      tableHead: [],
       tableData: [],
       breakH: '0',
       // 违约续作和违约增改行
@@ -206,6 +194,24 @@ export default {
     this.initFrameH('breakH', 200)
   },
   methods: {
+    // 获取用户模版id下设置的column
+    dispatchUserColumn() {
+      apiAdmin.getUserColumn({
+        templateId: 93,
+        userId: null,
+      }).then(response => {
+        if (response && response.code === '00000') {
+          const headContent = JSON.parse(response.value.headContent)
+          for (let i = 0; i < headContent.length; i++) {
+            if (config.breakHead[headContent[i]]) {
+              config.breakHead[headContent[i]].formatter = this.funcFormat
+              this.tableHead.push(config.breakHead[headContent[i]])
+            }
+          }
+          this.loadInitData()
+        }
+      })
+    },
     // 初始化违约成交
     loadInitData() {
       this.loading = true;
@@ -283,6 +289,8 @@ export default {
           return row.tscode ? row.tscode.replace(/.IB/, '') : ''
         case 'jiaogeStatus':
           return config.funcKeyValue(row.jiaogeStatus, 'bondStatus')
+        case 'weiyuePerson':
+          return config.funcKeyValue(row.weiyuePerson, 'breakTypeOptions')
       }
       return row[column.property]
     },
@@ -298,6 +306,7 @@ export default {
     }
   },
   mounted() {
+    this.dispatchUserColumn()
     this.loadInitData()
   }
 }

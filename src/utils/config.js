@@ -157,5 +157,20 @@ export default {
     contactType: { label: '联系方式', prop: 'contactType', width: '110', align: 'left', show: true },
     jiaogeStatus: { label: '交割状态', prop: 'jiaogeStatus', width: '100', align: 'left', show: true },
     status: { label: '平仓状态', prop: 'status', width: '100', align: 'left', show: true }
+  },
+  // 违约单头部
+  breakHead: {
+    tscode: { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
+    direction: { label: '方向', prop: 'direction', width: '60', align: 'left', show: true },
+    price: { label: '成交价', prop: 'price', width: '120', align: 'right', show: true },
+    volume: { label: '交易量', prop: 'volume', width: '100', align: 'right', show: true },
+    deliveryTime: { label: '交割日期', prop: 'deliveryTime', width: '120', align: 'left', show: true },
+    weiyueAmount: { label: '违约量', prop: 'weiyueAmount', width: '100', align: 'right', show: true },
+    weiyuePerson: { label: '违约方', prop: 'weiyuePerson', width: '120', align: 'left', show: true },
+    marketMakerName: { label: '做市商', prop: 'marketMakerName', width: '120', align: 'left', show: true },
+    jiaogeStatus: { label: '状态', prop: 'jiaogeStatus', width: '100', align: 'left', show: true },
+    realTradeId: { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
+    remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
+    tradeNum: { label: '单据号', prop: 'tradeNum', width: '180', align: 'left', show: true }
   }
 }
