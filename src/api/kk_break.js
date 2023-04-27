@@ -68,6 +68,26 @@ export default {
       }
     })
   },
+  // 违约续作修改内容查看
+  dealBreakRedoCheckField(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/checkxuzuo`,
+      method: 'post',
+      data: {
+        userTradeId: params.userTradeId
+      }
+    })
+  },
+  // 违约升级
+  dealBreakUpgrade(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/weiyueshengji`,
+      method: 'post',
+      data: {
+        realTradeId: params.realTradeId
+      }
+    })
+  },
   // 违约增改 - 作废
   dealBreakAddUpdate(params) {
     return request({

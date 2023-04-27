@@ -365,6 +365,65 @@
                   >拒绝成交</el-button
                 >
               </el-popover>
+              <el-popover
+                v-if="
+                  setAuth('inquiry:breaktobeconfirm') && scope.row.status === 20
+                "
+                placement="bottom-end"
+                :ref="`popover-breaktobeconfirm-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">同意违约续作</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”{{ scope.row.tscode }}？
+                </p>
+                <el-table
+                  border
+                  :data="diffTableData"
+                  :cell-style="cellStyleUpdate"
+                >
+                  <template v-for="itemHead in diffTableHead">
+                    <el-table-column
+                      v-if="itemHead.show"
+                      :key="itemHead.label"
+                      :align="itemHead.align"
+                      :prop="itemHead.prop"
+                      :formatter="
+                        itemHead.formatter
+                          ? itemHead.formatter
+                          : (row, column, cellValue, index) => {
+                              return cellValue;
+                            }
+                      "
+                      :label="itemHead.label"
+                      :width="
+                        itemHead.width ? returnFrameW(itemHead.width) : ''
+                      "
+                    >
+                    </el-table-column>
+                  </template>
+                </el-table>
+                <div style="text-align: center" class="mt20">
+                  <el-button
+                    type="primary"
+                    @click="handleAgreeBreakContinueClick(scope)"
+                    >同意</el-button
+                  >
+                  <el-button
+                    type="default"
+                    @click="handleRejectBreakContinueClick(scope)"
+                    >拒绝</el-button
+                  >
+                </div>
+                <el-button
+                  type="text"
+                  slot="reference"
+                  class="ml10"
+                  @click="handlViewBreakContinueContent(scope)"
+                  >违约续作审核</el-button
+                >
+              </el-popover>
             </template>
           </el-table-column>
           <el-table-column
@@ -509,6 +568,7 @@
 import { mapState } from 'vuex'
 import api from "@/api/kk_trade";
 import apiAdmin from '@/api/kk_power_admin'
+import apiBreak from '@/api/kk_break'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 import RealEnquiryRoll from '@/components/RealEnquiryRoll.vue';
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
@@ -603,7 +663,14 @@ export default {
       // 滚单
       dialogBondsRollFormVisible: false,
       overRow: {},
-      openRow: {}
+      openRow: {},
+      // 修改对比数据
+      diffTableData: [],
+      diffTableHead: [
+        { label: '修改项', prop: 'fieldName', width: '150', align: 'left', show: true },
+        { label: '旧值', prop: 'oldValue', width: '200', align: 'left', show: true },
+        { label: '新值', prop: 'newValue', width: '200', align: 'left', show: true }
+      ],
     }
   },
   created() {
@@ -1008,6 +1075,68 @@ export default {
         }
       }
     },
+    // 更新记录表
+    cellStyleUpdate(row, column, rowIndex, columnIndex) {
+      if (row.column.label === '旧值') {
+        return 'color:#2cad98'
+      }
+      if (row.column.label === '新值') {
+        return 'color:#ec0000'
+      }
+    },
+    // 同意违约续作
+    handleAgreeBreakContinueClick: debounce(function (scope) {
+      apiBreak.dealBreakRedoConfirm({ userTradeId: scope.row.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已同意续作",
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
+        }
+        this.loadInitData()
+      })
+    }),
+    // 拒绝违约续作
+    handleRejectBreakContinueClick: debounce(function (scope) {
+      apiBreak.dealBreakRedoRejection({ userTradeId: scope.row.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已拒绝续作",
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
+        }
+        this.loadInitData()
+      })
+    }),
+    // 违约续作内容对比
+    handlViewBreakContinueContent: debounce(function (scope) {
+      apiBreak.dealBreakRedoCheckField({ userTradeId: scope.row.userTradeId }).then(response => {
+        if (response && response.code === '00000' && response.value) {
+          let diffTableData = [];
+          if (response.value.compareResult.fieldlist && response.value.compareResult.fieldlist.length > 0) {
+            let fieldlist = response.value.compareResult.fieldlist
+            for (let i = 0; i < fieldlist.length; i++) {
+              if (fieldlist[i] === 'deliveryTime') {
+                diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD'), 'newValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD') })
+              } else {
+                diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': response.value.rt[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
+              }
+            }
+          }
+          this.diffTableData = diffTableData
+        }
+      })
+    }),
   },
   mounted() {
     this.dispatchUserColumn()

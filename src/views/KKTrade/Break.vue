@@ -39,7 +39,7 @@
             fixed="right"
             align="center"
             label="操作"
-            :width="returnFrameW(150)"
+            :width="returnFrameW(180)"
           >
             <template slot-scope="scope">
               <el-popover
@@ -73,6 +73,39 @@
                 </div>
                 <el-button type="text" slot="reference" class="ml10"
                   >改交割</el-button
+                >
+              </el-popover>
+              <el-popover
+                v-if="
+                  setAuth('break:upgrade') &&
+                  [3].indexOf(scope.row.jiaogeStatus) !== -1
+                "
+                placement="bottom-end"
+                :ref="`popover-breakupgrade-${scope.$index}`"
+              >
+                <p>
+                  确认"{{ scope.row.tscode }}"<span class="color-red">
+                    违约升级
+                  </span>
+                  ？
+                </p>
+                <div style="text-align: right">
+                  <el-button
+                    type="text"
+                    @click="
+                      handlePopoverClose(
+                        scope,
+                        `popover-breakupgrade-${scope.$index}`
+                      )
+                    "
+                    >取消</el-button
+                  >
+                  <el-button type="text" @click="handleBreakUpgradeClick(scope)"
+                    >确认</el-button
+                  >
+                </div>
+                <el-button type="text" slot="reference" class="ml10"
+                  >违约升级</el-button
                 >
               </el-popover>
               <el-button
@@ -190,7 +223,25 @@ export default {
           this.loadInitData()
         } else {
           this.$message({
-            message: response.data.message,
+            message: response.message,
+            type: 'error'
+          })
+        }
+      })
+    }),
+    // 违约升级
+    handleBreakUpgradeClick: debounce(function (scope) {
+      api.dealBreakUpgrade({ realTradeId: scope.row.realTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          })
+          this.handlePopoverClose(scope, `popover-breakupgrade-${scope.$index}`)
+          this.loadInitData()
+        } else {
+          this.$message({
+            message: response.message,
             type: 'error'
           })
         }
