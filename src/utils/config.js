@@ -170,7 +170,7 @@ export default {
     contactPerson: { label: '联系人', prop: 'contactPerson', width: '100', align: 'left', show: true },
     contactType: { label: '联系方式', prop: 'contactType', width: '110', align: 'left', show: true },
     createBy: { label: '创建人id', prop: 'createBy', width: 'auto', align: 'left', show: false },
-    createTime: { label: '交割时间', prop: 'createTime', width: '170', align: 'left', show: true },
+    createTime: { label: '成交时间', prop: 'createTime', width: '170', align: 'left', show: true },
     deliverySpeed: { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
     deliveryTime: { label: '交割日期', prop: 'deliveryTime', width: '120', align: 'left', show: true },
     tradeNum: { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: false },
