@@ -39,7 +39,7 @@
             fixed="right"
             align="center"
             label="操作"
-            :width="returnFrameW(180)"
+            :width="returnFrameW(200)"
           >
             <template slot-scope="scope">
               <el-popover
@@ -78,14 +78,20 @@
               <el-popover
                 v-if="
                   setAuth('break:upgrade') &&
-                  [3].indexOf(scope.row.jiaogeStatus) !== -1
+                  [3, 5].indexOf(scope.row.jiaogeStatus) !== -1
                 "
                 placement="bottom-end"
                 :ref="`popover-breakupgrade-${scope.$index}`"
               >
                 <p>
                   确认"{{ scope.row.tscode }}"<span class="color-red">
-                    违约升级
+                    违约{{
+                      scope.row.jiaogeStatus === 3
+                        ? "升级"
+                        : scope.row.jiaogeStatus === 5
+                        ? "还券"
+                        : ""
+                    }}
                   </span>
                   ？
                 </p>
@@ -105,7 +111,13 @@
                   >
                 </div>
                 <el-button type="text" slot="reference" class="ml10"
-                  >违约升级</el-button
+                  >违约{{
+                    scope.row.jiaogeStatus === 3
+                      ? "升级"
+                      : scope.row.jiaogeStatus === 5
+                      ? "还券"
+                      : ""
+                  }}</el-button
                 >
               </el-popover>
               <el-button

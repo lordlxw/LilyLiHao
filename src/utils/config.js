@@ -146,7 +146,7 @@ export default {
     profit: { label: '已平盈亏', prop: 'profit', width: '120', align: 'right', show: true },
     realTradeId: { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
     remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
-    tradeNum: { label: '单据号', prop: 'tradeNum', width: '160', align: 'left', show: true },
+    tradeNum: { label: '单据号', prop: 'tradeNum', width: '180', align: 'left', show: true },
     tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
     // userTradeId: { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
     // xunjiayuanId: { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
