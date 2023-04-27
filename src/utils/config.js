@@ -156,7 +156,8 @@ export default {
     contactPerson: { label: '联系人', prop: 'contactPerson', width: '120', align: 'left', show: true },
     contactType: { label: '联系方式', prop: 'contactType', width: '110', align: 'left', show: true },
     jiaogeStatus: { label: '交割状态', prop: 'jiaogeStatus', width: '100', align: 'left', show: true },
-    status: { label: '平仓状态', prop: 'status', width: '100', align: 'left', show: true }
+    status: { label: '平仓状态', prop: 'status', width: '100', align: 'left', show: true },
+    updateTime: { label: '修改时间', prop: 'updateTime', width: '180', align: 'left', show: true },
   },
   // 交割回报
   rewardHead: {
@@ -174,7 +175,8 @@ export default {
     deliveryTime: { label: '交割日期', prop: 'deliveryTime', width: '120', align: 'left', show: true },
     tradeNum: { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: false },
     tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
-    remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true }
+    remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
+    updateTime: { label: '修改时间', prop: 'updateTime', width: '180', align: 'left', show: true },
   },
   // 违约单头部
   breakHead: {
@@ -189,6 +191,7 @@ export default {
     jiaogeStatus: { label: '状态', prop: 'jiaogeStatus', width: '100', align: 'left', show: true },
     realTradeId: { label: '交易员id', prop: 'realTradeId', width: '120', align: 'left', show: false },
     remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
-    tradeNum: { label: '单据号', prop: 'tradeNum', width: '180', align: 'left', show: true }
+    tradeNum: { label: '单据号', prop: 'tradeNum', width: '180', align: 'left', show: true },
+    updateTime: { label: '修改时间', prop: 'updateTime', width: '180', align: 'left', show: true },
   }
 }

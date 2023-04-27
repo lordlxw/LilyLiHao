@@ -307,7 +307,6 @@ export default {
   },
   mounted() {
     this.dispatchUserColumn()
-    this.loadInitData()
   }
 }
 </script>
