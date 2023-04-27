@@ -184,6 +184,7 @@
 
 <script>
 import api from "@/api/kk_reward"
+import apiAdmin from '@/api/kk_power_admin'
 import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
@@ -207,23 +208,7 @@ export default {
       config,
       loading: false,
       // 表头
-      tableHead: [
-        { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '120', align: 'left', show: true },
-        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
-        { label: '交割价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
-        { label: '交割量', prop: 'volume', width: '100', align: 'right', show: true },
-        { label: '交割盈亏', prop: 'profit', width: '100', align: 'right', show: true },
-        { label: '对手方', prop: 'counterParty', width: '100', align: 'left', show: true },
-        { label: '联系人', prop: 'contactPerson', width: '100', align: 'left', show: true },
-        { label: '联系方式', prop: 'contactType', width: '110', align: 'left', show: true },
-        { label: '创建人id', prop: 'createBy', width: 'auto', align: 'left', show: false },
-        { label: '交割时间', prop: 'createTime', width: '170', align: 'left', show: true },
-        { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
-        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '120', align: 'left', show: true },
-        { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: false },
-        { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
-        { label: '备注', prop: 'remark', width: '500', align: 'left', show: true }
-      ],
+      tableHead: [],
       tableData: [],
       // 改违约表头
       breakTableHead: [
@@ -272,6 +257,24 @@ export default {
       scope.row.weiyueAmount = scope.row.volume
       scope.row.marketMakerName = ''
       this.breakTableData = [JSON.parse(JSON.stringify(scope.row))]
+    },
+    // 获取用户模版id下设置的column
+    dispatchUserColumn() {
+      apiAdmin.getUserColumn({
+        templateId: 94,
+        userId: null,
+      }).then(response => {
+        if (response && response.code === '00000') {
+          const headContent = JSON.parse(response.value.headContent)
+          for (let i = 0; i < headContent.length; i++) {
+            if (config.rewardHead[headContent[i]]) {
+              config.rewardHead[headContent[i]].formatter = this.funcFormat
+              this.tableHead.push(config.rewardHead[headContent[i]])
+            }
+          }
+          this.loadInitData()
+        }
+      })
     },
     // 改违约
     handleDeliveryBackClick: debounce(function (scope) {
@@ -394,6 +397,7 @@ export default {
     }
   },
   mounted() {
+    this.dispatchUserColumn()
     this.loadInitData()
   }
 }

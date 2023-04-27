@@ -158,6 +158,24 @@ export default {
     jiaogeStatus: { label: '交割状态', prop: 'jiaogeStatus', width: '100', align: 'left', show: true },
     status: { label: '平仓状态', prop: 'status', width: '100', align: 'left', show: true }
   },
+  // 交割回报
+  rewardHead: {
+    tscode: { label: '券码', prop: 'tscode', width: '120', align: 'left', show: true },
+    direction: { label: '方向', prop: 'direction', width: '60', align: 'left', show: true },
+    price: { label: '交割价', prop: 'price', width: '120', align: 'right', show: true },
+    volume: { label: '交割量', prop: 'volume', width: '100', align: 'right', show: true },
+    profit: { label: '交割盈亏', prop: 'profit', width: '100', align: 'right', show: true },
+    counterParty: { label: '对手方', prop: 'counterParty', width: '100', align: 'left', show: true },
+    contactPerson: { label: '联系人', prop: 'contactPerson', width: '100', align: 'left', show: true },
+    contactType: { label: '联系方式', prop: 'contactType', width: '110', align: 'left', show: true },
+    createBy: { label: '创建人id', prop: 'createBy', width: 'auto', align: 'left', show: false },
+    createTime: { label: '交割时间', prop: 'createTime', width: '170', align: 'left', show: true },
+    deliverySpeed: { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
+    deliveryTime: { label: '交割日期', prop: 'deliveryTime', width: '120', align: 'left', show: true },
+    tradeNum: { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: false },
+    tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
+    remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true }
+  },
   // 违约单头部
   breakHead: {
     tscode: { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
