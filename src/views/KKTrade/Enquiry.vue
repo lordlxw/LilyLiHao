@@ -484,10 +484,10 @@
           <el-input v-model="dealForm.volume" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="交割日期" prop="deliveryTime">
-          <delivery-canlendar
+          <delivery-canlendar-update
             ref="deliveryCanlendar"
             @change="handleDeliveryCanlendar"
-          ></delivery-canlendar>
+          ></delivery-canlendar-update>
         </el-form-item>
         <el-form-item label="交易对手" prop="counterParty">
           <el-input
@@ -569,7 +569,7 @@ import { mapState } from 'vuex'
 import api from "@/api/kk_trade";
 import apiAdmin from '@/api/kk_power_admin'
 import apiBreak from '@/api/kk_break'
-import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
+import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 import RealEnquiryRoll from '@/components/RealEnquiryRoll.vue';
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
 import EnquiryDifficult from '@/components/EnquiryDifficult.vue'
@@ -590,7 +590,7 @@ export default {
     status: ''
   },
   components: {
-    DeliveryCanlendar,
+    DeliveryCanlendarUpdate,
     EnquiryEdit,
     EnquiryDifficult,
     RealEnquiryRoll
@@ -781,14 +781,21 @@ export default {
       Promise.all([
         this.dialogDealFormVisible = true
       ]).then(() => {
+        this.dealForm.deliveryTime = row.deliveryTime
+        this.$refs.deliveryCanlendar.deliveryTime = row.deliveryTime
+        if (moment(row.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
+          row.deliveryTime = moment(row.deliveryTime).format('YYYY-MM-DD')
+        } else if (moment(row.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 15:30:00'))) {
+          row.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+        } else {
+          this.$refs.deliveryCanlendar.getNextDealDay()
+        }
         row.deliveryTime = moment(row.deliveryTime).format('YYYY-MM-DD')
         this.dealRows = row
         this.dealForm.usertradeId = row.userTradeId
         this.dealForm.price = row.price
         this.dealForm.volume = row.restVolume
         this.dealForm.remark = row.remark
-        this.dealForm.deliveryTime = row.deliveryTime
-        this.$refs.deliveryCanlendar.deliveryTime = row.deliveryTime
         this.dealForm.counterParty = row.counterParty
         this.dealForm.contactPerson = row.contactPerson
         this.dealForm.contactType = row.contactType
