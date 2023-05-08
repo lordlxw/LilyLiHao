@@ -1173,7 +1173,7 @@ export default {
                 trigger: 'axis',
                 formatter: function (params) {
                   // 修改鼠标划过显示为中文
-                  let ma5 = params[1].data // ma5的值
+                  // let ma5 = params[1].data // ma5的值
                   params = params[0] // 开盘收盘最低最高数据汇总
                   let currentItemData = params.data;
                   return params.name + '<br>' +
@@ -1181,8 +1181,8 @@ export default {
                     '开盘：' + currentItemData[1] + '<br>' +
                     '收盘：' + currentItemData[2] + '<br>' +
                     '最低：' + currentItemData[3] + '<br>' +
-                    '最高：' + currentItemData[4] + '<br>' +
-                    'MA5:' + ma5
+                    '最高：' + currentItemData[4] + '<br>'
+                    // 'MA5:' + ma5
                 },
                 axisPointer: {
                   type: 'cross',
@@ -1210,7 +1210,7 @@ export default {
               xAxis: {
                 type: 'category',
                 data: this.data0.categoryData,
-                boundaryGap: false,
+                boundaryGap: true,
                 axisLine: {
                   onZero: false,
                   lineStyle: {
@@ -1284,15 +1284,15 @@ export default {
                     }
                   }
                 },
-                {
-                  name: 'MA5',
-                  type: 'line',
-                  data: this.calculateMA(5, this.data0),
-                  smooth: true,
-                  lineStyle: {
-                    opacity: 0.8
-                  }
-                },
+                // {
+                //   name: 'MA5',
+                //   type: 'line',
+                //   data: this.calculateMA(5, this.data0),
+                //   smooth: true,
+                //   lineStyle: {
+                //     opacity: 0.8
+                //   }
+                // },
               ]
             }
             option && this.myChart.setOption(option, true)
@@ -1327,7 +1327,7 @@ export default {
               trigger: 'axis',
               formatter: function (params) {
                 // 修改鼠标划过显示为中文
-                let ma5 = params[1].data // ma5的值
+                // let ma5 = params[1].data // ma5的值
                 params = params[0] // 开盘收盘最低最高数据汇总
                 let currentItemData = params.data;
                 return params.name + '<br>' +
@@ -1335,8 +1335,8 @@ export default {
                   '开盘：' + currentItemData[1] + '<br>' +
                   '收盘：' + currentItemData[2] + '<br>' +
                   '最低：' + currentItemData[3] + '<br>' +
-                  '最高：' + currentItemData[4] + '<br>' +
-                  'MA5:' + ma5
+                  '最高：' + currentItemData[4] + '<br>'
+                  // 'MA5:' + ma5
               },
               axisPointer: {
                 type: 'cross',
@@ -1364,7 +1364,7 @@ export default {
             xAxis: {
               type: 'category',
               data: this.data0.categoryData,
-              boundaryGap: false,
+              boundaryGap: true,
               axisLine: {
                 onZero: false,
                 lineStyle: {
@@ -1438,15 +1438,15 @@ export default {
                   }
                 }
               },
-              {
-                name: 'MA5',
-                type: 'line',
-                data: this.calculateMA(5, this.data0),
-                smooth: true,
-                lineStyle: {
-                  opacity: 0.8
-                }
-              },
+              // {
+              //   name: 'MA5',
+              //   type: 'line',
+              //   data: this.calculateMA(5, this.data0),
+              //   smooth: true,
+              //   lineStyle: {
+              //     opacity: 0.8
+              //   }
+              // },
             ]
           }
           option && this.myChart.setOption(option, true)
