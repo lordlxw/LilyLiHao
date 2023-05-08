@@ -1226,6 +1226,7 @@ export default {
               yAxis: {
                 scale: true,
                 position: 'right',
+                boundaryGap: true,
                 splitArea: {
                   show: false
                 },
@@ -1380,6 +1381,7 @@ export default {
             yAxis: {
               scale: true,
               position: 'right',
+              boundaryGap: true,
               splitArea: {
                 show: false
               },
@@ -1584,6 +1586,7 @@ export default {
               yAxis: [{
                 scale: true,
                 position: 'right',
+                boundaryGap: true,
                 splitArea: {
                   show: false
                 },
