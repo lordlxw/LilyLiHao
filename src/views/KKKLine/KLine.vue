@@ -2241,7 +2241,7 @@ export default {
                 // }
                 break
               case 'trade':
-                self.transactionAllList.pop()
+                // self.transactionAllList.pop()
                 self.transactionAllList.unshift(msgJson.data)
                 break
               case 'error':
