@@ -1182,7 +1182,7 @@ export default {
                     '收盘：' + currentItemData[2] + '<br>' +
                     '最低：' + currentItemData[3] + '<br>' +
                     '最高：' + currentItemData[4] + '<br>'
-                    // 'MA5:' + ma5
+                  // 'MA5:' + ma5
                 },
                 axisPointer: {
                   type: 'cross',
@@ -1337,7 +1337,7 @@ export default {
                   '收盘：' + currentItemData[2] + '<br>' +
                   '最低：' + currentItemData[3] + '<br>' +
                   '最高：' + currentItemData[4] + '<br>'
-                  // 'MA5:' + ma5
+                // 'MA5:' + ma5
               },
               axisPointer: {
                 type: 'cross',

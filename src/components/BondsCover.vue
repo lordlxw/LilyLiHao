@@ -45,10 +45,10 @@
         </el-button-group>
       </el-form-item>
       <el-form-item label="交割日期" prop="deliveryTime">
-        <delivery-canlendar
+        <delivery-canlendar-update
           ref="deliveryCanlendarUpdate"
           @change="handleDeliveryCanlendarUpdate"
-        ></delivery-canlendar>
+        ></delivery-canlendar-update>
         <!-- <el-button-group>
           <el-button
             icon="el-icon-plus"
@@ -101,11 +101,11 @@ import * as util from '@/utils/util'
 import config from '@/utils/config'
 import { debounce } from '@/utils/debounce'
 import moment from 'moment'
-import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
+import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 export default {
   props: ['row'],
   components: {
-    DeliveryCanlendar
+    DeliveryCanlendarUpdate
   },
   data() {
     // 金额格式验证
