@@ -181,7 +181,7 @@ export default {
   },
   // 违约单头部
   breakHead: {
-    tscode: { label: '券码', prop: 'tscode', width: '170', align: 'left', show: true },
+    tscode: { label: '券码', prop: 'tscode', width: '130', align: 'left', show: true },
     direction: { label: '方向', prop: 'direction', width: '100', align: 'left', show: true },
     price: { label: '成交价', prop: 'price', width: '160', align: 'right', show: true },
     volume: { label: '交易量', prop: 'volume', width: '140', align: 'right', show: true },

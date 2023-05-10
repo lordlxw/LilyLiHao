@@ -107,7 +107,7 @@ export default {
                       menutree: response.menutree
                     })
                   }
-                  this.$router.push({ path: '/main' })
+                  this.$router.push({ path: '/trade/bonds' })
                 })
               })
             }
