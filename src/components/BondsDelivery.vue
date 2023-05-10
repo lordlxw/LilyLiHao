@@ -9,6 +9,8 @@
       :key="Math.random()"
       header-row-style="height:30px;line-height:30px;"
       header-cell-style="background:#f8f8f8;"
+      :row-class-name="tableRowFinishClassName"
+      :cell-style="finishCellStyle"
     >
       <template v-for="itemHead in deliveryFinishDataHead">
         <el-table-column
@@ -33,7 +35,10 @@
           <el-checkbox-group
             v-model="scope.row.mySelected"
             @input="handleDoCheck"
-            v-if="scope.row.jiaogeStatus !== 1"
+            v-if="
+              scope.row.jiaogeStatus !== 1 &&
+              deliveryDayValid(scope.row.deliveryTime)
+            "
           >
             <el-checkbox
               v-for="item in doListOption"
@@ -48,9 +53,7 @@
         <template slot-scope="scope">
           <el-select
             v-model="scope.row.weiyuePerson"
-            v-if="
-              scope.row.mySelected.length > 0
-            "
+            v-if="scope.row.mySelected.length > 0"
             placeholder="请选择"
           >
             <el-option
@@ -107,6 +110,8 @@ const doList = [
     value: 1
   }
 ]
+let tableFinishClassName = ''
+let currentFinishCode = ''
 export default {
   props: ['deliveryFinishData'],
   mixins: [commMixin],
@@ -120,7 +125,8 @@ export default {
         { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
         { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '100', align: 'right', show: true },
         { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
-        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '120', align: 'left', show: true }
+        { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '120', align: 'left', show: true },
+        { label: '交割状态', prop: 'jiaogeStatus', formatter: this.funcFormat, width: '100', align: 'left', show: true }
       ]
     }
   },
@@ -130,6 +136,10 @@ export default {
       if (val.length > 1) {
         val.shift()
       }
+    },
+    // 交割日验证
+    deliveryDayValid(deliveryTime) {
+      return moment(moment(new Date()).format('YYYY-MM-DD')).isSame(moment(deliveryTime).format('YYYY-MM-DD'))
     },
     // 提交事件
     handleSubmit: debounce(function () {
@@ -185,6 +195,34 @@ export default {
         })
       }
     }),
+    // 已平仓行样式
+    tableRowFinishClassName({ row, rowIndex }) {
+      if (rowIndex === 0) {
+        tableFinishClassName = 'odd-row'
+        currentFinishCode = row.finishCode
+      } else {
+        if (currentFinishCode !== row.finishCode) {
+          currentFinishCode = row.finishCode
+          if (tableFinishClassName === 'even-row') {
+            tableFinishClassName = 'odd-row'
+          } else {
+            tableFinishClassName = 'even-row'
+          }
+        }
+      }
+      return tableFinishClassName
+    },
+    // 盒子样式
+    cellStyle(row, column, rowIndex, columnIndex) {
+      if (row.column.label === '方向') {
+        switch (row.row.direction) {
+          case 'bond_1': // 卖出
+            return 'color:#e88585';
+          case 'bond_0': // 买入
+            return 'color:#00da3c';
+        }
+      }
+    },
     // 数据格式化
     funcFormat(row, column) {
       switch (column.property) {
@@ -196,6 +234,8 @@ export default {
           return util.moneyFormat(row.price, 4)
         case "tscode":
           return row.tscode.replace(/.IB/, '')
+        case "jiaogeStatus":
+          return config.bondStatus[row.jiaogeStatus]
       }
       return row[column.property]
     }

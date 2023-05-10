@@ -29,7 +29,7 @@ service.interceptors.response.use(response => {
   //   return true
   // }
   const resp = response.data
-  console.log(JSON.stringify(resp))
+  // console.log(JSON.stringify(resp))
   switch (resp.code) {
     case 200:
     case '00000':

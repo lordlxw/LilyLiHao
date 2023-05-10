@@ -16,6 +16,7 @@
           default-expand-all
           row-key="realTradeId"
           :row-class-name="tableRowClassName"
+          :cell-style="cellStyleUpdate"
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
           header-row-style="height:30px;line-height:30px;"
           header-cell-style="background:#f8f8f8;"
@@ -203,6 +204,13 @@ export default {
     tableRowClassName({ row, rowIndex }) {
       if (row.children) {
         return 'warning-row'
+      }
+    },
+    // 更新记录表
+    cellStyleUpdate(row, column, rowIndex, columnIndex) {
+      console.log(row)
+      if (row.column.label === '违约量' && parseInt(row.row.volume) > row.row.weiyueAmount) {
+        return 'color:orange'
       }
     },
     // 获取用户模版id下设置的column

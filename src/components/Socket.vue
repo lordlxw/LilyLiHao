@@ -70,6 +70,9 @@ export default {
         // 打开事件
         socket.onopen = function () {
           console.log("websocket已打开");
+          clearInterval(self.socketTimer)
+          self.socketTimer = null
+          self.socketHeart()
         }
         // 浏览器端收消息，获得从服务端发送过来的文本消息
         socket.onmessage = function (msg) {
@@ -764,6 +767,8 @@ export default {
               case 'confirm_cancel_bond_1':
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 break
+              case 'tradecompare_bond_0':
+              case 'tradecompare_bond_1':
               case 'deny_cancel_bond_0':
               case 'deny_cancel_bond_1':
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
@@ -830,6 +835,14 @@ export default {
           self.reconnect()
         }
       }
+    },
+    // socket心跳
+    socketHeart() {
+      this.socketTimer = setInterval(() => {
+        if (socket) {
+          socket.send(JSON.stringify({ "dataKey": 'HELLO', "dataType": 'ping' }))
+        }
+      }, 30 * 1000)
     },
     // 重连
     reconnect() {

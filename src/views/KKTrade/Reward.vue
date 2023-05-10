@@ -363,6 +363,10 @@ export default {
           this.rewardSaleVolume = rewardSaleVolume
         } else {
           this.tableData = [];
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
         }
         this.loading = false;
       });

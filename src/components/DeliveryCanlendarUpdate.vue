@@ -35,10 +35,16 @@ export default {
       api.holidayOfMonth().then(response => {
         if (response && response.code === '00000') {
           // 设置可选日期
+          // self.pickerOptions = {
+          //   disabledDate(time) {
+          //     const date = new Date()
+          //     return (time.getTime() + 3600 * 1000 * 24 * 1) < Date.now() || time.getTime() > (date.getTime() + 3600 * 1000 * 24 * 30) || response.value.indexOf(util.dateFormat(time, 'YYYY-MM-DD')) !== -1;
+          //   }
+          // }
           self.pickerOptions = {
             disabledDate(time) {
               const date = new Date()
-              return (time.getTime() + 3600 * 1000 * 24 * 1) < Date.now() || time.getTime() > (date.getTime() + 3600 * 1000 * 24 * 30) || response.value.indexOf(util.dateFormat(time, 'YYYY-MM-DD')) !== -1;
+              return (time.getTime() + 3600 * 1000 * 15 * 1 + 3600 * 100 * 5) < Date.now() || time.getTime() > (date.getTime() + 3600 * 1000 * 24 * 30) || response.value.indexOf(util.dateFormat(time, 'YYYY-MM-DD')) !== -1;
             }
           }
         }
