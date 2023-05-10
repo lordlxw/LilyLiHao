@@ -90,8 +90,7 @@
                   <el-button
                     type="text"
                     v-if="
-                      setAuth('bonds:cover') &&
-                      scope.row.realTradeId === null
+                      setAuth('bonds:cover') && scope.row.realTradeId === null
                     "
                     @click="handleBondsCover(scope.row)"
                     >平仓</el-button
@@ -755,7 +754,7 @@ export default {
             this.loadInitData()
             break
           case this.tablist[1]:
-          console.log('2-1')
+            console.log('2-1')
             this.loadInitDataFinish()
             break
         }

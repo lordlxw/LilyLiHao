@@ -1184,6 +1184,18 @@ export default {
                     '最高：' + currentItemData[4] + '<br>'
                   // 'MA5:' + ma5
                 },
+                position: function (pos, params, el, elRect, size) {
+                  const obj = {
+                    top: 10
+                  };
+                  // obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
+                  if (pos[0] < (size.viewSize[0] / 2)) {
+                    obj.right = 80
+                  } else {
+                    obj.left = 30
+                  }
+                  return obj;
+                },
                 axisPointer: {
                   type: 'cross',
                   lineStyle: {
@@ -1338,6 +1350,18 @@ export default {
                   '最低：' + currentItemData[3] + '<br>' +
                   '最高：' + currentItemData[4] + '<br>'
                 // 'MA5:' + ma5
+              },
+              position: function (pos, params, el, elRect, size) {
+                const obj = {
+                  top: 10
+                };
+                // obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
+                if (pos[0] < (size.viewSize[0] / 2)) {
+                  obj.right = 80
+                } else {
+                  obj.left = 30
+                }
+                return obj;
               },
               axisPointer: {
                 type: 'cross',
@@ -1522,7 +1546,12 @@ export default {
                   const obj = {
                     top: 10
                   };
-                  obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
+                  // obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
+                  if (pos[0] < (size.viewSize[0] / 2)) {
+                    obj.right = 80
+                  } else {
+                    obj.left = 30
+                  }
                   return obj;
                 }
               },

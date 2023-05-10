@@ -6,12 +6,17 @@
       <div class="table mt20">
         <el-table
           v-loading="loading"
+          ref="breakTableRef"
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
           :height="breakH"
           border
           :key="Math.random()"
+          default-expand-all
+          row-key="realTradeId"
+          :row-class-name="tableRowClassName"
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
           header-row-style="height:30px;line-height:30px;"
           header-cell-style="background:#f8f8f8;"
           highlight-current-row
@@ -194,6 +199,12 @@ export default {
     this.initFrameH('breakH', 200)
   },
   methods: {
+    // 行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (row.children) {
+        return 'warning-row'
+      }
+    },
     // 获取用户模版id下设置的column
     dispatchUserColumn() {
       apiAdmin.getUserColumn({
@@ -230,6 +241,9 @@ export default {
           this.tableData = [];
         }
         this.loading = false;
+        this.$nextTick(() => {
+          this.$refs.breakTableRef.doLayout()
+        })
       });
     },
     // 改交割
