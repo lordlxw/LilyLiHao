@@ -32,6 +32,7 @@
         header-cell-style="background:#f8f8f8;"
         :key="Math.random()"
         highlight-current-row
+        :cell-style="cellStyleUpdate"
       >
         <template v-for="itemHead in tableHead">
           <el-table-column
@@ -370,6 +371,12 @@ export default {
         }
         this.loading = false;
       });
+    },
+    // 更新记录表
+    cellStyleUpdate(row, column, rowIndex, columnIndex) {
+      if (row.column.label === '交割量' && parseInt(row.row.volume) < row.row.chengjiaoAmount) {
+        return 'color:orange'
+      }
     },
     // 数据格式化
     funcFormat(row, column) {
