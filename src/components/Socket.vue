@@ -589,6 +589,10 @@ export default {
                 break
               case 'nancheng_cancel_bond_0':
               case 'nancheng_cancel_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
                 self.$notify({
                   title: `${msgJson.data.createuser} 难成已撤单`,
                   dangerouslyUseHTMLString: true,
@@ -627,7 +631,6 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
                 self.tryPlay()
                 break
               case 'nancheng_baoliu_bond_0':

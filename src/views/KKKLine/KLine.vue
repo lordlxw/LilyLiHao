@@ -95,7 +95,7 @@
         <li class="nav-right">
           <router-link
             target="_blank"
-            :to="{ path: '/main' }"
+            :to="{ path: '/trade/bonds' }"
             class="i-text"
             style="color: white"
             ><i class="el-icon-s-home"></i
@@ -367,7 +367,10 @@
                   </el-select>
                   <br />
                   <el-button
-                    v-if="setAuth('inquiry:insert')"
+                    v-if="
+                      setAuth('inquiry:insert') &&
+                      activeTscode.indexOf('.CTD') === -1
+                    "
                     class="btn-green mt10"
                     :disabled="loading"
                     :loading="loading"
