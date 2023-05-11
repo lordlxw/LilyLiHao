@@ -165,14 +165,21 @@
           <hr color="#ec0000" size="1" style="margin: 0" />
           <el-scrollbar>
             <ul>
-              <li
-                v-for="item in tscodeListFavorite"
-                :key="item.id"
-                @click="handlerTscode(item)"
-                :class="{ active: activeTscode == item.tscode }"
+              <draggable
+                v-model="tscodeListFavorite"
+                animation="300"
+                @start="onStart"
+                @end="onEnd"
               >
-                <strong class="l-strong">{{ item.tscode }}</strong>
-              </li>
+                <li
+                  v-for="item in tscodeListFavorite"
+                  :key="item.id"
+                  @click="handlerTscode(item)"
+                  :class="{ active: activeTscode == item.tscode }"
+                >
+                  <strong class="l-strong">{{ item.tscode }}</strong>
+                </li>
+              </draggable>
             </ul>
           </el-scrollbar>
         </div>
@@ -793,6 +800,7 @@ import * as echarts from 'echarts'
 import configUtil from '@/utils/config.js'
 import * as util from '@/utils/util'
 import { debounce } from '@/utils/debounce'
+import Draggable from 'vuedraggable'
 // import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
 import UpdatePassword from '@/components/UpdatePassword.vue'
@@ -810,7 +818,8 @@ export default {
     // TradeEnquiry,
     DeliveryCanlendar,
     EnquiryEdit,
-    UpdatePassword
+    UpdatePassword,
+    Draggable
   },
   data() {
     // 金额格式验证
@@ -1754,6 +1763,17 @@ export default {
           this.tscodeListFavorite = response.value
           this.calcFavoriteIcon()
         }
+      })
+    },
+    // 拖拽
+    onStart() { },
+    onEnd() {
+      // 准备数据
+      const tscodeList = []
+      for (let i = 0; i < this.tscodeListFavorite.length; i++) {
+        tscodeList.push(this.tscodeListFavorite[i].tscode)
+      }
+      api.favoriteOrder({ tscodeList }).then(resposne => {
       })
     },
     // 计算收藏按钮样式

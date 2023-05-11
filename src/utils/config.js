@@ -149,8 +149,8 @@ export default {
     tradeNum: { label: '单据号', prop: 'tradeNum', width: '220', align: 'left', show: true },
     tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
     // userTradeId: { label: '交易id', prop: 'userTradeId', width: '120', align: 'left', show: false },
-    // xunjiayuanId: { label: '交易员id', prop: 'xunjiayuanId', width: '120', align: 'left', show: false },
-    xunjiayuanName: { label: '研究员', prop: 'xunjiayuanName', width: '120', align: 'left', show: true },
+    // yanjiuyuanId: { label: '交易员id', prop: 'yanjiuyuanId', width: '120', align: 'left', show: false },
+    yanjiuyuanName: { label: '研究员', prop: 'yanjiuyuanName', width: '120', align: 'left', show: true },
     createTime: { label: '成交时间', prop: 'createTime', width: '180', align: 'left', show: true },
     counterParty: { label: '交易对手', prop: 'counterParty', width: '120', align: 'left', show: true },
     contactPerson: { label: '联系人', prop: 'contactPerson', width: '120', align: 'left', show: true },
@@ -178,6 +178,7 @@ export default {
     tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
     remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
     updateTime: { label: '修改时间', prop: 'updateTime', width: '180', align: 'left', show: true },
+    yanjiuyuanName: { label: '研究员', prop: 'yanjiuyuanName', width: '120', align: 'left', show: true },
   },
   // 违约单头部
   breakHead: {
@@ -196,5 +197,7 @@ export default {
     updateTime: { label: '修改时间', prop: 'updateTime', width: '220', align: 'left', show: true },
     createTime: { label: '创建时间', prop: 'createTime', width: '220', align: 'left', show: true },
     contactPerson: { label: '交易对手', prop: 'contactPerson', width: '220', align: 'left', show: true },
+    tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
+    yanjiuyuanName: { label: '研究员', prop: 'yanjiuyuanName', width: '120', align: 'left', show: true },
   }
 }

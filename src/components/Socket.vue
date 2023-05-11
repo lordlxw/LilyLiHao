@@ -282,7 +282,7 @@ export default {
               case 'confirmdeal_bond_0':
               case 'confirmdeal_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.xunjiayuanName} 已确认成交`,
+                  title: `${msgJson.data.yanjiuyuanName} 已确认成交`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: `
@@ -384,7 +384,7 @@ export default {
               case 'deny_deal_bond_0':
               case 'deny_deal_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.xunjiayuanName} 已拒绝成交`,
+                  title: `${msgJson.data.yanjiuyuanName} 已拒绝成交`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: `
@@ -419,7 +419,7 @@ export default {
               case 'weipingchangeconfirm_bond_0':
               case 'weipingchangeconfirm_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.xunjiayuanName} 已同意未平仓修改`,
+                  title: `${msgJson.data.yanjiuyuanName} 已同意未平仓修改`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: `
@@ -462,7 +462,7 @@ export default {
               case 'weipingchangedeny_bond_0':
               case 'weipingchangedeny_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.xunjiayuanName} 已拒绝未平仓修改`,
+                  title: `${msgJson.data.yanjiuyuanName} 已拒绝未平仓修改`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: `
@@ -505,7 +505,7 @@ export default {
               case 'yipingchangeconfirm_bond_0':
               case 'yipingchangeconfirm_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.xunjiayuanName} 已同意已平仓修改`,
+                  title: `${msgJson.data.yanjiuyuanName} 已同意已平仓修改`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: `
@@ -547,7 +547,7 @@ export default {
               case 'yipingchangedeny_bond_0':
               case 'yipingchangedeny_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.xunjiayuanName} 已拒绝已平仓修改`,
+                  title: `${msgJson.data.yanjiuyuanName} 已拒绝已平仓修改`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: `
@@ -676,7 +676,7 @@ export default {
               case 'koutouweiyueconfirm_bond_0':
               case 'koutouweiyueconfirm_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.xunjiayuanName} 已确认口头违约`,
+                  title: `${msgJson.data.yanjiuyuanName} 已确认口头违约`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: `
@@ -719,7 +719,7 @@ export default {
               case 'koutouweiyuedeny_bond_0':
               case 'koutouweiyuedeny_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.xunjiayuanName} 已拒绝口头违约`,
+                  title: `${msgJson.data.yanjiuyuanName} 已拒绝口头违约`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: `
@@ -788,7 +788,7 @@ export default {
                   break
                 }
                 self.$notify({
-                  title: `${msgJson.data.xunjiayuanName} 已确认续作`,
+                  title: `${msgJson.data.yanjiuyuanName} 已确认续作`,
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
                   message: `

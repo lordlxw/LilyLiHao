@@ -208,7 +208,6 @@ export default {
     },
     // 更新记录表
     cellStyleUpdate(row, column, rowIndex, columnIndex) {
-      console.log(row)
       if (row.column.label === '违约量' && parseInt(row.row.volume) > row.row.weiyueAmount) {
         return 'color:orange'
       }

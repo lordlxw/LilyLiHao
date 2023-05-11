@@ -59,11 +59,9 @@ export default {
       this["SET_IS_COLLAPSE"]({ isCollapse: this.isCollapse, val: this.initFrameW(200) })
     }
     window.onresize = () => {
-      setTimeout(() => {
-        if (this.asideLeftWidth !== '0px') {
-          this["SET_IS_COLLAPSE"]({ isCollapse: this.isCollapse, val: this.initFrameW(200) })
-        }
-      }, 300)
+      if (this.asideLeftWidth !== '0px') {
+        this["SET_IS_COLLAPSE"]({ isCollapse: this.isCollapse, val: this.initFrameW(200) })
+      }
     }
   }
 }

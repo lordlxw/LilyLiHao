@@ -78,6 +78,19 @@ export default {
     })
   },
   /**
+   * 收藏排序
+   * @param {*} params
+   */
+  favoriteOrder(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/favorite/order`,
+      method: 'post',
+      data: {
+        tscodeList: params.tscodeList
+      }
+    })
+  },
+  /**
    * 删除个人喜好
    * @param {*} params
    */
