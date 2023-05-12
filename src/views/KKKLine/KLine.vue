@@ -541,13 +541,14 @@
           @click="handleRightOpenOrClose"
         ></div>
         <!-- 及期卖出 -->
-        <div class="r-out">
+        <div class="r-out" style="height: 120px">
           <el-scrollbar v-if="businessOutList && businessOutList.length > 0">
             <ul>
               <li
                 v-for="(item, index) in businessOutList"
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
+                style="height: 20px; line-height: 20px"
               >
                 <span :style="`width: ${widthList.w50}px`">{{
                   item.brokerName
@@ -566,13 +567,14 @@
           </el-scrollbar>
         </div>
         <!-- 及期买入 -->
-        <div class="r-in">
+        <div class="r-in" style="height: 120px">
           <el-scrollbar v-if="businessInList && businessInList.length > 0">
             <ul>
               <li
                 v-for="(item, index) in businessInList"
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
+                style="height: 20px; line-height: 20px"
               >
                 <span :style="`width: ${widthList.w50}px`">{{
                   item.brokerName
@@ -591,7 +593,7 @@
           </el-scrollbar>
         </div>
         <!-- 远期卖出 -->
-        <div class="r-out">
+        <div class="r-out" style="height: 120px">
           <el-scrollbar
             v-if="businessForwardOutList && businessForwardOutList.length > 0"
           >
@@ -600,6 +602,7 @@
                 v-for="(item, index) in businessForwardOutList"
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
+                style="height: 20px; line-height: 20px"
               >
                 <span :style="`width: ${widthList.w50}px`">{{
                   item.brokerName
@@ -618,7 +621,7 @@
           </el-scrollbar>
         </div>
         <!-- 远期买入 -->
-        <div class="r-in">
+        <div class="r-in" style="height: 120px">
           <el-scrollbar
             v-if="businessForwardInList && businessForwardInList.length > 0"
           >
@@ -627,6 +630,7 @@
                 v-for="(item, index) in businessForwardInList"
                 :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume"
+                style="height: 20px; line-height: 20px"
               >
                 <span :style="`width: ${widthList.w50}px`">{{
                   item.brokerName
@@ -647,8 +651,8 @@
         <!-- 交易 -->
         <div class="r-trans" v-if="transactionAllList.length > 0">
           <el-scrollbar>
-            <ul class="mt20">
-              <li class="li-first">
+            <ul class="mt20" style="margin-top:20px">
+              <li class="li-first" style="height: 20px; line-height: 20px">
                 <span class="colume1">方向</span>
                 <span class="colume2">价格</span>
                 <span class="colume3">中介</span>
@@ -659,6 +663,7 @@
                 v-for="(item, index) in transactionAllList"
                 :key="index"
                 :class="funcSelectColor(item.dealtype)"
+                style="height: 20px; line-height: 20px"
               >
                 <span class="colume1">{{ item.dealtype }}</span>
                 <span class="colume2">{{
@@ -1045,7 +1050,7 @@ export default {
           { validator: floatTest, trigger: 'blur' }
         ]
       },
-      canlendarW: 160,
+      canlendarW: 180,
       buyFormPrice: '',
       saleFormForwardPrice: '',
       buyFormForwardPrice: '',
