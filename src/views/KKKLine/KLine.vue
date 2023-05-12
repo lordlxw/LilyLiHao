@@ -651,7 +651,7 @@
         <!-- 交易 -->
         <div class="r-trans" v-if="transactionAllList.length > 0">
           <el-scrollbar>
-            <ul class="mt20" style="margin-top:20px">
+            <ul class="mt20" style="margin-top: 20px">
               <li class="li-first" style="height: 20px; line-height: 20px">
                 <span class="colume1">方向</span>
                 <span class="colume2">价格</span>
@@ -872,6 +872,8 @@ export default {
           this.getKLineDay('日线')
         }
       },
+      // K线定时器
+      klineTimer: null,
       // 左侧所有债券码
       tscodeList: [],
       // 左侧收藏
@@ -1138,6 +1140,9 @@ export default {
               this.activeTscode = this.tscode = this.tscodeList.length > 0 ? this.tscodeList[0].tscode : ''
             }
             this.klinemethods[this.klineactive]()
+            this.klineTimer = setInterval(() => {
+              this.klinemethods[this.klineactive]()
+            }, 30 * 1000)
             this.initCommonData()
           })
         }
@@ -3535,6 +3540,8 @@ export default {
     this.timer = null
     clearInterval(this.socketTimer)
     this.socketTimer = null
+    clearInterval(this.klineTimer)
+    this.klineTimer = null
   }
 }
 </script>
