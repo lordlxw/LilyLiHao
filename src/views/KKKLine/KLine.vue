@@ -1052,7 +1052,7 @@ export default {
           { validator: floatTest, trigger: 'blur' }
         ]
       },
-      canlendarW: 180,
+      canlendarW: 160,
       buyFormPrice: '',
       saleFormForwardPrice: '',
       buyFormForwardPrice: '',
