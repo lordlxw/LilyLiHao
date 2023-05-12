@@ -354,7 +354,7 @@
                 <el-form-item label="交易员" prop="tradeuserId">
                   <el-select
                     v-model="buyForm.tradeuserId"
-                    placeholder="请选择交易员"
+                    placeholder="请选择"
                     class="slt-user"
                   >
                     <el-option
@@ -491,7 +491,7 @@
                 <el-form-item label="交易员" prop="tradeuserId">
                   <el-select
                     v-model="saleForm.tradeuserId"
-                    placeholder="请选择交易员"
+                    placeholder="请选择"
                     class="slt-user"
                   >
                     <el-option
@@ -3613,7 +3613,7 @@ export default {
 }
 
 .slt-user {
-  width: 130px;
+  width: 140px;
 }
 
 .kline {
@@ -3722,7 +3722,7 @@ export default {
     }
     .chatbox {
       width: 100%;
-      height: 180px;
+      height: 200px;
       position: relative;
       bottom: 0;
       color: #ec0000;
