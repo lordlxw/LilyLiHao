@@ -36,7 +36,7 @@
                     }
               "
               :label="itemHead.label"
-              :width="itemHead.width ? returnFrameW(itemHead.width) : ''"
+              :width="itemHead.width ? itemHead.width : ''"
             >
             </el-table-column>
           </template>
@@ -45,7 +45,7 @@
             fixed="right"
             align="center"
             label="操作"
-            :width="returnFrameW(200)"
+            width="200px"
           >
             <template slot-scope="scope">
               <el-popover

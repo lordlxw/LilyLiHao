@@ -75,7 +75,7 @@
                         }
                   "
                   :label="itemHead.label"
-                  :width="itemHead.width ? returnFrameW(itemHead.width) : ''"
+                  :width="itemHead.width ? itemHead.width : ''"
                 >
                 </el-table-column>
               </template>
@@ -150,9 +150,7 @@
                                 }
                           "
                           :label="itemHead.label"
-                          :width="
-                            itemHead.width ? returnFrameW(itemHead.width) : ''
-                          "
+                          :width="itemHead.width ? itemHead.width : ''"
                         >
                         </el-table-column>
                       </template>
@@ -367,7 +365,7 @@
                         }
                   "
                   :label="itemHead.label"
-                  :width="itemHead.width ? returnFrameW(itemHead.width) : ''"
+                  :width="itemHead.width ? itemHead.width : ''"
                 >
                 </el-table-column>
               </template>

@@ -48,17 +48,12 @@
                   }
             "
             :label="itemHead.label"
-            :width="itemHead.width ? returnFrameW(itemHead.width) : ''"
+            :width="itemHead.width ? itemHead.width : ''"
           >
           </el-table-column>
         </template>
         <el-table-column></el-table-column>
-        <el-table-column
-          fixed="right"
-          align="center"
-          label="操作"
-          :width="returnFrameW(80)"
-        >
+        <el-table-column fixed="right" align="center" label="操作" width="80px">
           <template slot-scope="scope">
             <el-popover
               v-if="setAuth('reward:back') && funcIsBreak(scope)"
@@ -85,14 +80,14 @@
                           }
                     "
                     :label="itemHead.label"
-                    :width="itemHead.width ? returnFrameW(itemHead.width) : ''"
+                    :width="itemHead.width ? itemHead.width : ''"
                   >
                   </el-table-column>
                 </template>
                 <el-table-column
                   v-if="doListOption && doListOption.length > 0"
                   label="选择"
-                  :width="returnFrameW(300)"
+                  width="300px"
                 >
                   <template slot-scope="scope">
                     <el-checkbox-group
@@ -108,7 +103,7 @@
                     </el-checkbox-group>
                   </template>
                 </el-table-column>
-                <el-table-column label="违约方" :width="returnFrameW(150)">
+                <el-table-column label="违约方" width="150px">
                   <template slot-scope="scope">
                     <el-select
                       v-model="scope.row.weiyuePerson"
@@ -126,7 +121,7 @@
                     </el-select>
                   </template>
                 </el-table-column>
-                <el-table-column label="违约量" :width="returnFrameW(150)">
+                <el-table-column label="违约量" width="150px">
                   <template slot-scope="scope">
                     <el-input
                       size="mini"
@@ -138,7 +133,7 @@
                     ></el-input>
                   </template>
                 </el-table-column>
-                <el-table-column label="做市商" :width="returnFrameW(150)">
+                <el-table-column label="做市商" width="150px">
                   <template slot-scope="scope">
                     <el-input
                       size="mini"

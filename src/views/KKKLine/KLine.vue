@@ -260,7 +260,7 @@
                 ref="buyForm"
                 :model="buyForm"
                 :rules="buyFormRules"
-                :label-width="`${widthList.w80}px`"
+                label-width="`${widthList.w80}px`"
                 size="mini"
                 class="buy-form"
               >
@@ -275,6 +275,7 @@
                     step="0.001"
                     placeholder="请输入价格"
                     @input="handleMaxWait('buyForm')"
+                    class="pricew"
                   ></el-input-number
                   ><br />
                   <el-form-item prop="worstPrice">
@@ -294,7 +295,7 @@
                     placeholder="请输入交易量"
                   ></el-input
                   ><br />
-                  <el-button-group class="mt10">
+                  <el-button-group class="mt10" style="display: flex">
                     <el-button
                       type="primary"
                       style="background: white; color: #202020"
@@ -378,7 +379,7 @@
                     >发送</el-button
                   >
                 </el-form-item>
-                <el-form-item label="备注">
+                <el-form-item label="备注" style="width: 100%">
                   <el-input
                     type="textarea"
                     v-model="buyForm.remark"
@@ -412,6 +413,7 @@
                     step="0.001"
                     placeholder="请输入价格"
                     @input="handleMaxWait('saleForm')"
+                    class="pricew"
                   ></el-input-number
                   ><br />
                   <el-form-item prop="worstPrice">
@@ -431,7 +433,7 @@
                     placeholder="请输入交易量"
                   ></el-input
                   ><br />
-                  <el-button-group class="mt10">
+                  <el-button-group class="mt10" style="display: flex">
                     <el-button
                       type="primary"
                       style="background: white; color: #202020"
@@ -512,7 +514,7 @@
                     >发送</el-button
                   >
                 </el-form-item>
-                <el-form-item label="备注">
+                <el-form-item label="备注" style="width: 100%">
                   <el-input
                     type="textarea"
                     v-model="saleForm.remark"
@@ -3621,7 +3623,7 @@ export default {
 }
 
 .ipt-remark {
-  width: 400px;
+  width: 100%;
 }
 
 .container {
@@ -3746,6 +3748,9 @@ export default {
           cursor: pointer;
           background: #333131;
         }
+      }
+      .pricew {
+        width: 170px;
       }
       .numbw {
         width: 110px;
@@ -3909,6 +3914,9 @@ export default {
   //   padding: 6px 10px;
   // }
   .sale-form {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
     .el-button--primary {
       background-color: #ec0000;
       border-color: #ec0000;
@@ -3937,6 +3945,9 @@ export default {
     }
   }
   .buy-form {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
     .el-button--primary {
       background-color: #00da3c;
       border-color: #00da3c;
