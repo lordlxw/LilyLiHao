@@ -884,6 +884,7 @@ export default {
             type: 'error'
           })
         }
+        console.log(JSON.stringify(obj))
         self.notifyRejection[parseInt(obj.userTradeId)].close()
         delete self.notifyRejection[parseInt(obj.userTradeId)]
       })

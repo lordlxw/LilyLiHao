@@ -443,7 +443,11 @@
             >
             <el-button
               style="float: right"
-              v-if="setAuth('bonds:delivery') && tableDataFinish.length > 0"
+              v-if="
+                setAuth('bonds:delivery') &&
+                tableDataFinish.length > 0 &&
+                isShowDeliveryBtn
+              "
               type="primary"
               size="mini"
               @click="handleDeliveryClick"
@@ -874,7 +878,8 @@ export default {
       ],
       breakTableData: [],
       doListOption: config.doBreakList,
-      errorMsg: ''
+      errorMsg: '',
+      isShowDeliveryBtn: false
     }
   },
   created() {
@@ -1208,6 +1213,12 @@ export default {
         }
         this.loading = false;
       });
+      this.getIsShowDeliveryBtn()
+    },
+    getIsShowDeliveryBtn() {
+      api.deliveryBtnIsShow().then(response => {
+        this.isShowDeliveryBtn = !response.data
+      })
     },
     handlViewNobondsUpdateContent: debounce(function (scope) {
       api.nobondsUpdateContent({ realTradeId: scope.row.realTradeId }).then(response => {

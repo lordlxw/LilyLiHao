@@ -342,6 +342,12 @@ export default {
         realTradeId: params.realTradeId
       }
     })
+  },
+  // 是否显示交割按钮
+  deliveryBtnIsShow() {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/jiaogeButtonHidden`,
+      method: 'get'
+    })
   }
-
 }
