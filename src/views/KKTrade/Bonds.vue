@@ -11,39 +11,148 @@
         <!-- 未平仓 -->
         <el-tab-pane :label="tablist[0]" v-if="setAuth('nobonds:view')">
           <div class="do">
-            <el-button
-              size="mini"
-              class="mr20"
-              @click="handleDefaultExpandAll"
-              >{{ defaultExpandAll ? "全收" : "全展" }}</el-button
-            >
+            <el-button size="mini" @click="handleDefaultExpandAll">{{
+              defaultExpandAll ? "全收" : "全展"
+            }}</el-button>
             <el-button
               v-if="setAuth('nobonds:allexport')"
               type="primary"
               size="mini"
-              class="mr20"
               @click="handleNobondsAllExport"
               >全量导出</el-button
             >
+            <el-popover
+              v-if="setAuth('reward:back') && noBondsIsSelection.length > 0"
+              placement="bottom-start"
+              ref="popover-deliveryback"
+            >
+              <p>
+                单据号<span class="color-red">
+                  {{ noBondsIsSelection[0].tradeNum }} </span
+                >确认要<span class="color-red"> 改违约 </span>？
+              </p>
+              <el-table border :data="breakTableData">
+                <template v-for="itemHead in breakTableHead">
+                  <el-table-column
+                    v-if="itemHead.show"
+                    :key="itemHead.label"
+                    :align="itemHead.align"
+                    :prop="itemHead.prop"
+                    :formatter="
+                      itemHead.formatter
+                        ? itemHead.formatter
+                        : (row, column, cellValue, index) => {
+                            return cellValue;
+                          }
+                    "
+                    :label="itemHead.label"
+                    :width="itemHead.width ? itemHead.width : ''"
+                  >
+                  </el-table-column>
+                </template>
+                <el-table-column
+                  v-if="doListOption && doListOption.length > 0"
+                  label="选择"
+                  width="300px"
+                >
+                  <template slot-scope="scope">
+                    <el-checkbox-group
+                      v-model="scope.row.mySelected"
+                      @input="handleDoCheck"
+                    >
+                      <el-checkbox
+                        v-for="item in doListOption"
+                        :label="item.value"
+                        :key="item.value"
+                        >{{ item.label }}</el-checkbox
+                      >
+                    </el-checkbox-group>
+                  </template>
+                </el-table-column>
+                <el-table-column label="违约方" width="150px">
+                  <template slot-scope="scope">
+                    <el-select
+                      v-model="scope.row.weiyuePerson"
+                      v-if="
+                        scope.row.mySelected && scope.row.mySelected.length > 0
+                      "
+                      placeholder="请选择"
+                    >
+                      <el-option
+                        v-for="(value, key) in config.breakTypeOptions"
+                        :key="key"
+                        :label="value"
+                        :value="key"
+                      ></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column label="违约量" width="150px">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="mini"
+                      v-model="scope.row.weiyueAmount"
+                      v-if="
+                        scope.row.mySelected && scope.row.mySelected.length > 0
+                      "
+                      width="90"
+                    ></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column label="做市商" width="150px">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="mini"
+                      v-model="scope.row.marketMakerName"
+                      v-if="
+                        scope.row.mySelected && scope.row.mySelected.length > 0
+                      "
+                      width="90"
+                    ></el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <div style="text-align: right" class="mt20">
+                <el-button
+                  type="primary"
+                  @click="_self.$refs['popover-deliveryback'].doClose()"
+                  >取消</el-button
+                >
+                <el-button
+                  type="primary"
+                  @click="handleDeliveryBackClick(noBondsIsSelection[0])"
+                  >确认</el-button
+                >
+              </div>
+              <el-button
+                type="default"
+                slot="reference"
+                class="ml10"
+                size="mini"
+                @click="handleLoadCurrentRow(noBondsIsSelection[0])"
+                >改违约</el-button
+              >
+            </el-popover>
             <el-tag
               :type="
                 totalFloatProfit.toString().indexOf('-') !== -1
                   ? 'danger'
                   : 'success'
               "
-              class="mr20"
+              class="ml10"
               v-if="setAuth('reward:datatotal')"
               >浮动盈亏：<b>{{ totalFloatProfit }}</b></el-tag
             >
-            <el-tag type="success" class="mr20"
+            <el-tag type="success" class="ml10"
               >买：<b>{{ noBondsBuyVolumn }}</b></el-tag
             >
-            <el-tag type="danger" class="mr20"
+            <el-tag type="danger" class="ml10"
               >卖：<b>{{ noBondsSaleVolumn }}</b></el-tag
             >
           </div>
           <div class="table mt10" ref="noBondsDo">
             <el-table
+              v-if="isShow"
               ref="noBondsTable"
               v-loading="loading"
               :data="tableData"
@@ -54,13 +163,20 @@
               row-key="rowId"
               :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
               :row-class-name="tableRowClassName"
+              :cell-class-name="tableCellNoBondsClassName"
               :cell-style="cellStyle"
-              :key="Math.random()"
               :default-expand-all="defaultExpandAll"
               header-row-style="height:30px;line-height:30px;"
               header-cell-style="background:#f8f8f8;"
               highlight-current-row
+              @selection-change="handleNoBondsSelectionChange"
             >
+              <el-table-column
+                v-if="setAuth('reward:back')"
+                type="selection"
+                align="center"
+                width="40"
+              ></el-table-column>
               <template v-for="itemHead in tableHead">
                 <el-table-column
                   v-if="itemHead.show"
@@ -336,6 +452,7 @@
           </div>
           <div class="table mt10">
             <el-table
+              ref="bondsTable"
               v-loading="loading"
               :data="tableDataFinish"
               tooltip-effect="dark"
@@ -344,13 +461,19 @@
               border
               row-key="rowId"
               :row-class-name="tableRowFinishClassName"
+              :cell-class-name="tableCellBondsClassName"
               :cell-style="finishCellStyle"
-              :key="Math.random()"
               :span-method="objectSpanMethod"
               header-row-style="height:30px;line-height:30px;"
               header-cell-style="background:#f8f8f8;"
               highlight-current-row
+              @selection-change="handleBondsSelectionChange"
             >
+              <el-table-column
+                type="selection"
+                align="center"
+                width="40"
+              ></el-table-column>
               <template v-for="itemHead in tableHeadFinish">
                 <el-table-column
                   v-if="itemHead.show"
@@ -653,6 +776,7 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import api from "@/api/kk_bonds"
+import apiBreak from "@/api/kk_reward"
 import apiAdmin from '@/api/kk_power_admin'
 import apiBondPool from '@/api/kk_bond_pool'
 import { pageMixin } from '@/utils/pageMixin'
@@ -693,6 +817,7 @@ export default {
       tableData: [],
       tableHeadFinish: [],
       tableDataFinish: [],
+      isShow: true,
       defaultExpandAll: false,
       // 平仓弹框
       dialogBondsCoverFormVisible: false,
@@ -734,7 +859,22 @@ export default {
       totalProfit: '',
       // 已平买卖
       buyVolumn: '',
-      saleVolumn: ''
+      saleVolumn: '',
+      // 未平是否有选中
+      noBondsIsSelection: [],
+      noBondsSingleSelection: [],
+      // 已平
+      bondsIsSelection: [],
+      // 改违约表头
+      breakTableHead: [
+        { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '120', align: 'left', show: true },
+        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
+        { label: '交割价', prop: 'price', formatter: this.funcFormat, width: '120', align: 'right', show: true },
+        { label: '交割量', prop: 'volume', width: '100', align: 'right', show: true }
+      ],
+      breakTableData: [],
+      doListOption: config.doBreakList,
+      errorMsg: ''
     }
   },
   created() {
@@ -746,15 +886,22 @@ export default {
       if (this.$refs.eltabs.panes.length > 0) {
         switch (this.$refs.eltabs.panes[this.$refs.eltabs.currentName].label) {
           case this.tablist[0]:
-            console.log('1-1')
             this.loadInitData()
+            // this.$refs.noBondsTable.doLayout()
             break
           case this.tablist[1]:
-            console.log('2-1')
             this.loadInitDataFinish()
+            // this.$refs.bondsTable.doLayout()
             break
         }
       }
+    },
+    defaultExpandAll() {
+      this.isShow = false
+      this.noBondsIsSelection = []
+      this.$nextTick(() => {
+        this.isShow = true
+      })
     }
   },
   computed: {
@@ -766,6 +913,101 @@ export default {
     })
   },
   methods: {
+    handleDoCheck(val) {
+      this.errorMsg = ''
+      if (val.length > 1) {
+        val.shift()
+      }
+    },
+    handleNoBondsSelectionChange(val) {
+      if (val.length > 1) {
+        this.$refs.noBondsTable.clearSelection()
+        this.$refs.noBondsTable.toggleRowSelection(val.pop())
+      } else {
+        this.noBondsIsSelection = val
+      }
+    },
+    handleBondsSelectionChange(val) {
+      if (val.length > 1) {
+        this.$refs.bondsTable.clearSelection()
+        this.$refs.bondsTable.toggleRowSelection(val.pop())
+      } else {
+        this.bondsIsSelection = val
+      }
+    },
+    handleLoadCurrentRow(row) {
+      row.mySelected = []
+      row.weiyuePerson = ''
+      row.weiyueAmount = row.volume
+      row.marketMakerName = ''
+      this.breakTableData = [JSON.parse(JSON.stringify(row))]
+    },
+    // 改违约
+    handleDeliveryBackClick: debounce(function (row) {
+      // const finishCodeList = [...new Set(this.breakTableData.map(item => item.finishCode))]
+      const wyList = []
+      const len = this.breakTableData.length
+      let flag = false
+      console.log(len)
+      for (let i = 0; i < len; i++) {
+        if (this.breakTableData[i].mySelected.length > 0) {
+          wyList.push({
+            marketMakerName: this.breakTableData[i].marketMakerName,
+            realTradeId: this.breakTableData[i].realTradeId,
+            weiyueAmount: this.breakTableData[i].weiyueAmount ? parseInt(this.breakTableData[i].weiyueAmount) : '',
+            weiyuePerson: this.breakTableData[i].weiyuePerson,
+            weiyueType: this.breakTableData[i].mySelected[0]
+          })
+          if (!this.breakTableData[i].weiyuePerson) {
+            this.errorMsg = '违约方必须选全'
+            flag = true
+            break;
+          }
+          if (parseInt(this.breakTableData[i].weiyueAmount) > this.breakTableData[i].volume) {
+            this.errorMsg = '违约量不能超过持仓量'
+            flag = true
+            break;
+          }
+          if (isNaN(this.breakTableData[i].weiyueAmount) || Number(this.breakTableData[i].weiyueAmount) <= 0) {
+            this.errorMsg = '违约量必须大于0'
+            flag = true
+            break;
+          }
+        } else {
+          this.errorMsg = '请勾选违约类型'
+          flag = true
+          break;
+        }
+      }
+      if (!flag) {
+        apiBreak.deliverBreak({ realTradeId: row.realTradeId, wyList }).then(response => {
+          if (response && response.code === '00000') {
+            this.$message({
+              message: '操作成功',
+              type: 'success'
+            })
+            this._self.$refs['popover-deliveryback'].doClose()
+            this.loadInitData()
+          } else {
+            this.$message({
+              message: `${response.message}`,
+              type: 'error'
+            })
+          }
+        })
+      } else {
+        this.$message({
+          message: `${this.errorMsg}`,
+          type: 'error'
+        })
+      }
+    }),
+    // 是否不能改违约
+    funcIsBreakCanUpdate(row) {
+      return !moment(
+        moment(row.deliveryTime).format('YYYY-MM-DD')
+      ).isBefore(moment(new Date()).format('YYYY-MM-DD'))
+    },
     // 搜索事件
     handleSearch() {
       this.loadInitData()
@@ -1101,6 +1343,17 @@ export default {
         } else {
           return 'success-row'
         }
+      }
+    },
+    // 单元格样式
+    tableCellNoBondsClassName(row) {
+      if (row.row.realTradeId === null) {
+        return 'myCell'
+      }
+    },
+    tableCellBondsClassName(row) {
+      if (row.row.realTradeId === null) {
+        return 'myCell'
       }
     },
     // 已平仓行样式
@@ -1565,5 +1818,13 @@ export default {
   .table-height {
     height: 800px !important;
   }
+}
+</style>
+<style>
+thead .el-table-column--selection .cell {
+  display: none;
+}
+.myCell .el-checkbox__input {
+  display: none;
 }
 </style>

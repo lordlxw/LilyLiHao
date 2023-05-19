@@ -80,6 +80,16 @@ export default {
     '2': '做市商违约',
     '3': '我方违约'
   },
+  // 违约
+  doBreakList: [
+    {
+      label: '技术违约',
+      value: 0
+    }, {
+      label: '恶意违约',
+      value: 1
+    }
+  ],
   // 处理键值对信息转换
   funcKeyValue(key, type) {
     return this[`${type}`][`${key}`]

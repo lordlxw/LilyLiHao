@@ -178,7 +178,7 @@ export default {
                   ),
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.$refs.playAudio.play()
                 self.notifyRejection[msgJson.data.userTradeId] = notify
                 break
@@ -194,7 +194,7 @@ export default {
               //   break
               case 'accept_bond_0':
               case 'accept_bond_1':
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 break;
               case 'error':
                 if (msgJson.data.errorCode === '0001') {
@@ -233,7 +233,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break
               case 'deny_bond_0':
@@ -268,7 +268,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break
               // 直接撤单
@@ -276,7 +276,7 @@ export default {
               case 'cancel_bond_1':
               case 'delegate_feedback_bond_0':
               case 'delegate_feedback_bond_1':
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 break
               // 成交确认
               case 'confirmdeal_bond_0':
@@ -311,7 +311,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break
               // 撤单确认
@@ -374,7 +374,7 @@ export default {
                   ),
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.$refs.playAudio.play()
                 self.notifyRejection[msgJson.data.userTradeId] = notify
                 // if (self.dialogTableVisible) {
@@ -413,7 +413,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break
               case 'weipingchangeconfirm_bond_0':
@@ -456,7 +456,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break;
               case 'weipingchangedeny_bond_0':
@@ -499,7 +499,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break;
               case 'yipingchangeconfirm_bond_0':
@@ -584,12 +584,12 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break
               case 'nancheng_cancel_bond_0':
               case 'nancheng_cancel_bond_1':
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 if (msgJson.actionType === 'refresh') {
                   break
                 }
@@ -673,7 +673,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break
               case 'koutouweiyueconfirm_bond_0':
@@ -716,7 +716,7 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break
               case 'koutouweiyuedeny_bond_0':
@@ -759,34 +759,34 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break
               case 'koutouweiyuerequest_bond_0':
               case 'koutouweiyuerequest_bond_1':
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 break
               case 'confirm_cancel_bond_0':
               case 'confirm_cancel_bond_1':
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 break
               case 'tradecompare_bond_0':
               case 'tradecompare_bond_1':
               case 'deny_cancel_bond_0':
               case 'deny_cancel_bond_1':
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 break
               case 'yipingchangerequest_bond_0':
               case 'yipingchangerequest_bond_1':
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 break;
               case 'weipingchangerequest_bond_0':
               case 'weipingchangerequest_bond_1':
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 break;
               case 'xuzuo_confirmdeal_bond_0':
               case 'xuzuo_confirmdeal_bond_1':
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 if (msgJson.actionType === 'refresh') {
                   break
                 }
@@ -877,7 +877,7 @@ export default {
             type: 'success'
           })
           self.copySocket(obj)
-          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
         } else {
           this.$message({
             message: response.message,
@@ -897,7 +897,7 @@ export default {
             message: '已拒收',
             type: 'info'
           })
-          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
         } else {
           this.$message({
             message: response.message,
@@ -917,7 +917,7 @@ export default {
             message: "已撤单",
             type: 'success'
           })
-          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
         } else {
           self.$message({
             message: `${response.message}`,
@@ -937,7 +937,7 @@ export default {
             message: "已拒绝",
             type: 'success'
           })
-          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime())
+          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
         } else {
           self.$message({
             message: `${response.message}`,

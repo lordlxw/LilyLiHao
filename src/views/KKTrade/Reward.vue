@@ -190,16 +190,6 @@ import moment from 'moment'
 export default {
   mixins: [pageMixin, commMixin],
   data() {
-    const doList = [
-      {
-        label: '技术违约',
-        value: 0
-      },
-      {
-        label: '恶意违约',
-        value: 1
-      }
-    ]
     return {
       config,
       loading: false,
@@ -214,7 +204,7 @@ export default {
         { label: '交割量', prop: 'volume', width: '100', align: 'right', show: true }
       ],
       breakTableData: [],
-      doListOption: doList,
+      doListOption: config.doBreakList,
       errorMsg: '',
       rewardH: '0',
       rewardBuyVolume: '',
