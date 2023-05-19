@@ -418,49 +418,136 @@ export default {
                 break
               case 'weipingchangeconfirm_bond_0':
               case 'weipingchangeconfirm_bond_1':
-                self.$notify({
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
+                // self.$notify({
+                //   title: `${msgJson.data.yanjiuyuanName} 已同意未平仓修改`,
+                //   dangerouslyUseHTMLString: true,
+                //   position: 'bottom-left',
+                //   message: `
+                //   <div class="notify">
+                //     <dl>
+                //       <dt>债券码</dt>
+                //       <dd>${msgJson.data.tscode.replace(/.IB/, '')}</dd>
+                //     </dl>
+                //     <dl>
+                //       <dt>方向</dt>
+                //       <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                //     </dl>
+                //     <dl>
+                //       <dt>成交价</dt>
+                //       <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
+                //     </dl>
+                //     <dl>
+                //       <dt>成交量</dt>
+                //       <dd>${msgJson.data.volume}</dd>
+                //     </dl>
+                //     <dl>
+                //       <dt>交割日期</dt>
+                //       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                //     </dl>
+                //     <dl>
+                //       <dt>单据号</dt>
+                //       <dd>${msgJson.data.tradeNum}</dd>
+                //     </dl>
+                //     <dl>
+                //       <dt>备注</dt>
+                //       <dd>${msgJson.data.remark}</dd>
+                //     </dl>
+                //   </div>
+                //   `,
+                //   duration: 0
+                // });
+                notify = self.$notify({
                   title: `${msgJson.data.yanjiuyuanName} 已同意未平仓修改`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
-                  message: `
-                  <div class="notify">
-                    <dl>
-                      <dt>债券码</dt>
-                      <dd>${msgJson.data.tscode.replace(/.IB/, '')}</dd>
-                    </dl>
-                    <dl>
-                      <dt>方向</dt>
-                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
-                    </dl>
-                    <dl>
-                      <dt>成交价</dt>
-                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
-                    </dl>
-                    <dl>
-                      <dt>成交量</dt>
-                      <dd>${msgJson.data.volume}</dd>
-                    </dl>
-                    <dl>
-                      <dt>交割日期</dt>
-                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
-                    </dl>
-                    <dl>
-                      <dt>单据号</dt>
-                      <dd>${msgJson.data.tradeNum}</dd>
-                    </dl>
-                    <dl>
-                      <dt>备注</dt>
-                      <dd>${msgJson.data.remark}</dd>
-                    </dl>
-                  </div>
-                  `,
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "创建时间"),
+                        h("dd", null, `${msgJson.data.rt.createTime}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.rt.tscode.replace(/.IB/, '')}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.rt.direction === 'bond_0' ? '买入' : msgJson.data.rt.direction === 'bond_1' ? '卖出' : ' '}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交价"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.rt.price, 4) + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交量"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.rt.volume + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割速度"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliverySpeed') !== -1 ? msgJson.data.rt.deliverySpeed : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliverySpeed') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliverySpeed)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交易对手"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('counterParty') !== -1 ? msgJson.data.rt.counterParty : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('counterParty') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.counterParty)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "联系人"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactPerson') !== -1 ? msgJson.data.rt.contactPerson : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('contactPerson') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.contactPerson)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "联系方式"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('contactType') !== -1 ? msgJson.data.rt.contactType : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('contactType') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.contactType)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "备注"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('remark') !== -1 ? msgJson.data.rt.remark : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('remark') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.remark)
+                        ])
+                      ])
+                    ],
+                  ),
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break;
               case 'weipingchangedeny_bond_0':
               case 'weipingchangedeny_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
                 self.$notify({
                   title: `${msgJson.data.yanjiuyuanName} 已拒绝未平仓修改`,
                   dangerouslyUseHTMLString: true,
@@ -499,7 +586,6 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break;
               case 'yipingchangeconfirm_bond_0':
@@ -546,6 +632,10 @@ export default {
                 break;
               case 'yipingchangedeny_bond_0':
               case 'yipingchangedeny_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
                 self.$notify({
                   title: `${msgJson.data.yanjiuyuanName} 已拒绝已平仓修改`,
                   dangerouslyUseHTMLString: true,
@@ -584,7 +674,6 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break
               case 'nancheng_cancel_bond_0':

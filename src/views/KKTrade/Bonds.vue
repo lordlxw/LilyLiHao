@@ -22,7 +22,7 @@
               >全量导出</el-button
             >
             <el-popover
-              v-if="setAuth('reward:back') && noBondsIsSelection.length > 0"
+              v-if="setAuth('nobonds:break') && noBondsIsSelection.length > 0"
               placement="bottom-start"
               ref="popover-deliveryback"
             >
@@ -172,7 +172,7 @@
               @selection-change="handleNoBondsSelectionChange"
             >
               <el-table-column
-                v-if="setAuth('reward:back')"
+                v-if="setAuth('nobonds:break')"
                 type="selection"
                 align="center"
                 width="40"
