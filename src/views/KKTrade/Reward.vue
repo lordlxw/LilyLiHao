@@ -299,7 +299,13 @@ export default {
         }
       }
       if (!flag) {
-        api.deliverBreak({ realTradeId: scope.row.realTradeId, wyList }).then(response => {
+        api.deliverBreak({
+          marketMakerName: wyList[0].marketMakerName,
+          realTradeId: wyList[0].realTradeId,
+          weiyueAmount: wyList[0].weiyueAmount,
+          weiyuePerson: wyList[0].weiyuePerson,
+          weiyueType: wyList[0].weiyueType
+        }).then(response => {
           if (response && response.code === '00000') {
             this.$message({
               message: '操作成功',

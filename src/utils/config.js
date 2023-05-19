@@ -209,7 +209,9 @@ export default {
     updateTime: { label: '修改时间', prop: 'updateTime', width: '220', align: 'left', show: true },
     createTime: { label: '创建时间', prop: 'createTime', width: '220', align: 'left', show: true },
     contactPerson: { label: '交易对手', prop: 'contactPerson', width: '220', align: 'left', show: true },
-    tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
+    contactType: { label: '联系方式', prop: 'contactType', width: '110', align: 'left', show: true },
+    counterParty: { label: '对手方', prop: 'counterParty', width: '100', align: 'left', show: true },
+    traderName: { label: '交易员', prop: 'traderName', width: '120', align: 'left', show: true },
     yanjiuyuanName: { label: '研究员', prop: 'yanjiuyuanName', width: '120', align: 'left', show: true },
   }
 }

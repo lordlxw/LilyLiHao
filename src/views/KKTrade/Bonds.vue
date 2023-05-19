@@ -985,7 +985,13 @@ export default {
         }
       }
       if (!flag) {
-        apiBreak.deliverBreak({ realTradeId: row.realTradeId, wyList }).then(response => {
+        apiBreak.deliverBreak({
+          marketMakerName: wyList[0].marketMakerName,
+          realTradeId: wyList[0].realTradeId,
+          weiyueAmount: wyList[0].weiyueAmount,
+          weiyuePerson: wyList[0].weiyuePerson,
+          weiyueType: wyList[0].weiyueType
+        }).then(response => {
           if (response && response.code === '00000') {
             this.$message({
               message: '操作成功',
