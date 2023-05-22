@@ -8,7 +8,7 @@ export default {
    */
   get(params) {
     return request({
-      url: `${Vue.prototype.$apiUrl}/realtrade/listByCurrentUser`,
+      url: `${Vue.prototype.$apiUrl}/realtrade/listByCurrentUser?orderBy=${params.orderBy}&isAsc=${params.isAsc}`,
       method: 'get',
       params: {
         deliveryDateEnd: params.deliveryDateEnd,

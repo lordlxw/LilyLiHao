@@ -170,6 +170,8 @@
               header-cell-style="background:#f8f8f8;"
               highlight-current-row
               @selection-change="handleNoBondsSelectionChange"
+              @sort-change="handleSortChange"
+              :default-sort="{ prop: 'createTime', order: 'descending' }"
             >
               <el-table-column
                 v-if="setAuth('nobonds:break')"
@@ -183,6 +185,11 @@
                   :key="itemHead.label"
                   :align="itemHead.align"
                   :prop="itemHead.prop"
+                  :sortable="
+                    ['createTime'].indexOf(itemHead.prop) !== -1
+                      ? 'custom'
+                      : false
+                  "
                   :formatter="
                     itemHead.formatter
                       ? itemHead.formatter
@@ -947,6 +954,22 @@ export default {
       row.marketMakerName = ''
       this.breakTableData = [JSON.parse(JSON.stringify(row))]
     },
+    handleSortChange(sort) {
+      console.log(111)
+      console.log(sort)
+      if (sort.prop === 'createTime') {
+        sort.field = 'create_time'
+      }
+      if (sort.order === 'ascending') {
+        sort.asc = true
+      } else {
+        sort.asc = false
+      }
+      if (!sort.field) {
+        sort.field = 'create_time'
+      }
+      this.loadInitData(sort)
+    },
     // 改违约
     handleDeliveryBackClick: debounce(function (row) {
       // const finishCodeList = [...new Set(this.breakTableData.map(item => item.finishCode))]
@@ -1110,7 +1133,7 @@ export default {
       })
     },
     // 初始化数据（未平）
-    loadInitData() {
+    loadInitData(sort) {
       this.loading = true;
       api.get({
         deliveryDateEnd: null,
@@ -1119,7 +1142,9 @@ export default {
         tradeNum: null,
         tscode: null,
         userName: null,
-        userTradeId: null
+        userTradeId: null,
+        orderBy: sort ? sort.field : 'create_time',
+        isAsc: sort ? sort.asc : false
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
           let rowId = 0
