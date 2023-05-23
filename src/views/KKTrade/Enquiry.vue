@@ -67,7 +67,8 @@
                 type="text"
                 size="small"
                 v-if="
-                  ['1', '4', '8'].indexOf(scope.row.status.toString()) !== -1 &&
+                  ['1', '4', '8', '10'].indexOf(scope.row.status.toString()) !==
+                    -1 &&
                   setAuth('inquiry:deal') &&
                   scope.row.relativeNum &&
                   scope.row.relativeNum.indexOf('GD_') === -1
@@ -397,9 +398,7 @@
                             }
                       "
                       :label="itemHead.label"
-                      :width="
-                        itemHead.width ? itemHead.width : ''
-                      "
+                      :width="itemHead.width ? itemHead.width : ''"
                     >
                     </el-table-column>
                   </template>
