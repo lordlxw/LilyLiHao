@@ -110,6 +110,11 @@ export default {
                   this.$router.push({ path: '/trade/bonds' })
                 })
               })
+            } else {
+              this.$message({
+                message: `${response.message}`,
+                type: 'error'
+              })
             }
           })
         } else {
