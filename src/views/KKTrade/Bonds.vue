@@ -186,7 +186,14 @@
                   :align="itemHead.align"
                   :prop="itemHead.prop"
                   :sortable="
-                    ['createTime'].indexOf(itemHead.prop) !== -1
+                    [
+                      'createTime',
+                      'tscode',
+                      'tradeNum',
+                      'deliveryTime',
+                      'updateTime',
+                    ].indexOf(itemHead.prop) !== -1 &&
+                    ['研究员'].indexOf(userInfo.roleName) === -1
                       ? 'custom'
                       : false
                   "
@@ -1068,7 +1075,19 @@ export default {
     },
     handleSortChange(sort) {
       if (sort.prop === 'createTime') {
-        sort.field = 'create_time'
+        sort.field = 'createTime'
+      }
+      if (sort.prop === 'tscode') {
+        sort.field = 'tscode'
+      }
+      if (sort.prop === 'deliveryTime') {
+        sort.field = 'deliveryTime'
+      }
+      if (sort.prop === 'tradeNum') {
+        sort.field = 'tradeNum'
+      }
+      if (sort.prop === 'updateTime') {
+        sort.field = 'updateTime'
       }
       if (sort.order === 'ascending') {
         sort.asc = true
@@ -1076,7 +1095,7 @@ export default {
         sort.asc = false
       }
       if (!sort.field) {
-        sort.field = 'create_time'
+        sort.field = 'createTime'
       }
       this.loadInitData(sort)
     },
