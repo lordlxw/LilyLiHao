@@ -1977,9 +1977,9 @@ export default {
 </style>
 <style>
 thead .el-table-column--selection .cell {
-  display: none;
+  display: none !important;
 }
 .myCell .el-checkbox__input {
-  display: none;
+  display: none !important;
 }
 </style>
