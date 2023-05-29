@@ -1067,8 +1067,6 @@ export default {
       this.breakTableData = [JSON.parse(JSON.stringify(row))]
     },
     handleSortChange(sort) {
-      console.log(111)
-      console.log(sort)
       if (sort.prop === 'createTime') {
         sort.field = 'create_time'
       }
@@ -1088,7 +1086,6 @@ export default {
       const wyList = []
       const len = this.breakTableData.length
       let flag = false
-      console.log(len)
       for (let i = 0; i < len; i++) {
         if (this.breakTableData[i].mySelected.length > 0) {
           wyList.push({
@@ -1502,7 +1499,6 @@ export default {
     // 未平仓单元格样式
     tableCellNoBondsClassName(row) {
       // 交易号为null或者不是已交割状态不显示复选框
-      console.log(row.row.jiaogeStatus)
       if (row.row.realTradeId === null || row.row.jiaogeStatus !== 1) {
         return 'myCell'
       }

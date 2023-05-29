@@ -172,6 +172,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import api from "@/api/kk_break";
 import apiAdmin from '@/api/kk_power_admin'
 import { pageMixin } from '@/utils/pageMixin'
@@ -201,6 +202,16 @@ export default {
   },
   created() {
     this.initFrameH('breakH', 200)
+  },
+  watch: {
+    enquiryInfo() {
+      this.loadInitData()
+    }
+  },
+  computed: {
+    ...mapState({
+      enquiryInfo: (state) => state.enquiryInfo
+    })
   },
   methods: {
     // 行样式

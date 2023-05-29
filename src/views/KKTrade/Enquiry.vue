@@ -804,7 +804,6 @@ export default {
     submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(this.ruleForm)
           api.inquiryDeal({
             usertradeId: this.dealForm.usertradeId,
             price: this.dealForm.price,
