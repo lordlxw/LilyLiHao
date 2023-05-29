@@ -51,7 +51,8 @@
               <el-popover
                 v-if="
                   setAuth('break:back') &&
-                  [3, 4].indexOf(scope.row.jiaogeStatus) !== -1
+                  [3, 4].indexOf(scope.row.jiaogeStatus) !== -1 &&
+                  [22].indexOf(scope.row.status) === -1
                 "
                 placement="bottom-end"
                 :ref="`popover-breakback-${scope.$index}`"
@@ -84,7 +85,8 @@
               <el-popover
                 v-if="
                   setAuth('break:upgrade') &&
-                  [3, 5].indexOf(scope.row.jiaogeStatus) !== -1
+                  [3, 5].indexOf(scope.row.jiaogeStatus) !== -1 &&
+                  [22].indexOf(scope.row.status) === -1
                 "
                 placement="bottom-end"
                 :ref="`popover-breakupgrade-${scope.$index}`"
@@ -129,7 +131,8 @@
               <el-button
                 v-if="
                   [3].indexOf(scope.row.jiaogeStatus) !== -1 &&
-                  setAuth('break:redo')
+                  setAuth('break:redo') &&
+                  [22].indexOf(scope.row.status) === -1
                 "
                 type="text"
                 @click="handleOpenBreakEditDialog(1, scope.row)"
