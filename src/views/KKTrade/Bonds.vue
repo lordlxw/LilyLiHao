@@ -417,6 +417,118 @@
         <!-- 已平仓 -->
         <el-tab-pane :label="tablist[1]" v-if="setAuth('bonds:view')">
           <div class="do">
+            <el-popover
+              v-if="setAuth('bonds:break') && bondsIsSelection.length > 0"
+              placement="bottom-start"
+              ref="popover-deliveryback-bonds"
+            >
+              <p>
+                单据号<span class="color-red">
+                  {{ bondsIsSelection[0].tradeNum }} </span
+                >确认要<span class="color-red"> 改违约 </span>？
+              </p>
+              <el-table border :data="breakTableData">
+                <template v-for="itemHead in breakTableHead">
+                  <el-table-column
+                    v-if="itemHead.show"
+                    :key="itemHead.label"
+                    :align="itemHead.align"
+                    :prop="itemHead.prop"
+                    :formatter="
+                      itemHead.formatter
+                        ? itemHead.formatter
+                        : (row, column, cellValue, index) => {
+                            return cellValue;
+                          }
+                    "
+                    :label="itemHead.label"
+                    :width="itemHead.width ? itemHead.width : ''"
+                  >
+                  </el-table-column>
+                </template>
+                <el-table-column
+                  v-if="doListOption && doListOption.length > 0"
+                  label="选择"
+                  width="300px"
+                >
+                  <template slot-scope="scope">
+                    <el-checkbox-group
+                      v-model="scope.row.mySelected"
+                      @input="handleDoCheck"
+                    >
+                      <el-checkbox
+                        v-for="item in doListOption"
+                        :label="item.value"
+                        :key="item.value"
+                        >{{ item.label }}</el-checkbox
+                      >
+                    </el-checkbox-group>
+                  </template>
+                </el-table-column>
+                <el-table-column label="违约方" width="150px">
+                  <template slot-scope="scope">
+                    <el-select
+                      v-model="scope.row.weiyuePerson"
+                      v-if="
+                        scope.row.mySelected && scope.row.mySelected.length > 0
+                      "
+                      placeholder="请选择"
+                    >
+                      <el-option
+                        v-for="(value, key) in config.breakTypeOptions"
+                        :key="key"
+                        :label="value"
+                        :value="key"
+                      ></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column label="违约量" width="150px">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="mini"
+                      v-model="scope.row.weiyueAmount"
+                      v-if="
+                        scope.row.mySelected && scope.row.mySelected.length > 0
+                      "
+                      width="90"
+                    ></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column label="做市商" width="150px">
+                  <template slot-scope="scope">
+                    <el-input
+                      size="mini"
+                      v-model="scope.row.marketMakerName"
+                      v-if="
+                        scope.row.mySelected && scope.row.mySelected.length > 0
+                      "
+                      width="90"
+                    ></el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <div style="text-align: right" class="mt20">
+                <el-button
+                  type="primary"
+                  @click="_self.$refs['popover-deliveryback-bonds'].doClose()"
+                  >取消</el-button
+                >
+                <el-button
+                  type="primary"
+                  @click="handleDeliveryBackClick(bondsIsSelection[0])"
+                  >确认</el-button
+                >
+              </div>
+              <el-button
+                type="default"
+                slot="reference"
+                class="mr10"
+                size="mini"
+                @click="handleLoadCurrentRow(bondsIsSelection[0])"
+                >改违约</el-button
+              >
+            </el-popover>
             <el-button
               v-if="setAuth('bonds:allexport')"
               type="primary"
@@ -438,14 +550,14 @@
                   ? 'danger'
                   : 'success'
               "
-              class="mr20"
+              class="mr10"
               v-if="setAuth('reward:datatotal')"
               >已平盈亏：<b>{{ totalProfit }}</b></el-tag
             >
-            <el-tag type="success" class="mr20"
+            <el-tag type="success" class="mr10"
               >买：<b>{{ buyVolumn }}</b></el-tag
             >
-            <el-tag type="danger" class="mr20"
+            <el-tag type="danger" class="mr10"
               >卖：<b>{{ saleVolumn }}</b></el-tag
             >
             <el-button
@@ -481,6 +593,7 @@
               @selection-change="handleBondsSelectionChange"
             >
               <el-table-column
+                v-if="setAuth('bonds:break')"
                 type="selection"
                 align="center"
                 width="40"
@@ -873,7 +986,6 @@ export default {
       saleVolumn: '',
       // 未平是否有选中
       noBondsIsSelection: [],
-      noBondsSingleSelection: [],
       // 已平
       bondsIsSelection: [],
       // 改违约表头
@@ -1387,14 +1499,17 @@ export default {
         }
       }
     },
-    // 单元格样式
+    // 未平仓单元格样式
     tableCellNoBondsClassName(row) {
-      if (row.row.realTradeId === null) {
+      // 交易号为null或者不是已交割状态不显示复选框
+      console.log(row.row.jiaogeStatus)
+      if (row.row.realTradeId === null || row.row.jiaogeStatus !== 1) {
         return 'myCell'
       }
     },
+    // 已平仓单元格样式
     tableCellBondsClassName(row) {
-      if (row.row.realTradeId === null) {
+      if (row.row.realTradeId === null || row.row.jiaogeStatus !== 1) {
         return 'myCell'
       }
     },
@@ -1829,6 +1944,8 @@ export default {
   .list {
     padding: 0 15px;
     .do {
+      height: 40px;
+      line-height: 40px;
       .el-button {
         margin-top: 10px;
       }
