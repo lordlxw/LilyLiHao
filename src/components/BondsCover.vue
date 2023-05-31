@@ -158,7 +158,8 @@ export default {
         remark: '',
         // 快速交易
         quickSubmit: false,
-        realTradeIdList: []
+        realTradeIdList: [],
+        relativeNum: ''
       },
       coverFormRules: {
         direction: [
@@ -246,7 +247,8 @@ export default {
             // 允许浮动
             worstPrice: this[formName].worstPrice,
             //
-            realTradeIdList: this[formName].realTradeIdList
+            realTradeIdList: this[formName].realTradeIdList,
+            relativeNum: this[formName].relativeNum
           }).then(res => {
             if (res && res.code === '00000' && res.value) {
               this.$message({
@@ -288,6 +290,7 @@ export default {
         this.getNextDealDay()
       }
       this.coverForm.realTradeIdList = this.row.realTradeIdList
+      this.coverForm.relativeNum = this.row.relativeNum
       this.getTradeUserList(this.row.realTradeIdList)
     },
     // 获取下个交易日

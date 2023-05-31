@@ -86,7 +86,9 @@ export default {
         // 成交量
         volume: params.volume,
         // 允许浮动
-        worstPrice: params.worstPrice
+        worstPrice: params.worstPrice,
+        // 相关单号
+        relativeNum: params.relativeNum
       }
     })
   },
@@ -132,7 +134,9 @@ export default {
           tscode: params.tscode2,
           userId: params.userId2,
           volume: params.volume2
-        }
+        },
+        relativeNum: params.relativeNum,
+        deliveryTime2: params.deliveryTime2
       }
     })
   },

@@ -234,7 +234,9 @@ export default {
         // 交易员
         userId2: '',
         // 备注
-        remark2: ''
+        remark2: '',
+        // 相关单号
+        relativeNum: ''
       },
       rollFormRules: {
         direction: [
@@ -368,6 +370,8 @@ export default {
             volume2: this[formName].volume2,
             // 备注
             remark2: this[formName].remark2,
+            // 相关单号
+            relativeNum: this[formName].relativeNum
           }).then(res => {
             if (res && res.code === '00000') {
               this.$message({
@@ -394,6 +398,7 @@ export default {
     },
     // 加载初始值
     loadInitData() {
+      this.rollForm.relativeNum = this.overRow.relativeNum
       this.rollForm.direction = this.overRow.direction === 'bond_1' ? 'bond_0' : (this.overRow.direction === 'bond_0' ? 'bond_1' : '')
       this.rollForm.tscode = this.overRow.tscode
       this.rollForm.price = this.overRow.price
