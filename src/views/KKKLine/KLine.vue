@@ -1145,7 +1145,8 @@ export default {
             this.klineTimer = setInterval(() => {
               this.klinemethods[this.klineactive]()
             }, 30 * 1000)
-            this.initCommonData()
+            // 初始化实时交易数据
+            this.initRightTransactionList()
           })
         }
       })
@@ -2057,6 +2058,7 @@ export default {
       }).then(res => {
         if (res.code === '00000') {
           this.transactionAllList = res.value
+          this.initCommonData()
         }
       })
     },
@@ -2075,8 +2077,6 @@ export default {
       // 初始化表单数据
       this.buyForm.tscode = this.activeTscode
       this.saleForm.tscode = this.activeTscode
-      // 初始化实时交易数据
-      this.initRightTransactionList()
       this.$store.commit('SET_TSCODE_GLOBAL', { tscodeGlobal: this.activeTscode })
     },
     // 根据主动方显示颜色
@@ -2270,45 +2270,17 @@ export default {
             switch (msgJson.dataType) {
               case 'noforward_1':
                 self.businessOutList = msgJson.data
-                if (self.buyForm.maxWait <= 0) {
-                  self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', msgJson.data)
-                } else {
-                  self.buyFormPrice = self.funcGetBestPrice('max', msgJson.data)
-                }
-                self.calcuDiffPrice(1)
                 break
               case 'noforward_0':
                 self.businessInList = msgJson.data
-                if (self.saleForm.maxWait <= 0) {
-                  self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
-                } else {
-                  self.saleFormPrice = self.funcGetBestPrice('min', msgJson.data)
-                }
-                self.calcuDiffPrice(1)
                 break
               case 'isforward_1':
                 self.businessForwardOutList = msgJson.data
-                self.buyFormForwardPrice = self.funcGetBestPrice('max', msgJson.data.concat(self.businessOutList))
-                self.calcuDiffPrice(2)
-                // if (self.buyForm.maxWait <= 0) {
-                //   self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', msgJson.data)
-                // } else {
-                //   self.buyFormPrice = self.funcGetBestPrice('max', msgJson.data)
-                // }
                 break
               case 'isforward_0':
                 self.businessForwardInList = msgJson.data
-                console.log(msgJson.data)
-                self.saleFormForwardPrice = self.funcGetBestPrice('min', msgJson.data.concat(self.businessInList))
-                self.calcuDiffPrice(2)
-                // if (self.saleForm.maxWait <= 0) {
-                //   self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', msgJson.data)
-                // } else {
-                //   self.saleFormPrice = self.funcGetBestPrice('min', msgJson.data)
-                // }
                 break
               case 'trade':
-                // self.transactionAllList.pop()
                 self.transactionAllList.unshift(msgJson.data)
                 break
               case 'error':
@@ -2317,6 +2289,24 @@ export default {
                 }
                 break
             }
+            // 近买
+            if (self.buyForm.maxWait <= 0) {
+              self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', self.businessOutList)
+            } else {
+              self.buyFormPrice = self.funcGetBestPrice('max', self.businessOutList)
+            }
+            // 近卖
+            if (self.saleForm.maxWait <= 0) {
+              self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', self.businessInList)
+            } else {
+              self.saleFormPrice = self.funcGetBestPrice('min', self.businessInList)
+            }
+            self.calcuDiffPrice(1)
+            // 远买
+            self.buyFormForwardPrice = self.funcGetBestPrice('max', self.businessForwardOutList.concat(self.businessOutList))
+            // 远卖
+            self.saleFormForwardPrice = self.funcGetBestPrice('min', self.businessForwardInList.concat(self.businessInList))
+            self.calcuDiffPrice(2)
           } else {
             switch (msgJson.dataType) {
               // 返回研究员待接收询价单（买）
