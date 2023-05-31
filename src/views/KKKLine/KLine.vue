@@ -2048,6 +2048,8 @@ export default {
               self.businessAllList = res.value
           }
         }
+        this.calcuDiffPrice(1)
+        this.calcuDiffPrice(2)
       })
     },
     // 右侧
