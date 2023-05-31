@@ -1862,7 +1862,7 @@ export default {
       ]).then(() => {
         this.klinemethods[this.klineactive]()
         this.calcFavoriteIcon()
-        this.initCommonData()
+        this.initRightTransactionList()
       })
     }),
     // 图表数据分类方法
