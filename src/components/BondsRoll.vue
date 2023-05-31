@@ -236,7 +236,9 @@ export default {
         // 备注
         remark2: '',
         // 相关单号
-        relativeNum: ''
+        relativeNum: '',
+        // 母单交割日期
+        deliveryTime3: '',
       },
       rollFormRules: {
         direction: [
@@ -371,7 +373,8 @@ export default {
             // 备注
             remark2: this[formName].remark2,
             // 相关单号
-            relativeNum: this[formName].relativeNum
+            relativeNum: this[formName].relativeNum,
+            deliveryTime3: this[formName].deliveryTime3,
           }).then(res => {
             if (res && res.code === '00000') {
               this.$message({
@@ -399,6 +402,7 @@ export default {
     // 加载初始值
     loadInitData() {
       this.rollForm.relativeNum = this.overRow.relativeNum
+      this.rollForm.deliveryTime3 = this.overRow.deliveryTime
       this.rollForm.direction = this.overRow.direction === 'bond_1' ? 'bond_0' : (this.overRow.direction === 'bond_0' ? 'bond_1' : '')
       this.rollForm.tscode = this.overRow.tscode
       this.rollForm.price = this.overRow.price

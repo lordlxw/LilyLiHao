@@ -136,7 +136,7 @@ export default {
           volume: params.volume2
         },
         relativeNum: params.relativeNum,
-        deliveryTime2: params.deliveryTime2
+        deliveryTime2: params.deliveryTime3
       }
     })
   },
