@@ -1849,7 +1849,7 @@ export default {
       ]).then(res => {
         this.calcFavoriteIcon()
         this.klinemethods[this.klineactive]()
-        this.initCommonData()
+        this.initRightTransactionList()
       })
     },
     // 债券点击事件
