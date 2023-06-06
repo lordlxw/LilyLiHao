@@ -318,7 +318,7 @@ export default {
                   break
                 }
                 notify = self.$notify({
-                  title: `${msgJson.data.yanjiuyuanName} 已确认成交`,
+                  title: `${msgJson.data.ut.createuser} 已确认成交`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: h(
@@ -466,7 +466,7 @@ export default {
                   break
                 }
                 notify = self.$notify({
-                  title: `${msgJson.data.yanjiuyuanName} 已拒绝成交`,
+                  title: `${msgJson.data.ut.createuser} 已拒绝成交`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: h(
