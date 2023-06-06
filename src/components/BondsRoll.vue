@@ -456,4 +456,7 @@ export default {
   color: white;
   border: 1px solid #409eff;
 }
+.txt-red {
+  color: red;
+}
 </style>
