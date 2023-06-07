@@ -525,7 +525,7 @@
     </el-dialog>
     <el-dialog
       title="滚单成交"
-      width="50%"
+      width="60%"
       :visible.sync="dialogBondsRollFormVisible"
       append-to-body
       :destroy-on-close="true"
@@ -1034,8 +1034,8 @@ export default {
     handleRollDealClick(row) {
       for (let i = 0; i < this.tableData.length; i++) {
         if (row.relativeNum === this.tableData[i].relativeNum) {
-          this.overRow = JSON.parse(JSON.stringify(this.tableData[i]))
-          this.openRow = JSON.parse(JSON.stringify(this.tableData[i + 1]))
+          this.overRow = JSON.parse(JSON.stringify(this.tableData[i + 1]))
+          this.openRow = JSON.parse(JSON.stringify(this.tableData[i]))
           break
         }
       }

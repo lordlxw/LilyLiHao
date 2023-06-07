@@ -228,7 +228,9 @@
                   <el-button
                     type="text"
                     v-if="
-                      setAuth('nobonds:roll') && scope.row.realTradeId === null
+                      setAuth('nobonds:roll') &&
+                      scope.row.realTradeId === null &&
+                      scope.row.gunnable
                     "
                     @click="handleRoll(scope.row)"
                     >滚单</el-button
