@@ -1005,6 +1005,7 @@ export default {
                 break
               case 'xuzuo_deal_bond_0':
               case 'xuzuo_deal_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 if (msgJson.actionType === 'refresh') {
                   break
                 }
@@ -1038,9 +1039,46 @@ export default {
                   `,
                   duration: 5000
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break
+              case 'gundan_bond_1':
+              case 'gundan_bond_0':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
+                self.$notify({
+                  title: `${msgJson.data.yanjiuyuanName} 发起滚单`,
+                  dangerouslyUseHTMLString: true,
+                  position: 'bottom-left',
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 0
+                });
+                self.tryPlay()
+                break;
             }
             socket.send(JSON.stringify({ "dataType": "ack", "data": { "dataKey": msgJson.dataKey, "dataType": msgJson.dataType } }))
           }

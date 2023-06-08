@@ -453,12 +453,18 @@ export default {
       this.rollForm.tscode = this.overRow.tscode
       this.rollForm.price = this.overRow.price
       this.rollForm.volume = parseFloat(this.overRow.volume)
-      if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
+      if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') < moment(new Date()).format('YYYY-MM-DD')) {
+        this.rollForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+        this.getNextDealDayByDeliveryTime(moment(this.rollForm.deliveryTime).format('YYYY-MM-DD 00:00:00'))
+      } else if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
         this.rollForm.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
         this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
+        this.getNextDealDayByDeliveryTime(moment(this.rollForm.deliveryTime).format('YYYY-MM-DD 00:00:00'))
       } else if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 15:30:00'))) {
         this.rollForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
         this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+        this.getNextDealDayByDeliveryTime(moment(this.rollForm.deliveryTime).format('YYYY-MM-DD 00:00:00'))
       } else {
         this.getNextDealDay()
       }
@@ -466,7 +472,6 @@ export default {
       this.rollForm.tscode2 = this.openRow.tscode
       this.rollForm.price2 = this.openRow.price
       this.rollForm.volume2 = parseFloat(this.openRow.volume)
-      this.getNextDealDayByDeliveryTime(this.overRow.deliveryTime)
       this.getTradeUserList(this.overRow.realTradeIdList)
     },
     // 获取下个交易日
@@ -475,6 +480,7 @@ export default {
         if (response && response.code === '00000') {
           this.rollForm.deliveryTime = response.value
           this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
+          this.getNextDealDayByDeliveryTime(moment(this.rollForm.deliveryTime).format('YYYY-MM-DD 00:00:00'))
         }
       })
     },
