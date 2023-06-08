@@ -3,11 +3,11 @@
     :value="deliveryTime"
     type="date"
     placeholder="选择日期"
-    :style="{ width: `${w}` }"
     :clearable="false"
     :picker-options="pickerOptions"
     @input="handleChange"
     :editable="false"
+    class="date-w"
   >
   </el-date-picker>
 </template>
@@ -74,6 +74,8 @@ export default {
   }
 }
 </script>
-
-<style>
+<style lang="scss" scoped>
+.date-w {
+  width: 170px;
+}
 </style>

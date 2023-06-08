@@ -123,7 +123,8 @@ export default {
           remark: params.remark,
           tscode: params.tscode,
           userId: params.userId,
-          volume: params.volume
+          volume: params.volume,
+          isYouxian: params.isYouxian ? 1 : 0
         },
         second: {
           deliverySpeed: params.deliverySpeed2,
@@ -133,7 +134,8 @@ export default {
           remark: params.remark2,
           tscode: params.tscode2,
           userId: params.userId2,
-          volume: params.volume2
+          volume: params.volume2,
+          isYouxian: params.isYouxian2 ? 1 : 0
         },
         relativeNum: params.relativeNum,
         deliveryTime2: params.deliveryTime3

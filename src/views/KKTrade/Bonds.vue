@@ -1475,6 +1475,7 @@ export default {
     // 滚单弹框回参接收
     handleBondsRollDialogVisible(obj) {
       this.dialogBondsRollFormVisible = obj.dialogVisible
+      this.loadInitData()
     },
     // 交割弹框回参接收
     handleBondsDeliveryDialogVisible(obj) {

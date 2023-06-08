@@ -7,7 +7,22 @@
       label-width="100px"
     >
       <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col
+          :span="12"
+          :style="
+            rollForm.direction === 'bond_0'
+              ? 'background-color: #f0fbf2'
+              : 'background-color:#fbf1f1'
+          "
+        >
+          <el-divider content-position="left" class="divider-tit"
+            >平仓</el-divider
+          >
+          <el-form-item label="优先">
+            <el-checkbox v-model="rollForm.isYouxian" @change="handleOver"
+              >是</el-checkbox
+            >
+          </el-form-item>
           <el-form-item label="方向" prop="direction">
             {{
               rollForm.direction === "bond_0"
@@ -81,7 +96,22 @@
             ></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <el-col
+          :span="12"
+          :style="
+            rollForm.direction2 === 'bond_0'
+              ? 'background-color: #f0fbf2'
+              : 'background-color:#fbf1f1'
+          "
+        >
+          <el-divider content-position="left" class="divider-tit"
+            >开仓</el-divider
+          >
+          <el-form-item label="优先">
+            <el-checkbox v-model="rollForm.isYouxian2" @change="handleOpen"
+              >是</el-checkbox
+            >
+          </el-form-item>
           <el-form-item label="方向" prop="direction2">
             {{
               rollForm.direction2 === "bond_0"
@@ -157,14 +187,14 @@
         </el-col>
       </el-row>
 
-      <el-form-item>
+      <div class="button-box">
         <span class="txt-red"
           >价差：{{ (rollForm.price - rollForm.price2) | moneyFormat(4) }}</span
         ><br />
-        <el-button class="btn-green" @click="submitForm('rollForm')"
+        <el-button type="primary" @click="submitForm('rollForm')"
           >确认滚单</el-button
         >
-      </el-form-item>
+      </div>
     </el-form>
   </div>
 </template>
@@ -203,6 +233,8 @@ export default {
     return {
       tradeUsersOption: [],
       rollForm: {
+        // 优先级
+        isYouxian: false,
         // 交易类型
         direction: '买入',
         // 价格
@@ -221,6 +253,8 @@ export default {
         remark: '',
         // 交易类型
         direction2: '买入',
+        // 优先级
+        isYouxian2: false,
         // 价格
         price2: '',
         // 交易量
@@ -335,6 +369,18 @@ export default {
     // 点击交割日期
     handleDelivertySpeed2(val) {
       this.rollForm.deliverySpeed2 = val
+    },
+    // 处理开仓优先级勾选
+    handleOpen(val) {
+      if (val) {
+        this.rollForm.isYouxian = false
+      }
+    },
+    // 处理平仓优先级勾选
+    handleOver(val) {
+      if (val) {
+        this.rollForm.isYouxian2 = false
+      }
     },
     submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
@@ -458,5 +504,10 @@ export default {
 }
 .txt-red {
   color: red;
+}
+.button-box {
+  margin-top: 20px;
+  text-align: center;
+  line-height: 40px;
 }
 </style>
