@@ -88,7 +88,13 @@
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('overForm')"
+            <el-button
+              type="primary"
+              @click="submitForm('overForm')"
+              v-if="
+                overForm.isYouxian === 1 ||
+                (overForm.isYouxian === 0 && openForm.isYouxian === 0)
+              "
               >确认平仓</el-button
             >
           </el-form-item>
@@ -181,7 +187,13 @@
             ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('openForm')"
+            <el-button
+              type="primary"
+              @click="submitForm('openForm')"
+              v-if="
+                openForm.isYouxian === 1 ||
+                (overForm.isYouxian === 0 && openForm.isYouxian === 0)
+              "
               >确认开仓</el-button
             >
           </el-form-item>
@@ -245,7 +257,8 @@ export default {
         // 联系人
         contactPerson: '',
         // 联系方式
-        contactType: ''
+        contactType: '',
+        isYouxian: 0
       },
       overFormRules: {
         price: [
@@ -285,7 +298,8 @@ export default {
         // 联系人
         contactPerson: '',
         // 联系方式
-        contactType: ''
+        contactType: '',
+        isYouxian: 0
       },
       openFormRules: {
         price: [
@@ -376,6 +390,7 @@ export default {
     // 加载初始值
     loadInitData() {
       this.overForm.direction = this.overRow.direction
+      this.overForm.isYouxian = this.overRow.isYouxian
       this.overForm.tscode = this.overRow.tscode
       this.overForm.price = this.overRow.price
       this.overForm.usertradeId = this.overRow.userTradeId
@@ -394,6 +409,7 @@ export default {
       this.overForm.contactPerson = this.overRow.contactPerson
       this.overForm.contactType = this.overRow.contactType
 
+      this.openForm.isYouxian = this.openRow.isYouxian
       this.openForm.direction = this.openRow.direction
       this.openForm.tscode = this.openRow.tscode
       this.openForm.price = this.openRow.price

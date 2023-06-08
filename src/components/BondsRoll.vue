@@ -386,6 +386,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.dealRoll({
+            isYouxian: this[formName].isYouxian,
             // 交割速度
             deliverySpeed: this[formName].deliverySpeed,
             // 交割日期
@@ -402,6 +403,7 @@ export default {
             volume: this[formName].volume,
             // 备注
             remark: this[formName].remark,
+            isYouxian2: this[formName].isYouxian2,
             // 交割速度
             deliverySpeed2: this[formName].deliverySpeed2,
             // 交割日期
