@@ -399,7 +399,15 @@ export default {
       this.openForm.price = this.openRow.price
       this.openForm.usertradeId = this.openRow.userTradeId
       this.openForm.volume = parseFloat(this.openRow.volume)
-      this.getNextDealDayByDeliveryTime(this.overRow.deliveryTime)
+      if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
+        this.openForm.deliveryTime = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
+        this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
+      } else if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
+        this.openForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+        this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+      } else {
+        this.getNextDealDay()
+      }
       this.openForm.remark = this.openRow.remark
       this.openForm.counterParty = this.openRow.counterParty
       this.openForm.contactPerson = this.openRow.contactPerson
@@ -410,20 +418,12 @@ export default {
       apiCanlendar.nextDealDay({}).then(response => {
         if (response && response.code === '00000') {
           this.overForm.deliveryTime = response.value
-          this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
-          this.getNextDealDayByDeliveryTime(response.value)
-        }
-      })
-    },
-    // 开仓单获取平仓单交割日期的下个工作日
-    getNextDealDayByDeliveryTime(deliveryTime) {
-      apiCanlendar.nextDealDay({ deliveryTime }).then(response => {
-        if (response && response.code === '00000') {
           this.openForm.deliveryTime = response.value
+          this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
           this.$refs.deliveryCanlendarUpdate2.deliveryTime = response.value
         }
       })
-    }
+    },
   },
   mounted() {
     this.loadInitData()

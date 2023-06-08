@@ -466,16 +466,7 @@ export default {
       this.rollForm.tscode2 = this.openRow.tscode
       this.rollForm.price2 = this.openRow.price
       this.rollForm.volume2 = parseFloat(this.openRow.volume)
-      if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
-        this.rollForm.deliveryTime2 = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
-        this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
-      } else if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 15:30:00'))) {
-        this.rollForm.deliveryTime2 = moment(new Date()).format('YYYY-MM-DD')
-        this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
-      } else {
-        this.getNextDealDay()
-      }
-
+      this.getNextDealDayByDeliveryTime(this.overRow.deliveryTime)
       this.getTradeUserList(this.overRow.realTradeIdList)
     },
     // 获取下个交易日
@@ -484,11 +475,18 @@ export default {
         if (response && response.code === '00000') {
           this.rollForm.deliveryTime = response.value
           this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
+        }
+      })
+    },
+    // 开仓单获取平仓单交割日期的下个工作日
+    getNextDealDayByDeliveryTime(deliveryTime) {
+      apiCanlendar.nextDealDay({ deliveryTime }).then(response => {
+        if (response && response.code === '00000') {
           this.rollForm.deliveryTime2 = response.value
           this.$refs.deliveryCanlendarUpdate2.deliveryTime = response.value
         }
       })
-    },
+    }
   },
   mounted() {
     this.loadInitData()
