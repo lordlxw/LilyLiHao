@@ -30,7 +30,13 @@
             <el-input
               v-model="overForm.volume"
               placeholder="请输入交易量"
-              :disabled="overForm.restVolume === 0"
+              :disabled="
+                overForm.restVolume === 0 ||
+                !(
+                  [2].indexOf(overForm.youxianLevel) !== -1 &&
+                  overForm.restVolume !== 0
+                )
+              "
             ></el-input>
           </el-form-item>
           <el-form-item>
@@ -94,8 +100,10 @@
               @click="submitForm('overForm')"
               :disabled="
                 overForm.restVolume === 0 ||
-                ([2].indexOf(openForm.youxianLevel) !== -1 &&
-                  overForm.restVolume === 0)
+                !(
+                  [2].indexOf(overForm.youxianLevel) !== -1 &&
+                  overForm.restVolume !== 0
+                )
               "
               >确认平仓</el-button
             >
@@ -131,7 +139,13 @@
             <el-input
               v-model="openForm.volume"
               placeholder="请输入交易量"
-              :disabled="openForm.restVolume === 0"
+              :disabled="
+                openForm.restVolume === 0 ||
+                !(
+                  [2].indexOf(openForm.youxianLevel) !== -1 &&
+                  openForm.restVolume !== 0
+                )
+              "
             ></el-input>
           </el-form-item>
           <el-form-item>
@@ -195,8 +209,10 @@
               @click="submitForm('openForm')"
               :disabled="
                 openForm.restVolume === 0 ||
-                ([2].indexOf(overForm.youxianLevel) !== -1 &&
-                  openForm.restVolume === 0)
+                !(
+                  [2].indexOf(openForm.youxianLevel) !== -1 &&
+                  openForm.restVolume !== 0
+                )
               "
               >确认开仓</el-button
             >
