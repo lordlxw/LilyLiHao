@@ -200,5 +200,16 @@ export default {
         userTradeId: params.userTradeId
       }
     })
+  },
+  // 根据滚单号查询开仓和平仓信息
+  detailByRelativeNum(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/detailByRelativeNum`,
+      method: 'get',
+      params: {
+        relativeNum: params.relativeNum,
+        yanjiuyuanId: params.yanjiuyuanId
+      }
+    })
   }
 }

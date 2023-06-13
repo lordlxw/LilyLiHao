@@ -30,6 +30,7 @@
             <el-input
               v-model="overForm.volume"
               placeholder="请输入交易量"
+              :disabled="overForm.restVolume === 0"
             ></el-input>
           </el-form-item>
           <el-form-item>
@@ -91,9 +92,10 @@
             <el-button
               type="primary"
               @click="submitForm('overForm')"
-              v-if="
-                overForm.isYouxian === 1 ||
-                (overForm.isYouxian === 0 && openForm.isYouxian === 0)
+              :disabled="
+                overForm.restVolume === 0 ||
+                ([2].indexOf(openForm.youxianLevel) !== -1 &&
+                  overForm.restVolume === 0)
               "
               >确认平仓</el-button
             >
@@ -129,6 +131,7 @@
             <el-input
               v-model="openForm.volume"
               placeholder="请输入交易量"
+              :disabled="openForm.restVolume === 0"
             ></el-input>
           </el-form-item>
           <el-form-item>
@@ -190,9 +193,10 @@
             <el-button
               type="primary"
               @click="submitForm('openForm')"
-              v-if="
-                openForm.isYouxian === 1 ||
-                (overForm.isYouxian === 0 && openForm.isYouxian === 0)
+              :disabled="
+                openForm.restVolume === 0 ||
+                ([2].indexOf(overForm.youxianLevel) !== -1 &&
+                  openForm.restVolume === 0)
               "
               >确认开仓</el-button
             >
@@ -375,8 +379,13 @@ export default {
                 type: 'success'
               })
               this.$emit('change', {
-                dialogVisible: false
+                refresh: false,
+                relativeNum: this.overRow.relativeNum,
+                createBy: this.overRow.createBy
               })
+              // this.$emit('change', {
+              //   dialogVisible: false
+              // })
             } else {
               this.$message({
                 message: `${res.message}`,
@@ -394,7 +403,8 @@ export default {
       this.overForm.tscode = this.overRow.tscode
       this.overForm.price = this.overRow.price
       this.overForm.usertradeId = this.overRow.userTradeId
-      this.overForm.volume = parseFloat(this.overRow.volume)
+      this.overForm.volume = parseFloat(this.overRow.maxVolume)
+      this.overForm.restVolume = parseFloat(this.overRow.restVolume)
       if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
         this.overForm.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
         this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
@@ -408,13 +418,15 @@ export default {
       this.overForm.counterParty = this.overRow.counterParty
       this.overForm.contactPerson = this.overRow.contactPerson
       this.overForm.contactType = this.overRow.contactType
+      this.overForm.youxianLevel = this.overRow.youxianLevel
 
       this.openForm.isYouxian = this.openRow.isYouxian
       this.openForm.direction = this.openRow.direction
       this.openForm.tscode = this.openRow.tscode
       this.openForm.price = this.openRow.price
       this.openForm.usertradeId = this.openRow.userTradeId
-      this.openForm.volume = parseFloat(this.openRow.volume)
+      this.openForm.volume = parseFloat(this.openRow.maxVolume)
+      this.openForm.restVolume = parseFloat(this.openRow.restVolume)
       if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
         this.openForm.deliveryTime = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
         this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
@@ -428,6 +440,7 @@ export default {
       this.openForm.counterParty = this.openRow.counterParty
       this.openForm.contactPerson = this.openRow.contactPerson
       this.openForm.contactType = this.openRow.contactType
+      this.openForm.youxianLevel = this.openRow.youxianLevel
     },
     // 获取下个交易日
     getNextDealDay() {

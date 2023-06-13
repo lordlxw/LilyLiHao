@@ -60,7 +60,13 @@
                 type="text"
                 v-if="setAuth('inquiry:accept') && scope.row.status === 0"
                 @click="handleAcceptClick(scope)"
-                >接收并复制</el-button
+                >{{
+                  scope.row.youxianLevel === 2
+                    ? "接收先发复制"
+                    : scope.row.youxianLevel === 1
+                    ? "接收后发复制"
+                    : "接收并复制"
+                }}</el-button
               >
               <el-button
                 @click="handleDealClick(scope.row)"
@@ -189,7 +195,13 @@
                   [1, 4, 7, 8, 9].indexOf(scope.row.status) !== -1
                 "
                 @click="copy(scope, true)"
-                >复制</el-button
+                >{{
+                  scope.row.youxianLevel === 2
+                    ? "先发复制"
+                    : scope.row.youxianLevel === 1
+                    ? "后发复制"
+                    : "复制"
+                }}</el-button
               >
               <el-popover
                 v-if="
@@ -442,7 +454,7 @@
                   scope.row.relativeNum &&
                   scope.row.relativeNum.indexOf('GD_') !== -1
                 "
-                >滚单</el-button
+                >成交</el-button
               >
             </template>
           </el-table-column>
@@ -1032,18 +1044,40 @@ export default {
     },
     // 滚单成交弹出框
     handleRollDealClick(row) {
-      for (let i = 0; i < this.tableData.length; i++) {
-        if (row.relativeNum === this.tableData[i].relativeNum) {
-          this.overRow = JSON.parse(JSON.stringify(this.tableData[i + 1]))
-          this.openRow = JSON.parse(JSON.stringify(this.tableData[i]))
-          break
+      // for (let i = 0; i < this.tableData.length; i++) {
+      //   if (row.relativeNum === this.tableData[i].relativeNum) {
+      //     this.overRow = JSON.parse(JSON.stringify(this.tableData[i + 1]))
+      //     this.openRow = JSON.parse(JSON.stringify(this.tableData[i]))
+      //     break
+      //   }
+      // }
+      const self = this
+      this.getDetailByRelativeNum(row.relativeNum, row.createBy, function () { self.dialogBondsRollFormVisible = true })
+    },
+    getDetailByRelativeNum(relativeNum, yanjiuyuanId, callback) {
+      api.detailByRelativeNum({
+        relativeNum,
+        yanjiuyuanId
+      }).then(response => {
+        if (response && response.code === '00000') {
+          this.overRow = response.value.ping
+          this.openRow = response.value.kai
+          callback()
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'error'
+          })
         }
-      }
-      this.dialogBondsRollFormVisible = true
+      })
     },
     handleBondsRollDialogVisible(obj) {
-      this.dialogBondsRollFormVisible = obj.dialogVisible
+      // this.dialogBondsRollFormVisible = obj.dialogVisible
+      if (!obj.refresh) {
+        this.getDetailByRelativeNum(obj.relativeNum, obj.createBy)
+      }
     },
+
     // 合并单元格
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {

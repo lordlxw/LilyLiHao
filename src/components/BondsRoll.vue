@@ -189,7 +189,11 @@
 
       <div class="button-box">
         <span class="txt-red"
-          >价差：{{ (rollForm.price - rollForm.price2) | moneyFormat(4) }}</span
+          >价差：{{
+            (openRow.direction === "bond_1"
+              ? rollForm.price - rollForm.price2
+              : rollForm.price2 - rollForm.price) | moneyFormat(4)
+          }}</span
         ><br />
         <el-button type="primary" @click="submitForm('rollForm')"
           >确认滚单</el-button
@@ -431,6 +435,11 @@ export default {
               })
               this.$emit('change', {
                 dialogVisible: false
+              })
+            } else {
+              this.$message({
+                message: `${res.message}`,
+                type: 'error'
               })
             }
           })
