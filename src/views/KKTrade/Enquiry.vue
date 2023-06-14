@@ -449,7 +449,8 @@
                 type="text"
                 size="small"
                 v-if="
-                  ['1', '4', '8'].indexOf(scope.row.status.toString()) !== -1 &&
+                  ['1', '4', '8', '10'].indexOf(scope.row.status.toString()) !==
+                    -1 &&
                   setAuth('inquiry:rolldeal') &&
                   scope.row.relativeNum &&
                   scope.row.relativeNum.indexOf('GD_') !== -1
@@ -1062,7 +1063,7 @@ export default {
         if (response && response.code === '00000') {
           this.overRow = response.value.ping
           this.openRow = response.value.kai
-          callback()
+          if (callback) { callback() }
         } else {
           this.$message({
             message: `${response.message}`,

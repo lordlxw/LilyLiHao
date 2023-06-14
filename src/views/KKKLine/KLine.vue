@@ -124,15 +124,15 @@
           >
             单券
           </li>
-          <li
+          <!-- <li
             :class="activeTab == tabList[1] ? 'active' : ''"
             @click="handleClickTab(tabList[1])"
           >
             JC
-          </li>
+          </li> -->
           <li
-            :class="activeTab == tabList[2] ? 'active' : ''"
-            @click="handleClickTab(tabList[2])"
+            :class="activeTab == tabList[1] ? 'active' : ''"
+            @click="handleClickTab(tabList[1])"
           >
             收藏
           </li>
@@ -161,7 +161,7 @@
             </ul>
           </el-scrollbar>
         </div>
-        <div class="tab-common tab-2" v-if="activeTab == tabList[2]">
+        <div class="tab-common tab-2" v-if="activeTab == tabList[1]">
           <hr color="#ec0000" size="1" style="margin: 0" />
           <el-scrollbar>
             <ul>
@@ -2025,7 +2025,7 @@ export default {
     // 左侧tab切换
     handleClickTab: debounce(function (tab) {
       this.activeTab = tab;
-      if (tab === this.tabList[2]) {
+      if (tab === this.tabList[1]) {
         this.favoriteList()
       }
     }),
