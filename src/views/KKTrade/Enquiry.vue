@@ -29,6 +29,7 @@
           :row-class-name="tableRowClassName"
           :cell-style="cellStyle"
           :span-method="objectSpanMethod"
+          @expand-change="handleExpandChange"
         >
           <template v-for="itemHead in tableHead">
             <el-table-column
@@ -453,7 +454,8 @@
                   ) !== -1 &&
                   setAuth('inquiry:rolldeal') &&
                   scope.row.relativeNum &&
-                  scope.row.relativeNum.indexOf('GD_') !== -1
+                  scope.row.relativeNum.indexOf('GD_') !== -1 &&
+                  !scope.row.gundanFinished
                 "
                 >成交</el-button
               >
@@ -595,7 +597,7 @@ let tableCurrentRelativeNum = ''
 let currentRelativeNum = ''
 // 合并单元格
 let relativeNum = ''
-let relativeNumSameCount = 0
+// let relativeNumSameCount = 0
 export default {
   mixins: [pageMixin, commMixin],
   props: {
@@ -683,6 +685,7 @@ export default {
         { label: '旧值', prop: 'oldValue', width: '200', align: 'left', show: true },
         { label: '新值', prop: 'newValue', width: '200', align: 'left', show: true }
       ],
+      expandRollSheetCounts: {}
     }
   },
   created() {
@@ -746,6 +749,7 @@ export default {
           this.tableData = [];
           this.totalCount = 0;
         }
+        this.calcRollSheetCanSee()
         this.loading = false;
       });
     },
@@ -1084,7 +1088,44 @@ export default {
       }
       this.loadInitData()
     },
-
+    // 收起和展开事件处理
+    handleExpandChange(row, expandedRows) {
+      if (row.relativeNum.indexOf('GD_') !== -1) {
+        if (expandedRows) {
+          this.expandRollSheetCounts[row.relativeNum] += row.children.length
+        } else {
+          this.expandRollSheetCounts[row.relativeNum] -= row.children.length
+        }
+      }
+    },
+    calcRollSheetCanSee() {
+      this.expandRollSheetCounts = {}
+      let tempRelativeNum = ''
+      let relativeNumCount = 0
+      for (let i = 0; i < this.tableData.length; i++) {
+        if (this.tableData[i].relativeNum && this.tableData[i].relativeNum.indexOf('GD_') !== -1) {
+          if (tempRelativeNum === '' && this.tableData[i].relativeNum) {
+            tempRelativeNum = this.tableData[i].relativeNum
+          }
+          if (tempRelativeNum === this.tableData[i].relativeNum) {
+            relativeNumCount++
+            relativeNumCount += this.tableData[i].children.length
+          } else {
+            this.expandRollSheetCounts[tempRelativeNum] = relativeNumCount
+            relativeNumCount = 0
+            tempRelativeNum = this.tableData[i].relativeNum
+            relativeNumCount++
+            relativeNumCount += this.tableData[i].children.length
+          }
+        } else {
+          if (tempRelativeNum) {
+            this.expandRollSheetCounts[tempRelativeNum] = relativeNumCount
+          }
+          relativeNumCount = 0
+          tempRelativeNum = ''
+        }
+      }
+    },
     // 合并单元格
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
@@ -1094,22 +1135,23 @@ export default {
       if (column.label === '滚单成交') {
         if (row.relativeNum && row.relativeNum.indexOf('GD_') !== -1) {
           // 1、根据当前finishCode查找个数作为合并行数
-          relativeNumSameCount = 0
-          let flag = false
+          // relativeNumSameCount = 0
+          // let flag = false
           if (relativeNum.toString() !== row.relativeNum) {
             relativeNum = row.relativeNum
-            for (let i = 0; i < this.tableData.length; i++) {
-              if (this.tableData[i].relativeNum === row.relativeNum) {
-                relativeNumSameCount = relativeNumSameCount + 1
-                flag = true
-              } else {
-                if (flag) {
-                  break
-                }
-              }
-            }
+            // for (let i = 0; i < this.tableData.length; i++) {
+            //   if (this.tableData[i].relativeNum === row.relativeNum) {
+            //     relativeNumSameCount = relativeNumSameCount + 1
+            //     flag = true
+            //     relativeNumSameCount = relativeNumSameCount + this.tableData[i].children.length
+            //   } else {
+            //     if (flag) {
+            //       break
+            //     }
+            //   }
+            // }
             return {
-              rowspan: relativeNumSameCount,
+              rowspan: this.expandRollSheetCounts[relativeNum],
               colspan: columnIndex
             }
           } else {
