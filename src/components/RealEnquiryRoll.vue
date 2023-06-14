@@ -16,6 +16,9 @@
                 ? "卖出"
                 : "不明确"
             }}
+            <span class="txt-red">{{
+              overForm.youxianLevel === 2 ? "【优先成交】" : ""
+            }}</span>
           </el-form-item>
           <el-form-item label="券码" prop="tscode">
             {{ overForm.tscode }}
@@ -30,13 +33,7 @@
             <el-input
               v-model="overForm.volume"
               placeholder="请输入交易量"
-              :disabled="
-                overForm.restVolume === 0 ||
-                !(
-                  [2].indexOf(overForm.youxianLevel) !== -1 &&
-                  overForm.restVolume !== 0
-                )
-              "
+              :disabled="overForm.restVolume === 0"
             ></el-input>
           </el-form-item>
           <el-form-item>
@@ -98,13 +95,7 @@
             <el-button
               type="primary"
               @click="submitForm('overForm')"
-              :disabled="
-                overForm.restVolume === 0 ||
-                !(
-                  [2].indexOf(overForm.youxianLevel) !== -1 &&
-                  overForm.restVolume !== 0
-                )
-              "
+              :disabled="overForm.restVolume === 0"
               >确认平仓</el-button
             >
           </el-form-item>
@@ -125,6 +116,9 @@
                 ? "卖出"
                 : "不明确"
             }}
+            <span class="txt-red">{{
+              openForm.youxianLevel === 2 ? "【优先成交】" : ""
+            }}</span>
           </el-form-item>
           <el-form-item label="券码" prop="tscode">
             {{ openForm.tscode }}
@@ -139,13 +133,7 @@
             <el-input
               v-model="openForm.volume"
               placeholder="请输入交易量"
-              :disabled="
-                openForm.restVolume === 0 ||
-                !(
-                  [2].indexOf(openForm.youxianLevel) !== -1 &&
-                  openForm.restVolume !== 0
-                )
-              "
+              :disabled="openForm.restVolume === 0"
             ></el-input>
           </el-form-item>
           <el-form-item>
@@ -207,13 +195,7 @@
             <el-button
               type="primary"
               @click="submitForm('openForm')"
-              :disabled="
-                openForm.restVolume === 0 ||
-                !(
-                  [2].indexOf(openForm.youxianLevel) !== -1 &&
-                  openForm.restVolume !== 0
-                )
-              "
+              :disabled="openForm.restVolume === 0"
               >确认开仓</el-button
             >
           </el-form-item>
@@ -481,5 +463,9 @@ export default {
   background: #409eff !important;
   color: white;
   border: 1px solid #409eff;
+}
+.txt-red {
+  color: red;
+  font-weight: bold;
 }
 </style>

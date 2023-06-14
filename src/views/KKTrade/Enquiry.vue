@@ -1056,6 +1056,7 @@ export default {
       this.getDetailByRelativeNum(row.relativeNum, row.createBy, function () { self.dialogBondsRollFormVisible = true })
     },
     getDetailByRelativeNum(relativeNum, yanjiuyuanId, callback) {
+      const self = this
       api.detailByRelativeNum({
         relativeNum,
         yanjiuyuanId
@@ -1063,6 +1064,10 @@ export default {
         if (response && response.code === '00000') {
           this.overRow = response.value.ping
           this.openRow = response.value.kai
+          if (parseInt(this.overRow.restVolume) === 0 && parseInt(this.openRow.restVolume) === 0) {
+            self.dialogBondsRollFormVisible = false
+            self.loadInitData()
+          }
           if (callback) { callback() }
         } else {
           this.$message({
@@ -1077,6 +1082,7 @@ export default {
       if (!obj.refresh) {
         this.getDetailByRelativeNum(obj.relativeNum, obj.createBy)
       }
+      this.loadInitData()
     },
 
     // 合并单元格
