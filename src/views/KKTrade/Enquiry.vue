@@ -1110,6 +1110,7 @@ export default {
           if (tempRelativeNum === this.tableData[i].relativeNum) {
             relativeNumCount++
             relativeNumCount += this.tableData[i].children.length
+            this.expandRollSheetCounts[tempRelativeNum] = relativeNumCount
           } else {
             this.expandRollSheetCounts[tempRelativeNum] = relativeNumCount
             relativeNumCount = 0
