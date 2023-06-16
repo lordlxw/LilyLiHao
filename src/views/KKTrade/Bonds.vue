@@ -1389,7 +1389,7 @@ export default {
             let fieldlist = response.value.compareResult.fieldlist
             for (let i = 0; i < fieldlist.length; i++) {
               if (fieldlist[i] === 'deliveryTime') {
-                diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD'), 'newValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD') })
+                diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD'), 'newValue': moment(response.value.dto[fieldlist[i]]).format('YYYY-MM-DD') })
               } else {
                 diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': response.value.rt[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
               }
