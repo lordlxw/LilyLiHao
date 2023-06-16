@@ -59,6 +59,9 @@
           </el-form-item>
         </el-form>
       </transition>
+      <div class="icp">
+        <a href="beian.miit.gov.cn" target="_blank">琼ICP备2023001153号-1</a>
+      </div>
     </div>
   </transition>
 </template>
@@ -209,6 +212,16 @@ export default {
       margin: auto;
       display: block;
     }
+  }
+}
+.icp {
+  text-align: center;
+  margin-top: 20px;
+  a {
+    color: white;
+  }
+  a:hover{
+    color: rgb(240, 238, 238);
   }
 }
 </style>
