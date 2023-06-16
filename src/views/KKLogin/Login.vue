@@ -60,7 +60,9 @@
         </el-form>
       </transition>
       <div class="icp">
-        <a href="beian.miit.gov.cn" target="_blank">琼ICP备2023001153号-1</a>
+        <a href="http://beian.miit.gov.cn" target="_blank"
+          >琼ICP备2023001153号-1</a
+        >
       </div>
     </div>
   </transition>
@@ -220,7 +222,7 @@ export default {
   a {
     color: white;
   }
-  a:hover{
+  a:hover {
     color: rgb(240, 238, 238);
   }
 }
