@@ -2263,9 +2263,9 @@ export default {
         }
         // 浏览器端收消息，获得从服务端发送过来的文本消息
         socket.onmessage = function (msg) {
+          const timestamp = moment().valueOf()
           console.log("收到数据====" + msg.data);
           let msgJson = JSON.parse(msg.data)
-          console.log(msgJson.dataType)
           const h = self.$createElement;
           let notify = null
           if (msgJson && msgJson.dataKey === self.activeTscode) {
@@ -2574,7 +2574,7 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleInquiryDealConfirmClick(msgJson.data.ut.userTradeId)
+                                self.handleInquiryDealConfirmClick(msgJson.data.ut.userTradeId, timestamp)
                               }
                             }
                           }, "同意"),
@@ -2582,7 +2582,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleInquiryDealRejectionClick(msgJson.data.ut.userTradeId)
+                                self.handleInquiryDealRejectionClick(msgJson.data.ut.userTradeId, timestamp)
                               }
                             }
                           }, "拒绝")
@@ -2593,7 +2593,7 @@ export default {
                   duration: 0
                 });
                 self.tryPlay()
-                self.notifyRejection[msgJson.data.ut.userTradeId] = notify
+                self.notifyRejection[timestamp] = notify
                 break
               case 'weipingchangerequest_bond_0':
               case 'weipingchangerequest_bond_1':
@@ -2680,7 +2680,7 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleAgreeNoBondsUpdateClick(msgJson.data.rt.realTradeId)
+                                self.handleAgreeNoBondsUpdateClick(msgJson.data.rt.realTradeId, timestamp)
                               }
                             }
                           }, "同意"),
@@ -2688,7 +2688,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleRejectNoBondsUpdateClick(msgJson.data.rt.realTradeId)
+                                self.handleRejectNoBondsUpdateClick(msgJson.data.rt.realTradeId, timestamp)
                               }
                             }
                           }, "拒绝")
@@ -2699,7 +2699,7 @@ export default {
                   duration: 0
                 });
                 self.tryPlay()
-                self.notifyRejection[msgJson.data.rt.realTradeId] = notify
+                self.notifyRejection[timestamp] = notify
                 break
               case 'yipingchangerequest_bond_0':
               case 'yipingchangerequest_bond_1':
@@ -2786,7 +2786,7 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleAgreeBondsUpdateClick(msgJson.data.rt.realTradeId)
+                                self.handleAgreeBondsUpdateClick(msgJson.data.rt.realTradeId, timestamp)
                               }
                             }
                           }, "同意"),
@@ -2794,7 +2794,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleRejectBondsUpdateClick(msgJson.data.rt.realTradeId)
+                                self.handleRejectBondsUpdateClick(msgJson.data.rt.realTradeId, timestamp)
                               }
                             }
                           }, "拒绝")
@@ -2805,7 +2805,7 @@ export default {
                   duration: 0
                 });
                 self.tryPlay()
-                self.notifyRejection[msgJson.data.rt.realTradeId] = notify
+                self.notifyRejection[timestamp] = notify
                 break
               case 'koutouweiyuerequest_bond_0':
               case 'koutouweiyuerequest_bond_1':
@@ -2855,7 +2855,7 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleSayBreakConfirmClick(msgJson.data.realTradeId)
+                                self.handleSayBreakConfirmClick(msgJson.data.realTradeId, timestamp)
                               }
                             }
                           }, "同意"),
@@ -2863,7 +2863,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleSayBreakRejectionClick(msgJson.data.realTradeId)
+                                self.handleSayBreakRejectionClick(msgJson.data.realTradeId, timestamp)
                               }
                             }
                           }, "拒绝")
@@ -2874,7 +2874,7 @@ export default {
                   duration: 0
                 });
                 self.tryPlay()
-                self.notifyRejection[msgJson.data.realTradeId] = notify
+                self.notifyRejection[timestamp] = notify
                 break
               case 'nancheng_bond_0':
               case 'nancheng_bond_1':
@@ -2925,7 +2925,7 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleEnquiryDifficultAddClick(msgJson.data)
+                                self.handleEnquiryDifficultAddClick(msgJson.data, timestamp)
                               }
                             }
                           }, "新建"),
@@ -2933,7 +2933,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleEnquiryDifficultCanncelClick(msgJson.data)
+                                self.handleEnquiryDifficultCanncelClick(msgJson.data, timestamp)
                               }
                             }
                           }, "撤单"),
@@ -2941,7 +2941,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleEnquiryDifficultDotMoveClick(msgJson.data)
+                                self.handleEnquiryDifficultDotMoveClick(msgJson.data, timestamp)
                               }
                             }
                           }, "保留")
@@ -2952,7 +2952,7 @@ export default {
                   duration: 0
                 });
                 self.tryPlay()
-                self.notifyRejection[msgJson.data.userTradeId] = notify
+                self.notifyRejection[timestamp] = notify
                 break
               case 'xuzuo_tradecompare_bond_0':
               case 'xuzuo_tradecompare_bond_1':
@@ -3003,7 +3003,7 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleDealBreakRedoConfirmClick(msgJson.data.dto.userTradeId)
+                                self.handleDealBreakRedoConfirmClick(msgJson.data.dto.userTradeId, timestamp)
                               }
                             }
                           }, "同意"),
@@ -3011,7 +3011,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleDealBreakRedoRejectionClick(msgJson.data.dto.userTradeId)
+                                self.handleDealBreakRedoRejectionClick(msgJson.data.dto.userTradeId, timestamp)
                               }
                             }
                           }, "拒绝")
@@ -3022,7 +3022,7 @@ export default {
                   duration: 0
                 });
                 self.tryPlay()
-                self.notifyRejection[msgJson.data.dto.userTradeId] = notify
+                self.notifyRejection[timestamp] = notify
                 break
               case 'xuzuo_deal_bond_0':
               case 'xuzuo_deal_bond_1':
@@ -3150,7 +3150,7 @@ export default {
     },
 
     // 同意成交
-    handleInquiryDealConfirmClick: debounce(function (userTradeId) {
+    handleInquiryDealConfirmClick: debounce(function (userTradeId, timestamp) {
       const self = this
       apiTrade.inquiryDealConfirm({ userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3164,12 +3164,12 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(userTradeId)].close()
-        delete self.notifyRejection[parseInt(userTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
     // 拒绝成交
-    handleInquiryDealRejectionClick: debounce(function (userTradeId) {
+    handleInquiryDealRejectionClick: debounce(function (userTradeId, timestamp) {
       const self = this
       apiTrade.inquiryDealRejection({ userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3183,12 +3183,12 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(userTradeId)].close()
-        delete self.notifyRejection[parseInt(userTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
     // 续作同意
-    handleDealBreakRedoConfirmClick: debounce(function (userTradeId) {
+    handleDealBreakRedoConfirmClick: debounce(function (userTradeId, timestamp) {
       const self = this
       apiBreak.dealBreakRedoConfirm({ userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3202,12 +3202,12 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(userTradeId)].close()
-        delete self.notifyRejection[parseInt(userTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
     // 续作拒绝
-    handleDealBreakRedoRejectionClick: debounce(function (userTradeId) {
+    handleDealBreakRedoRejectionClick: debounce(function (userTradeId, timestamp) {
       const self = this
       apiBreak.dealBreakRedoRejection({ userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3221,12 +3221,12 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(userTradeId)].close()
-        delete self.notifyRejection[parseInt(userTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
     // 同意修改未平仓单
-    handleAgreeNoBondsUpdateClick: debounce(function (realTradeId) {
+    handleAgreeNoBondsUpdateClick: debounce(function (realTradeId, timestamp) {
       const self = this
       apiBonds.dealNoBondsEditComfirm({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3240,12 +3240,12 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(realTradeId)].close()
-        delete self.notifyRejection[parseInt(realTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
     // 拒绝修改未平仓单
-    handleRejectNoBondsUpdateClick: debounce(function (realTradeId) {
+    handleRejectNoBondsUpdateClick: debounce(function (realTradeId, timestamp) {
       const self = this
       apiBonds.dealNoBondsEditRejection({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3259,12 +3259,12 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(realTradeId)].close()
-        delete self.notifyRejection[parseInt(realTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
     // 同意修改已平仓单
-    handleAgreeBondsUpdateClick: debounce(function (realTradeId) {
+    handleAgreeBondsUpdateClick: debounce(function (realTradeId, timestamp) {
       const self = this
       apiBonds.dealBondsEditComfirm({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3278,12 +3278,12 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(realTradeId)].close()
-        delete self.notifyRejection[parseInt(realTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
     // 口头违约确认
-    handleSayBreakConfirmClick: debounce(function (realTradeId) {
+    handleSayBreakConfirmClick: debounce(function (realTradeId, timestamp) {
       const self = this
       apiBonds.bondsSayBreakConfirm({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3297,12 +3297,12 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(realTradeId)].close()
-        delete self.notifyRejection[parseInt(realTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
     // 口头违约拒绝
-    handleSayBreakRejectionClick: debounce(function (realTradeId) {
+    handleSayBreakRejectionClick: debounce(function (realTradeId, timestamp) {
       const self = this
       apiBonds.bondsSayBreakRejection({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3316,12 +3316,12 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(realTradeId)].close()
-        delete self.notifyRejection[parseInt(realTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
     // 拒绝修改已平仓单
-    handleRejectBondsUpdateClick: debounce(function (realTradeId) {
+    handleRejectBondsUpdateClick: debounce(function (realTradeId, timestamp) {
       const self = this
       apiBonds.dealBondsEditRejection({ realTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3335,11 +3335,11 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(realTradeId)].close()
-        delete self.notifyRejection[parseInt(realTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
-    handleEnquiryDifficultAddClick: debounce(function (data) {
+    handleEnquiryDifficultAddClick: debounce(function (data, timestamp) {
       // 撤单
       const self = this
       apiTrade.difficultAcheveCannel({ userTradeId: data.userTradeId }).then(response => {
@@ -3358,12 +3358,12 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(data.userTradeId)].close()
-        delete self.notifyRejection[parseInt(data.userTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
     // 询价单难成撤单
-    handleEnquiryDifficultCanncelClick: debounce(function (data) {
+    handleEnquiryDifficultCanncelClick: debounce(function (data, timestamp) {
       const self = this
       apiTrade.difficultAcheveCannel({ userTradeId: data.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3377,12 +3377,12 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(data.userTradeId)].close()
-        delete self.notifyRejection[parseInt(data.userTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
     // 询价单难成保留
-    handleEnquiryDifficultDotMoveClick: debounce(function (data) {
+    handleEnquiryDifficultDotMoveClick: debounce(function (data, timestamp) {
       const self = this
       apiTrade.difficultStay({ userTradeId: data.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -3396,8 +3396,8 @@ export default {
             type: 'warning'
           })
         }
-        self.notifyRejection[parseInt(data.userTradeId)].close()
-        delete self.notifyRejection[parseInt(data.userTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     }),
     // 接收单据

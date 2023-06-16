@@ -18,6 +18,7 @@ import { pageMixin } from '@/utils/pageMixin'
 import * as util from '@/utils/util'
 // import TradeEnquiry from '@/views/KKTrade/Enquiry.vue'
 import api from "@/api/kk_trade";
+import moment from 'moment'
 
 let socket
 let lockReconnect = false
@@ -76,6 +77,7 @@ export default {
         }
         // 浏览器端收消息，获得从服务端发送过来的文本消息
         socket.onmessage = function (msg) {
+          const timestamp = moment().valueOf()
           console.log("收到数据====" + msg.data);
           let msgJson = JSON.parse(msg.data)
           console.log(msgJson.dataType)
@@ -160,7 +162,7 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleAcceptEnquiryClick(msgJson.data)
+                                self.handleAcceptEnquiryClick(msgJson.data, timestamp)
                               }
                             }
                           }, "接收并复制"),
@@ -168,7 +170,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleNotAcceptEnquiryClick(msgJson.data)
+                                self.handleNotAcceptEnquiryClick(msgJson.data, timestamp)
                               }
                             }
                           }, "拒收")
@@ -180,7 +182,7 @@ export default {
                 });
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.$refs.playAudio.play()
-                self.notifyRejection[msgJson.data.userTradeId] = notify
+                self.notifyRejection[timestamp] = notify
                 break
               // 通知研究员确认接收(买)
               // case 'accept_bond_0':
@@ -374,7 +376,7 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleInquiryCancelConfirmClick(msgJson.data.userTradeId)
+                                self.handleInquiryCancelConfirmClick(msgJson.data.userTradeId, timestamp)
                               }
                             }
                           }, "同意"),
@@ -382,7 +384,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleInquiryCancelRejectionClick(msgJson.data.userTradeId)
+                                self.handleInquiryCancelRejectionClick(msgJson.data.userTradeId, timestamp)
                               }
                             }
                           }, "拒绝")
@@ -393,7 +395,7 @@ export default {
                   duration: 0
                 });
                 self.$refs.playAudio.play()
-                self.notifyRejection[msgJson.data.userTradeId] = notify
+                self.notifyRejection[timestamp] = notify
                 // if (self.dialogTableVisible) {
                 //   self.$refs.tradeEnquiry.loadInitData()
                 // }
@@ -1029,7 +1031,7 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleAcceptEnquiryClick(msgJson.data)
+                                self.handleAcceptEnquiryClick(msgJson.data, timestamp)
                               }
                             }
                           }, msgJson.data.youxianLevel === 2 ? "接收先发复制" : (msgJson.data.youxianLevel === 1 ? "接收后发复制" : "接收并复制")),
@@ -1037,7 +1039,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleNotAcceptEnquiryClick(msgJson.data)
+                                self.handleNotAcceptEnquiryClick(msgJson.data, timestamp)
                               }
                             }
                           }, "拒收")
@@ -1048,7 +1050,7 @@ export default {
                   duration: 0
                 });
                 self.$refs.playAudio.play()
-                self.notifyRejection[msgJson.data.userTradeId] = notify
+                self.notifyRejection[timestamp] = notify
                 break;
             }
             socket.send(JSON.stringify({ "dataType": "ack", "data": { "dataKey": msgJson.dataKey, "dataType": msgJson.dataType } }))
@@ -1096,7 +1098,7 @@ export default {
       }, 5000)
     },
     // 接收询价单
-    handleAcceptEnquiryClick(obj) {
+    handleAcceptEnquiryClick(obj, timestamp) {
       const self = this
       api.inquiryAccept({ usertradeId: obj.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -1112,13 +1114,12 @@ export default {
             type: 'error'
           })
         }
-        console.log(JSON.stringify(obj))
-        self.notifyRejection[parseInt(obj.userTradeId)].close()
-        delete self.notifyRejection[parseInt(obj.userTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     },
     // 拒收询价单
-    handleNotAcceptEnquiryClick(obj) {
+    handleNotAcceptEnquiryClick(obj, timestamp) {
       const self = this
       api.inquiryRejection({ usertradeId: obj.userTradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -1133,12 +1134,12 @@ export default {
             type: 'error'
           })
         }
-        self.notifyRejection[parseInt(obj.userTradeId)].close()
-        delete self.notifyRejection[parseInt(obj.userTradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     },
     // 确认撤单
-    handleInquiryCancelConfirmClick(usertradeId) {
+    handleInquiryCancelConfirmClick(usertradeId, timestamp) {
       const self = this
       api.inquiryCancelConfirm({ usertradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -1153,12 +1154,12 @@ export default {
             type: 'error'
           })
         }
-        self.notifyRejection[parseInt(usertradeId)].close()
-        delete self.notifyRejection[parseInt(usertradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     },
     // 拒绝撤单
-    handleInquiryCancelRejectionClick(usertradeId) {
+    handleInquiryCancelRejectionClick(usertradeId, timestamp) {
       const self = this
       api.inquiryCancelRejection({ usertradeId }).then(response => {
         if (response && response.code === '00000') {
@@ -1173,8 +1174,8 @@ export default {
             type: 'error'
           })
         }
-        self.notifyRejection[parseInt(usertradeId)].close()
-        delete self.notifyRejection[parseInt(usertradeId)]
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     },
     // 播放提示音
