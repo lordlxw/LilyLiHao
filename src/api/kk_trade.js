@@ -211,5 +211,26 @@ export default {
         yanjiuyuanId: params.yanjiuyuanId
       }
     })
+  },
+  // 滚单接收
+  bondRollAccept(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/gundanaccept`,
+      method: 'post',
+      data: {
+        relativeNum: params.relativeNum
+      }
+    })
+  },
+  // 滚单拒收
+  bondRollReject(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/gundandeny`,
+      method: 'post',
+      data: {
+        relativeNum: params.relativeNum
+      }
+
+    })
   }
 }

@@ -57,7 +57,7 @@
             width="180"
           >
             <template slot-scope="scope">
-              <el-button
+              <!-- <el-button
                 type="text"
                 v-if="setAuth('inquiry:accept') && scope.row.status === 0"
                 @click="handleAcceptClick(scope)"
@@ -68,6 +68,12 @@
                     ? "接收后发复制"
                     : "接收并复制"
                 }}</el-button
+              > -->
+              <el-button
+                type="text"
+                v-if="setAuth('inquiry:accept') && scope.row.status === 0"
+                @click="handleAcceptClick(scope)"
+                >接收并复制</el-button
               >
               <el-button
                 @click="handleDealClick(scope.row)"
@@ -598,6 +604,7 @@ let tableCurrentRelativeNum = ''
 let currentRelativeNum = ''
 // 合并单元格
 let relativeNum = ''
+let relativeNumRoll = ''
 // let relativeNumSameCount = 0
 export default {
   mixins: [pageMixin, commMixin],
@@ -756,42 +763,89 @@ export default {
     },
     // 接受
     handleAcceptClick: debounce(function (scope) {
-      api.inquiryAccept({ usertradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.copy(scope)
-          this.$message({
-            message: '已接收并复制成功',
-            type: 'success'
-          })
-          this.loadInitData()
-        } else {
-          this.$message({
-            message: response.message,
-            type: 'error'
-          })
-        }
-      })
+      if (scope.row.relativeNum.indexOf('GD_') !== -1) {
+        api.bondRollAccept({ relativeNum: scope.row.relativeNum }).then(response => {
+          if (response && response.code === '00000') {
+            // 根据相关单号查找优先成交行
+            for (let i = 0; i < this.tableData.length; i++) {
+              if (this.tableData[i].relativeNum === scope.row.relativeNum && this.tableData[i].youxianLevel === 2) {
+                let myScope = {}
+                myScope.row = this.tableData[i]
+                this.copy(myScope)
+                this.$message({
+                  message: '已接收并复制成功',
+                  type: 'success'
+                })
+                break
+              }
+            }
+            this.loadInitData()
+          } else {
+            this.$message({
+              message: response.message,
+              type: 'error'
+            })
+          }
+        })
+      } else {
+        api.inquiryAccept({ usertradeId: scope.row.userTradeId }).then(response => {
+          if (response && response.code === '00000') {
+            this.copy(scope)
+            this.$message({
+              message: '已接收并复制成功',
+              type: 'success'
+            })
+            this.loadInitData()
+          } else {
+            this.$message({
+              message: response.message,
+              type: 'error'
+            })
+          }
+        })
+      }
     }),
     // 拒收
     handleNotAcceptClick: debounce(function (scope) {
-      api.inquiryRejection({ usertradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: '已拒收',
-            type: 'info'
-          })
-          this.handlePopoverClose(
-            scope,
-            `popover-notaccept-${scope.$index}`
-          )
-          this.loadInitData()
-        } else {
-          this.$message({
-            message: response.message,
-            type: 'error'
-          })
-        }
-      })
+      if (scope.row.relativeNum.indexOf('GD_') !== -1) {
+        api.bondRollReject({ relativeNum: scope.row.relativeNum }).then(response => {
+          if (response && response.code === '00000') {
+            this.$message({
+              message: '已拒收',
+              type: 'info'
+            })
+            this.handlePopoverClose(
+              scope,
+              `popover-notaccept-${scope.$index}`
+            )
+            this.loadInitData()
+          } else {
+            this.$message({
+              message: response.message,
+              type: 'error'
+            })
+          }
+        })
+      } else {
+        api.inquiryRejection({ usertradeId: scope.row.userTradeId }).then(response => {
+          if (response && response.code === '00000') {
+            this.$message({
+              message: '已拒收',
+              type: 'info'
+            })
+            this.handlePopoverClose(
+              scope,
+              `popover-notaccept-${scope.$index}`
+            )
+            this.loadInitData()
+          } else {
+            this.$message({
+              message: response.message,
+              type: 'error'
+            })
+          }
+        })
+      }
     }),
     // 点击成交
     handleDealClick: debounce(function (row) {
@@ -1133,6 +1187,7 @@ export default {
       if (rowIndex === 0) {
         // 解决重复渲染问题，清空之前的数据
         relativeNum = ''
+        relativeNumRoll = ''
       }
       if (column.label === '滚单成交') {
         if (row.relativeNum && row.relativeNum.indexOf('GD_') !== -1) {
@@ -1154,6 +1209,22 @@ export default {
             // }
             return {
               rowspan: this.expandRollSheetCounts[relativeNum],
+              colspan: columnIndex
+            }
+          } else {
+            return {
+              rowspan: 0,
+              colspan: columnIndex
+            }
+          }
+        }
+      }
+      if (column.label === '操作') {
+        if (row.relativeNum && row.relativeNum.indexOf('GD_') !== -1 && row.status === 0) {
+          if (relativeNumRoll.toString() !== row.relativeNum) {
+            relativeNumRoll = row.relativeNum
+            return {
+              rowspan: this.expandRollSheetCounts[relativeNumRoll],
               colspan: columnIndex
             }
           } else {

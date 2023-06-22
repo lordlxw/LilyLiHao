@@ -18,7 +18,7 @@
           <el-divider content-position="left" class="divider-tit"
             >平仓</el-divider
           >
-          <el-form-item label="优先">
+          <el-form-item label="优先" prop="isYouxian">
             <el-checkbox v-model="rollForm.isYouxian" @change="handleOver"
               >是</el-checkbox
             >
@@ -107,7 +107,7 @@
           <el-divider content-position="left" class="divider-tit"
             >开仓</el-divider
           >
-          <el-form-item label="优先">
+          <el-form-item label="优先" prop="isYouxian2">
             <el-checkbox v-model="rollForm.isYouxian2" @change="handleOpen"
               >是</el-checkbox
             >
@@ -234,6 +234,15 @@ export default {
         callback()
       }
     }
+    // 优先成交
+    const validYouXian = async (rule, value, callback) => {
+      console.log(this.rollForm.isYouxian || this.rollForm.isYouxian2)
+      if (!(this.rollForm.isYouxian || this.rollForm.isYouxian2)) {
+        callback(new Error('优先成交必选'))
+      } else {
+        callback()
+      }
+    }
     return {
       tradeUsersOption: [],
       rollForm: {
@@ -318,7 +327,13 @@ export default {
         ],
         userId2: [
           { required: true, message: '交易员必选', trigger: 'change' }
-        ]
+        ],
+        isYouxian: [{
+          validator: validYouXian, message: '优先成交必选', trigger: 'change'
+        }],
+        isYouxian2: [{
+          validator: validYouXian, message: '优先成交必选', trigger: 'change'
+        }],
       }
     }
   },
