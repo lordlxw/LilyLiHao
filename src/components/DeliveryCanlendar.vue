@@ -19,7 +19,7 @@ export default {
   props: {
     w: {
       type: String,
-      default: '170px'
+      default: '120px'
     }
   },
   data() {
@@ -74,6 +74,6 @@ export default {
 
 <style lang="scss" scoped>
 .date-w {
-  width: 170px;
+  width: 140px;
 }
 </style>

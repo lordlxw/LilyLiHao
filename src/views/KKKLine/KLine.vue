@@ -1054,7 +1054,7 @@ export default {
           { validator: floatTest, trigger: 'blur' }
         ]
       },
-      canlendarW: 170,
+      canlendarW: 120,
       buyFormPrice: '',
       saleFormForwardPrice: '',
       buyFormForwardPrice: '',
@@ -1533,12 +1533,12 @@ export default {
               //   show: true,
               //   trigger: 'axis',
               //   formatter: function (params) {
-              //     console.log(params)
+              //     console.log(params.data)
               //     // 修改鼠标划过显示为中文
-              //     let ma5 = params[1].data // ma5的值
-              //     let ma10 = params[2].data // ma10的值
-              //     let ma20 = params[3].data // ma20的值
-              //     let ma30 = params[4].data // ma30的值
+              //     // let ma5 = params[1].data // ma5的值
+              //     // let ma10 = params[2].data // ma10的值
+              //     // let ma20 = params[3].data // ma20的值
+              //     // let ma30 = params[4].data // ma30的值
               //     params = params[0] // 开盘收盘最低最高数据汇总
               //     let currentItemData = params.data;
               //     return params.name + '<br>' +
@@ -1547,10 +1547,11 @@ export default {
               //       '收盘：' + currentItemData[2] + '<br>' +
               //       '最低：' + currentItemData[3] + '<br>' +
               //       '最高：' + currentItemData[4] + '<br>' +
-              //       'MA5日均线：' + ma5 + '<br>' +
-              //       'MA10日均线：' + ma10 + '<br>' +
-              //       'MA20日均线：' + ma20 + '<br>' +
-              //       'MA30日均线：' + ma30
+              //       '交易量：' + currentItemData[5]
+              //     // 'MA5日均线：' + ma5 + '<br>' +
+              //     // 'MA10日均线：' + ma10 + '<br>' +
+              //     // 'MA20日均线：' + ma20 + '<br>' +
+              //     // 'MA30日均线：' + ma30
               //   },
               //   axisPointer: {
               //     type: 'cross',
@@ -1561,6 +1562,18 @@ export default {
               //       opacity: 0
               //     }
               //   },
+              //   position: function (pos, params, el, elRect, size) {
+              //     const obj = {
+              //       top: 10
+              //     };
+              //     // obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
+              //     if (pos[0] < (size.viewSize[0] / 2)) {
+              //       obj.right = 80
+              //     } else {
+              //       obj.left = 30
+              //     }
+              //     return obj;
+              //   }
               // },
               tooltip: {
                 trigger: 'axis',
@@ -1709,7 +1722,7 @@ export default {
               ],
               series: [
                 {
-                  name: 'volume',
+                  name: '交易量',
                   type: 'bar',
                   xAxisIndex: 1,
                   yAxisIndex: 1,
@@ -1872,7 +1885,7 @@ export default {
       const volumes = []
       for (let i = 0; i < rawData.length; i++) {
         categoryData.push(rawData[i][xAxisKey])
-        values.push([rawData[i].openprice, rawData[i].closeprice, rawData[i].lowprice, rawData[i].highprice, rawData[i].volume])
+        values.push([util.moneyFormat(rawData[i].openprice, 4), util.moneyFormat(rawData[i].closeprice, 4), util.moneyFormat(rawData[i].lowprice, 4), util.moneyFormat(rawData[i].highprice, 4), rawData[i].volume])
         volumes.push([i, rawData[i].volume, rawData[i].openprice > rawData[i].closeprice ? 1 : -1])
       }
       return {
@@ -1892,7 +1905,7 @@ export default {
         for (var j = 0; j < dayCount; j++) {
           sum += +data0.values[i - j][1];
         }
-        result.push(util.moneyFormat(sum / dayCount, 3));
+        result.push(util.moneyFormat(sum / dayCount, 4));
       }
       return result;
     },
@@ -1903,7 +1916,6 @@ export default {
       document.onkeydown = function (event) {
         var e = event || window.event
         var keyCode = e.keyCode || e.which
-        console.log(keyCode)
         switch (keyCode) {
           case 13:
             // 检查K线轮询个数
@@ -2150,7 +2162,7 @@ export default {
       if (val === 0) {
         this[formType].volume = 0
       } else {
-        this[formType].volume += val
+        this[formType].volume = (this[formType].volume ? parseInt(this[formType].volume) : 0) + val
       }
     },
     // 交割速度方法
@@ -3742,7 +3754,7 @@ export default {
         }
       }
       .pricew {
-        width: 170px;
+        width: 140px;
       }
       .numbw {
         width: 110px;
