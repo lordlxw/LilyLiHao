@@ -22,6 +22,9 @@
           </el-form-item>
           <el-form-item label="券码" prop="tscode">
             {{ overForm.tscode }}
+            <el-button type="text" @click="handleCope(overForm)"
+              >复制</el-button
+            >
           </el-form-item>
           <el-form-item label="价格" prop="price">
             <el-input
@@ -122,6 +125,9 @@
           </el-form-item>
           <el-form-item label="券码" prop="tscode">
             {{ openForm.tscode }}
+            <el-button type="text" @click="handleCope(openForm)"
+              >复制</el-button
+            >
           </el-form-item>
           <el-form-item label="价格" prop="price">
             <el-input
@@ -211,9 +217,11 @@ import api from '@/api/kk_trade'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
 import { debounce } from '@/utils/debounce'
+import { pageMixin } from '@/utils/pageMixin'
 import moment from 'moment'
 import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 export default {
+  mixins: [pageMixin],
   props: ['overRow', 'openRow'],
   components: {
     DeliveryCanlendarUpdate
@@ -353,6 +361,16 @@ export default {
     // 交割日期变化
     handleDeliveryCanlendarUpdate2(obj) {
       this.openForm.deliveryTime = obj.value
+    },
+    // 复制
+    handleCope(formData) {
+      const scope = {}
+      scope.row = JSON.parse(JSON.stringify(formData))
+      this.copy(scope)
+      this.$message({
+        message: `复制成功`,
+        type: 'success'
+      })
     },
     // 表单提交
     submitForm: debounce(function (formName) {

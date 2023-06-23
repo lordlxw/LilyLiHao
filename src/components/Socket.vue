@@ -1051,7 +1051,7 @@ export default {
                                 self.handleAcceptEnquiryRollClick(msgJson.data.first, timestamp)
                               }
                             }
-                          }, "接收先发复制"),
+                          }, "接收优先复制"),
                           h("button", {
                             class: "notigy-cancel",
                             on: {

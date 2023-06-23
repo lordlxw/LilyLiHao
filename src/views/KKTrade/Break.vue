@@ -93,11 +93,11 @@
               >
                 <p>
                   确认"{{ scope.row.tscode }}"<span class="color-red">
-                    违约{{
+                    {{
                       scope.row.jiaogeStatus === 3
-                        ? "升级"
+                        ? "违约升级"
                         : scope.row.jiaogeStatus === 5
-                        ? "还券"
+                        ? "垫违还券"
                         : ""
                     }}
                   </span>
@@ -118,15 +118,13 @@
                     >确认</el-button
                   >
                 </div>
-                <el-button type="text" slot="reference" class="ml10"
-                  >违约{{
-                    scope.row.jiaogeStatus === 3
-                      ? "升级"
-                      : scope.row.jiaogeStatus === 5
-                      ? "还券"
-                      : ""
-                  }}</el-button
-                >
+                <el-button type="text" slot="reference" class="ml10">{{
+                  scope.row.jiaogeStatus === 3
+                    ? "违约升级"
+                    : scope.row.jiaogeStatus === 5
+                    ? "垫违还券"
+                    : ""
+                }}</el-button>
               </el-popover>
               <el-button
                 v-if="
