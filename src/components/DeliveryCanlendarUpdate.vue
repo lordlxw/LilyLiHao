@@ -20,6 +20,10 @@ export default {
     w: {
       type: String,
       default: '140px'
+    },
+    dtime: {
+      type: Date,
+      default: null
     }
   },
   data() {
@@ -44,6 +48,9 @@ export default {
           self.pickerOptions = {
             disabledDate(time) {
               const date = new Date()
+              if (self.dtime) {
+                return (time.getTime() + 3600 * 1000 * 15 * 1 + 3600 * 100 * 5) < new Date(self.dtime) || time.getTime() > (date.getTime() + 3600 * 1000 * 24 * 30) || response.value.indexOf(util.dateFormat(time, 'YYYY-MM-DD')) !== -1;
+              }
               return (time.getTime() + 3600 * 1000 * 15 * 1 + 3600 * 100 * 5) < Date.now() || time.getTime() > (date.getTime() + 3600 * 1000 * 24 * 30) || response.value.indexOf(util.dateFormat(time, 'YYYY-MM-DD')) !== -1;
             }
           }

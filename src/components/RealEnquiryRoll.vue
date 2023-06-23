@@ -64,6 +64,7 @@
           <el-form-item label="交割日期" prop="deliveryTime">
             <delivery-canlendar-update
               ref="deliveryCanlendarUpdate"
+              :dtime="overForm.dtime"
               @change="handleDeliveryCanlendarUpdate"
             ></delivery-canlendar-update>
           </el-form-item>
@@ -167,6 +168,7 @@
           <el-form-item label="交割日期" prop="deliveryTime">
             <delivery-canlendar-update
               ref="deliveryCanlendarUpdate2"
+              :dtime="openForm.dtime"
               @change="handleDeliveryCanlendarUpdate2"
             ></delivery-canlendar-update>
           </el-form-item>
@@ -268,7 +270,9 @@ export default {
         contactPerson: '',
         // 联系方式
         contactType: '',
-        isYouxian: 0
+        isYouxian: 0,
+        // 计算初始化日期
+        dtime: ''
       },
       overFormRules: {
         price: [
@@ -309,7 +313,9 @@ export default {
         contactPerson: '',
         // 联系方式
         contactType: '',
-        isYouxian: 0
+        isYouxian: 0,
+        // 计算初始化日期
+        dtime: ''
       },
       openFormRules: {
         price: [
@@ -423,10 +429,10 @@ export default {
       this.overForm.restVolume = parseFloat(this.overRow.maxVolume)
       if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
         this.overForm.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
-        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
+        this.overForm.dtime = this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
       } else if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
         this.overForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
-        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+        this.overForm.dtime = this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
       } else {
         this.getNextDealDay()
       }
@@ -444,10 +450,10 @@ export default {
       this.openForm.restVolume = parseFloat(this.openRow.maxVolume)
       if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
         this.openForm.deliveryTime = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
-        this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
+        this.openForm.dtime = this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
       } else if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 16:30:00'))) {
         this.openForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
-        this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+        this.openForm.dtime = this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
       } else {
         this.getNextDealDay()
       }
@@ -463,8 +469,8 @@ export default {
         if (response && response.code === '00000') {
           this.overForm.deliveryTime = response.value
           this.openForm.deliveryTime = response.value
-          this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
-          this.$refs.deliveryCanlendarUpdate2.deliveryTime = response.value
+          this.overForm.dtime = this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
+          this.openForm.dtime = this.$refs.deliveryCanlendarUpdate2.deliveryTime = response.value
         }
       })
     },
