@@ -978,7 +978,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 5000
+                  duration: 0
                 });
                 self.tryPlay()
                 break
@@ -1004,7 +1004,8 @@ export default {
                         h("dt", null, "债券码"),
                         h("dd", null, `${msgJson.data.first.tscode}`)
                       ]),
-                      h("div", { style: "border:1px solid #f56c6c; width:100%; background:#fac8c8", class: "mt10" }, [
+                      h("div", { style: "border:1px solid #f56c6c; width:100%; background:#fac8c8; position:relative; padding:8px 0;", class: "mt10" }, [
+                        h("div", { style: "position: absolute; right:10px; top:10px; color:red; opacity:0.5" }, "优先成交"),
                         h("dl", null, [
                           h("dt", null, "方向"),
                           h("dd", null, `${msgJson.data.first.direction === 'bond_0' ? '买入' : msgJson.data.first.direction === 'bond_1' ? '卖出' : ''}`)
@@ -1022,7 +1023,7 @@ export default {
                           h("dd", null, `${msgJson.data.first.deliveryTime.substr(0, 10)}`)
                         ])
                       ]),
-                      h("div", { style: "border:1px solid #52d5c0; width:100%;background:#d3f5ef", class: "mt10" }, [
+                      h("div", { style: "border:1px solid #52d5c0; width:100%;background:#d3f5ef; padding:8px 0;", class: "mt10" }, [
                         h("dl", null, [
                           h("dt", null, "方向"),
                           h("dd", null, `${msgJson.data.second.direction === 'bond_0' ? '买入' : msgJson.data.second.direction === 'bond_1' ? '卖出' : ''}`)
@@ -1050,7 +1051,7 @@ export default {
                                 self.handleAcceptEnquiryRollClick(msgJson.data.first, timestamp)
                               }
                             }
-                          }, "接收并复制"),
+                          }, "接收先发复制"),
                           h("button", {
                             class: "notigy-cancel",
                             on: {

@@ -73,7 +73,13 @@
                 type="text"
                 v-if="setAuth('inquiry:accept') && scope.row.status === 0"
                 @click="handleAcceptClick(scope)"
-                >接收并复制</el-button
+                >{{
+                  scope.row.youxianLevel === 2
+                    ? "接收先发复制"
+                    : scope.row.youxianLevel === 1
+                    ? "接收后发复制"
+                    : "接收并复制"
+                }}</el-button
               >
               <el-button
                 @click="handleDealClick(scope.row)"

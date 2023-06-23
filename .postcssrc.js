@@ -6,10 +6,10 @@ module.exports = {
     "postcss-url": {},
     // to edit target browsers: use "browserslist" field in package.json
     "autoprefixer": {},
-    "postcss-pxtorem": {
-      "rootValue": 192, // 设计稿宽度的1/10
-      "propList": ["*"] // 需要做转化处理的属性，如`hight`、`width`、`margin`等，`*`表示全部
-    },
+    // "postcss-pxtorem": {
+    //   "rootValue": 192, // 设计稿宽度的1/10
+    //   "propList": ["*"] // 需要做转化处理的属性，如`hight`、`width`、`margin`等，`*`表示全部
+    // },
     // "postcss-px-to-viewport": {
     //   viewportWidth: 1920, //  视窗的宽度，对应的是我们设计稿的宽度，移动端一般是750，如果是pc端那就是类似1920这样的尺寸
     //   viewportHeight: '', // 视窗的高度，移动端一般指定1334，也可以不配置

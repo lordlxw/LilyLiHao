@@ -3054,7 +3054,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 5000
+                  duration: 0
                 });
                 self.tryPlay()
                 break
