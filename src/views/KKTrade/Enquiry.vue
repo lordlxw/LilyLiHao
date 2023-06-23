@@ -208,6 +208,11 @@
                   [1, 4, 7, 8, 9].indexOf(scope.row.status) !== -1
                 "
                 @click="copy(scope, true)"
+                :style="
+                  scope.row.youxianLevel === 2
+                    ? { fontWeight: 'bold', color: '#ec0000' }
+                    : ''
+                "
                 >{{
                   scope.row.youxianLevel === 2
                     ? "先发复制"
