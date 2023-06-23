@@ -989,7 +989,7 @@ export default {
                   break
                 }
                 notify = self.$notify({
-                  title: `${msgJson.data.yanjiuyuanName} 发起询价单`,
+                  title: `${msgJson.data.first.yanjiuyuanName} 发起滚单`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   message: h(
@@ -998,31 +998,47 @@ export default {
                     [
                       h("dl", null, [
                         h("dt", null, "创建时间"),
-                        h("dd", null, `${msgJson.data.createTime}`)
+                        h("dd", null, `${msgJson.data.first.createTime}`)
                       ]),
                       h("dl", null, [
                         h("dt", null, "债券码"),
-                        h("dd", null, `${msgJson.data.tscode}`)
+                        h("dd", null, `${msgJson.data.first.tscode}`)
                       ]),
-                      h("dl", null, [
-                        h("dt", null, "方向"),
-                        h("dd", null, `${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`)
+                      h("div", { style: "border:1px solid #f56c6c; width:100%; background:#fac8c8", class: "mt10" }, [
+                        h("dl", null, [
+                          h("dt", null, "方向"),
+                          h("dd", null, `${msgJson.data.first.direction === 'bond_0' ? '买入' : msgJson.data.first.direction === 'bond_1' ? '卖出' : ''}`)
+                        ]),
+                        h("dl", null, [
+                          h("dt", null, "询价"),
+                          h("dd", null, `${util.moneyFormat(msgJson.data.first.price, 4)}`)
+                        ]),
+                        h("dl", null, [
+                          h("dt", null, "询量"),
+                          h("dd", null, `${msgJson.data.first.volume}`)
+                        ]),
+                        h("dl", null, [
+                          h("dt", null, "交割日期"),
+                          h("dd", null, `${msgJson.data.first.deliveryTime.substr(0, 10)}`)
+                        ])
                       ]),
-                      h("dl", null, [
-                        h("dt", null, "询价"),
-                        h("dd", null, `${util.moneyFormat(msgJson.data.price, 4)}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "允许最差价格"),
-                        h("dd", null, `${util.moneyFormat((msgJson.data.direction === 'bond_0' ? (msgJson.data.price - msgJson.data.worstPrice / 100) : (msgJson.data.price + msgJson.data.worstPrice / 100)), 4)}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "询量"),
-                        h("dd", null, `${msgJson.data.volume}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "交割日期"),
-                        h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}`)
+                      h("div", { style: "border:1px solid #52d5c0; width:100%;background:#d3f5ef", class: "mt10" }, [
+                        h("dl", null, [
+                          h("dt", null, "方向"),
+                          h("dd", null, `${msgJson.data.second.direction === 'bond_0' ? '买入' : msgJson.data.second.direction === 'bond_1' ? '卖出' : ''}`)
+                        ]),
+                        h("dl", null, [
+                          h("dt", null, "询价"),
+                          h("dd", null, `${util.moneyFormat(msgJson.data.second.price, 4)}`)
+                        ]),
+                        h("dl", null, [
+                          h("dt", null, "询量"),
+                          h("dd", null, `${msgJson.data.second.volume}`)
+                        ]),
+                        h("dl", null, [
+                          h("dt", null, "交割日期"),
+                          h("dd", null, `${msgJson.data.second.deliveryTime.substr(0, 10)}`)
+                        ])
                       ]),
                       h("dl", { style: "margin-top:20px;" }, [
                         // h("dt", null, ""),
@@ -1031,15 +1047,15 @@ export default {
                             class: "notigy-agree",
                             on: {
                               click: function () {
-                                self.handleAcceptEnquiryClick(msgJson.data, timestamp)
+                                self.handleAcceptEnquiryRollClick(msgJson.data.first, timestamp)
                               }
                             }
-                          }, msgJson.data.youxianLevel === 2 ? "接收先发复制" : (msgJson.data.youxianLevel === 1 ? "接收后发复制" : "接收并复制")),
+                          }, "接收并复制"),
                           h("button", {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleNotAcceptEnquiryClick(msgJson.data, timestamp)
+                                self.handleNotAcceptEnquiryRollClick(msgJson.data.firt, timestamp)
                               }
                             }
                           }, "拒收")
@@ -1097,6 +1113,47 @@ export default {
         })
       }, 5000)
     },
+    // 接收询价滚单
+    handleAcceptEnquiryRollClick(obj, timestamp) {
+      const self = this
+      api.bondRollAccept({ relativeNum: obj.relativeNum }).then(response => {
+        if (response && response.code === '00000') {
+          self.copySocket(obj)
+          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+          this.$message({
+            message: '已接收并复制成功',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: response.message,
+            type: 'error'
+          })
+        }
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
+      })
+    },
+    // 拒收询价滚单
+    handleNotAcceptEnquiryRollClick(obj, timestamp) {
+      const self = this
+      api.bondRollReject({ relativeNum: obj.relativeNum }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: '已拒收',
+            type: 'info'
+          })
+          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+        } else {
+          this.$message({
+            message: response.message,
+            type: 'error'
+          })
+        }
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
+      })
+    },
     // 接收询价单
     handleAcceptEnquiryClick(obj, timestamp) {
       const self = this
@@ -1125,7 +1182,7 @@ export default {
         if (response && response.code === '00000') {
           this.$message({
             message: '已拒收',
-            type: 'info'
+            type: 'success'
           })
           self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
         } else {

@@ -402,7 +402,7 @@ export default {
       this.overForm.price = this.overRow.price
       this.overForm.usertradeId = this.overRow.userTradeId
       this.overForm.volume = parseFloat(this.overRow.maxVolume)
-      this.overForm.restVolume = parseFloat(this.overRow.restVolume)
+      this.overForm.restVolume = parseFloat(this.overRow.maxVolume)
       if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
         this.overForm.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
         this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
@@ -417,14 +417,13 @@ export default {
       this.overForm.contactPerson = this.overRow.contactPerson
       this.overForm.contactType = this.overRow.contactType
       this.overForm.youxianLevel = this.overRow.youxianLevel
-
       this.openForm.isYouxian = this.openRow.isYouxian
       this.openForm.direction = this.openRow.direction
       this.openForm.tscode = this.openRow.tscode
       this.openForm.price = this.openRow.price
       this.openForm.usertradeId = this.openRow.userTradeId
       this.openForm.volume = parseFloat(this.openRow.maxVolume)
-      this.openForm.restVolume = parseFloat(this.openRow.restVolume)
+      this.openForm.restVolume = parseFloat(this.openRow.maxVolume)
       if (moment(this.openRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
         this.openForm.deliveryTime = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
         this.$refs.deliveryCanlendarUpdate2.deliveryTime = moment(this.openRow.deliveryTime).format('YYYY-MM-DD')
