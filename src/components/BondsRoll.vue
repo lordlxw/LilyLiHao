@@ -72,6 +72,7 @@
           <el-form-item label="交割日期" prop="deliveryTime">
             <delivery-canlendar-update
               ref="deliveryCanlendarUpdate"
+              :dtime="rollForm.dtime"
               @change="handleDeliveryCanlendarUpdate"
             ></delivery-canlendar-update>
           </el-form-item>
@@ -161,6 +162,7 @@
           <el-form-item label="交割日期" prop="deliveryTime2">
             <delivery-canlendar-update
               ref="deliveryCanlendarUpdate2"
+              :dtime="rollForm.dtime2"
               @change="handleDeliveryCanlendarUpdate2"
             ></delivery-canlendar-update>
           </el-form-item>
@@ -286,6 +288,8 @@ export default {
         relativeNum: '',
         // 母单交割日期
         deliveryTime3: '',
+        dtime: '',
+        dtime2: ''
       },
       rollFormRules: {
         direction: [
@@ -482,14 +486,14 @@ export default {
       if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') < moment(new Date()).format('YYYY-MM-DD')) {
         this.rollForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
         this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
-        this.getNextDealDayByDeliveryTime(moment(this.rollForm.deliveryTime).format('YYYY-MM-DD 00:00:00'))
+        this.rollForm.dtime = this.getNextDealDayByDeliveryTime(moment(this.rollForm.deliveryTime).format('YYYY-MM-DD 00:00:00'))
       } else if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
         this.rollForm.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
-        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
+        this.rollForm.dtime = this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(this.overRow.deliveryTime).format('YYYY-MM-DD')
         this.getNextDealDayByDeliveryTime(moment(this.rollForm.deliveryTime).format('YYYY-MM-DD 00:00:00'))
       } else if (moment(this.overRow.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 15:30:00'))) {
         this.rollForm.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
-        this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+        this.rollForm.dtime = this.$refs.deliveryCanlendarUpdate.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
         this.getNextDealDayByDeliveryTime(moment(this.rollForm.deliveryTime).format('YYYY-MM-DD 00:00:00'))
       } else {
         this.getNextDealDay()
@@ -506,7 +510,7 @@ export default {
         if (response && response.code === '00000') {
           this.rollForm.deliveryTime = response.value
           this.$refs.deliveryCanlendarUpdate.deliveryTime = response.value
-          this.getNextDealDayByDeliveryTime(moment(this.rollForm.deliveryTime).format('YYYY-MM-DD 00:00:00'))
+          this.rollForm.dtime = this.getNextDealDayByDeliveryTime(moment(this.rollForm.deliveryTime).format('YYYY-MM-DD 00:00:00'))
         }
       })
     },
@@ -515,7 +519,7 @@ export default {
       apiCanlendar.nextDealDay({ deliveryTime }).then(response => {
         if (response && response.code === '00000') {
           this.rollForm.deliveryTime2 = response.value
-          this.$refs.deliveryCanlendarUpdate2.deliveryTime = response.value
+          this.rollForm.dtime2 = this.$refs.deliveryCanlendarUpdate2.deliveryTime = response.value
         }
       })
     }
