@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{ row }}
     <el-form
       ref="enquiryForm"
       :model="enquiryForm"
@@ -175,7 +176,11 @@ export default {
         // 快速交易
         quickSubmit: false,
         // 允许浮动
-        worstPrice: 0.1
+        worstPrice: 0.1,
+        // 相关单号
+        relativeNum: '',
+        // 滚单相关单号
+        sourceNum: ''
       },
       enquiryFormRules: {
         direction: [
@@ -261,7 +266,11 @@ export default {
             // 备注
             remark: this[formName].remark,
             // 允许浮动
-            worstPrice: this[formName].worstPrice
+            worstPrice: this[formName].worstPrice,
+            // 相关单号
+            relativeNum: this[formName].relativeNum,
+            // 滚单相关单号
+            sourceNum: this[formName].sourceNum
           }).then(res => {
             if (res && res.code === '00000' && res.value) {
               this.$message({
@@ -293,6 +302,8 @@ export default {
       this.enquiryForm.remark = obj.remark
       this.enquiryForm.lockDirection = obj.lockDirection
       this.enquiryForm.worstPrice = obj.worstPrice
+      this.enquiryForm.relativeNum = obj.relativeNum
+      this.enquiryForm.sourceNum = obj.sourceNum
     },
     // 获取交易员列表
     getTradeUserList() {

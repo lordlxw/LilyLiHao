@@ -29,7 +29,11 @@ export default {
         // 备注
         remark: params.remark,
         // 允许浮动
-        worstPrice: params.worstPrice
+        worstPrice: params.worstPrice,
+        // 相关单号
+        relativeNum: params.relativeNum,
+        // 滚单相关单号
+        sourceNum: params.sourceNum
       }
     })
   },

@@ -3360,7 +3360,9 @@ export default {
           data.lockDirection = true
           Promise.all([
             self.currentDifficultData = JSON.parse(JSON.stringify(data)),
-            self.currentDifficultData.volume = self.currentDifficultData.restVolume
+            self.currentDifficultData.volume = self.currentDifficultData.restVolume,
+            self.currentDifficultData.relativeNum = response.value.relativeNum,
+            self.currentDifficultData.sourceNum = response.value.sourceNum
           ]).then(() => {
             self.dialogEnquiryAddVisible = true
           })

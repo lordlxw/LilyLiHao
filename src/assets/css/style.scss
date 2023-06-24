@@ -435,3 +435,8 @@ a:hover {
 .el-table__body tr.current-row>td {
     background-color: #b3f2e8;
 }
+
+.el-form-item .el-form-item__label {
+    font-weight: bold;
+    color      : $hover-color;
+}
