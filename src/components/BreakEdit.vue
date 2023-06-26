@@ -28,7 +28,7 @@
         <el-input
           v-model="breakEditForm.volume"
           placeholder="请输入交易量"
-          disabled="type===1"
+          :disabled="type===1"
         ></el-input>
       </el-form-item>
       <el-form-item v-if="type === 2">
@@ -50,11 +50,11 @@
         <div v-show="type === 1">
           {{ breakEditForm.deliveryTime }}
         </div>
-        <!-- <delivery-canlendar-update
-          v-show="type === 2"
+        <delivery-canlendar-update
+          v-show="type === 3"
           ref="deliveryCanlendarUpdate"
           @change="handleDeliveryCanlendarUpdate"
-        ></delivery-canlendar-update> -->
+        ></delivery-canlendar-update>
         <!-- <el-button-group>
           <el-button
             icon="el-icon-plus"
@@ -74,7 +74,7 @@
         <el-input
           v-model="breakEditForm.counterParty"
           autocomplete="off"
-          disabled="type===1"
+          :disabled="type===1"
         ></el-input>
       </el-form-item>
       <!-- <el-form-item label="联系人" prop="contactPerson">
@@ -101,8 +101,17 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button class="btn-green" @click="submitForm('breakEditForm')"
+        <el-button
+          class="btn-green"
+          v-if="type === 1"
+          @click="submitForm('breakEditForm')"
           >申请违约续作</el-button
+        >
+        <el-button
+          class="btn-green"
+          v-if="type === 3"
+          @click="submitForm('breakEditForm')"
+          >确认补单</el-button
         >
       </el-form-item>
     </el-form>
@@ -118,7 +127,7 @@ import { debounce } from '@/utils/debounce'
 import moment from 'moment'
 import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 export default {
-  // type: 1: 违约续作；2：违约增改
+  // type: 1: 违约续作；2：违约增改；3:补单
   props: ['row', 'type'],
   components: {
     DeliveryCanlendarUpdate
@@ -298,6 +307,48 @@ export default {
           //     }
           //   })
           // }
+
+          if (this.type === 3) {
+            api.dealBreakBack({
+              // 券号
+              tscode: this[formName].tscode,
+              // 方向
+              direction: this[formName].direction,
+              // 交割速度
+              deliverySpeed: this[formName].deliverySpeed,
+              // 交割日期
+              deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD 00:00:00"),
+              // 成交价格
+              price: util.moneyFormat(this[formName].price, 4),
+              // 成交量
+              volume: this[formName].volume,
+              // 备注
+              remark: this[formName].remark,
+              // 联系人
+              contactPerson: this[formName].contactPerson,
+              // 联系方式
+              contactType: this[formName].contactType,
+              // 交易对手
+              counterParty: this[formName].counterParty,
+              // 交易id
+              realTradeId: this[formName].realTradeId
+            }).then(res => {
+              if (res && res.code === '00000') {
+                this.$message({
+                  message: '已补单成功',
+                  type: 'success'
+                })
+                this.$emit('change', {
+                  dialogVisible: false
+                })
+              } else {
+                this.$message({
+                  message: `${res.message}`,
+                  type: 'error'
+                })
+              }
+            })
+          }
         }
       })
     }),

@@ -147,6 +147,16 @@
                 class="ml10"
                 >增改</el-button
               > -->
+              <el-button
+                v-if="
+                  [3, 4].indexOf(scope.row.jiaogeStatus) !== -1 &&
+                  setAuth('break:addback')
+                "
+                type="text"
+                @click="handleOpenBreakEditDialog(3, scope.row)"
+                class="ml10"
+                >补单</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
