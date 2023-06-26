@@ -33,7 +33,11 @@ export default {
         // 相关单号
         relativeNum: params.relativeNum,
         // 滚单相关单号
-        sourceNum: params.sourceNum
+        sourceNum: params.sourceNum,
+        // 优先
+        isYouxian: params.isYouxian,
+        // 优先级别
+        youxianLevel: params.youxianLevel
       }
     })
   },

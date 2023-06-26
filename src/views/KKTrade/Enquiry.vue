@@ -7,7 +7,7 @@
         <el-button
           type="default"
           v-if="setAuth('inquiry:insert')"
-          @click="dialogEnquiryFormVisible = true"
+          @click="handleAddInquiry"
           >添加</el-button
         >
       </div>
@@ -135,6 +135,15 @@
                 class="ml10"
                 >难成</el-button
               >
+              <el-button
+                type="text"
+                v-if="
+                  setAuth('inquiry:difficultcanncel') &&
+                  [5, 19].indexOf(scope.row.status) !== -1
+                "
+                @click="handleDifficultNewEnqury(scope.row)"
+                >新建</el-button
+              >
               <el-popover
                 v-if="
                   setAuth('inquiry:difficultcanncel') && scope.row.status === 19
@@ -166,7 +175,7 @@
                   >
                 </div>
                 <el-button type="text" slot="reference" class="ml10"
-                  >难成撤单</el-button
+                  >撤单</el-button
                 >
               </el-popover>
               <el-popover
@@ -578,7 +587,10 @@
       :destroy-on-close="true"
       :close-on-click-modal="false"
     >
-      <enquiry-edit @change="handleDialogVisible"></enquiry-edit>
+      <enquiry-edit
+        :row="currentDifficultData"
+        @change="handleDialogVisible"
+      ></enquiry-edit>
     </el-dialog>
     <el-dialog
       title="难成"
@@ -704,7 +716,9 @@ export default {
         { label: '旧值', prop: 'oldValue', width: '200', align: 'left', show: true },
         { label: '新值', prop: 'newValue', width: '200', align: 'left', show: true }
       ],
-      expandRollSheetCounts: {}
+      expandRollSheetCounts: {},
+      // 难成新建
+      currentDifficultData: {}
     }
   },
   created() {
@@ -771,6 +785,10 @@ export default {
         this.calcRollSheetCanSee()
         this.loading = false;
       });
+    },
+    handleAddInquiry() {
+      this.currentDifficultData = {}
+      this.dialogEnquiryFormVisible = true
     },
     // 接受
     handleAcceptClick: debounce(function (scope) {
@@ -1079,6 +1097,26 @@ export default {
     },
     handleDialogVisible(obj) {
       this.dialogEnquiryFormVisible = obj.dialogVisible
+    },
+    // 难成新建
+    handleDifficultNewEnqury(row) {
+      const self = this
+      api.difficultAcheveCannel({ userTradeId: row.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          // 锁住方向
+          response.value.lockDirection = true
+          Promise.all([
+            self.currentDifficultData = JSON.parse(JSON.stringify(response.value))
+          ]).then(() => {
+            self.dialogEnquiryFormVisible = true
+          })
+        } else {
+          self.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
+        }
+      })
     },
     // 难成点击事件
     handleEnquiryDifficultClick: debounce(function (row) {

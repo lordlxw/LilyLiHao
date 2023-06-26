@@ -179,7 +179,11 @@ export default {
         // 相关单号
         relativeNum: '',
         // 滚单相关单号
-        sourceNum: ''
+        sourceNum: '',
+        // 是否优先
+        isYouxian: '',
+        // 优先级别
+        youxianLevel: ''
       },
       enquiryFormRules: {
         direction: [
@@ -269,7 +273,11 @@ export default {
             // 相关单号
             relativeNum: this[formName].relativeNum,
             // 滚单相关单号
-            sourceNum: this[formName].sourceNum
+            sourceNum: this[formName].sourceNum,
+            // 是否优先
+            isYouxian: this[formName].isYouxian,
+            // 优先级别
+            youxianLevel: this[formName].youxianLevel
           }).then(res => {
             if (res && res.code === '00000' && res.value) {
               this.$message({
@@ -303,6 +311,8 @@ export default {
       this.enquiryForm.worstPrice = obj.worstPrice
       this.enquiryForm.relativeNum = obj.relativeNum
       this.enquiryForm.sourceNum = obj.sourceNum
+      this.enquiryForm.isYouxian = obj.isYouxian
+      this.enquiryForm.youxianLevel = obj.youxianLevel
     },
     // 获取交易员列表
     getTradeUserList() {

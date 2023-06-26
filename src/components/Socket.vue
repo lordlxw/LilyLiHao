@@ -902,6 +902,8 @@ export default {
               case 'yipingchangerequest_bond_1':
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 break;
+              case 'nancheng_bond_0':
+              case 'nancheng_bond_1':
               case 'weipingchangerequest_bond_0':
               case 'weipingchangerequest_bond_1':
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))

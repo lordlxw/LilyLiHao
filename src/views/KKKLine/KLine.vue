@@ -3362,8 +3362,11 @@ export default {
             self.currentDifficultData = JSON.parse(JSON.stringify(data)),
             self.currentDifficultData.volume = self.currentDifficultData.restVolume,
             self.currentDifficultData.relativeNum = response.value.relativeNum,
-            self.currentDifficultData.sourceNum = response.value.sourceNum
+            self.currentDifficultData.sourceNum = response.value.sourceNum,
+            self.currentDifficultData.isYouxian = response.value.isYouxian,
+            self.currentDifficultData.youxianLevel = response.value.youxianLevel
           ]).then(() => {
+            console.log(self.currentDifficultData)
             self.dialogEnquiryAddVisible = true
           })
         } else {
