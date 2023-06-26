@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ row }}
     <el-form
       ref="enquiryForm"
       :model="enquiryForm"
