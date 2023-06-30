@@ -41,6 +41,32 @@ export default {
       }
     })
   },
+  // 修改询价单
+  inquirySheetEdit(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/changerequest`,
+      method: 'post',
+      data: {
+        userTradeId: params.userTradeId,
+        // 交割速度
+        deliverySpeed: params.deliverySpeed,
+        // 交割日期
+        deliveryTime: params.deliveryTime,
+        // 买还是卖
+        direction: params.direction,
+        // 成交价格
+        price: params.price,
+        // 债券编号
+        tscode: params.tscode,
+        // 成交量
+        volume: params.volume,
+        // 备注
+        remark: params.remark,
+        // 允许浮动
+        worstPrice: params.worstPrice
+      }
+    })
+  },
   /**
    * 询价单接收
    * @param {*} params
@@ -237,6 +263,36 @@ export default {
       method: 'post',
       data: {
         relativeNum: params.relativeNum
+      }
+    })
+  },
+  // 询价修改内容查看详情
+  inquiryChangeCheck(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/changecheck`,
+      method: 'post',
+      data: {
+        userTradeId: params.userTradeId
+      }
+    })
+  },
+  // 询价修改确认
+  inquiryEditConfirm(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/changeconfirm`,
+      method: 'post',
+      data: {
+        userTradeId: params.userTradeId
+      }
+    })
+  },
+  // 询价修改拒绝
+  inquiryEditReject(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/changedeny`,
+      method: 'post',
+      data: {
+        userTradeId: params.userTradeId
       }
     })
   }

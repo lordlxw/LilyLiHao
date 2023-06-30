@@ -1071,6 +1071,194 @@ export default {
                 self.$refs.playAudio.play()
                 self.notifyRejection[timestamp] = notify
                 break;
+              case 'budan_bond_0':
+              case 'budan_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
+                self.$notify({
+                  title: `${msgJson.data.createUserName} 发起补单`,
+                  dangerouslyUseHTMLString: true,
+                  position: 'top-left',
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 0
+                });
+                self.tryPlay()
+                break
+              case 'xunjiachangefinish_bond_0':
+              case 'xunjiachangefinish_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
+                notify = self.$notify({
+                  title: `${msgJson.data.yanjiuyuanName} 已修改询价单`,
+                  dangerouslyUseHTMLString: true,
+                  position: 'bottom-left',
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "单据号"),
+                        h("dd", null, `${msgJson.data.ut.tradeNum}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.ut.tscode.replace(/.IB/, '')}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.ut.direction === 'bond_0' ? '买入' : msgJson.data.ut.direction === 'bond_1' ? '卖出' : ' '}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交价"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "允许浮动"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? util.moneyFormat(msgJson.data.ut.worstPrice, 4) + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.worstPrice, 4))
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交量"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.ut.volume + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.toString().substr(0, 10) + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
+                        ])
+                      ])
+                    ],
+                  ),
+                  duration: 0
+                });
+                self.tryPlay()
+                break
+              case 'xunjiachangerequest_bond_0':
+              case 'xunjiachangerequest_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
+                notify = self.$notify({
+                  title: `${msgJson.data.yanjiuyuanName} 询价修改待确认`,
+                  dangerouslyUseHTMLString: true,
+                  position: 'bottom-left',
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "单据号"),
+                        h("dd", null, `${msgJson.data.ut.tradeNum}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.ut.tscode.replace(/.IB/, '')}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.ut.direction === 'bond_0' ? '买入' : msgJson.data.ut.direction === 'bond_1' ? '卖出' : ' '}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交价"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "允许浮动"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? util.moneyFormat(msgJson.data.ut.worstPrice, 4) + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.worstPrice, 4))
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交量"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.ut.volume + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.toString().substr(0, 10) + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
+                        ])
+                      ]),
+                      h("dl", { style: "margin-top:20px;" }, [
+                        // h("dt", null, ""),
+                        h("dd", null, [
+                          h("button", {
+                            class: "notigy-agree",
+                            on: {
+                              click: function () {
+                                self.handleInquiryEditConfirmClick(msgJson.data.dto.userTradeId, timestamp)
+                              }
+                            }
+                          }, "同意"),
+                          h("button", {
+                            class: "notigy-cancel",
+                            on: {
+                              click: function () {
+                                self.handleInquiryEditRejectionClick(msgJson.data.dto.userTradeId, timestamp)
+                              }
+                            }
+                          }, "拒绝")
+                        ])
+                      ]),
+                    ],
+                  ),
+                  duration: 0
+                });
+                self.$refs.playAudio.play()
+                self.notifyRejection[timestamp] = notify
+                break
+              case 'xiugaichangedeny_bond_0':
+              case 'xiugaichangedeny_bond_1':
+              case 'xiugaichangeconfirm_bond_0':
+              case 'xiugaichangeconfirm_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
             }
             socket.send(JSON.stringify({ "dataType": "ack", "data": { "dataKey": msgJson.dataKey, "dataType": msgJson.dataType } }))
           }
@@ -1225,6 +1413,46 @@ export default {
         if (response && response.code === '00000') {
           self.$message({
             message: "已拒绝",
+            type: 'success'
+          })
+          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+        } else {
+          self.$message({
+            message: `${response.message}`,
+            type: 'error'
+          })
+        }
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
+      })
+    },
+    // 同意修改询价单
+    handleInquiryEditConfirmClick(usertradeId, timestamp) {
+      const self = this
+      api.inquiryEditConfirm({ userTradeId: usertradeId }).then(response => {
+        if (response && response.code === '00000') {
+          self.$message({
+            message: "已同意修改",
+            type: 'success'
+          })
+          self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+        } else {
+          self.$message({
+            message: `${response.message}`,
+            type: 'error'
+          })
+        }
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
+      })
+    },
+    // 拒绝修改询价
+    handleInquiryEditRejectionClick(usertradeId, timestamp) {
+      const self = this
+      api.inquiryEditReject({ userTradeId: usertradeId }).then(response => {
+        if (response && response.code === '00000') {
+          self.$message({
+            message: "已拒绝修改",
             type: 'success'
           })
           self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))

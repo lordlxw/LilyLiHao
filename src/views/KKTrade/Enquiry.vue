@@ -71,6 +71,15 @@
               > -->
               <el-button
                 type="text"
+                v-if="
+                  setAuth('inquiry:edit') &&
+                  [0, 1, 4, 10].indexOf(scope.row.status) !== -1
+                "
+                @click="handleEditEnqury(scope.row)"
+                >修改</el-button
+              >
+              <el-button
+                type="text"
                 v-if="setAuth('inquiry:accept') && scope.row.status === 0"
                 @click="handleAcceptClick(scope)"
                 >{{
@@ -462,6 +471,59 @@
                   >违约续作审核</el-button
                 >
               </el-popover>
+              <el-popover
+                v-if="setAuth('inquiry:agreeedit') && scope.row.status === 23"
+                placement="bottom-end"
+                :ref="`popover-agreeedit-${scope.$index}`"
+              >
+                <p>
+                  确认要<span class="color-red">同意修改</span>“<span
+                    class="color-main"
+                    >{{ scope.row.tradeNum }}</span
+                  >”{{ scope.row.tscode }}？
+                </p>
+                <el-table
+                  border
+                  :data="diffTableData"
+                  :cell-style="cellStyleUpdate"
+                >
+                  <template v-for="itemHead in diffTableHead">
+                    <el-table-column
+                      v-if="itemHead.show"
+                      :key="itemHead.label"
+                      :align="itemHead.align"
+                      :prop="itemHead.prop"
+                      :formatter="
+                        itemHead.formatter
+                          ? itemHead.formatter
+                          : (row, column, cellValue, index) => {
+                              return cellValue;
+                            }
+                      "
+                      :label="itemHead.label"
+                      :width="itemHead.width ? itemHead.width : ''"
+                    >
+                    </el-table-column>
+                  </template>
+                </el-table>
+                <div style="text-align: center" class="mt20">
+                  <el-button type="primary" @click="handleAgreeEditClick(scope)"
+                    >同意</el-button
+                  >
+                  <el-button
+                    type="default"
+                    @click="handleRejectEditClick(scope)"
+                    >拒绝</el-button
+                  >
+                </div>
+                <el-button
+                  type="text"
+                  slot="reference"
+                  class="ml10"
+                  @click="handlViewEditContent(scope)"
+                  >修改审核</el-button
+                >
+              </el-popover>
             </template>
           </el-table-column>
           <el-table-column
@@ -580,7 +642,7 @@
       ></real-enquiry-roll>
     </el-dialog>
     <el-dialog
-      title="询价"
+      :title="`询价${action === 2 ? '修改' : ''}`"
       width="500px;"
       :visible.sync="dialogEnquiryFormVisible"
       append-to-body
@@ -589,6 +651,7 @@
     >
       <enquiry-edit
         :row="currentDifficultData"
+        :action="action"
         @change="handleDialogVisible"
       ></enquiry-edit>
     </el-dialog>
@@ -718,7 +781,8 @@ export default {
       ],
       expandRollSheetCounts: {},
       // 难成新建
-      currentDifficultData: {}
+      currentDifficultData: {},
+      action: 1
     }
   },
   created() {
@@ -786,8 +850,17 @@ export default {
         this.loading = false;
       });
     },
+    // 添加
     handleAddInquiry() {
       this.currentDifficultData = {}
+      this.action = 1
+      this.dialogEnquiryFormVisible = true
+    },
+    // 编辑
+    handleEditEnqury(row) {
+      this.currentDifficultData = JSON.parse(JSON.stringify(row))
+      this.currentDifficultData.lockDirection = true
+      this.action = 2
       this.dialogEnquiryFormVisible = true
     },
     // 接受
@@ -1097,10 +1170,12 @@ export default {
     },
     handleDialogVisible(obj) {
       this.dialogEnquiryFormVisible = obj.dialogVisible
+      this.loadInitData()
     },
     // 难成新建
     handleDifficultNewEnqury(row) {
       const self = this
+      this.action = 1
       api.difficultAcheveCannel({ userTradeId: row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           // 锁住方向
@@ -1330,6 +1405,7 @@ export default {
     }),
     // 违约续作内容对比
     handlViewBreakContinueContent: debounce(function (scope) {
+      this.diffTableData = []
       apiBreak.dealBreakRedoCheckField({ userTradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000' && response.value) {
           let diffTableData = [];
@@ -1340,6 +1416,60 @@ export default {
                 diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD'), 'newValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD') })
               } else {
                 diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': response.value.rt[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
+              }
+            }
+          }
+          this.diffTableData = diffTableData
+        }
+      })
+    }),
+    // 同意修改
+    handleAgreeEditClick: debounce(function (scope) {
+      api.inquiryEditConfirm({ userTradeId: scope.row.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已同意修改",
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
+        }
+        this.loadInitData()
+      })
+    }),
+    // 拒绝修改
+    handleRejectEditClick: debounce(function (scope) {
+      api.inquiryEditReject({ userTradeId: scope.row.userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已拒绝修改",
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'warning'
+          })
+        }
+        this.loadInitData()
+      })
+    }),
+    // 修改内容对比
+    handlViewEditContent: debounce(function (scope) {
+      this.diffTableData = []
+      api.inquiryChangeCheck({ userTradeId: scope.row.userTradeId }).then(response => {
+        if (response && response.code === '00000' && response.value) {
+          let diffTableData = [];
+          if (response.value.compareResult.fieldlist && response.value.compareResult.fieldlist.length > 0) {
+            let fieldlist = response.value.compareResult.fieldlist
+            for (let i = 0; i < fieldlist.length; i++) {
+              if (fieldlist[i] === 'deliveryTime') {
+                diffTableData.push({ 'fieldName': config.enquiryHead[fieldlist[i]]['label'], 'oldValue': moment(response.value.ut[fieldlist[i]]).format('YYYY-MM-DD'), 'newValue': moment(response.value.ut[fieldlist[i]]).format('YYYY-MM-DD') })
+              } else {
+                diffTableData.push({ 'fieldName': config.enquiryHead[fieldlist[i]]['label'], 'oldValue': response.value.ut[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
               }
             }
           }

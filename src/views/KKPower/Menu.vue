@@ -169,6 +169,11 @@ export default {
             `popover-delete-${scope.$index}`
           )
           this.loadInitData();
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'error'
+          })
         }
       });
     }),

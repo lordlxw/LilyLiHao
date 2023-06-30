@@ -24,6 +24,7 @@
       <el-form-item label="券码" prop="tscode">
         <el-input
           v-model="enquiryForm.tscode"
+          :disabled="action === 2"
           placeholder="请输入券码"
         ></el-input>
       </el-form-item>
@@ -78,7 +79,11 @@
         </el-button-group> -->
       </el-form-item>
       <el-form-item label="交易员" prop="tradeuserId">
-        <el-select v-model="enquiryForm.tradeuserId" placeholder="请选择交易员">
+        <el-select
+          v-model="enquiryForm.tradeuserId"
+          placeholder="请选择交易员"
+          :disabled="action === 2"
+        >
           <el-option
             v-for="item in tradeUsersOption"
             :key="item.userId"
@@ -114,7 +119,8 @@ import config from '@/utils/config'
 import { debounce } from '@/utils/debounce'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 export default {
-  props: ['row'],
+  // action=1 添加，action=2 询价单编辑
+  props: ['row', 'action'],
   components: {
     DeliveryCanlendar
   },
@@ -154,6 +160,7 @@ export default {
     return {
       tradeUsersOption: [],
       enquiryForm: {
+        userTradeId: '',
         // 锁住方向
         lockDirection: '',
         // 交易类型
@@ -251,49 +258,86 @@ export default {
     submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          api.inquirySheetAdd({
-            // 交割速度
-            deliverySpeed: this[formName].deliverySpeed,
-            // 交割日期
-            deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD"),
-            // 买还是卖
-            direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
-            // 成交价格
-            price: util.moneyFormat(this[formName].price, 4),
-            // 交易员
-            tradeuserId: this[formName].tradeuserId,
-            // 债券编号
-            tscode: this[formName].tscode,
-            // 成交量
-            volume: this[formName].volume,
-            // 备注
-            remark: this[formName].remark,
-            // 允许浮动
-            worstPrice: this[formName].worstPrice,
-            // 相关单号
-            relativeNum: this[formName].relativeNum,
-            // 滚单相关单号
-            sourceNum: this[formName].sourceNum,
-            // 是否优先
-            isYouxian: this[formName].isYouxian,
-            // 优先级别
-            youxianLevel: this[formName].youxianLevel
-          }).then(res => {
-            if (res && res.code === '00000' && res.value) {
-              this.$message({
-                message: `询价单发送成功`,
-                type: 'success'
-              })
-              this.$emit('change', {
-                dialogVisible: false
-              })
-            } else {
-              this.$message({
-                message: `${res.message}`,
-                type: 'error'
-              })
-            }
-          })
+          if (this.action === 2) {
+            api.inquirySheetEdit({
+              userTradeId: this[formName].userTradeId,
+              // 交割速度
+              deliverySpeed: this[formName].deliverySpeed,
+              // 交割日期
+              deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD hh:mm:ss"),
+              // 买还是卖
+              direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
+              // 成交价格
+              price: util.moneyFormat(this[formName].price, 4),
+              // 债券编号
+              tscode: this[formName].tscode,
+              // 成交量
+              volume: this[formName].volume,
+              // 备注
+              remark: this[formName].remark,
+              // 允许浮动
+              worstPrice: this[formName].worstPrice
+            }).then(res => {
+              if (res && res.code === '00000' && res.value) {
+                this.$message({
+                  message: `询价单已修改`,
+                  type: 'success'
+                })
+                this.$emit('change', {
+                  dialogVisible: false
+                })
+              } else {
+                this.$message({
+                  message: `${res.message}`,
+                  type: 'error'
+                })
+              }
+            })
+          } else {
+            api.inquirySheetAdd({
+              // 交割速度
+              deliverySpeed: this[formName].deliverySpeed,
+              // 交割日期
+              deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD"),
+              // 买还是卖
+              direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
+              // 成交价格
+              price: util.moneyFormat(this[formName].price, 4),
+              // 交易员
+              tradeuserId: this[formName].tradeuserId,
+              // 债券编号
+              tscode: this[formName].tscode,
+              // 成交量
+              volume: this[formName].volume,
+              // 备注
+              remark: this[formName].remark,
+              // 允许浮动
+              worstPrice: this[formName].worstPrice,
+              // 相关单号
+              relativeNum: this[formName].relativeNum,
+              // 滚单相关单号
+              sourceNum: this[formName].sourceNum,
+              // 是否优先
+              isYouxian: this[formName].isYouxian,
+              // 优先级别
+              youxianLevel: this[formName].youxianLevel
+            }).then(res => {
+              if (res && res.code === '00000' && res.value) {
+                this.$message({
+                  message: `询价单发送成功`,
+                  type: 'success'
+                })
+                this.$emit('change', {
+                  dialogVisible: false
+                })
+              } else {
+                this.$message({
+                  message: `${res.message}`,
+                  type: 'error'
+                })
+              }
+            })
+          }
         }
       })
     }),
@@ -301,18 +345,19 @@ export default {
     initEnquiryForm(obj) {
       this.enquiryForm.direction = obj.direction === 'bond_0' ? '买' : (obj.direction === 'bond_1' ? '卖' : '')
       this.enquiryForm.price = obj.price
-      this.enquiryForm.volume = parseFloat(obj.volume)
+      this.enquiryForm.volume = obj.volume ? parseFloat(obj.volume) : ''
       this.enquiryForm.tscode = obj.tscode
-      this.enquiryForm.deliverySpeed = obj.deliverySpeed
+      this.enquiryForm.deliverySpeed = obj.deliverySpeed ? obj.deliverySpeed : 0
       this.enquiryForm.deliveryTime = obj.deliveryTime
       this.enquiryForm.tradeuserId = obj.userId
       this.enquiryForm.remark = obj.remark
       this.enquiryForm.lockDirection = obj.lockDirection
-      this.enquiryForm.worstPrice = obj.worstPrice
+      this.enquiryForm.worstPrice = obj.worstPrice ? obj.worstPrice : 0.1
       this.enquiryForm.relativeNum = obj.relativeNum
       this.enquiryForm.sourceNum = obj.sourceNum
       this.enquiryForm.isYouxian = obj.isYouxian
       this.enquiryForm.youxianLevel = obj.youxianLevel
+      this.enquiryForm.userTradeId = obj.userTradeId
     },
     // 获取交易员列表
     getTradeUserList() {
