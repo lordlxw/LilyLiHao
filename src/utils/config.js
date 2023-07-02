@@ -193,7 +193,7 @@ export default {
     createTime: { label: '成交时间', prop: 'createTime', width: '170', align: 'left', show: true },
     deliverySpeed: { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
     deliveryTime: { label: '交割日期', prop: 'deliveryTime', width: '120', align: 'left', show: true },
-    tradeNum: { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: false },
+    tradeNum: { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
     tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true },
     remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
     updateTime: { label: '修改时间', prop: 'updateTime', width: '180', align: 'left', show: true },

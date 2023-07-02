@@ -33,6 +33,7 @@
         :key="Math.random()"
         highlight-current-row
         :cell-style="cellStyleUpdate"
+        :row-class-name="tableRowFinishClassName"
       >
         <template v-for="itemHead in tableHead">
           <el-table-column
@@ -187,6 +188,8 @@ import config from '@/utils/config'
 import * as util from '@/utils/util'
 import { debounce } from '@/utils/debounce'
 import moment from 'moment'
+let tableFinishClassName = ''
+let currentFinishCode = ''
 export default {
   mixins: [pageMixin, commMixin],
   data() {
@@ -216,6 +219,23 @@ export default {
     this.initFrameH('rewardH', 200)
   },
   methods: {
+    // 已平仓行样式
+    tableRowFinishClassName({ row, rowIndex }) {
+      if (rowIndex === 0) {
+        tableFinishClassName = 'odd-row'
+        currentFinishCode = row.finishCode
+      } else {
+        if (currentFinishCode !== row.finishCode) {
+          currentFinishCode = row.finishCode
+          if (tableFinishClassName === 'even-row') {
+            tableFinishClassName = 'odd-row'
+          } else {
+            tableFinishClassName = 'even-row'
+          }
+        }
+      }
+      return tableFinishClassName
+    },
     handleDoCheck(val) {
       this.errorMsg = ''
       if (val.length > 1) {

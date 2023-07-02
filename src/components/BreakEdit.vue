@@ -335,7 +335,7 @@ export default {
             }).then(res => {
               if (res && res.code === '00000') {
                 this.$message({
-                  message: '已补单成功',
+                  message: '补单已询价',
                   type: 'success'
                 })
                 this.$emit('change', {

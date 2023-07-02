@@ -2050,11 +2050,13 @@ export default {
           switch (params.bidtype) {
             case 1:
               self.businessOutList = res.value
-              self.buyFormForwardPrice = self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', res.value)
+              self.buyFormForwardPrice = self.buyForm.price = self.funcGetBestPrice('max', res.value, true)
+              self.buyFormPrice = self.funcGetBestPrice('max', res.value, false)
               break;
             case 0:
               self.businessInList = res.value
-              self.saleFormForwardPrice = self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', res.value)
+              self.saleFormForwardPrice = self.saleForm.price = self.funcGetBestPrice('min', res.value, true)
+              self.saleFormPrice = self.funcGetBestPrice('min', res.value, false)
               break;
             default:
               self.businessAllList = res.value
@@ -2107,8 +2109,8 @@ export default {
           return 'txt-orange'
       }
     },
-    // 买卖最优值(type:min最小，type:max最大;arr:初始数组;)
-    funcGetBestPrice(type, arr) {
+    // 买卖最优值(type:min最小，type:max最大;arr:初始数组;flag:true参与最近一笔交易进行计算)
+    funcGetBestPrice(type, arr, flag) {
       const self = this
       switch (type) {
         case 'min':
@@ -2125,7 +2127,7 @@ export default {
             }
           }
           // 与最近一笔交易对比
-          if (this.transactionAllList.length > 0 && this.transactionAllList[0].tradeprice < minVal) {
+          if (flag && this.transactionAllList.length > 0 && this.transactionAllList[0].tradeprice < minVal) {
             minVal = this.transactionAllList[0].tradeprice
           }
           return minVal
@@ -2147,7 +2149,7 @@ export default {
             }
           }
           // 与最近一笔交易对比
-          if (this.transactionAllList.length > 0 && this.transactionAllList[0].tradeprice > maxVal) {
+          if (flag && this.transactionAllList.length > 0 && this.transactionAllList[0].tradeprice > maxVal) {
             maxVal = this.transactionAllList[0].tradeprice
           }
           return maxVal
@@ -2305,21 +2307,23 @@ export default {
             }
             // 近买
             if (self.buyForm.maxWait <= 0) {
-              self.buyFormPrice = self.buyForm.price = self.funcGetBestPrice('max', self.businessOutList)
+              self.buyForm.price = self.funcGetBestPrice('max', self.businessOutList, true)
+              self.buyFormPrice = self.funcGetBestPrice('max', self.businessOutList, false)
             } else {
-              self.buyFormPrice = self.funcGetBestPrice('max', self.businessOutList)
+              self.buyFormPrice = self.funcGetBestPrice('max', self.businessOutList, false)
             }
             // 近卖
             if (self.saleForm.maxWait <= 0) {
-              self.saleFormPrice = self.saleForm.price = self.funcGetBestPrice('min', self.businessInList)
+              self.saleForm.price = self.funcGetBestPrice('min', self.businessInList, true)
+              self.saleFormPrice = self.funcGetBestPrice('min', self.businessInList, false)
             } else {
-              self.saleFormPrice = self.funcGetBestPrice('min', self.businessInList)
+              self.saleFormPrice = self.funcGetBestPrice('min', self.businessInList, false)
             }
             self.calcuDiffPrice(1)
             // 远买
-            self.buyFormForwardPrice = self.funcGetBestPrice('max', self.businessForwardOutList.concat(self.businessOutList))
+            self.buyFormForwardPrice = self.funcGetBestPrice('max', self.businessForwardOutList.concat(self.businessOutList), true)
             // 远卖
-            self.saleFormForwardPrice = self.funcGetBestPrice('min', self.businessForwardInList.concat(self.businessInList))
+            self.saleFormForwardPrice = self.funcGetBestPrice('min', self.businessForwardInList.concat(self.businessInList), true)
             self.calcuDiffPrice(2)
           } else {
             switch (msgJson.dataType) {

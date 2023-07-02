@@ -1077,37 +1077,100 @@ export default {
                 if (msgJson.actionType === 'refresh') {
                   break
                 }
-                self.$notify({
-                  title: `${msgJson.data.createUserName} 发起补单`,
+                // self.$notify({
+                //   title: `${msgJson.data.createUserName} 发起补单`,
+                //   dangerouslyUseHTMLString: true,
+                //   position: 'top-left',
+                //   message: `
+                //   <div class="notify">
+                //     <dl>
+                //       <dt>债券码</dt>
+                //       <dd>${msgJson.data.tscode}</dd>
+                //     </dl>
+                //     <dl>
+                //       <dt>方向</dt>
+                //       <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                //     </dl>
+                //     <dl>
+                //       <dt>成交价</dt>
+                //       <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
+                //     </dl>
+                //     <dl>
+                //       <dt>成交量</dt>
+                //       <dd>${msgJson.data.volume}</dd>
+                //     </dl>
+                //     <dl>
+                //       <dt>交割日期</dt>
+                //       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                //     </dl>
+                //   </div>
+                //   `,
+                //   duration: 0
+                // });
+                // self.tryPlay()
+                notify = self.$notify({
+                  title: `${msgJson.data.createUserName} 发起补单询价单`,
                   dangerouslyUseHTMLString: true,
-                  position: 'top-left',
-                  message: `
-                  <div class="notify">
-                    <dl>
-                      <dt>债券码</dt>
-                      <dd>${msgJson.data.tscode}</dd>
-                    </dl>
-                    <dl>
-                      <dt>方向</dt>
-                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
-                    </dl>
-                    <dl>
-                      <dt>成交价</dt>
-                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
-                    </dl>
-                    <dl>
-                      <dt>成交量</dt>
-                      <dd>${msgJson.data.volume}</dd>
-                    </dl>
-                    <dl>
-                      <dt>交割日期</dt>
-                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
-                    </dl>
-                  </div>
-                  `,
+                  position: 'bottom-left',
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "创建时间"),
+                        h("dd", null, `${msgJson.data.createTime}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.tscode}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "询价"),
+                        h("dd", null, `${util.moneyFormat(msgJson.data.price, 4)}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "允许最差价格"),
+                        h("dd", null, `${util.moneyFormat((msgJson.data.direction === 'bond_0' ? (msgJson.data.price - msgJson.data.worstPrice / 100) : (msgJson.data.price + msgJson.data.worstPrice / 100)), 4)}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "询量"),
+                        h("dd", null, `${msgJson.data.volume}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}`)
+                      ]),
+                      h("dl", { style: "margin-top:20px;" }, [
+                        // h("dt", null, ""),
+                        h("dd", null, [
+                          h("button", {
+                            class: "notigy-agree",
+                            on: {
+                              click: function () {
+                                self.handleAcceptEnquiryClick(msgJson.data, timestamp)
+                              }
+                            }
+                          }, "接收并复制"),
+                          h("button", {
+                            class: "notigy-cancel",
+                            on: {
+                              click: function () {
+                                self.handleNotAcceptEnquiryClick(msgJson.data, timestamp)
+                              }
+                            }
+                          }, "拒收")
+                        ])
+                      ]),
+                    ],
+                  ),
                   duration: 0
                 });
                 self.tryPlay()
+                self.notifyRejection[timestamp] = notify
                 break
               case 'xunjiachangefinish_bond_0':
               case 'xunjiachangefinish_bond_1':

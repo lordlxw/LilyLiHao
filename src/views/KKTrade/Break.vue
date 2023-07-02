@@ -150,6 +150,7 @@
               <el-button
                 v-if="
                   [3, 4].indexOf(scope.row.jiaogeStatus) !== -1 &&
+                  [22].indexOf(scope.row.status) === -1 &&
                   setAuth('break:addback')
                 "
                 type="text"
@@ -163,7 +164,7 @@
       </div>
     </div>
     <el-dialog
-      :title="currentType === 1 ? '违约续作' : ''"
+      :title="currentType === 1 ? '违约续作' : currentType === 3 ? '补单' : ''"
       :width="returnFrameW(600) + 'px'"
       :visible.sync="dialogBreakEditFormVisible"
       append-to-body
