@@ -86,7 +86,7 @@
                   scope.row.youxianLevel === 2
                     ? "接收优先复制"
                     : scope.row.youxianLevel === 1
-                    ? "接收后发复制"
+                    ? "接收优先复制"
                     : "接收并复制"
                 }}</el-button
               >
