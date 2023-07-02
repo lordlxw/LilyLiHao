@@ -1282,7 +1282,7 @@ export default {
       let tempRelativeNum = ''
       let relativeNumCount = 0
       for (let i = 0; i < this.tableData.length; i++) {
-        if (this.tableData[i].relativeNum && this.tableData[i].relativeNum.indexOf('GD_') !== -1) {
+        if (this.tableData[i].relativeNum && this.tableData[i].relativeNum.indexOf('GD_') !== -1 && [2, 5, 6].indexOf(this.tableData[i].status) === -1) {
           if (tempRelativeNum === '' && this.tableData[i].relativeNum) {
             tempRelativeNum = this.tableData[i].relativeNum
           }
