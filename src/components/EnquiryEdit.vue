@@ -58,9 +58,10 @@
           <el-button type="primary" @click="funcVolumeAdd(10000)">10</el-button>
         </el-button-group>
       </el-form-item>
-      <el-form-item label="交易速度" prop="deliveryTime">
+      <el-form-item label="交割日期" prop="deliveryTime">
         <delivery-canlendar
           ref="buyDeliveryCanlendar"
+          :init="action === 2 ? true : false"
           @change="handleBuyDeliveryCanlendar"
         ></delivery-canlendar>
         <!-- <el-button-group>
@@ -349,6 +350,7 @@ export default {
       this.enquiryForm.tscode = obj.tscode
       this.enquiryForm.deliverySpeed = obj.deliverySpeed ? obj.deliverySpeed : 0
       this.enquiryForm.deliveryTime = obj.deliveryTime
+      this.$refs.buyDeliveryCanlendar.deliveryTime = obj.deliveryTime
       this.enquiryForm.tradeuserId = obj.userId
       this.enquiryForm.remark = obj.remark
       this.enquiryForm.lockDirection = obj.lockDirection

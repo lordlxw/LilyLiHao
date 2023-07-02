@@ -20,6 +20,10 @@ export default {
     w: {
       type: String,
       default: '120px'
+    },
+    init: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -52,8 +56,6 @@ export default {
           this.$emit('change', {
             value: response.value
           })
-          // self.buyForm.deliveryTime = response.value
-          // self.saleForm.deliveryTime = response.value
         }
       })
     },
@@ -67,7 +69,10 @@ export default {
   },
   mounted() {
     this.getHolidayOfMonth()
-    this.getNextDealDay()
+    if (this.init) {
+    } else {
+      this.getNextDealDay()
+    }
   }
 }
 </script>
