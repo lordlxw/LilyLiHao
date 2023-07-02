@@ -149,7 +149,7 @@
               > -->
               <el-button
                 v-if="
-                  [3, 4].indexOf(scope.row.jiaogeStatus) !== -1 &&
+                  [2, 3, 4].indexOf(scope.row.jiaogeStatus) !== -1 &&
                   [22].indexOf(scope.row.status) === -1 &&
                   setAuth('break:addback')
                 "
