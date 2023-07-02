@@ -397,9 +397,9 @@ export default {
           }).then(res => {
             if (res && res.code === '00000') {
               this.$message({
-                message: `操作成功`,
-                type: 'success'
-              })
+                message: "已提交，如有变动请等待审核",
+                type: "warning",
+              });
               this.$emit('change', {
                 refresh: false,
                 relativeNum: this.overRow.relativeNum,
