@@ -171,8 +171,8 @@
               highlight-current-row
               @selection-change="handleNoBondsSelectionChange"
               @sort-change="handleSortChange"
-              :default-sort="{ prop: 'createTime', order: 'descending' }"
             >
+            <!-- :default-sort="{ prop: 'createTime', order: 'descending' }" -->
               <el-table-column
                 v-if="setAuth('nobonds:break')"
                 type="selection"
@@ -1283,13 +1283,9 @@ export default {
           let totalFloatProfit = 0
           let noBondsBuyVolumn = 0
           let noBondsSaleVolumn = 0
+          const rows = []
           response.rows.forEach(element => {
-            // if (index === 0) {
-            //   firstRow = JSON.parse(JSON.stringify(element))
-            //   Object.keys(firstRow).forEach(key => {
-            //     firstRow[key] = ''
-            //   })
-            // }
+            const firstRowId = ++rowId
             if (element.children && element.children.length > 0) {
               const realTradeIdList = []
               element.children.forEach(element => {
@@ -1311,8 +1307,10 @@ export default {
             if (!isNaN(element.volume) && element.direction === 'bond_1') {
               noBondsSaleVolumn += Number(element.volume)
             }
+            element.rowId = firstRowId
+            rows.push(element)
           });
-          this.tableData = response.rows;
+          this.tableData = rows;
           this.totalCount = response.total;
           this.totalFloatProfit = util.moneyFormat(totalFloatProfit, 2)
           this.noBondsBuyVolumn = noBondsBuyVolumn
