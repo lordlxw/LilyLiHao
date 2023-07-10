@@ -11,9 +11,12 @@
         <!-- 未平仓 -->
         <el-tab-pane :label="tablist[0]" v-if="setAuth('nobonds:view')">
           <div class="do">
-            <el-button size="mini" @click="handleDefaultExpandAll">{{
-              defaultExpandAll ? "全收" : "全展"
-            }}</el-button>
+            <el-button
+              v-if="['研究员', '交割员'].indexOf(userInfo.roleName) !== -1"
+              size="mini"
+              @click="handleDefaultExpandAll"
+              >{{ defaultExpandAll ? "全收" : "全展" }}</el-button
+            >
             <el-button
               v-if="setAuth('nobonds:allexport')"
               type="primary"
@@ -172,7 +175,7 @@
               @selection-change="handleNoBondsSelectionChange"
               @sort-change="handleSortChange"
             >
-            <!-- :default-sort="{ prop: 'createTime', order: 'descending' }" -->
+              <!-- :default-sort="{ prop: 'createTime', order: 'descending' }" -->
               <el-table-column
                 v-if="setAuth('nobonds:break')"
                 type="selection"

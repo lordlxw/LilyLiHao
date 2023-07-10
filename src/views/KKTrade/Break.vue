@@ -151,7 +151,10 @@
                 v-if="
                   [2, 3, 4].indexOf(scope.row.jiaogeStatus) !== -1 &&
                   [22].indexOf(scope.row.status) === -1 &&
-                  setAuth('break:addback')
+                  setAuth('break:addback') &&
+                  (['研究员'].indexOf(userInfo.roleName) === -1 ||
+                    (['研究员'].indexOf(userInfo.roleName) !== -1 &&
+                      [3].indexOf(scope.row.jiaogeStatus) === -1))
                 "
                 type="text"
                 @click="handleOpenBreakEditDialog(3, scope.row)"
@@ -181,7 +184,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import api from "@/api/kk_break";
 import apiAdmin from '@/api/kk_power_admin'
 import { pageMixin } from '@/utils/pageMixin'
@@ -218,6 +221,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      userInfo: "getUserInfo"
+    }),
     ...mapState({
       enquiryInfo: (state) => state.enquiryInfo
     })
