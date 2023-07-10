@@ -1322,6 +1322,61 @@ export default {
                 if (msgJson.actionType === 'refresh') {
                   break
                 }
+                break;
+              case 'jiaogeweiyueNotice_bond_0':
+              case 'jiaogeweiyueNotice_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
+                self.$notify({
+                  title: `${msgJson.data.traderName} 发起违约`,
+                  dangerouslyUseHTMLString: true,
+                  position: 'top-left',
+                  message: `
+                  <div class="notify">
+                    <dl>
+                      <dt>单据号</dt>
+                      <dd>${msgJson.data.tradeNum}</dd>
+                    </dl>
+                    <dl>
+                      <dt>债券码</dt>
+                      <dd>${msgJson.data.tscode}</dd>
+                    </dl>
+                    <dl>
+                      <dt>方向</dt>
+                      <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交价</dt>
+                      <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
+                    </dl>
+                    <dl>
+                      <dt>成交量</dt>
+                      <dd>${msgJson.data.volume}</dd>
+                    </dl>
+                    <dl>
+                      <dt>交割日期</dt>
+                      <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
+                    </dl>
+                    <dl>
+                      <dt>违约方</dt>
+                      <dd>${configUtil.funcKeyValue(msgJson.data.weiyuePerson ? msgJson.data.weiyuePerson.toString() : '', "breakTypeOptions")}</dd>
+                    </dl>
+                    <dl>
+                      <dt>违约量</dt>
+                      <dd>${msgJson.data.weiyueAmount}</dd>
+                    </dl>
+                    <dl>
+                      <dt>做市商</dt>
+                      <dd>${msgJson.data.marketMakerName}</dd>
+                    </dl>
+                  </div>
+                  `,
+                  duration: 0
+                });
+                self.tryPlay()
+                break;
             }
             socket.send(JSON.stringify({ "dataType": "ack", "data": { "dataKey": msgJson.dataKey, "dataType": msgJson.dataType } }))
           }
