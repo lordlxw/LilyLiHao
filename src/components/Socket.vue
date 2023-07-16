@@ -1330,7 +1330,7 @@ export default {
                   break
                 }
                 self.$notify({
-                  title: `${msgJson.data.traderName} 发起违约`,
+                  title: `${msgJson.data.jiaogeyuanName} 发起违约`,
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
                   message: `

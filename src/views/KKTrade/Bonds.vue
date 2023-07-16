@@ -173,7 +173,7 @@
               header-cell-style="background:#f8f8f8;"
               highlight-current-row
               @selection-change="handleNoBondsSelectionChange"
-              @sort-change="handleSortChange"
+              @sort-change="handleSortChangeNoBonds"
             >
               <!-- :default-sort="{ prop: 'createTime', order: 'descending' }" -->
               <el-table-column
@@ -603,6 +603,7 @@
               header-cell-style="background:#f8f8f8;"
               highlight-current-row
               @selection-change="handleBondsSelectionChange"
+              @sort-change="handleSortChangeBonds"
             >
               <el-table-column
                 v-if="setAuth('bonds:break')"
@@ -616,6 +617,18 @@
                   :key="itemHead.label"
                   :align="itemHead.align"
                   :prop="itemHead.prop"
+                  :sortable="
+                    [
+                      'createTime',
+                      'tscode',
+                      'tradeNum',
+                      'deliveryTime',
+                      'updateTime',
+                    ].indexOf(itemHead.prop) !== -1 &&
+                    ['研究员'].indexOf(userInfo.roleName) === -1
+                      ? 'custom'
+                      : false
+                  "
                   :formatter="
                     itemHead.formatter
                       ? itemHead.formatter
@@ -1078,7 +1091,8 @@ export default {
       row.marketMakerName = ''
       this.breakTableData = [JSON.parse(JSON.stringify(row))]
     },
-    handleSortChange(sort) {
+    // 未平
+    handleSortChangeNoBonds(sort) {
       if (sort.prop === 'createTime') {
         sort.field = 'createTime'
       }
@@ -1103,6 +1117,33 @@ export default {
         sort.field = 'createTime'
       }
       this.loadInitData(sort)
+    },
+    // 已平
+    handleSortChangeBonds(sort) {
+      if (sort.prop === 'createTime') {
+        sort.field = 'createTime'
+      }
+      if (sort.prop === 'tscode') {
+        sort.field = 'tscode'
+      }
+      if (sort.prop === 'deliveryTime') {
+        sort.field = 'deliveryTime'
+      }
+      if (sort.prop === 'tradeNum') {
+        sort.field = 'tradeNum'
+      }
+      if (sort.prop === 'updateTime') {
+        sort.field = 'updateTime'
+      }
+      if (sort.order === 'ascending') {
+        sort.asc = true
+      } else {
+        sort.asc = false
+      }
+      if (!sort.field) {
+        sort.field = 'createTime'
+      }
+      this.loadInitDataFinish(sort)
     },
     // 改违约
     handleDeliveryBackClick: debounce(function (row) {
@@ -1328,7 +1369,7 @@ export default {
       });
     },
     // 初始化已平仓数据
-    loadInitDataFinish() {
+    loadInitDataFinish(sort) {
       this.loading = true;
       api.getFinish({
         deliveryDateEnd: null,
@@ -1337,7 +1378,9 @@ export default {
         tradeNum: null,
         tscode: null,
         userName: null,
-        userTradeId: null
+        userTradeId: null,
+        orderBy: sort ? sort.field : 'create_time',
+        isAsc: sort ? sort.asc : false
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
           // 获取表格第一行汇总的数据字段

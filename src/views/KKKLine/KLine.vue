@@ -2023,7 +2023,9 @@ export default {
               this.activeTscode = this.tscode = this.tscodeList.length > 0 ? this.tscodeList[0].tscode : ''
             ]).then(() => {
               if (this.tscode !== '') {
+                this.calcFavoriteIcon()
                 this.klinemethods[this.klineactive]()
+                this.initRightTransactionList()
               } else {
                 this.data0 = ''
                 this.myChart.clear()
@@ -3199,7 +3201,7 @@ export default {
               case 'jiaogeweiyueNotice_bond_0':
               case 'jiaogeweiyueNotice_bond_1':
                 self.$notify({
-                  title: `${msgJson.data.traderName} 发起违约`,
+                  title: `${msgJson.data.jiaogeyuanName} 发起违约`,
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
                   message: `

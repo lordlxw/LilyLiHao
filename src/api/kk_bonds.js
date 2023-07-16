@@ -27,7 +27,7 @@ export default {
    */
   getFinish(params) {
     return request({
-      url: `${Vue.prototype.$apiUrl}/realtrade/listFinishTrade`,
+      url: `${Vue.prototype.$apiUrl}/realtrade/listFinishTrade?orderBy=${params.orderBy}&isAsc=${params.isAsc}`,
       method: 'get',
       params: {
         deliveryDateEnd: params.deliveryDateEnd,

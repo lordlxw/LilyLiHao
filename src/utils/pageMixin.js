@@ -159,11 +159,13 @@ export const pageMixin = {
       }
     },
     copy(scope, flag) {
+      console.log(11111)
+      console.info(scope)
       let copyContent = ''
       copyContent += scope.row.direction === 'bond_0' ? 'bid ' : (scope.row.direction === 'bond_1' ? 'ofr ' : '')
       copyContent += scope.row.tscode.replace(/.IB/, '') + ' '
       copyContent += this.unitChange(scope.row.restVolume) + ' '
-      if (moment(moment(scope.row.deliveryTime).format('YYYY-MM-DD')).isAfter(moment(new Date()).format('YYYY-MM-DD'))) {
+      if (moment(moment(scope.row.deliveryTime).format('YYYY-MM-DD')).isSameOrAfter(moment(new Date()).format('YYYY-MM-DD'))) {
         copyContent += moment(scope.row.deliveryTime).format('MM月DD日')
       }
       copyContent += '+' + scope.row.deliverySpeed + ' '
@@ -175,7 +177,7 @@ export const pageMixin = {
       copyContent += data.direction === 'bond_0' ? 'bid ' : (data.direction === 'bond_1' ? 'ofr ' : '')
       copyContent += data.tscode.replace(/.IB/, '') + ' '
       copyContent += this.unitChange(data.volume) + ' '
-      if (moment(moment(data.deliveryTime).format('YYYY-MM-DD')).isAfter(moment(new Date()).format('YYYY-MM-DD'))) {
+      if (moment(moment(data.deliveryTime).format('YYYY-MM-DD')).isSameOrAfter(moment(new Date()).format('YYYY-MM-DD'))) {
         copyContent += moment(data.deliveryTime).format('MM月DD日')
       }
       copyContent += '+' + data.deliverySpeed + ' '
