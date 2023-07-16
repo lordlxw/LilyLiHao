@@ -209,7 +209,6 @@ const store = new Vuex.Store({
     },
     // 设置询价信息变化
     SET_ENQUIRY_INFO(state, enquiryInfo) {
-      console.log(32323)
       state.enquiryInfo = JSON.stringify(enquiryInfo)
     },
   }

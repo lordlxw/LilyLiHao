@@ -623,6 +623,10 @@ export default {
                 break;
               case 'yipingchangeconfirm_bond_0':
               case 'yipingchangeconfirm_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
                 self.$notify({
                   title: `${msgJson.data.yanjiuyuanName} 已同意已平仓修改`,
                   dangerouslyUseHTMLString: true,
