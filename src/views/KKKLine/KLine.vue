@@ -1541,7 +1541,7 @@ export default {
               //   show: true,
               //   trigger: 'axis',
               //   formatter: function (params) {
-              //     console.log(params.data)
+              //     // console.log(params.data)
               //     // 修改鼠标划过显示为中文
               //     // let ma5 = params[1].data // ma5的值
               //     // let ma10 = params[2].data // ma10的值
@@ -1640,7 +1640,7 @@ export default {
                 type: 'category',
                 gridIndex: 1,
                 data: this.data0.categoryData,
-                boundaryGap: false,
+                boundaryGap: true,
                 splitLine: { show: false },
                 axisLabel: { show: false },
                 axisTick: { show: false },
@@ -1693,17 +1693,17 @@ export default {
               }],
               grid: [{
                 left: '0%',
-                right: '2%',
-                bottom: '15%',
+                right: '60px',
+                bottom: '25%',
                 top: '2%',
-                containLabel: true,
+                // containLabel: true,
                 show: true,
                 borderColor: '#ec0000'
               }, {
-                left: '1%',
-                right: '5.5%',
+                left: '0%',
+                right: '60px',
                 bottom: '1%',
-                top: '85%',
+                top: '80%',
               }],
               visualMap: {
                 show: false,
