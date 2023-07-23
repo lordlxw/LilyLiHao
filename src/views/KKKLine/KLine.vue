@@ -251,6 +251,11 @@
             <li class="txt-green txt-bold">
               近买 {{ buyFormPrice | moneyFormat(4) }}
             </li>
+            <li>
+              <el-button type="default" size="mini" @click="handleGetPrice"
+                >取价</el-button
+              >
+            </li>
           </ul>
           <el-tabs v-model="activeName">
             <el-tab-pane label="买(F1)" name="buy">
@@ -1088,7 +1093,10 @@ export default {
       dialogEnquiryAddVisible: false,
       currentDifficultData: {},
       // 修改密码
-      dialogUpdatePasswordVisible: false
+      dialogUpdatePasswordVisible: false,
+      // 买和卖价
+      saleFormTempPrice: 4,
+      buyFormTempPrice: 5
     }
   },
   computed: {
@@ -2052,12 +2060,12 @@ export default {
           switch (params.bidtype) {
             case 1:
               self.businessOutList = res.value
-              self.buyFormForwardPrice = self.buyForm.price = self.funcGetBestPrice('max', res.value, true)
+              self.buyFormForwardPrice = self.buyFormTempPrice = self.funcGetBestPrice('max', res.value, true)
               self.buyFormPrice = self.funcGetBestPrice('max', res.value, false)
               break;
             case 0:
               self.businessInList = res.value
-              self.saleFormForwardPrice = self.saleForm.price = self.funcGetBestPrice('min', res.value, true)
+              self.saleFormForwardPrice = self.saleFormTempPrice = self.funcGetBestPrice('min', res.value, true)
               self.saleFormPrice = self.funcGetBestPrice('min', res.value, false)
               break;
             default:
@@ -2220,6 +2228,15 @@ export default {
         }
       })
     },
+    // 取价
+    handleGetPrice: debounce(function () {
+      if (this.activeName === 'buy') {
+        this.buyForm.price = this.buyFormTempPrice
+      }
+      if (this.activeName === 'sale') {
+        this.saleForm.price = this.saleFormTempPrice
+      }
+    }),
     submitForm: debounce(function (formName) {
       this.loading = true;
       switch (formName) {
@@ -2309,14 +2326,14 @@ export default {
             }
             // 近买
             if (self.buyForm.maxWait <= 0) {
-              self.buyForm.price = self.funcGetBestPrice('max', self.businessOutList, true)
+              self.buyFormTempPrice = self.funcGetBestPrice('max', self.businessOutList, true)
               self.buyFormPrice = self.funcGetBestPrice('max', self.businessOutList, false)
             } else {
               self.buyFormPrice = self.funcGetBestPrice('max', self.businessOutList, false)
             }
             // 近卖
             if (self.saleForm.maxWait <= 0) {
-              self.saleForm.price = self.funcGetBestPrice('min', self.businessInList, true)
+              self.saleFormTempPrice = self.funcGetBestPrice('min', self.businessInList, true)
               self.saleFormPrice = self.funcGetBestPrice('min', self.businessInList, false)
             } else {
               self.saleFormPrice = self.funcGetBestPrice('min', self.businessInList, false)
@@ -3940,7 +3957,7 @@ export default {
         width: 140px;
       }
       .numbw {
-        width: 110px;
+        width: 100px;
       }
     }
   }
