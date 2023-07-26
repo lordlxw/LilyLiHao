@@ -2066,13 +2066,13 @@ export default {
           switch (params.bidtype) {
             case 1:
               self.businessOutList = res.value
-              self.buyFormForwardPrice = self.buyForm.price = self.funcGetBestPrice('max', res.value, true)
-              self.buyFormPrice = self.funcGetBestPrice('max', res.value, false)
+              self.buyForm.price = self.funcGetBestPrice('max', res.value, true)
+              self.buyFormForwardPrice = self.buyFormPrice = self.funcGetBestPrice('max', res.value, false)
               break;
             case 0:
               self.businessInList = res.value
-              self.saleFormForwardPrice = self.saleForm.price = self.funcGetBestPrice('min', res.value, true)
-              self.saleFormPrice = self.funcGetBestPrice('min', res.value, false)
+              self.saleForm.price = self.funcGetBestPrice('min', res.value, true)
+              self.saleFormForwardPrice = self.saleFormPrice = self.funcGetBestPrice('min', res.value, false)
               break;
             default:
               self.businessAllList = res.value
@@ -2344,9 +2344,9 @@ export default {
             }
             self.calcuDiffPrice(1)
             // 远买
-            self.buyFormForwardPrice = self.funcGetBestPrice('max', self.businessForwardOutList.concat(self.businessOutList), true)
+            self.buyFormForwardPrice = self.funcGetBestPrice('max', self.businessForwardOutList.concat(self.businessOutList), false)
             // 远卖
-            self.saleFormForwardPrice = self.funcGetBestPrice('min', self.businessForwardInList.concat(self.businessInList), true)
+            self.saleFormForwardPrice = self.funcGetBestPrice('min', self.businessForwardInList.concat(self.businessInList), false)
             self.calcuDiffPrice(2)
           } else {
             switch (msgJson.dataType) {
@@ -3226,7 +3226,7 @@ export default {
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
                   message: `
-                  <div class="notify">
+                  <div class="notify notify-red">
                     <dl>
                       <dt>单据号</dt>
                       <dd>${msgJson.data.tradeNum}</dd>
@@ -3262,6 +3262,10 @@ export default {
                     <dl>
                       <dt>做市商</dt>
                       <dd>${msgJson.data.marketMakerName}</dd>
+                    </dl>
+                    <dl>
+                      <dt>提示</dt>
+                      <dd>请去违约页面处理后续！</dd>
                     </dl>
                   </div>
                   `,

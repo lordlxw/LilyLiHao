@@ -1338,7 +1338,7 @@ export default {
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
                   message: `
-                  <div class="notify">
+                  <div class="notify notify-red">
                     <dl>
                       <dt>单据号</dt>
                       <dd>${msgJson.data.tradeNum}</dd>
@@ -1374,6 +1374,10 @@ export default {
                     <dl>
                       <dt>做市商</dt>
                       <dd>${msgJson.data.marketMakerName}</dd>
+                    </dl>
+                    <dl>
+                      <dt>提示</dt>
+                      <dd>请去违约页面处理后续！</dd>
                     </dl>
                   </div>
                   `,
