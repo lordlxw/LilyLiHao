@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <router-view style="z-index: 2" />
-    <div class="test" v-if="testWaterText"></div>
+    <div class="test" v-if="testWaterText" style="z-index: 999999; position:fixed"></div>
   </div>
 </template>
 <script>
