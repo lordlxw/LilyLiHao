@@ -252,8 +252,15 @@
               近买 {{ buyFormPrice | moneyFormat(4) }}
             </li>
             <li>
-              <el-button type="default" size="mini" @click="handleGetPrice"
-                >取价</el-button
+              <el-button
+                v-if="
+                  (activeName === 'buy' && buyForm.isMarketRoll === false) ||
+                  (activeName === 'sale' && saleForm.isMarketRoll === false)
+                "
+                type="default"
+                size="mini"
+                @click="handleGetPrice"
+                >市价</el-button
               >
             </li>
           </ul>
@@ -279,7 +286,7 @@
                     v-model="buyForm.price"
                     step="0.001"
                     placeholder="请输入价格"
-                    @input="handleMaxWait('buyForm')"
+                    @focus="handleMaxWait('buyForm')"
                     class="pricew"
                   ></el-input-number
                   ><br />
@@ -287,7 +294,6 @@
                     <el-input-number
                       v-model="buyForm.worstPrice"
                       step="0.05"
-                      @input="handleMaxWait('buyForm')"
                       class="mt10 numbw"
                     ></el-input-number>
                     <span class="txt-green">BP</span>
@@ -417,7 +423,7 @@
                     v-model="saleForm.price"
                     step="0.001"
                     placeholder="请输入价格"
-                    @input="handleMaxWait('saleForm')"
+                    @focus="handleMaxWait('saleForm')"
                     class="pricew"
                   ></el-input-number
                   ><br />
@@ -425,7 +431,6 @@
                     <el-input-number
                       v-model="saleForm.worstPrice"
                       step="0.05"
-                      @input="handleMaxWait('buyForm')"
                       class="mt10 numbw"
                     ></el-input-number>
                     <span class="txt-red">BP</span>
@@ -981,10 +986,12 @@ export default {
         quickSubmit: false,
         // 交割日期消息
         deliveryTimeMsg: '',
+        // 允许浮动
+        worstPrice: 0.1,
         // 等待时长
         maxWait: 0,
-        // 允许浮动
-        worstPrice: 0.1
+        // 是否开启市价滚动
+        isMarketRoll: true
       },
       saleFormRules: {
         direction: [
@@ -1031,10 +1038,12 @@ export default {
         quickSubmit: false,
         // 交割日期消息
         deliveryTimeMsg: '',
+        // 允许浮动
+        worstPrice: 0.1,
         // 等待时长
         maxWait: 0,
-        // 允许浮动
-        worstPrice: 0.1
+        // 是否开启市价滚动
+        isMarketRoll: true
       },
       buyFormRules: {
         direction: [
@@ -1093,10 +1102,7 @@ export default {
       dialogEnquiryAddVisible: false,
       currentDifficultData: {},
       // 修改密码
-      dialogUpdatePasswordVisible: false,
-      // 买和卖价
-      saleFormTempPrice: 4,
-      buyFormTempPrice: 5
+      dialogUpdatePasswordVisible: false
     }
   },
   computed: {
@@ -2060,12 +2066,12 @@ export default {
           switch (params.bidtype) {
             case 1:
               self.businessOutList = res.value
-              self.buyFormForwardPrice = self.buyFormTempPrice = self.funcGetBestPrice('max', res.value, true)
+              self.buyFormForwardPrice = self.buyForm.price = self.funcGetBestPrice('max', res.value, true)
               self.buyFormPrice = self.funcGetBestPrice('max', res.value, false)
               break;
             case 0:
               self.businessInList = res.value
-              self.saleFormForwardPrice = self.saleFormTempPrice = self.funcGetBestPrice('min', res.value, true)
+              self.saleFormForwardPrice = self.saleForm.price = self.funcGetBestPrice('min', res.value, true)
               self.saleFormPrice = self.funcGetBestPrice('min', res.value, false)
               break;
             default:
@@ -2228,13 +2234,15 @@ export default {
         }
       })
     },
-    // 取价
+    // 市价
     handleGetPrice: debounce(function () {
       if (this.activeName === 'buy') {
-        this.buyForm.price = this.buyFormTempPrice
+        this.buyForm.isMarketRoll = true
+        this.buyForm.price = this.funcGetBestPrice('max', this.businessOutList, true)
       }
       if (this.activeName === 'sale') {
-        this.saleForm.price = this.saleFormTempPrice
+        this.saleForm.isMarketRoll = true
+        this.saleForm.price = this.funcGetBestPrice('min', this.businessInList, true)
       }
     }),
     submitForm: debounce(function (formName) {
@@ -2325,18 +2333,14 @@ export default {
                 break
             }
             // 近买
-            if (self.buyForm.maxWait <= 0) {
-              self.buyFormTempPrice = self.funcGetBestPrice('max', self.businessOutList, true)
-              self.buyFormPrice = self.funcGetBestPrice('max', self.businessOutList, false)
-            } else {
-              self.buyFormPrice = self.funcGetBestPrice('max', self.businessOutList, false)
+            self.buyFormPrice = self.funcGetBestPrice('max', self.businessOutList, false)
+            if (self.buyForm.isMarketRoll) {
+              self.buyForm.price = self.funcGetBestPrice('max', self.businessOutList, true)
             }
             // 近卖
-            if (self.saleForm.maxWait <= 0) {
-              self.saleFormTempPrice = self.funcGetBestPrice('min', self.businessInList, true)
-              self.saleFormPrice = self.funcGetBestPrice('min', self.businessInList, false)
-            } else {
-              self.saleFormPrice = self.funcGetBestPrice('min', self.businessInList, false)
+            self.saleFormPrice = self.funcGetBestPrice('min', self.businessInList, false)
+            if (self.saleForm.isMarketRoll) {
+              self.saleForm.price = self.funcGetBestPrice('min', self.businessInList, true)
             }
             self.calcuDiffPrice(1)
             // 远买
@@ -3697,7 +3701,8 @@ export default {
       }, 1000)
     },
     handleMaxWait(formName) {
-      this[formName].maxWait = 5
+      // this[formName].maxWait = 5
+      this[formName].isMarketRoll = false
     },
     // 计算近差和总差 1:近差；2：总差
     calcuDiffPrice(type) {
@@ -3723,7 +3728,7 @@ export default {
     this.buyForm.quickSubmit = this.setForm.quickSubmit
     this.saleForm.quickSubmit = this.setForm.quickSubmit
 
-    this.initPriceWait()
+    // this.initPriceWait()
     window.onresize = () => {
       this.initFrameW('leftWith', 200)
       this.initFrameW('rightWith', 360)
