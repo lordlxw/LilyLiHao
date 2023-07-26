@@ -1422,7 +1422,7 @@ export default {
     },
     getIsShowDeliveryBtn() {
       api.deliveryBtnIsShow().then(response => {
-        this.isShowDeliveryBtn = !response.data.value
+        this.isShowDeliveryBtn = !response.value
       })
     },
     handlViewNobondsUpdateContent: debounce(function (scope) {
