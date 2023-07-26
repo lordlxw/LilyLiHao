@@ -1735,6 +1735,7 @@ export default {
     },
     // 交割
     handleDeliveryClick: debounce(function () {
+      this.loadInitDataFinish()
       let deliveryFinishData = []
       // 处理数据
       for (let i = 0; i < this.tableDataFinish.length; i++) {

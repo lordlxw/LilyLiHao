@@ -97,7 +97,7 @@
                       scope.row.jiaogeStatus === 3
                         ? "违约升级"
                         : scope.row.jiaogeStatus === 5
-                        ? "垫违还券"
+                        ? "垫违升级"
                         : ""
                     }}
                   </span>
@@ -122,7 +122,7 @@
                   scope.row.jiaogeStatus === 3
                     ? "违约升级"
                     : scope.row.jiaogeStatus === 5
-                    ? "垫违还券"
+                    ? "垫违升级"
                     : ""
                 }}</el-button>
               </el-popover>
