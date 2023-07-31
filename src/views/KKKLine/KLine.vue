@@ -2226,6 +2226,11 @@ export default {
                 position: 'top-left'
               });
               this.dialogVisible = false
+            } else {
+              this.$message({
+                message: `${res.message}`,
+                type: 'error'
+              })
             }
             this.loading = false;
           })
@@ -2346,7 +2351,7 @@ export default {
             // 远买
             self.buyFormForwardPrice = self.funcGetBestPrice('max', self.businessForwardOutList.concat(self.businessOutList), false)
             // 远卖
-            self.saleFormForwardPrice = self.funcGetBestPrice('min', self.businessForwardInList.concat(self.businessInList), false)
+            self.saleFormForwardPrice = self.funcGetBestPrice('min', self.businessForwardInList.concat(self.businessInList), true)
             self.calcuDiffPrice(2)
           } else {
             switch (msgJson.dataType) {
@@ -2464,6 +2469,7 @@ export default {
                   title: `${msgJson.data.tradeuser} 已拒收`,
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
+                  customClass: 'notify-yellow',
                   message: `
                   <div class="notify">
                     <dl>
@@ -2492,7 +2498,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 5000
+                  duration: 0
                 });
                 self.tryPlay()
                 break
@@ -2502,6 +2508,7 @@ export default {
                   title: `${msgJson.data.tradeuser} 拒绝撤单`,
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
+                  customClass: 'notify-yellow',
                   message: `
                   <div class="notify">
                     <dl>
@@ -2526,7 +2533,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 5000
+                  duration: 0
                 });
                 self.tryPlay()
                 break
@@ -2852,6 +2859,7 @@ export default {
                   title: `${msgJson.data.tradeuser} 发起口头违约`,
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
+                  customClass: 'notify-red',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -2921,6 +2929,7 @@ export default {
                   title: `${msgJson.data.tradeuser} 发起难成`,
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
+                  customClass: 'notify-yellow',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -2999,6 +3008,7 @@ export default {
                   title: `${msgJson.data.rt.tradeuser} 发起违约续作`,
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
+                  customClass: 'notify-red',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -3093,7 +3103,7 @@ export default {
                     </dl>
                   </div>
                   `,
-                  duration: 0
+                  duration: 5000
                 });
                 self.tryPlay()
                 break
@@ -3103,6 +3113,7 @@ export default {
                   title: `${msgJson.data.tradeuser} 已拒绝修改询价单`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
+                  customClass: 'notify-yellow',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -3214,7 +3225,7 @@ export default {
                       ]),
                     ],
                   ),
-                  duration: 0
+                  duration: 5000
                 });
                 self.tryPlay()
                 self.notifyRejection[timestamp] = notify
@@ -3225,8 +3236,9 @@ export default {
                   title: `${msgJson.data.jiaogeyuanName} 发起违约`,
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
+                  customClass: 'notify-red',
                   message: `
-                  <div class="notify notify-red">
+                  <div class="notify">
                     <dl>
                       <dt>单据号</dt>
                       <dd>${msgJson.data.tradeNum}</dd>

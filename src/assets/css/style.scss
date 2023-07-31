@@ -51,16 +51,21 @@ body {
         }
     }
 
-    .notify.notify-red {
-        dd {
-            flex        : 1;
-            color       : #ec0000;
-            font-weight : bold;
-            padding     : 0;
-            padding-left: 10px;
-            margin      : 0;
-            text-align  : left;
-        }
+    .notify-red .el-notification__title {
+        // dd {
+        //     flex        : 1;
+        //     color       : #ec0000;
+        //     font-weight : bold;
+        //     padding     : 0;
+        //     padding-left: 10px;
+        //     margin      : 0;
+        //     text-align  : left;
+        // }
+        color: #da04fb;
+    }
+
+    .notify-yellow .el-notification__title {
+        color: #e78745;
     }
 
     .el-header,

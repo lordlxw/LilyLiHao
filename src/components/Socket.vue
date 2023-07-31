@@ -244,6 +244,7 @@ export default {
                   title: `${msgJson.data.tradeuser} 已拒收`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
+                  customClass: 'notify-yellow',
                   message: `
                   <div class="notify">
                     <dl>
@@ -341,6 +342,7 @@ export default {
                   title: `${msgJson.data.createuser} 发起撤单`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
+                  customClass: 'notify-yellow',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -410,6 +412,7 @@ export default {
                   title: `${msgJson.data.ut.createuser} 已拒绝成交`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
+                  customClass: 'notify-yellow',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -585,6 +588,7 @@ export default {
                   title: `${msgJson.data.yanjiuyuanName} 已拒绝未平仓修改`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
+                  customClass: 'notify-yellow',
                   message: `
                   <div class="notify">
                     <dl>
@@ -677,6 +681,7 @@ export default {
                   title: `${msgJson.data.yanjiuyuanName} 已拒绝已平仓修改`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
+                  customClass: 'notify-yellow',
                   message: `
                   <div class="notify">
                     <dl>
@@ -723,6 +728,7 @@ export default {
                   title: `${msgJson.data.createuser} 难成已撤单`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
+                  customClass: 'notify-yellow',
                   message: `
                   <div class="notify">
                     <dl>
@@ -808,6 +814,7 @@ export default {
                   title: `${msgJson.data.yanjiuyuanName} 已确认口头违约`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
+                  customClass: 'notify-red',
                   message: `
                   <div class="notify">
                     <dl>
@@ -851,6 +858,7 @@ export default {
                   title: `${msgJson.data.yanjiuyuanName} 已拒绝口头违约`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
+                  customClass: 'notify-red',
                   message: `
                   <div class="notify">
                     <dl>
@@ -1186,6 +1194,7 @@ export default {
                   title: `${msgJson.data.yanjiuyuanName} 已修改询价单`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
+                  customClass: 'notify-yellow',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -1246,6 +1255,7 @@ export default {
                   title: `${msgJson.data.yanjiuyuanName} 询价修改待确认`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
+                  customClass: 'notify-yellow',
                   message: h(
                     "div",
                     { class: "notify" },
@@ -1337,8 +1347,9 @@ export default {
                   title: `${msgJson.data.jiaogeyuanName} 发起违约`,
                   dangerouslyUseHTMLString: true,
                   position: 'top-left',
+                  customClass: 'notify-red',
                   message: `
-                  <div class="notify notify-red">
+                  <div class="notify">
                     <dl>
                       <dt>单据号</dt>
                       <dd>${msgJson.data.tradeNum}</dd>
@@ -1433,6 +1444,8 @@ export default {
     // 接收询价滚单
     handleAcceptEnquiryRollClick(obj, timestamp) {
       const self = this
+      self.notifyRejection[timestamp].close()
+      delete self.notifyRejection[timestamp]
       api.bondRollAccept({ relativeNum: obj.relativeNum }).then(response => {
         if (response && response.code === '00000') {
           self.copySocket(obj)
@@ -1447,8 +1460,6 @@ export default {
             type: 'error'
           })
         }
-        self.notifyRejection[timestamp].close()
-        delete self.notifyRejection[timestamp]
       })
     },
     // 拒收询价滚单
