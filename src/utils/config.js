@@ -177,7 +177,7 @@ export default {
     jiaogeStatus: { label: '交割状态', prop: 'jiaogeStatus', width: '100', align: 'left', show: true },
     status: { label: '平仓状态', prop: 'status', width: '100', align: 'left', show: true },
     updateTime: { label: '修改时间', prop: 'updateTime', width: '180', align: 'left', show: true },
-    useTradeNum: { label: '询价单据号', prop: 'useTradeNum', width: '180', align: 'left', show: true },
+    userTradeNum: { label: '询价单据号', prop: 'userTradeNum', width: '180', align: 'left', show: true },
   },
   // 交割回报
   rewardHead: {
@@ -199,7 +199,7 @@ export default {
     remark: { label: '备注', prop: 'remark', width: '500', align: 'left', show: true },
     updateTime: { label: '修改时间', prop: 'updateTime', width: '180', align: 'left', show: true },
     yanjiuyuanName: { label: '研究员', prop: 'yanjiuyuanName', width: '120', align: 'left', show: true },
-    useTradeNum: { label: '询价单据号', prop: 'useTradeNum', width: '180', align: 'left', show: true },
+    userTradeNum: { label: '询价单据号', prop: 'userTradeNum', width: '180', align: 'left', show: true },
   },
   // 违约单头部
   breakHead: {
@@ -222,6 +222,6 @@ export default {
     counterParty: { label: '对手方', prop: 'counterParty', width: '100', align: 'left', show: true },
     traderName: { label: '交易员', prop: 'traderName', width: '120', align: 'left', show: true },
     yanjiuyuanName: { label: '研究员', prop: 'yanjiuyuanName', width: '120', align: 'left', show: true },
-    useTradeNum: { label: '询价单据号', prop: 'useTradeNum', width: '180', align: 'left', show: true },
+    userTradeNum: { label: '询价单据号', prop: 'userTradeNum', width: '180', align: 'left', show: true },
   }
 }
