@@ -996,6 +996,60 @@ export default {
                 });
                 self.tryPlay()
                 break
+              case 'xuzuo_deny_deal_bond_0':
+              case 'xuzuo_deny_deal_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
+                notify = self.$notify({
+                  title: `${msgJson.data.yanjiuyuanName} 已拒绝续作`,
+                  dangerouslyUseHTMLString: true,
+                  position: 'bottom-left',
+                  customClass: 'notify-yellow',
+                  message: h(
+                    "div",
+                    { class: "notify" },
+                    [
+                      h("dl", null, [
+                        h("dt", null, "单据号"),
+                        h("dd", null, `${msgJson.data.rt.tradeNum}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "债券码"),
+                        h("dd", null, `${msgJson.data.rt.tscode.replace(/.IB/, '')}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "方向"),
+                        h("dd", null, `${msgJson.data.rt.direction === 'bond_0' ? '买入' : msgJson.data.rt.direction === 'bond_1' ? '卖出' : ' '}`)
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交价"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.rt.price, 4) + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "成交量"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.rt.volume + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
+                        ])
+                      ]),
+                      h("dl", null, [
+                        h("dt", null, "交割日期"),
+                        h("dd", null, [
+                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.toString().substr(0, 10) + ' ' : ''),
+                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
+                        ])
+                      ])
+                    ],
+                  ),
+                  duration: 0
+                });
+                self.tryPlay()
+                break
               case 'gundan_bond_1':
               case 'gundan_bond_0':
                 self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
