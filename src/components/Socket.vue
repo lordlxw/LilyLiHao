@@ -1003,7 +1003,7 @@ export default {
                   break
                 }
                 notify = self.$notify({
-                  title: `${msgJson.data.yanjiuyuanName} 已拒绝续作`,
+                  title: `${msgJson.data.rt.yanjiuyuanName} 已拒绝续作`,
                   dangerouslyUseHTMLString: true,
                   position: 'bottom-left',
                   customClass: 'notify-yellow',
