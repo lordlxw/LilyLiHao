@@ -205,6 +205,10 @@ export default {
                 break
               case 'deal_bond_0':
               case 'deal_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
                 self.$notify({
                   title: `${msgJson.data.tradeuser} 已成交`,
                   dangerouslyUseHTMLString: true,
@@ -235,11 +239,14 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break
               case 'deny_bond_0':
               case 'deny_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
                 self.$notify({
                   title: `${msgJson.data.tradeuser} 已拒收`,
                   dangerouslyUseHTMLString: true,
@@ -271,7 +278,6 @@ export default {
                   `,
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
                 self.tryPlay()
                 break
               // 直接撤单
