@@ -4,7 +4,6 @@
       <trade-enquiry ref="tradeEnquiry"></trade-enquiry>
       <div class="both-clear"></div>
     </el-dialog> -->
-    <!-- {{ notifyRejection }} -->
     <audio controls ref="playAudio" style="display: none">
       <source src="@/assets/audio/1.wav" type="audio/wav" />
     </audio>
@@ -120,6 +119,10 @@ export default {
               // 交易员待接收询价单（卖）
               case 'delegate_bond_0':
               case 'delegate_bond_1':
+                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
+                if (msgJson.actionType === 'refresh') {
+                  break
+                }
                 notify = self.$notify({
                   title: `${msgJson.data.createUserName} 发起询价单`,
                   dangerouslyUseHTMLString: true,
@@ -181,9 +184,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                self.$refs.playAudio.play()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 break
               // 通知研究员确认接收(买)
               // case 'accept_bond_0':
@@ -403,8 +405,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.$refs.playAudio.play()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 // if (self.dialogTableVisible) {
                 //   self.$refs.tradeEnquiry.loadInitData()
                 // }
@@ -1141,8 +1143,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.$refs.playAudio.play()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 break;
               case 'budan_bond_0':
               case 'budan_bond_1':
@@ -1386,8 +1388,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.$refs.playAudio.play()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 break
               case 'xiugaichangedeny_bond_0':
               case 'xiugaichangedeny_bond_1':

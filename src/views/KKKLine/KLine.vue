@@ -2638,8 +2638,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.tryPlay()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 break
               case 'weipingchangerequest_bond_0':
               case 'weipingchangerequest_bond_1':
@@ -2744,8 +2744,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.tryPlay()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 break
               case 'yipingchangerequest_bond_0':
               case 'yipingchangerequest_bond_1':
@@ -2850,8 +2850,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.tryPlay()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 break
               case 'koutouweiyuerequest_bond_0':
               case 'koutouweiyuerequest_bond_1':
@@ -2920,8 +2920,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.tryPlay()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 break
               case 'nancheng_bond_0':
               case 'nancheng_bond_1':
@@ -2999,8 +2999,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.tryPlay()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 break
               case 'xuzuo_tradecompare_bond_0':
               case 'xuzuo_tradecompare_bond_1':
@@ -3070,8 +3070,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.tryPlay()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 break
               case 'xuzuo_deal_bond_0':
               case 'xuzuo_deal_bond_1':
@@ -3166,8 +3166,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.tryPlay()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 break
               case 'xiugaichangeconfirm_bond_0':
               case 'xiugaichangeconfirm_bond_1':
@@ -3227,8 +3227,8 @@ export default {
                   ),
                   duration: 5000
                 });
-                self.tryPlay()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 break
               case 'jiaogeweiyueNotice_bond_0':
               case 'jiaogeweiyueNotice_bond_1':
