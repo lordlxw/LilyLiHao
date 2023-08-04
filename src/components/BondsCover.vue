@@ -258,6 +258,11 @@ export default {
               this.$emit('change', {
                 dialogVisible: false
               })
+            } else {
+              this.$message({
+                message: `${res.message}`,
+                type: 'error'
+              })
             }
           })
         }

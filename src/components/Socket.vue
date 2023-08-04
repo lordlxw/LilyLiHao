@@ -4,6 +4,7 @@
       <trade-enquiry ref="tradeEnquiry"></trade-enquiry>
       <div class="both-clear"></div>
     </el-dialog> -->
+    <!-- {{ notifyRejection }} -->
     <audio controls ref="playAudio" style="display: none">
       <source src="@/assets/audio/1.wav" type="audio/wav" />
     </audio>
