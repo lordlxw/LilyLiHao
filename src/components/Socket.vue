@@ -1504,8 +1504,6 @@ export default {
     // 接收询价滚单
     handleAcceptEnquiryRollClick(obj, timestamp) {
       const self = this
-      self.notifyRejection[timestamp].close()
-      delete self.notifyRejection[timestamp]
       api.bondRollAccept({ relativeNum: obj.relativeNum }).then(response => {
         if (response && response.code === '00000') {
           self.copySocket(obj)
@@ -1520,6 +1518,8 @@ export default {
             type: 'error'
           })
         }
+        self.notifyRejection[timestamp].close()
+        delete self.notifyRejection[timestamp]
       })
     },
     // 拒收询价滚单
