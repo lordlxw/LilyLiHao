@@ -141,6 +141,11 @@ export default {
                 type: "success",
               });
               this.$router.go(-1);
+            } else {
+              this.$message({
+                message: `${response.message}`,
+                type: "error",
+              });
             }
           });
         }

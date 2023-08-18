@@ -1244,8 +1244,8 @@ export default {
                   ),
                   duration: 0
                 });
-                self.tryPlay()
                 self.notifyRejection[timestamp] = notify
+                self.tryPlay()
                 break
               case 'xunjiachangefinish_bond_0':
               case 'xunjiachangefinish_bond_1':
@@ -1673,7 +1673,9 @@ export default {
         // if (self.dialogTableVisible) {
         //   self.$refs.tradeEnquiry.loadInitData()
         // }
-        self.$refs.playAudio.play()
+        if (self.$refs.playAudio) {
+          self.$refs.playAudio.play()
+        }
       } catch (error) {
         console.log(error)
       }
