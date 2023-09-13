@@ -825,7 +825,7 @@ export default {
                   position: 'bottom-left',
                   customClass: 'notify-red',
                   message: `
-                  <div class="notify">
+                  <div class="notify notify-dd-red">
                     <dl>
                       <dt>债券码</dt>
                       <dd>${msgJson.data.tscode.replace(/.IB/, '')}</dd>
@@ -869,7 +869,7 @@ export default {
                   position: 'bottom-left',
                   customClass: 'notify-red',
                   message: `
-                  <div class="notify">
+                  <div class="notify notify-dd-red">
                     <dl>
                       <dt>债券码</dt>
                       <dd>${msgJson.data.tscode.replace(/.IB/, '')}</dd>
@@ -1133,7 +1133,7 @@ export default {
                             class: "notigy-cancel",
                             on: {
                               click: function () {
-                                self.handleNotAcceptEnquiryRollClick(msgJson.data.firt, timestamp)
+                                self.handleNotAcceptEnquiryRollClick(msgJson.data.first, timestamp)
                               }
                             }
                           }, "拒收")
@@ -1412,7 +1412,7 @@ export default {
                   position: 'top-left',
                   customClass: 'notify-red',
                   message: `
-                  <div class="notify">
+                  <div class="notify notify-dd-red">
                     <dl>
                       <dt>单据号</dt>
                       <dd>${msgJson.data.tradeNum}</dd>

@@ -388,6 +388,14 @@ export default {
       if (row.column.label === '交割量' && parseInt(row.row.volume) < row.row.chengjiaoAmount) {
         return 'color:orange'
       }
+      if (row.column.label === '方向') {
+        switch (row.row.direction) {
+          case 'bond_1': // 卖出
+            return 'color:#e88585';
+          case 'bond_0': // 买入
+            return 'color:#00da3c';
+        }
+      }
     },
     // 数据格式化
     funcFormat(row, column) {

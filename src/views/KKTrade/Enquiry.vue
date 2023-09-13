@@ -1360,6 +1360,16 @@ export default {
         }
       }
     },
+    cellStyle(row, column, rowIndex, columnIndex) {
+      if (row.column.label === '方向') {
+        switch (row.row.direction) {
+          case 'bond_1': // 卖出
+            return 'color:#e88585';
+          case 'bond_0': // 买入
+            return 'color:#00da3c';
+        }
+      }
+    },
     // 更新记录表
     cellStyleUpdate(row, column, rowIndex, columnIndex) {
       if (row.column.label === '旧值') {

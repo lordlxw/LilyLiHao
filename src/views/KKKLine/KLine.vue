@@ -2862,7 +2862,7 @@ export default {
                   customClass: 'notify-red',
                   message: h(
                     "div",
-                    { class: "notify" },
+                    { class: "notify notify-dd-red" },
                     [
                       h("dl", null, [
                         h("dt", null, "创建时间"),
@@ -3238,7 +3238,7 @@ export default {
                   position: 'top-left',
                   customClass: 'notify-red',
                   message: `
-                  <div class="notify">
+                  <div class="notify notify-dd-red">
                     <dl>
                       <dt>单据号</dt>
                       <dd>${msgJson.data.tradeNum}</dd>

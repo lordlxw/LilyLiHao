@@ -51,6 +51,12 @@ body {
         }
     }
 
+    .notify-dd-red {
+        dd {
+            color: #f56c6c;
+        }
+    }
+
     .notify-red .el-notification__title {
         // dd {
         //     flex        : 1;
