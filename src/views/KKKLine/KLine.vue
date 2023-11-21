@@ -1116,7 +1116,8 @@ export default {
     activeTscode(newVal, oldVal) {
       if (newVal !== oldVal) {
         if (newVal && socket != null) {
-          socket.send(JSON.stringify({ "dataKey": newVal, "dataType": "tscode" }))
+          // socket.send(JSON.stringify({ "dataKey": newVal, "dataType": "tscode" }))
+          socket.send(JSON.stringify({ "dataKey": newVal, "dataType": "sub_tscode" }))
           this.calcFavoriteIcon()
         }
       }
@@ -2304,7 +2305,8 @@ export default {
           self.socketTimer = null
           self.socketHeart()
           if (self.activeTscode) {
-            socket.send(JSON.stringify({ "dataKey": self.activeTscode, "dataType": "tscode" }))
+            // socket.send(JSON.stringify({ "dataKey": self.activeTscode, "dataType": "tscode" }))
+            socket.send(JSON.stringify({ "dataKey": self.activeTscode, "dataType": "sub_tscode" }))
           }
         }
         // 浏览器端收消息，获得从服务端发送过来的文本消息
