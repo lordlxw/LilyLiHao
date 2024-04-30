@@ -6,48 +6,24 @@
           <el-row class="slt-type">
             <el-col :span="14">
               <div class="grid-content">
-                <el-select
-                  v-model="tstype"
-                  clearable
-                  placeholder="债券类型"
-                  @change="handleChangeTSType"
-                >
-                  <el-option
-                    v-for="item in optionTSType"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  >
+                <el-select v-model="tstype" clearable placeholder="债券类型" @change="handleChangeTSType">
+                  <el-option v-for="item in optionTSType" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
               </div>
             </el-col>
             <el-col :span="10">
               <div class="grid-content">
-                <el-select
-                  v-model="tslength"
-                  clearable
-                  placeholder="年限"
-                  @change="handleChangeTSType"
-                >
-                  <el-option
-                    v-for="item in optionYear"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  >
+                <el-select v-model="tslength" clearable placeholder="年限" @change="handleChangeTSType">
+                  <el-option v-for="item in optionYear" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
               </div>
             </el-col>
           </el-row>
         </li>
-        <li
-          v-for="item in loopmethodskey"
-          @click="klinemethods[item]"
-          :class="{ active: klineactive == item }"
-          :key="item"
-        >
+        <li v-for="item in loopmethodskey" @click="klinemethods[item]" :class="{ active: klineactive == item }"
+          :key="item">
           {{ item }}
         </li>
         <li class="tscode">
@@ -60,27 +36,17 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="updatePassword"
-                >修改密码</el-dropdown-item
-              >
+              <el-dropdown-item command="updatePassword">修改密码</el-dropdown-item>
               <el-dropdown-item divided command="logout">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </li>
-        <li
-          class="nav-right"
-          v-if="favoriteTscodeIcon == favoriteTscodeIconList[0]"
-          @click="handleFavorite"
-        >
+        <li class="nav-right" v-if="favoriteTscodeIcon == favoriteTscodeIconList[0]" @click="handleFavorite">
           <span class="i-text">
             <i :class="favoriteTscodeIconList[0]"></i>
           </span>
         </li>
-        <li
-          class="nav-right"
-          v-if="favoriteTscodeIcon == favoriteTscodeIconList[1]"
-          @click="handleFavoriteCancel"
-        >
+        <li class="nav-right" v-if="favoriteTscodeIcon == favoriteTscodeIconList[1]" @click="handleFavoriteCancel">
           <span class="i-text" style="color: yellow">
             <i :class="favoriteTscodeIconList[1]"></i>
           </span>
@@ -93,35 +59,20 @@
           </span>
         </li> -->
         <li class="nav-right">
-          <router-link
-            target="_blank"
-            :to="{ path: '/trade/bonds' }"
-            class="i-text"
-            style="color: white"
-            ><i class="el-icon-s-home"></i
-          ></router-link>
+          <router-link target="_blank" :to="{ path: '/trade/bonds' }" class="i-text" style="color: white"><i
+              class="el-icon-s-home"></i></router-link>
         </li>
       </ul>
     </div>
     <div class="container" style="background-color: #202020">
       <!-- 左侧 -->
-      <div
-        class="left-group"
-        :style="{
-          width: leftWith + 'px',
-        }"
-      >
+      <div class="left-group" :style="{
+              width: leftWith + 'px',
+            }">
         <!-- 关闭和打开左侧侧面板 -->
-        <div
-          class="open-colse"
-          :class="leftFold"
-          @click="handleLeftOpenOrClose"
-        ></div>
+        <div class="open-colse" :class="leftFold" @click="handleLeftOpenOrClose"></div>
         <ul class="left-tabs">
-          <li
-            :class="activeTab == tabList[0] ? 'active' : ''"
-            @click="handleClickTab(tabList[0])"
-          >
+          <li :class="activeTab == tabList[0] ? 'active' : ''" @click="handleClickTab(tabList[0])">
             单券
           </li>
           <!-- <li
@@ -130,31 +81,20 @@
           >
             JC
           </li> -->
-          <li
-            :class="activeTab == tabList[1] ? 'active' : ''"
-            @click="handleClickTab(tabList[1])"
-          >
+          <li :class="activeTab == tabList[1] ? 'active' : ''" @click="handleClickTab(tabList[1])">
             收藏
           </li>
         </ul>
         <div class="tab-common tab-0" v-if="activeTab == tabList[0]">
           <div class="search-box">
-            <com-tscode-select
-              ref="refComTscodeSelect"
-              @change="handlerTscodeSelect"
-              style="width: 100%"
-            >
+            <com-tscode-select ref="refComTscodeSelect" @change="handlerTscodeSelect" style="width: 100%">
             </com-tscode-select>
           </div>
           <hr color="#ec0000" size="1" style="margin: 0" />
           <el-scrollbar>
             <ul>
-              <li
-                v-for="item in tscodeList"
-                :key="item.id"
-                @click="handlerTscode(item)"
-                :class="{ active: activeTscode == item.tscode }"
-              >
+              <li v-for="item in tscodeList" :key="item.id" @click="handlerTscode(item)"
+                :class="{ active: activeTscode == item.tscode }">
                 {{ item.bondname }}<br />
                 <strong class="l-strong">{{ item.tscode }}</strong>
               </li>
@@ -165,18 +105,9 @@
           <hr color="#ec0000" size="1" style="margin: 0" />
           <el-scrollbar>
             <ul>
-              <draggable
-                v-model="tscodeListFavorite"
-                animation="300"
-                @start="onStart"
-                @end="onEnd"
-              >
-                <li
-                  v-for="item in tscodeListFavorite"
-                  :key="item.id"
-                  @click="handlerTscode(item)"
-                  :class="{ active: activeTscode == item.tscode }"
-                >
+              <draggable v-model="tscodeListFavorite" animation="300" @start="onStart" @end="onEnd">
+                <li v-for="item in tscodeListFavorite" :key="item.id" @click="handlerTscode(item)"
+                  :class="{ active: activeTscode == item.tscode }">
                   <strong class="l-strong">{{ item.tscode }}</strong>
                 </li>
               </draggable>
@@ -191,45 +122,23 @@
         <!-- 交易框 -->
         <div class="chatbox">
           <ul class="best-price-wapper">
-            <el-popover
-              placement="bottom-end"
-              width="300"
-              trigger="manual"
-              ref="popover-set"
-              v-model="popoverSetVisible"
-            >
+            <el-popover placement="bottom-end" width="300" trigger="manual" ref="popover-set"
+              v-model="popoverSetVisible">
               <div class="default-set-wrapper">
-                <el-form
-                  ref="setForm"
-                  :model="setForm"
-                  :rules="setFormRules"
-                  :label-width="`${widthList.w100}px`"
-                >
+                <el-form ref="setForm" :model="setForm" :rules="setFormRules" :label-width="`${widthList.w100}px`">
                   <el-form-item label="交易量" prop="volume">
                     <el-input v-model="setForm.volume"></el-input>
                   </el-form-item>
                   <el-form-item label="快速提交">
-                    <el-checkbox
-                      label="是"
-                      v-model="setForm.quickSubmit"
-                      name="quickSubmit"
-                    ></el-checkbox>
+                    <el-checkbox label="是" v-model="setForm.quickSubmit" name="quickSubmit"></el-checkbox>
                   </el-form-item>
                   <el-form-item>
-                    <el-button type="primary" @click="submitForm('setForm')"
-                      >保存默认设置</el-button
-                    >
-                    <el-button type="default" @click="popoverSetVisible = false"
-                      >取消</el-button
-                    >
+                    <el-button type="primary" @click="submitForm('setForm')">保存默认设置</el-button>
+                    <el-button type="default" @click="popoverSetVisible = false">取消</el-button>
                   </el-form-item>
                 </el-form>
               </div>
-              <li
-                slot="reference"
-                class="txt-white chat-set"
-                @click="popoverSetVisible = !popoverSetVisible"
-              >
+              <li slot="reference" class="txt-white chat-set" @click="popoverSetVisible = !popoverSetVisible">
                 <i class="el-icon-setting"></i>
               </li>
             </el-popover>
@@ -252,100 +161,43 @@
               近买 {{ buyFormPrice | moneyFormat(4) }}
             </li>
             <li>
-              <el-button
-                v-if="
-                  (activeName === 'buy' && buyForm.isMarketRoll === false) ||
-                  (activeName === 'sale' && saleForm.isMarketRoll === false)
-                "
-                type="default"
-                size="mini"
-                @click="handleGetPrice"
-                >市价</el-button
-              >
+              <el-button v-if="(activeName === 'buy' && buyForm.isMarketRoll === false) ||
+              (activeName === 'sale' && saleForm.isMarketRoll === false)
+              " type="default" size="mini" @click="handleGetPrice">市价</el-button>
             </li>
           </ul>
           <el-tabs v-model="activeName">
             <el-tab-pane label="买(F1)" name="buy">
-              <el-form
-                :inline="true"
-                label-position="top"
-                ref="buyForm"
-                :model="buyForm"
-                :rules="buyFormRules"
-                label-width="`${widthList.w80}px`"
-                size="mini"
-                class="buy-form"
-              >
+              <el-form :inline="true" label-position="top" ref="buyForm" :model="buyForm" :rules="buyFormRules"
+                label-width="`${widthList.w80}px`" size="mini" class="buy-form">
                 <el-form-item label="券码">
                   <span class="txt-green">{{
-                    buyForm.tscode.replace(/.IB/, "")
-                  }}</span>
+              buyForm.tscode.replace(/.IB/, "")
+            }}</span>
                 </el-form-item>
                 <el-form-item label="价格 | 允许浮动" prop="price">
-                  <el-input-number
-                    v-model="buyForm.price"
-                    step="0.001"
-                    placeholder="请输入价格"
-                    @focus="handleMaxWait('buyForm')"
-                    class="pricew"
-                  ></el-input-number
-                  ><br />
+                  <el-input-number v-model="buyForm.price" step="0.001" placeholder="请输入价格"
+                    @focus="handleMaxWait('buyForm')" class="pricew"></el-input-number><br />
                   <el-form-item prop="worstPrice">
-                    <el-input-number
-                      v-model="buyForm.worstPrice"
-                      step="0.05"
-                      class="mt10 numbw"
-                    ></el-input-number>
+                    <el-input-number v-model="buyForm.worstPrice" step="0.05" class="mt10 numbw"></el-input-number>
                     <span class="txt-green">BP</span>
                   </el-form-item>
                 </el-form-item>
                 <el-form-item label="交易量" prop="volume">
-                  <el-input
-                    class="ipt-volume"
-                    v-model="buyForm.volume"
-                    placeholder="请输入交易量"
-                  ></el-input
-                  ><br />
+                  <el-input class="ipt-volume" v-model="buyForm.volume" placeholder="请输入交易量"></el-input><br />
                   <el-button-group class="mt10" style="display: flex">
-                    <el-button
-                      type="primary"
-                      style="background: white; color: #202020"
-                      @click="funcVolumeAdd('buyForm', 0)"
-                      >0</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('buyForm', 5000)"
-                      >5</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('buyForm', 3000)"
-                      >3</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('buyForm', 10000)"
-                      >10</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('buyForm', 2000)"
-                      >2</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('buyForm', 1000)"
-                      >1</el-button
-                    >
+                    <el-button type="primary" style="background: white; color: #202020"
+                      @click="funcVolumeAdd('buyForm', 0)">0</el-button>
+                    <el-button type="primary" @click="funcVolumeAdd('buyForm', 5000)">5</el-button>
+                    <el-button type="primary" @click="funcVolumeAdd('buyForm', 3000)">3</el-button>
+                    <el-button type="primary" @click="funcVolumeAdd('buyForm', 10000)">10</el-button>
+                    <el-button type="primary" @click="funcVolumeAdd('buyForm', 2000)">2</el-button>
+                    <el-button type="primary" @click="funcVolumeAdd('buyForm', 1000)">1</el-button>
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="交割日期" prop="deliveryTime">
-                  <delivery-canlendar
-                    :w="`${canlendarW}px`"
-                    ref="buyDeliveryCanlendar"
-                    @change="handleBuyDeliveryCanlendar"
-                  ></delivery-canlendar>
+                  <delivery-canlendar :w="`${canlendarW}px`" ref="buyDeliveryCanlendar"
+                    @change="handleBuyDeliveryCanlendar"></delivery-canlendar>
                   <!-- <el-button-group>
                     <el-button
                       icon="el-icon-plus"
@@ -364,125 +216,54 @@
                   <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
                 </el-form-item>
                 <el-form-item label="交易员" prop="tradeuserId">
-                  <el-select
-                    v-model="buyForm.tradeuserId"
-                    placeholder="请选择"
-                    class="slt-user"
-                  >
-                    <el-option
-                      v-for="item in tradeUsersOption"
-                      :key="item.userId"
-                      :label="item.nickName"
-                      :value="item.userId"
-                    >
+                  <el-select v-model="buyForm.tradeuserId" placeholder="请选择" class="slt-user">
+                    <el-option v-for="item in tradeUsersOption" :key="item.userId" :label="item.nickName"
+                      :value="item.userId">
                     </el-option>
                   </el-select>
                   <br />
-                  <el-button
-                    v-if="
-                      setAuth('inquiry:insert') &&
-                      activeTscode.indexOf('.CTD') === -1
-                    "
-                    class="btn-green mt10"
-                    :disabled="loading"
-                    :loading="loading"
-                    @click="submitForm('buyForm')"
-                    >发送</el-button
-                  >
+                  <el-button v-if="setAuth('inquiry:insert') &&
+              activeTscode.indexOf('.CTD') === -1
+              " class="btn-green mt10" :disabled="loading" :loading="loading"
+                    @click="submitForm('buyForm')">发送</el-button>
                 </el-form-item>
                 <el-form-item label="备注" style="width: 100%">
-                  <el-input
-                    type="textarea"
-                    v-model="buyForm.remark"
-                    placeholder="请输入内容"
-                    resize="none"
-                    rows="3"
-                    class="ipt-remark"
-                  ></el-input>
+                  <el-input type="textarea" v-model="buyForm.remark" placeholder="请输入内容" resize="none" rows="3"
+                    class="ipt-remark"></el-input>
                 </el-form-item>
               </el-form>
             </el-tab-pane>
             <el-tab-pane label="卖(F2)" name="sale">
-              <el-form
-                :inline="true"
-                label-position="top"
-                ref="saleForm"
-                :model="saleForm"
-                :rules="saleFormRules"
-                :label-width="`${widthList.w80}px`"
-                size="mini"
-                class="sale-form"
-              >
+              <el-form :inline="true" label-position="top" ref="saleForm" :model="saleForm" :rules="saleFormRules"
+                :label-width="`${widthList.w80}px`" size="mini" class="sale-form">
                 <el-form-item label="券码">
                   <span class="txt-red">{{
-                    saleForm.tscode.replace(/.IB/, "")
-                  }}</span>
+              saleForm.tscode.replace(/.IB/, "")
+            }}</span>
                 </el-form-item>
                 <el-form-item label="价格 | 允许浮动" prop="price">
-                  <el-input-number
-                    v-model="saleForm.price"
-                    step="0.001"
-                    placeholder="请输入价格"
-                    @focus="handleMaxWait('saleForm')"
-                    class="pricew"
-                  ></el-input-number
-                  ><br />
+                  <el-input-number v-model="saleForm.price" step="0.001" placeholder="请输入价格"
+                    @focus="handleMaxWait('saleForm')" class="pricew"></el-input-number><br />
                   <el-form-item prop="worstPrice">
-                    <el-input-number
-                      v-model="saleForm.worstPrice"
-                      step="0.05"
-                      class="mt10 numbw"
-                    ></el-input-number>
+                    <el-input-number v-model="saleForm.worstPrice" step="0.05" class="mt10 numbw"></el-input-number>
                     <span class="txt-red">BP</span>
                   </el-form-item>
                 </el-form-item>
                 <el-form-item label="交易量" prop="volume">
-                  <el-input
-                    class="ipt-volume"
-                    v-model="saleForm.volume"
-                    placeholder="请输入交易量"
-                  ></el-input
-                  ><br />
+                  <el-input class="ipt-volume" v-model="saleForm.volume" placeholder="请输入交易量"></el-input><br />
                   <el-button-group class="mt10" style="display: flex">
-                    <el-button
-                      type="primary"
-                      style="background: white; color: #202020"
-                      @click="funcVolumeAdd('saleForm', 0)"
-                      >0</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('saleForm', 5000)"
-                      >5</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('saleForm', 3000)"
-                      >3</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('saleForm', 10000)"
-                      >10</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('saleForm', 2000)"
-                      >2</el-button
-                    >
-                    <el-button
-                      type="primary"
-                      @click="funcVolumeAdd('saleForm', 1000)"
-                      >1</el-button
-                    >
+                    <el-button type="primary" style="background: white; color: #202020"
+                      @click="funcVolumeAdd('saleForm', 0)">0</el-button>
+                    <el-button type="primary" @click="funcVolumeAdd('saleForm', 5000)">5</el-button>
+                    <el-button type="primary" @click="funcVolumeAdd('saleForm', 3000)">3</el-button>
+                    <el-button type="primary" @click="funcVolumeAdd('saleForm', 10000)">10</el-button>
+                    <el-button type="primary" @click="funcVolumeAdd('saleForm', 2000)">2</el-button>
+                    <el-button type="primary" @click="funcVolumeAdd('saleForm', 1000)">1</el-button>
                   </el-button-group>
                 </el-form-item>
                 <el-form-item label="交割日期" prop="deliveryTime">
-                  <delivery-canlendar
-                    :w="`${canlendarW}px`"
-                    ref="saleDeliveryCanlendar"
-                    @change="handleSaleDeliveryCanlendar"
-                  ></delivery-canlendar>
+                  <delivery-canlendar :w="`${canlendarW}px`" ref="saleDeliveryCanlendar"
+                    @change="handleSaleDeliveryCanlendar"></delivery-canlendar>
                   <!-- <el-button-group>
                     <el-button
                       icon="el-icon-plus"
@@ -501,38 +282,18 @@
                   <span class="txt-red">{{ saleForm.deliveryTimeMsg }}</span>
                 </el-form-item>
                 <el-form-item label="交易员" prop="tradeuserId">
-                  <el-select
-                    v-model="saleForm.tradeuserId"
-                    placeholder="请选择"
-                    class="slt-user"
-                  >
-                    <el-option
-                      v-for="item in tradeUsersOption"
-                      :key="item.userId"
-                      :label="item.nickName"
-                      :value="item.userId"
-                    >
+                  <el-select v-model="saleForm.tradeuserId" placeholder="请选择" class="slt-user">
+                    <el-option v-for="item in tradeUsersOption" :key="item.userId" :label="item.nickName"
+                      :value="item.userId">
                     </el-option>
                   </el-select>
                   <br />
-                  <el-button
-                    v-if="setAuth('inquiry:insert')"
-                    class="btn-red mt10"
-                    :disabled="loading"
-                    :loading="loading"
-                    @click="submitForm('saleForm')"
-                    >发送</el-button
-                  >
+                  <el-button v-if="setAuth('inquiry:insert')" class="btn-red mt10" :disabled="loading"
+                    :loading="loading" @click="submitForm('saleForm')">发送</el-button>
                 </el-form-item>
                 <el-form-item label="备注" style="width: 100%">
-                  <el-input
-                    type="textarea"
-                    v-model="saleForm.remark"
-                    placeholder="请输入内容"
-                    resize="none"
-                    rows="3"
-                    class="ipt-remark"
-                  ></el-input>
+                  <el-input type="textarea" v-model="saleForm.remark" placeholder="请输入内容" resize="none" rows="3"
+                    class="ipt-remark"></el-input>
                 </el-form-item>
               </el-form>
             </el-tab-pane>
@@ -540,40 +301,29 @@
         </div>
       </div>
       <!-- 右侧 -->
-      <div
-        class="right-group"
-        :style="{
-          width: rightWith + 'px',
-        }"
-      >
+      <div class="right-group" :style="{
+              width: rightWith + 'px',
+            }">
         <!-- 关闭和打开右侧面板 -->
-        <div
-          class="open-colse"
-          :class="rightFold"
-          @click="handleRightOpenOrClose"
-        ></div>
+        <div class="open-colse" :class="rightFold" @click="handleRightOpenOrClose"></div>
         <!-- 及期卖出 -->
         <div class="r-out" style="height: 120px">
           <el-scrollbar v-if="businessOutList && businessOutList.length > 0">
             <ul>
-              <li
-                v-for="(item, index) in businessOutList"
-                :key="index"
-                :title="item.volumecomment ? item.volumecomment : item.volume"
-                style="height: 20px; line-height: 20px"
-              >
+              <li v-for="(item, index) in businessOutList" :key="index"
+                :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px">
                 <span :style="`width: ${widthList.w50}px`">{{
-                  item.brokerName
-                }}</span>
+              item.brokerName
+            }}</span>
                 <span style="flex: 1" class="ellipsis">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
                 <span :style="`width: ${widthList.w50}px`">{{
-                  item.price | moneyFormat(4)
-                }}</span>
+              item.price | moneyFormat(4)
+            }}</span>
                 <span :style="`width: ${widthList.w60}px`">{{
-                  item.updatetime
-                }}</span>
+              item.updatetime
+            }}</span>
               </li>
             </ul>
           </el-scrollbar>
@@ -582,80 +332,64 @@
         <div class="r-in" style="height: 120px">
           <el-scrollbar v-if="businessInList && businessInList.length > 0">
             <ul>
-              <li
-                v-for="(item, index) in businessInList"
-                :key="index"
-                :title="item.volumecomment ? item.volumecomment : item.volume"
-                style="height: 20px; line-height: 20px"
-              >
+              <li v-for="(item, index) in businessInList" :key="index"
+                :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px">
                 <span :style="`width: ${widthList.w50}px`">{{
-                  item.brokerName
-                }}</span>
+              item.brokerName
+            }}</span>
                 <span class="ellipsis" style="flex: 1">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
                 <span :style="`width: ${widthList.w50}px`">{{
-                  item.price | moneyFormat(4)
-                }}</span>
+              item.price | moneyFormat(4)
+            }}</span>
                 <span :style="`width: ${widthList.w60}px`">{{
-                  item.updatetime
-                }}</span>
+              item.updatetime
+            }}</span>
               </li>
             </ul>
           </el-scrollbar>
         </div>
         <!-- 远期卖出 -->
         <div class="r-out" style="height: 120px">
-          <el-scrollbar
-            v-if="businessForwardOutList && businessForwardOutList.length > 0"
-          >
+          <el-scrollbar v-if="businessForwardOutList && businessForwardOutList.length > 0">
             <ul>
-              <li
-                v-for="(item, index) in businessForwardOutList"
-                :key="index"
-                :title="item.volumecomment ? item.volumecomment : item.volume"
-                style="height: 20px; line-height: 20px"
-              >
+              <li v-for="(item, index) in businessForwardOutList" :key="index"
+                :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px">
                 <span :style="`width: ${widthList.w50}px`">{{
-                  item.brokerName
-                }}</span>
+              item.brokerName
+            }}</span>
                 <span style="flex: 1" class="ellipsis">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
                 <span :style="`width: ${widthList.w50}px`">{{
-                  item.price | moneyFormat(4)
-                }}</span>
+              item.price | moneyFormat(4)
+            }}</span>
                 <span :style="`width: ${widthList.w60}px`">{{
-                  item.updatetime
-                }}</span>
+              item.updatetime
+            }}</span>
               </li>
             </ul>
           </el-scrollbar>
         </div>
         <!-- 远期买入 -->
         <div class="r-in" style="height: 120px">
-          <el-scrollbar
-            v-if="businessForwardInList && businessForwardInList.length > 0"
-          >
+          <el-scrollbar v-if="businessForwardInList && businessForwardInList.length > 0">
             <ul>
-              <li
-                v-for="(item, index) in businessForwardInList"
-                :key="index"
-                :title="item.volumecomment ? item.volumecomment : item.volume"
-                style="height: 20px; line-height: 20px"
-              >
+              <li v-for="(item, index) in businessForwardInList" :key="index"
+                :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px">
                 <span :style="`width: ${widthList.w50}px`">{{
-                  item.brokerName
-                }}</span>
+              item.brokerName
+            }}</span>
                 <span class="ellipsis" style="flex: 1">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
                 <span :style="`width: ${widthList.w50}px`">{{
-                  item.price | moneyFormat(4)
-                }}</span>
+              item.price | moneyFormat(4)
+            }}</span>
                 <span :style="`width: ${widthList.w60}px`">{{
-                  item.updatetime
-                }}</span>
+              item.updatetime
+            }}</span>
               </li>
             </ul>
           </el-scrollbar>
@@ -671,16 +405,12 @@
                 <span class="colume4">交易时间</span>
                 <!-- <span style="width: 60px">净价</span> -->
               </li>
-              <li
-                v-for="(item, index) in transactionAllList"
-                :key="index"
-                :class="funcSelectColor(item.dealtype)"
-                style="height: 20px; line-height: 20px"
-              >
+              <li v-for="(item, index) in transactionAllList" :key="index" :class="funcSelectColor(item.dealtype)"
+                style="height: 20px; line-height: 20px">
                 <span class="colume1">{{ item.dealtype }}</span>
                 <span class="colume2">{{
-                  item.tradeprice | moneyFormat(4)
-                }}</span>
+              item.tradeprice | moneyFormat(4)
+            }}</span>
                 <span class="colume3">{{ item.brokerName }}</span>
                 <span class="colume4">{{ item.tradetime }}</span>
                 <!-- <span style="width: 60px">{{ item.netprice }}</span> -->
@@ -715,21 +445,17 @@
               >已接收</span
             >
           </template>
-        </el-table-column>
-        <el-table-column property="direction" label="方向" width="150">
-          <template slot-scope="scope">
+</el-table-column>
+<el-table-column property="direction" label="方向" width="150">
+  <template slot-scope="scope">
             <span v-if="scope.row.direction === 'bond_0'">买入</span>
             <span v-if="scope.row.direction === 'bond_1'">卖出</span>
           </template>
-        </el-table-column>
-        <el-table-column
-          property="price"
-          label="价格"
-          width="200"
-        ></el-table-column>
-        <el-table-column property="volume" label="交易量"></el-table-column>
-        <el-table-column fixed="right" label="操作" width="100">
-          <template slot-scope="scope">
+</el-table-column>
+<el-table-column property="price" label="价格" width="200"></el-table-column>
+<el-table-column property="volume" label="交易量"></el-table-column>
+<el-table-column fixed="right" label="操作" width="100">
+  <template slot-scope="scope">
             <el-button
               @click="handleReceiveClick(scope.row)"
               type="text"
@@ -742,9 +468,9 @@
               >接收</el-button
             >
           </template>
-        </el-table-column>
-      </el-table>
-    </el-dialog> -->
+</el-table-column>
+</el-table>
+</el-dialog> -->
 
     <!-- 暂时不用 -->
     <!-- <el-dialog title="消息框" width="80%" :visible.sync="dialogTableVisible">
@@ -758,48 +484,25 @@
       <span>请确认需要提交询价单？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button
-          type="primary"
-          @click="
-            quickSubmit(
-              `${
-                activeName === 'buy'
+        <el-button type="primary" @click="
+              quickSubmit(
+                `${activeName === 'buy'
                   ? 'buyForm'
                   : activeName === 'sale'
-                  ? 'saleForm'
-                  : ''
-              }`
-            )
-          "
-          >确 定</el-button
-        >
+                    ? 'saleForm'
+                    : ''
+                }`
+              )
+              ">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog
-      title="新建询价单"
-      :visible.sync="dialogEnquiryAddVisible"
-      width="40%"
-      append-to-body
-      :destroy-on-close="true"
-      :close-on-click-modal="false"
-    >
-      <enquiry-edit
-        :row="currentDifficultData"
-        @change="handleDialogEnquiryAddVisible"
-      ></enquiry-edit>
+    <el-dialog title="新建询价单" :visible.sync="dialogEnquiryAddVisible" width="40%" append-to-body :destroy-on-close="true"
+      :close-on-click-modal="false">
+      <enquiry-edit :row="currentDifficultData" @change="handleDialogEnquiryAddVisible"></enquiry-edit>
     </el-dialog>
-    <el-dialog
-      title="修改密码"
-      :visible.sync="dialogUpdatePasswordVisible"
-      width="30%"
-      center
-      append-to-body
-      :destroy-on-close="true"
-      :close-on-click-modal="false"
-    >
-      <update-password
-        @change="handleDialogUpdatePasswordVisible"
-      ></update-password>
+    <el-dialog title="修改密码" :visible.sync="dialogUpdatePasswordVisible" width="30%" center append-to-body
+      :destroy-on-close="true" :close-on-click-modal="false">
+      <update-password @change="handleDialogUpdatePasswordVisible"></update-password>
     </el-dialog>
   </div>
 </template>
@@ -807,7 +510,7 @@
 <script>
 import Vue from 'vue'
 import Router from '@/router'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import api from '@/api/kk_bond_pool'
 import apiTrade from '@/api/kk_trade'
 import apiKLine from '@/api/kk_kline'
@@ -829,7 +532,6 @@ import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
 import moment from 'moment'
-let socket
 let lockReconnect = false
 export default {
   mixins: [pageMixin, commMixin],
@@ -1110,14 +812,17 @@ export default {
       tscodeGlobal: 'getTscodeGlobal',
       defaultSet: 'getDefaultSet',
       userInfo: 'getUserInfo'
+    }),
+    ...mapState({
+      socketKLine: (state) => state.socketKLine,
     })
   },
   watch: {
     activeTscode(newVal, oldVal) {
       if (newVal !== oldVal) {
-        if (newVal && socket != null) {
+        if (newVal && this.socketKLine != null) {
           // socket.send(JSON.stringify({ "dataKey": newVal, "dataType": "tscode" }))
-          socket.send(JSON.stringify({ "dataKey": newVal, "dataType": "sub_tscode" }))
+          this.socketKLine.send(JSON.stringify({ "dataKey": newVal, "dataType": "sub_tscode" }))
           this.calcFavoriteIcon()
         }
       }
@@ -1142,8 +847,17 @@ export default {
       this.createSocketEmitter.removeListener('msgContent', this)
       this.createSocketIO.close()
     }
+    this.socketKLine.close()
+    this["SET_SOCKET_MAIN"](null)
+    clearInterval(this.timer)
+    this.timer = null
+    clearInterval(this.socketTimer)
+    this.socketTimer = null
+    clearInterval(this.klineTimer)
+    this.klineTimer = null
   },
   methods: {
+    ...mapMutations(["SET_SOCKET_MAIN", "SET_SOCKET_KLINE"]),
     // 获取所有债券号相关信息
     getAllBondPool() {
       api.getAll({}).then(res => {
@@ -2291,26 +2005,26 @@ export default {
         }
         let socketUrl =
           `${Vue.prototype.$wsUrl}/${localStorage.getItem(configUtil.keys.tokenKey)}`;
-        if (socket != null) {
-          socket.close();
-          socket = null;
+        if (self.socketKLine != null) {
+          self.socketKLine.close();
+          self["SET_SOCKET_KLINE"](null)
         }
         // 开启一个websocket服务
-        socket = new WebSocket(socketUrl);
+        self["SET_SOCKET_KLINE"](new WebSocket(socketUrl));
         console.log('socket链接：' + socketUrl)
         // 打开事件
-        socket.onopen = function () {
+        self.socketKLine.onopen = function () {
           console.log("websocket已打开");
           clearInterval(self.socketTimer)
           self.socketTimer = null
           self.socketHeart()
           if (self.activeTscode) {
             // socket.send(JSON.stringify({ "dataKey": self.activeTscode, "dataType": "tscode" }))
-            socket.send(JSON.stringify({ "dataKey": self.activeTscode, "dataType": "sub_tscode" }))
+            self.socketKLine.send(JSON.stringify({ "dataKey": self.activeTscode, "dataType": "sub_tscode" }))
           }
         }
         // 浏览器端收消息，获得从服务端发送过来的文本消息
-        socket.onmessage = function (msg) {
+        self.socketKLine.onmessage = function (msg) {
           const timestamp = moment().valueOf()
           console.log("收到数据====" + msg.data);
           let msgJson = JSON.parse(msg.data)
@@ -3288,16 +3002,16 @@ export default {
                 self.tryPlay()
                 break;
             }
-            socket.send(JSON.stringify({ "dataType": "ack", "data": { "dataKey": msgJson.dataKey, "dataType": msgJson.dataType } }))
+            self.socketKLine.send(JSON.stringify({ "dataType": "ack", "data": { "dataKey": msgJson.dataKey, "dataType": msgJson.dataType } }))
           }
         }
         // 关闭事件
-        socket.onclose = function () {
+        self.socketKLine.onclose = function () {
           console.log("websocket已关闭");
           self.reconnect()
         }
         // 发生了错误事件
-        socket.onerror = function () {
+        self.socketKLine.onerror = function () {
           console.log("websocket发生了错误");
           // 重连
           self.reconnect()
@@ -3307,8 +3021,8 @@ export default {
     // socket心跳
     socketHeart() {
       this.socketTimer = setInterval(() => {
-        if (socket) {
-          socket.send(JSON.stringify({ "dataKey": 'HELLO', "dataType": 'ping' }))
+        if (self.socketKLine) {
+          self.socketKLine.send(JSON.stringify({ "dataKey": 'HELLO', "dataType": 'ping' }))
         }
       }, 30 * 1000)
     },
@@ -3327,7 +3041,7 @@ export default {
     // 重连
     reconnect() {
       const self = this
-      if (socket.readyState === 1) {
+      if (self.socketKLine && self.socketKLine.readyState === 1) {
         // 如果状态等于1代表websocket连接正常
         return
       }
@@ -3338,8 +3052,8 @@ export default {
       lockReconnect = true
       setTimeout(() => {
         console.log("尝试重连")
-        if (socket) {
-          socket.close()
+        if (self.socketKLine) {
+          self.socketKLine.close()
         }
         Promise.all([
           lockReconnect = false
@@ -3367,7 +3081,7 @@ export default {
           "price": this.chartPrice
         }
       }))
-      socket.send(JSON.stringify({
+      this.socketKLine.send(JSON.stringify({
         "dataKey": this.activeTscode,
         "dataType": dataType,
         "data": {
@@ -3637,9 +3351,9 @@ export default {
     // 接收单据
     handleReceiveClick: debounce(function (row) {
       if (row.status === 'delegate_bond_0') {
-        socket.send(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_0' }))
+        this.socketKLine.send(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_0' }))
       } else if (row.status === 'delegate_bond_1') {
-        socket.send(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_1' }))
+        this.socketKLine.send(JSON.stringify({ "dataKey": `${row.userTradeId}`, "dataType": 'accept_bond_1' }))
       }
       // this.dialogTableVisible = false
     }),
@@ -3763,15 +3477,6 @@ export default {
       }, 300)
     }
   },
-  unmounted() {
-    socket.close()
-    clearInterval(this.timer)
-    this.timer = null
-    clearInterval(this.socketTimer)
-    this.socketTimer = null
-    clearInterval(this.klineTimer)
-    this.klineTimer = null
-  }
 }
 </script>
 
@@ -3823,10 +3528,12 @@ export default {
         justify-content: center;
         text-align: center;
         line-height: 20px;
+
         i {
           font-size: 18px;
         }
       }
+
       .el-dropdown {
         color: white;
       }
@@ -3837,6 +3544,7 @@ export default {
 .l-strong {
   font-size: 16px;
 }
+
 .ipt-volume {
   width: 160px;
 }
@@ -3875,6 +3583,7 @@ export default {
       cursor: pointer;
       z-index: 1000;
     }
+
     .left-tabs {
       overflow: hidden;
       display: flex;
@@ -3930,11 +3639,13 @@ export default {
         }
       }
     }
+
     .tab-0 {
       .el-scrollbar {
         height: calc(100% - 81px);
       }
     }
+
     .tab-2 {
       .el-scrollbar {
         height: calc(100% - 40px);
@@ -3946,9 +3657,11 @@ export default {
     flex: 1;
     display: flex;
     flex-direction: column;
+
     .volume {
       flex: 1;
     }
+
     .chatbox {
       width: 100%;
       height: 200px;
@@ -3960,25 +3673,30 @@ export default {
       padding: 0px;
       background: #202020;
       overflow: hidden;
+
       .best-price-wapper {
         position: absolute;
         overflow: hidden;
         right: 0;
         z-index: 1;
+
         li {
           height: 40px;
           line-height: 40px;
           float: right;
           padding: 0 10px;
         }
+
         li.chat-set:hover {
           cursor: pointer;
           background: #333131;
         }
       }
+
       .pricew {
         width: 140px;
       }
+
       .numbw {
         width: 100px;
       }
@@ -3991,6 +3709,7 @@ export default {
     position: relative;
     border-top: 1px solid #ec0000;
     border-left: 1px solid #ec0000;
+
     .open-colse {
       position: absolute;
       width: 16px;
@@ -4001,18 +3720,22 @@ export default {
       font-size: 16px;
       cursor: pointer;
     }
+
     .r-in,
     .r-out {
       position: relative;
     }
+
     .r-in:after {
       content: "买单";
       color: #00da3c;
     }
+
     .r-out:after {
       content: "卖单";
       color: #ec0000;
     }
+
     .r-in:after,
     .r-out:after {
       position: absolute;
@@ -4025,18 +3748,22 @@ export default {
       transform: rotate(320deg);
       -webkit-transform: rotate(320deg);
     }
+
     .r-in,
     .r-out,
     .r-trans {
       height: 120px;
       border-bottom: 1px solid #ec0000;
+
       .el-scrollbar {
         width: 100%;
         height: 100%;
+
         .el-scrollbar__wrap {
           height: 100%;
           overflow: scroll;
           overflow-x: hidden;
+
           ul li {
             height: 20px;
             line-height: 20px;
@@ -4047,26 +3774,33 @@ export default {
             padding: 0 5px;
             cursor: pointer;
             border-bottom: 1px dashed rgb(51, 51, 51);
+
             span {
               justify-content: flex-start;
               padding: 0 5px;
             }
           }
+
           ul li:hover {
             background: #3f3f3f;
           }
+
           ul li:last-child {
             border-bottom: none;
           }
+
           .colume1 {
             width: 60px;
           }
+
           .colume2 {
             width: 100px;
           }
+
           .colume3 {
             width: 100px;
           }
+
           .colume4 {
             width: 100px;
             text-align: center;
@@ -4074,6 +3808,7 @@ export default {
         }
       }
     }
+
     .r-in {
       .el-scrollbar {
         .el-scrollbar__wrap {
@@ -4083,12 +3818,15 @@ export default {
         }
       }
     }
+
     .r-trans {
       flex: 1;
       transform: scale(1);
+
       .el-scrollbar {
         width: 100%;
       }
+
       ul {
         .li-first {
           font-weight: bold;
@@ -4103,6 +3841,7 @@ export default {
     }
   }
 }
+
 .ellipsis {
   overflow: hidden;
   white-space: nowrap;
@@ -4114,28 +3853,36 @@ export default {
 .txt-red {
   color: #ec0000 !important;
 }
+
 .txt-green {
   color: #00da3c !important;
 }
+
 .txt-yellow {
   color: yellow !important;
 }
+
 .txt-orange {
   color: orange !important;
 }
+
 .txt-white {
   color: white !important;
 }
+
 .txt-bold {
   font-weight: bold;
 }
+
 .default-set-wrapper {
   .el-form-item__label {
     font-size: 12px;
     font-weight: normal;
   }
 }
+
 .chatbox {
+
   // .el-button--mini,
   // .el-button--mini.is-round {
   //   padding: 6px 10px;
@@ -4144,87 +3891,107 @@ export default {
     width: 100%;
     display: flex;
     justify-content: flex-start;
+
     .el-button--primary {
       background-color: #ec0000;
       border-color: #ec0000;
     }
+
     .el-button--primary:hover {
       background-color: rgb(221, 28, 28);
       border-color: rgb(221, 28, 28);
     }
+
     .el-button--primary:last-child {
       border-left-color: rgba(255, 255, 255, 0.5);
     }
+
     .btn-red,
     .btn-active {
       background: #ec0000 !important;
       color: white;
       border: 1px solid rgb(238, 3, 3);
     }
+
     .btn-red:hover {
       background: rgb(250, 64, 64) !important;
       color: white;
     }
+
     .el-form-item__label {
       font-size: 12px;
       font-weight: normal;
       color: #ec0000 !important;
     }
   }
+
   .buy-form {
     width: 100%;
     display: flex;
     justify-content: flex-start;
+
     .el-button--primary {
       background-color: #00da3c;
       border-color: #00da3c;
     }
+
     .el-button--primary:hover {
       background-color: rgb(6, 156, 6);
       border-color: rgb(6, 156, 6);
     }
+
     .el-button--primary:last-child {
       border-left-color: rgba(255, 255, 255, 0.5);
     }
+
     .btn-green,
     .btn-active {
       background: #00da3c !important;
       color: white;
       border: 1px solid #00da3c;
     }
+
     .btn-green:hover {
       background: rgb(8, 145, 8) !important;
       color: white;
       border: 1px solid #00da3c;
     }
+
     .el-form-item__label {
       font-size: 12px;
       font-weight: normal;
       color: #00da3c !important;
     }
   }
+
   .el-tabs__item {
     color: rgb(113, 112, 112);
     font-size: 12px;
     padding: 0 10px;
     font-weight: bold;
   }
+
   #tab-buy.el-tabs__item.is-active {
     color: #00da3c;
   }
+
   #tab-sale.el-tabs__item.is-active {
     color: #ec0000;
   }
+
   .el-tabs__nav-wrap::after {
     background-color: #ec0000;
     height: 1px;
   }
+
   .el-tabs__active-bar {
     background-color: white;
   }
+
   .el-tabs__nav-scroll {
     padding: 0 10px;
   }
+
   .el-tabs__content {
     padding: 0 10px;
   }

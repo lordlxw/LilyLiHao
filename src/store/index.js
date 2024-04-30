@@ -28,7 +28,9 @@ const store = new Vuex.Store({
     // 询价单的一些默认设置默认设置
     defaultSet: {},
     userInfo: {},
-    enquiryInfo: ""
+    enquiryInfo: "",
+    socketMain: null,
+    socketKLine: null
   },
   getters: {
     getMenus(state) {
@@ -211,6 +213,14 @@ const store = new Vuex.Store({
     SET_ENQUIRY_INFO(state, enquiryInfo) {
       state.enquiryInfo = JSON.stringify(enquiryInfo)
     },
+    // 设置socketMain
+    SET_SOCKET_MAIN(state, socket) {
+      state.socketMain = socket
+    },
+    // 设置socketKLine
+    SET_SOCKET_KLINE(state, socket) {
+      state.socketKLine = socket
+    }
   }
 })
 export default store

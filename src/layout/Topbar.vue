@@ -1,24 +1,15 @@
 <template>
   <div class="topbar">
     <div class="navigator">
-      <i
-        class="collapse"
-        :class="isCollapse ? 'el-icon-s-fold' : 'el-icon-s-unfold'"
-        @click="changeFoldState"
-      ></i>
+      <i class="collapse" :class="isCollapse ? 'el-icon-s-fold' : 'el-icon-s-unfold'" @click="changeFoldState"></i>
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <!-- <el-breadcrumb-item :to="{ path: '/main' }">仪表盘</el-breadcrumb-item> -->
-        <el-breadcrumb-item
-          v-for="(item, index) in navigator"
-          :key="item + index"
-          >{{ item }}</el-breadcrumb-item
-        >
+        <el-breadcrumb-item v-for="(item, index) in navigator" :key="item + index">{{ item }}</el-breadcrumb-item>
       </el-breadcrumb>
       <ul class="k-nav">
         <li class="nav-right" v-if="setAuth('kline:view')">
-          <router-link target="_blank" :to="{ path: '/kline' }" class="i-text"
-            ><i class="fa fa-line-chart"></i
-          ></router-link>
+          <router-link target="_blank" :to="{ path: '/kline' }" class="i-text"><i
+              class="fa fa-line-chart"></i></router-link>
         </li>
         <li class="nav-right">
           <el-dropdown @command="handleCommand">
@@ -27,9 +18,7 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="updatePassword"
-                >修改密码</el-dropdown-item
-              >
+              <el-dropdown-item command="updatePassword">修改密码</el-dropdown-item>
               <el-dropdown-item divided command="logout">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -37,18 +26,9 @@
       </ul>
     </div>
     <main-socket></main-socket>
-    <el-dialog
-      title="修改密码"
-      :visible.sync="dialogUpdatePasswordVisible"
-      width="30%"
-      append-to-body
-      center
-      :destroy-on-close="true"
-      :close-on-click-modal="false"
-    >
-      <update-password
-        @change="handleDialogUpdatePasswordVisible"
-      ></update-password>
+    <el-dialog title="修改密码" :visible.sync="dialogUpdatePasswordVisible" width="30%" append-to-body center
+      :destroy-on-close="true" :close-on-click-modal="false">
+      <update-password @change="handleDialogUpdatePasswordVisible"></update-password>
     </el-dialog>
   </div>
 </template>
@@ -83,14 +63,15 @@ export default {
   computed: {
     ...mapState({
       isCollapse: (state) => state.isCollapse,
-      asideLeftWidth: (state) => state.asideLeftWidth
+      asideLeftWidth: (state) => state.asideLeftWidth,
+      socketMain: (state) => state.socketMain,
     }),
     ...mapGetters({
       userInfo: 'getUserInfo'
     })
   },
   methods: {
-    ...mapMutations(["SET_IS_COLLAPSE"]),
+    ...mapMutations(["SET_IS_COLLAPSE", "SET_SOCKET_KLINE"]),
     /* 折叠展开 */
     changeFoldState() {
       this["SET_IS_COLLAPSE"]({ isCollapse: !this.isCollapse, val: this.initFrameW(this.isCollapse ? 200 : 0) });
@@ -153,33 +134,42 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "../assets/css/style.scss";
+
 .topbar {
   background-color: #e9e6e6;
   height: 40px;
+
   .collapse {
     font-size: 20px;
   }
+
   i:hover {
     cursor: pointer;
     color: $hover-color;
   }
+
   .navigator {
     line-height: 40px;
     padding: 0 15px;
+
     .el-breadcrumb {
       height: 40px;
       line-height: 40px;
       float: left;
     }
+
     .k-nav {
       overflow: hidden;
       float: right;
+
       .i-text {
         color: #333333;
+
         i {
           font-size: 18px;
         }
       }
+
       li {
         padding: 0px 5px;
         font-size: 12px;

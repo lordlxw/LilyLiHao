@@ -1,12 +1,6 @@
 <!--登录页面-->
 <template>
-  <transition
-    appear
-    name="fade"
-    @before-enter="handleBeforeEnter"
-    @enter="handleEnter"
-    @after-enter="handleAfterEnter"
-  >
+  <transition appear name="fade" @before-enter="handleBeforeEnter" @enter="handleEnter" @after-enter="handleAfterEnter">
     <div class="login-wrapper">
       <!-- <el-image
         class="logo"
@@ -14,61 +8,33 @@
       ></el-image> -->
       <h3>Lily系统</h3>
 
-      <transition
-        appear
-        @before-enter="handleFormBeforeEnter"
-        @enter="handleFormEnter"
-      >
-        <el-form
-          :model="ruleForm"
-          :rules="rules"
-          ref="ruleForm"
-          class="login-form"
-          size="medium"
-        >
+      <transition appear @before-enter="handleFormBeforeEnter" @enter="handleFormEnter">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="login-form" size="medium">
           <div class="tit">登录</div>
           <el-form-item prop="username">
-            <el-input
-              placeholder="请输入账号"
-              prefix-icon="el-icon-user"
-              v-model="ruleForm.username"
-              @keyup.enter.native="submitForm('ruleForm')"
-              size="medium"
-            >
+            <el-input placeholder="请输入账号" prefix-icon="el-icon-user" v-model="ruleForm.username"
+              @keyup.enter.native="submitForm('ruleForm')" size="medium">
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input
-              placeholder="请输入密码"
-              prefix-icon="el-icon-lock"
-              v-model="ruleForm.password"
-              show-password
-              @keyup.enter.native="submitForm('ruleForm')"
-              size="medium"
-            >
+            <el-input placeholder="请输入密码" prefix-icon="el-icon-lock" v-model="ruleForm.password" show-password
+              @keyup.enter.native="submitForm('ruleForm')" size="medium">
             </el-input>
           </el-form-item>
           <el-form-item>
-            <el-button
-              type="primary"
-              class="btn-login"
-              @click="submitForm('ruleForm')"
-              size="medium"
-              >进入系统</el-button
-            >
+            <el-button type="primary" class="btn-login" @click="submitForm('ruleForm')" size="medium">进入系统</el-button>
           </el-form-item>
         </el-form>
       </transition>
       <div class="icp">
-        <a href="http://beian.miit.gov.cn" target="_blank"
-          >琼ICP备2023001153号-1</a
-        >
+        <a href="http://beian.miit.gov.cn" target="_blank">琼ICP备2023001153号-1</a>
       </div>
     </div>
   </transition>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
 import Velocity from 'velocity-animate'
 import api from '@/api/kk_login'
 import { debounce } from '@/utils/debounce'
@@ -88,7 +54,13 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState({
+      socketMain: (state) => state.socketMain
+    })
+  },
   methods: {
+    ...mapMutations(["SET_SOCKET_MAIN", "SET_SOCKET_KLINE"]),
     submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -161,7 +133,12 @@ export default {
       })
     }
   },
-  mounted() { }
+  mounted() {
+    if (this.socketMain != null) {
+      this.socketMain.close()
+    }
+    this["SET_SOCKET_MAIN"](null)
+  }
 }
 </script>
 
@@ -216,12 +193,15 @@ export default {
     }
   }
 }
+
 .icp {
   text-align: center;
   margin-top: 20px;
+
   a {
     color: white;
   }
+
   a:hover {
     color: rgb(240, 238, 238);
   }
