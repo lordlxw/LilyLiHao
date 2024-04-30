@@ -411,6 +411,14 @@ a:hover {
     color      : #606266;
 }
 
+.el-table .cell {
+    padding-right: 5px;
+    line-height: 16px;
+}
+.el-table--border td:first-child .cell, .el-table--border th:first-child .cell{
+    padding-left:5px;
+}
+
 .el-table .history-row {
     background: rgb(252, 211, 168);
 }
