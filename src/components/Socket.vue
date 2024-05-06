@@ -383,8 +383,16 @@ export default {
                           h("dd", null, `${util.moneyFormat(msgJson.data.price, 4)}`)
                         ]),
                         h("dl", null, [
-                          h("dt", null, "成交量"),
+                          h("dt", null, "成交总量"),
                           h("dd", null, `${msgJson.data.volume}`)
+                        ]),
+                        h("dl", null, [
+                          h("dt", null, "已成交"),
+                          h("dd", null, `${msgJson.data.realVolume}`)
+                        ]),
+                        h("dl", null, [
+                          h("dt", null, "未成交"),
+                          h("dd", null, `${msgJson.data.restVolume}`)
                         ]),
                         h("dl", null, [
                           h("dt", null, "交割日期"),
