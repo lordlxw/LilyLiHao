@@ -7,8 +7,8 @@
         <el-tag type="success" class="mr20">交割（买）：<b>{{ rewardBuyVolume }}</b></el-tag>
         <el-tag type="danger" class="mr20">交割（卖）：<b>{{ rewardSaleVolume }}</b></el-tag>
         <el-tag :type="rewardFloatProfit.toString().indexOf('-') !== -1
-            ? 'danger'
-            : 'success'
+          ? 'danger'
+          : 'success'
           " class="mr20" v-if="setAuth('reward:datatotal')">交割盈亏：<b>{{ rewardFloatProfit }}</b></el-tag>
       </div>
       <el-table v-loading="loading" :data="tableData" tooltip-effect="dark" style="width: 100%" :height="height" border
@@ -17,11 +17,12 @@
         <template v-for="itemHead in tableHead">
           <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
             :formatter="itemHead.formatter
-            ? itemHead.formatter
-            : (row, column, cellValue, index) => {
-              return cellValue;
-            }
-          " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
+          ? itemHead.formatter
+          : (row, column, cellValue, index) => {
+            return cellValue;
+          }
+          " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''"
+            :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false">
           </el-table-column>
         </template>
         <el-table-column></el-table-column>
@@ -38,10 +39,10 @@
                 <template v-for="itemHead in breakTableHead">
                   <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align"
                     :prop="itemHead.prop" :formatter="itemHead.formatter
-            ? itemHead.formatter
-            : (row, column, cellValue, index) => {
-              return cellValue;
-            }
+          ? itemHead.formatter
+          : (row, column, cellValue, index) => {
+            return cellValue;
+          }
           " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
                   </el-table-column>
                 </template>

@@ -20,7 +20,8 @@
           : (row, column, cellValue, index) => {
             return cellValue;
           }
-          " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
+          " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''"
+              :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false">
             </el-table-column>
           </template>
           <el-table-column></el-table-column>

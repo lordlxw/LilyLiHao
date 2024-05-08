@@ -78,7 +78,7 @@ export default {
     ...mapMutations(["SET_IS_COLLAPSE", "SET_SOCKET_KLINE"]),
     /* 折叠展开 */
     changeFoldState() {
-      this["SET_IS_COLLAPSE"]({ isCollapse: !this.isCollapse, val: this.initFrameW(this.isCollapse ? 200 : 0) });
+      this["SET_IS_COLLAPSE"]({ isCollapse: !this.isCollapse, val: this.isCollapse ? 200 : 0 });
     },
     /* 全屏与退出全屏 */
     handleScreenfull() {

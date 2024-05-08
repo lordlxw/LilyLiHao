@@ -54,13 +54,13 @@ export default {
   },
   mounted() {
     if (this.isCollapse) {
-      this["SET_IS_COLLAPSE"]({ isCollapse: this.isCollapse, val: this.initFrameW(0) })
+      this["SET_IS_COLLAPSE"]({ isCollapse: this.isCollapse, val: 0 })
     } else {
-      this["SET_IS_COLLAPSE"]({ isCollapse: this.isCollapse, val: this.initFrameW(200) })
+      this["SET_IS_COLLAPSE"]({ isCollapse: this.isCollapse, val: 200 })
     }
     window.onresize = () => {
       if (this.asideLeftWidth !== '0px') {
-        this["SET_IS_COLLAPSE"]({ isCollapse: this.isCollapse, val: this.initFrameW(200) })
+        this["SET_IS_COLLAPSE"]({ isCollapse: this.isCollapse, val: 200 })
       }
     }
   }

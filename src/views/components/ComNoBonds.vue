@@ -74,6 +74,7 @@
         header-row-style="height:30px;line-height:30px;" header-cell-style="background:#f8f8f8;" highlight-current-row
         @selection-change="handleNoBondsSelectionChange" @sort-change="handleSortChangeNoBonds">
         <!-- :default-sort="{ prop: 'createTime', order: 'descending' }" -->
+        <el-table-column width="30"></el-table-column>
         <el-table-column v-if="setAuth('nobonds:break')" type="selection" align="center" width="40"></el-table-column>
         <template v-for="itemHead in tableHead">
           <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
@@ -92,7 +93,8 @@
         : (row, column, cellValue, index) => {
           return cellValue;
         }
-        " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
+        " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''"
+            :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false">
           </el-table-column>
         </template>
         <el-table-column></el-table-column>

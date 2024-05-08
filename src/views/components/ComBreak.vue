@@ -13,11 +13,12 @@
           <template v-for="itemHead in tableHead">
             <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
               :formatter="itemHead.formatter
-            ? itemHead.formatter
-            : (row, column, cellValue, index) => {
-              return cellValue;
-            }
-          " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
+          ? itemHead.formatter
+          : (row, column, cellValue, index) => {
+            return cellValue;
+          }
+          " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''"
+              :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false">
             </el-table-column>
           </template>
           <el-table-column></el-table-column>
