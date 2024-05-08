@@ -970,6 +970,11 @@ export default {
   mounted() {
     this.dispatchUserBondedColumn()
     this.loadInitDataFinish()
+  },
+  updated() {
+    this.$nextTick(() => {
+      this.$refs.bondsTable.doLayout();
+    })
   }
 }
 </script>
