@@ -140,7 +140,7 @@ export default {
     direction: { label: '方向', prop: 'direction', width: '60', align: 'left', show: true },
     status: { label: '状态', prop: 'status', width: '90', align: 'left', show: true },
     remark: { label: '备注', prop: 'remark', width: '300', align: 'left', show: true },
-    tradeNum: { label: '单据号', prop: 'tradeNum', width: '150', align: 'left', show: true },
+    tradeNum: { label: '单据号', prop: 'tradeNum', width: '160', align: 'left', show: true },
     deliverySpeed: { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },
     createuser: { label: '研究员', prop: 'createuser', width: '160', align: 'left', show: true },
     forward: { label: '是否远期', prop: 'forward', width: '140', align: 'left', show: false },
@@ -148,7 +148,7 @@ export default {
     updateBy: { label: '修改人', prop: 'updateBy', width: '120', align: 'left', show: true },
     updateTime: { label: '修改时间', prop: 'updateTime', width: '150', align: 'left', show: true },
     tradeTime: { label: '成交时间', prop: 'tradeTime', width: '150', align: 'left', show: true },
-    tradeuser: { label: '交易员', prop: 'tradeuser', width: '90', align: 'left', show: true }
+    tradeuser: { label: '交易员', prop: 'tradeuser', width: '120', align: 'left', show: true }
     // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
   },
   // 未平仓，已平表头

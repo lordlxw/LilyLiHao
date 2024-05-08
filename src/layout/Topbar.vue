@@ -8,6 +8,10 @@
       </el-breadcrumb>
       <ul class="k-nav">
         <li class="nav-right" v-if="setAuth('kline:view')">
+          <router-link target="_blank" :to="{ path: '/fourscreen' }" class="i-text"><i
+              class="el-icon-menu"></i></router-link>
+        </li>
+        <li class="nav-right" v-if="setAuth('kline:view')">
           <router-link target="_blank" :to="{ path: '/kline' }" class="i-text"><i
               class="fa fa-line-chart"></i></router-link>
         </li>

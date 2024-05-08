@@ -36,6 +36,18 @@ const router = new Router({
         }
       ]
     },
+    // 四分屏
+    {
+      path: '/',
+      component: () => import('@/views/KKFourScreen/Index.vue'),
+      redirect: '/fourscreen',
+      children: [
+        {
+          path: '/fourscreen',
+          component: () => import('@/views/KKFourScreen/FourScreen.vue')
+        }
+      ]
+    },
     {
       path: '/main',
       component: () => import('@/views/Index.vue'),
