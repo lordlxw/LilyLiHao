@@ -1,196 +1,444 @@
 <template>
   <div>
     <div class="do">
-      <el-popover v-if="setAuth('bonds:break') && bondsIsSelection.length > 0" placement="bottom-start"
-        ref="popover-deliveryback-bonds">
+      <el-popover
+        v-if="setAuth('bonds:break') && bondsIsSelection.length > 0"
+        placement="bottom-start"
+        ref="popover-deliveryback-bonds"
+      >
         <p>
           单据号<span class="color-red">
-            {{ bondsIsSelection[0].tradeNum }} </span>确认要<span class="color-red"> 改违约 </span>？
+            {{ bondsIsSelection[0].tradeNum }} </span
+          >确认要<span class="color-red"> 改违约 </span>？
         </p>
         <el-table border :data="breakTableData">
           <template v-for="itemHead in breakTableHead">
-            <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
-              :formatter="itemHead.formatter
-        ? itemHead.formatter
-        : (row, column, cellValue, index) => {
-          return cellValue;
-        }
-        " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
+            <el-table-column
+              v-if="itemHead.show"
+              :key="itemHead.label"
+              :align="itemHead.align"
+              :prop="itemHead.prop"
+              :formatter="
+                itemHead.formatter
+                  ? itemHead.formatter
+                  : (row, column, cellValue, index) => {
+                      return cellValue;
+                    }
+              "
+              :label="itemHead.label"
+              :width="itemHead.width ? itemHead.width : ''"
+            >
             </el-table-column>
           </template>
-          <el-table-column v-if="doListOption && doListOption.length > 0" label="选择" width="300px">
+          <el-table-column
+            v-if="doListOption && doListOption.length > 0"
+            label="选择"
+            width="300px"
+          >
             <template slot-scope="scope">
-              <el-checkbox-group v-model="scope.row.mySelected" @input="handleDoCheck">
-                <el-checkbox v-for="item in doListOption" :label="item.value" :key="item.value">{{ item.label
-                  }}</el-checkbox>
+              <el-checkbox-group
+                v-model="scope.row.mySelected"
+                @input="handleDoCheck"
+              >
+                <el-checkbox
+                  v-for="item in doListOption"
+                  :label="item.value"
+                  :key="item.value"
+                  >{{ item.label }}</el-checkbox
+                >
               </el-checkbox-group>
             </template>
           </el-table-column>
           <el-table-column label="违约方" width="150px">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.weiyuePerson" v-if="scope.row.mySelected && scope.row.mySelected.length > 0
-        " placeholder="请选择">
-                <el-option v-for="(value, key) in config.breakTypeOptions" :key="key" :label="value"
-                  :value="key"></el-option>
+              <el-select
+                v-model="scope.row.weiyuePerson"
+                v-if="scope.row.mySelected && scope.row.mySelected.length > 0"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="(value, key) in config.breakTypeOptions"
+                  :key="key"
+                  :label="value"
+                  :value="key"
+                ></el-option>
               </el-select>
             </template>
           </el-table-column>
           <el-table-column label="违约量" width="150px">
             <template slot-scope="scope">
-              <el-input size="mini" v-model="scope.row.weiyueAmount" v-if="scope.row.mySelected && scope.row.mySelected.length > 0
-        " width="90"></el-input>
+              <el-input
+                size="mini"
+                v-model="scope.row.weiyueAmount"
+                v-if="scope.row.mySelected && scope.row.mySelected.length > 0"
+                width="90"
+              ></el-input>
             </template>
           </el-table-column>
           <el-table-column label="做市商" width="150px">
             <template slot-scope="scope">
-              <el-input size="mini" v-model="scope.row.marketMakerName" v-if="scope.row.mySelected && scope.row.mySelected.length > 0
-        " width="90"></el-input>
+              <el-input
+                size="mini"
+                v-model="scope.row.marketMakerName"
+                v-if="scope.row.mySelected && scope.row.mySelected.length > 0"
+                width="90"
+              ></el-input>
             </template>
           </el-table-column>
         </el-table>
         <div style="text-align: right" class="mt20">
-          <el-button type="primary" @click="_self.$refs['popover-deliveryback-bonds'].doClose()">取消</el-button>
-          <el-button type="primary" @click="handleDeliveryBackClick(bondsIsSelection[0])">确认</el-button>
+          <el-button
+            type="primary"
+            @click="_self.$refs['popover-deliveryback-bonds'].doClose()"
+            >取消</el-button
+          >
+          <el-button
+            type="primary"
+            @click="handleDeliveryBackClick(bondsIsSelection[0])"
+            >确认</el-button
+          >
         </div>
-        <el-button type="default" slot="reference" class="mr10" size="mini"
-          @click="handleLoadCurrentRow(bondsIsSelection[0])">改违约</el-button>
+        <el-button
+          type="default"
+          slot="reference"
+          class="mr10"
+          size="mini"
+          @click="handleLoadCurrentRow(bondsIsSelection[0])"
+          >改违约</el-button
+        >
       </el-popover>
-      <el-button v-if="setAuth('bonds:allexport')" type="primary" size="mini" @click="handleAllExport">全量导出</el-button>
-      <el-button v-if="setAuth('bonds:addexport')" type="primary" size="mini" class="mr10"
-        @click="handleAddExport">增量导出</el-button>
-      <el-tag :type="totalProfit.toString().indexOf('-') !== -1
-        ? 'danger'
-        : 'success'
-        " class="mr10" v-if="setAuth('reward:datatotal')">已平盈亏：<b>{{ totalProfit }}</b></el-tag>
-      <el-tag type="success" class="mr10">买：<b>{{ buyVolumn }}</b></el-tag>
-      <el-tag type="danger" class="mr10">卖：<b>{{ saleVolumn }}</b></el-tag>
-      <el-button style="float: right" v-if="setAuth('bonds:delivery') &&
-        tableDataFinish.length > 0 &&
-        isShowDeliveryBtn
-        " type="primary" size="mini" @click="handleDeliveryClick">交割</el-button>
+      <el-button
+        v-if="setAuth('bonds:allexport')"
+        type="primary"
+        size="mini"
+        @click="handleAllExport"
+        >全量导出</el-button
+      >
+      <el-button
+        v-if="setAuth('bonds:addexport')"
+        type="primary"
+        size="mini"
+        class="mr10"
+        @click="handleAddExport"
+        >增量导出</el-button
+      >
+      <el-tag
+        :type="
+          totalProfit.toString().indexOf('-') !== -1 ? 'danger' : 'success'
+        "
+        class="mr10"
+        v-if="setAuth('reward:datatotal')"
+        >已平盈亏：<b>{{ totalProfit }}</b></el-tag
+      >
+      <el-tag type="success" class="mr10"
+        >买：<b>{{ buyVolumn }}</b></el-tag
+      >
+      <el-tag type="danger" class="mr10"
+        >卖：<b>{{ saleVolumn }}</b></el-tag
+      >
+      <el-button
+        style="float: right"
+        v-if="
+          setAuth('bonds:delivery') &&
+          tableDataFinish.length > 0 &&
+          isShowDeliveryBtn
+        "
+        type="primary"
+        size="mini"
+        @click="handleDeliveryClick"
+        >交割</el-button
+      >
+      <div style="float: right" v-if="showLoginName">
+        <el-dropdown @command="handleCommand">
+          <span class="el-dropdown-link">
+            {{ userInfo ? userInfo.userName : "" }}
+            <i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="logout">退出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
     </div>
     <div class="table mt10">
-      <el-table ref="bondsTable" v-loading="loading" :data="tableDataFinish" tooltip-effect="dark" style="width: 100%"
-        :height="height" border row-key="rowId" :row-class-name="tableRowFinishClassName"
-        :cell-class-name="tableCellBondsClassName" :cell-style="finishCellStyle" :span-method="objectSpanMethod"
-        header-row-style="height:30px;line-height:30px;" header-cell-style="background:#f8f8f8;" highlight-current-row
-        @selection-change="handleBondsSelectionChange" @sort-change="handleSortChangeBonds">
-        <el-table-column v-if="setAuth('bonds:break')" type="selection" align="center" width="40"></el-table-column>
+      <el-table
+        ref="bondsTable"
+        v-loading="loading"
+        :data="tableDataFinish"
+        tooltip-effect="dark"
+        style="width: 100%"
+        :height="height"
+        border
+        row-key="rowId"
+        :row-class-name="tableRowFinishClassName"
+        :cell-class-name="tableCellBondsClassName"
+        :cell-style="finishCellStyle"
+        :span-method="objectSpanMethod"
+        header-row-style="height:30px;line-height:30px;"
+        header-cell-style="background:#f8f8f8;"
+        highlight-current-row
+        @selection-change="handleBondsSelectionChange"
+        @sort-change="handleSortChangeBonds"
+      >
+        <el-table-column
+          v-if="setAuth('bonds:break')"
+          type="selection"
+          align="center"
+          width="40"
+        ></el-table-column>
         <template v-for="itemHead in tableHeadFinish">
-          <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
-            :sortable="[
-        'createTime',
-        'tscode',
-        'tradeNum',
-        'deliveryTime',
-        'updateTime',
-      ].indexOf(itemHead.prop) !== -1 &&
-        ['研究员'].indexOf(userInfo.roleName) === -1
-        ? 'custom'
-        : false
-        " :formatter="itemHead.formatter
-        ? itemHead.formatter
-        : (row, column, cellValue, index) => {
-          return cellValue;
-        }
-        " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''"
-            :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false">
+          <template
+            v-if="['createTime'].indexOf(itemHead.prop) !== -1 && itemHead.show"
+          >
+            <el-table-column
+              :key="itemHead.label"
+              :align="itemHead.align"
+              :prop="itemHead.prop"
+              :label="
+                ['createTime'].indexOf(itemHead.prop) !== -1 ? '成交日期' : ''
+              "
+              :width="itemHead.width ? parseInt(itemHead.width * (3 / 5)) : ''"
+              :formatter="
+                (row, column, cellValue, index) => {
+                  return funcFormatDateTime(cellValue, 'YYYY-MM-DD');
+                }
+              "
+            >
+            </el-table-column>
+            <el-table-column
+              :key="itemHead.label"
+              :align="itemHead.align"
+              :prop="itemHead.prop"
+              :sortable="
+                ['createTime'].indexOf(itemHead.prop) !== -1 &&
+                ['研究员'].indexOf(userInfo.roleName) === -1
+                  ? 'custom'
+                  : false
+              "
+              :label="
+                ['createTime'].indexOf(itemHead.prop) !== -1 ? '成交时间' : ''
+              "
+              :width="itemHead.width ? parseInt(itemHead.width * (2 / 3)) : ''"
+              :formatter="
+                (row, column, cellValue, index) => {
+                  return funcFormatDateTime(cellValue, 'HH:mm:ss');
+                }
+              "
+            >
+            </el-table-column>
+          </template>
+          <el-table-column
+            v-else-if="itemHead.show"
+            :key="itemHead.label"
+            :align="itemHead.align"
+            :prop="itemHead.prop"
+            :sortable="
+              [
+                'createTime',
+                'tscode',
+                'tradeNum',
+                'deliveryTime',
+                'updateTime',
+              ].indexOf(itemHead.prop) !== -1
+                ? 'custom'
+                : false
+            "
+            :formatter="
+              itemHead.formatter
+                ? itemHead.formatter
+                : (row, column, cellValue, index) => {
+                    return cellValue;
+                  }
+            "
+            :label="itemHead.label"
+            :width="itemHead.width ? itemHead.width : ''"
+            :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false"
+          >
           </el-table-column>
         </template>
         <el-table-column></el-table-column>
         <el-table-column fixed="right" align="center" label="操作" width="150">
           <template slot-scope="scope">
-            <el-button @click="handleBondsEditClick(scope.row)" type="text" size="small" v-if="setAuth('bonds:update') &&
-        scope.row.status === 12 &&
-        scope.row.jiaogeStatus === 0 &&
-        funcIsBreak(scope)
-        " class="ml10">修改</el-button>
-            <el-popover v-if="setAuth('bonds:updateconfirm') &&
-        scope.row.realTradeId !== null &&
-        scope.row.status === 16
-        " placement="bottom-end" :ref="`popover-agreeupdatebonds-${scope.$index}`">
+            <el-button
+              @click="handleBondsEditClick(scope.row)"
+              type="text"
+              size="small"
+              v-if="
+                setAuth('bonds:update') &&
+                scope.row.status === 12 &&
+                scope.row.jiaogeStatus === 0 &&
+                funcIsBreak(scope)
+              "
+              class="ml10"
+              >修改</el-button
+            >
+            <el-popover
+              v-if="
+                setAuth('bonds:updateconfirm') &&
+                scope.row.realTradeId !== null &&
+                scope.row.status === 16
+              "
+              placement="bottom-end"
+              :ref="`popover-agreeupdatebonds-${scope.$index}`"
+            >
               <p>
-                确认要<span class="color-red">同意修改</span>“<span class="color-main">{{ scope.row.tradeNum }}</span>”{{
-        scope.row.tscode }}？
+                确认要<span class="color-red">同意修改</span>“<span
+                  class="color-main"
+                  >{{ scope.row.tradeNum }}</span
+                >”{{ scope.row.tscode }}？
               </p>
-              <el-table border :data="diffTableData" :cell-style="cellStyleUpdate">
+              <el-table
+                border
+                :data="diffTableData"
+                :cell-style="cellStyleUpdate"
+              >
                 <template v-for="itemHead in diffTableHead">
-                  <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align"
-                    :prop="itemHead.prop" :formatter="itemHead.formatter
-        ? itemHead.formatter
-        : (row, column, cellValue, index) => {
-          return cellValue;
-        }
-        " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
+                  <el-table-column
+                    v-if="itemHead.show"
+                    :key="itemHead.label"
+                    :align="itemHead.align"
+                    :prop="itemHead.prop"
+                    :formatter="
+                      itemHead.formatter
+                        ? itemHead.formatter
+                        : (row, column, cellValue, index) => {
+                            return cellValue;
+                          }
+                    "
+                    :label="itemHead.label"
+                    :width="itemHead.width ? itemHead.width : ''"
+                  >
                   </el-table-column>
                 </template>
               </el-table>
               <div style="text-align: center" class="mt20">
-                <el-button type="primary" @click="handleAgreeBondsUpdateClick(scope)">同意</el-button>
-                <el-button type="default" @click="handleRejectBondsUpdateClick(scope)">拒绝</el-button>
+                <el-button
+                  type="primary"
+                  @click="handleAgreeBondsUpdateClick(scope)"
+                  >同意</el-button
+                >
+                <el-button
+                  type="default"
+                  @click="handleRejectBondsUpdateClick(scope)"
+                  >拒绝</el-button
+                >
+              </div>
+              <el-button
+                type="text"
+                slot="reference"
+                class="ml10"
+                @click="handlViewBondsUpdateContent(scope)"
+                >修改审核</el-button
+              >
+            </el-popover>
+            <el-popover
+              v-if="
+                setAuth('bonds:saybreak') &&
+                scope.row.realTradeId !== null &&
+                [1, 6].indexOf(scope.row.jiaogeStatus) === -1 &&
+                funcIsBreak(scope)
+              "
+              placement="bottom-end"
+              :ref="`popover-bondssaybreak-${scope.$index}`"
+            >
+              <p>
+                确认要<span class="color-red">口头违约</span>“<span
+                  class="color-main"
+                  >{{ scope.row.tradeNum }}</span
+                >”{{ scope.row.tscode }}？
+              </p>
+              <div style="text-align: right">
+                <el-button
+                  type="text"
+                  @click="
+                    handlePopoverClose(
+                      scope,
+                      `popover-bondssaybreak-${scope.$index}`
+                    )
+                  "
+                  >取消</el-button
+                >
+                <el-button type="text" @click="handleBondsSayBreakClick(scope)"
+                  >确认</el-button
+                >
               </div>
               <el-button type="text" slot="reference" class="ml10"
-                @click="handlViewBondsUpdateContent(scope)">修改审核</el-button>
+                >口头违约</el-button
+              >
             </el-popover>
-            <el-popover v-if="setAuth('bonds:saybreak') &&
-        scope.row.realTradeId !== null &&
-        [1, 6].indexOf(scope.row.jiaogeStatus) === -1 &&
-        funcIsBreak(scope)
-        " placement="bottom-end" :ref="`popover-bondssaybreak-${scope.$index}`">
+            <el-popover
+              v-if="
+                setAuth('bonds:saybreakok') &&
+                scope.row.realTradeId !== null &&
+                funcIsBreak(scope) &&
+                [6].indexOf(scope.row.jiaogeStatus) !== -1
+              "
+              placement="bottom-end"
+              :ref="`popover-bondssaybreakok-${scope.$index}`"
+            >
               <p>
-                确认要<span class="color-red">口头违约</span>“<span class="color-main">{{ scope.row.tradeNum }}</span>”{{
-        scope.row.tscode }}？
+                确认要<span class="color-red">同意口头违约</span>“<span
+                  class="color-main"
+                  >{{ scope.row.tradeNum }}</span
+                >”{{ scope.row.tscode }}？
               </p>
               <div style="text-align: right">
-                <el-button type="text" @click="
-        handlePopoverClose(
-          scope,
-          `popover-bondssaybreak-${scope.$index}`
-        )
-        ">取消</el-button>
-                <el-button type="text" @click="handleBondsSayBreakClick(scope)">确认</el-button>
+                <el-button
+                  type="text"
+                  @click="
+                    handlePopoverClose(
+                      scope,
+                      `popover-bondssaybreakok-${scope.$index}`
+                    )
+                  "
+                  >取消</el-button
+                >
+                <el-button
+                  type="text"
+                  @click="handleBondsSayBreakOKClick(scope)"
+                  >确认</el-button
+                >
               </div>
-              <el-button type="text" slot="reference" class="ml10">口头违约</el-button>
+              <el-button type="text" slot="reference" class="ml10"
+                >确认口违</el-button
+              >
             </el-popover>
-            <el-popover v-if="setAuth('bonds:saybreakok') &&
-        scope.row.realTradeId !== null &&
-        funcIsBreak(scope) &&
-        [6].indexOf(scope.row.jiaogeStatus) !== -1
-        " placement="bottom-end" :ref="`popover-bondssaybreakok-${scope.$index}`">
+            <el-popover
+              v-if="
+                setAuth('bonds:saybreakrejection') &&
+                scope.row.realTradeId !== null &&
+                funcIsBreak(scope) &&
+                [6].indexOf(scope.row.jiaogeStatus) !== -1
+              "
+              placement="bottom-end"
+              :ref="`popover-bondssaybreakrejection-${scope.$index}`"
+            >
               <p>
-                确认要<span class="color-red">同意口头违约</span>“<span class="color-main">{{ scope.row.tradeNum }}</span>”{{
-        scope.row.tscode }}？
+                确认要<span class="color-red">拒绝口头违约</span>“<span
+                  class="color-main"
+                  >{{ scope.row.tradeNum }}</span
+                >”{{ scope.row.tscode }}？
               </p>
               <div style="text-align: right">
-                <el-button type="text" @click="
-        handlePopoverClose(
-          scope,
-          `popover-bondssaybreakok-${scope.$index}`
-        )
-        ">取消</el-button>
-                <el-button type="text" @click="handleBondsSayBreakOKClick(scope)">确认</el-button>
+                <el-button
+                  type="text"
+                  @click="
+                    handlePopoverClose(
+                      scope,
+                      `popover-bondssaybreakrejection-${scope.$index}`
+                    )
+                  "
+                  >取消</el-button
+                >
+                <el-button
+                  type="text"
+                  @click="handleBondsSayBreakRejectionClick(scope)"
+                  >确认</el-button
+                >
               </div>
-              <el-button type="text" slot="reference" class="ml10">确认口违</el-button>
-            </el-popover>
-            <el-popover v-if="setAuth('bonds:saybreakrejection') &&
-        scope.row.realTradeId !== null &&
-        funcIsBreak(scope) &&
-        [6].indexOf(scope.row.jiaogeStatus) !== -1
-        " placement="bottom-end" :ref="`popover-bondssaybreakrejection-${scope.$index}`">
-              <p>
-                确认要<span class="color-red">拒绝口头违约</span>“<span class="color-main">{{ scope.row.tradeNum }}</span>”{{
-        scope.row.tscode }}？
-              </p>
-              <div style="text-align: right">
-                <el-button type="text" @click="
-        handlePopoverClose(
-          scope,
-          `popover-bondssaybreakrejection-${scope.$index}`
-        )
-        ">取消</el-button>
-                <el-button type="text" @click="handleBondsSayBreakRejectionClick(scope)">确认</el-button>
-              </div>
-              <el-button type="text" slot="reference" class="ml10">拒绝口违</el-button>
+              <el-button type="text" slot="reference" class="ml10"
+                >拒绝口违</el-button
+              >
             </el-popover>
           </template>
         </el-table-column>
@@ -210,22 +458,58 @@
       </el-table>
     </div>
 
-    <el-dialog title="平仓" width="500px;" :visible.sync="dialogBondsCoverFormVisible" append-to-body
-      :destroy-on-close="true" :close-on-click-modal="false">
-      <bonds-cover :row="currentRow" @change="handleBondsCoverDialogVisible"></bonds-cover>
+    <el-dialog
+      title="平仓"
+      width="500px;"
+      :visible.sync="dialogBondsCoverFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <bonds-cover
+        :row="currentRow"
+        @change="handleBondsCoverDialogVisible"
+      ></bonds-cover>
     </el-dialog>
-    <el-dialog title="已平仓修改申请" width="50%" :visible.sync="dialogBondsFormVisible" append-to-body
-      :destroy-on-close="true" :close-on-click-modal="false">
-      <bonds-edit :row="bondsRow" @change="handleBondsDialogVisible"></bonds-edit>
+    <el-dialog
+      title="已平仓修改申请"
+      width="50%"
+      :visible.sync="dialogBondsFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <bonds-edit
+        :row="bondsRow"
+        @change="handleBondsDialogVisible"
+      ></bonds-edit>
     </el-dialog>
-    <el-dialog title="滚单" width="50%" :visible.sync="dialogBondsRollFormVisible" append-to-body :destroy-on-close="true"
-      :close-on-click-modal="false">
-      <bonds-roll :overRow="overRow" :openRow="openRow" @change="handleBondsRollDialogVisible"></bonds-roll>
+    <el-dialog
+      title="滚单"
+      width="50%"
+      :visible.sync="dialogBondsRollFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <bonds-roll
+        :overRow="overRow"
+        :openRow="openRow"
+        @change="handleBondsRollDialogVisible"
+      ></bonds-roll>
     </el-dialog>
-    <el-dialog title="今天（交割确认）" width="80%" :visible.sync="dialogBondsDeliveryFormVisible" append-to-body
-      :destroy-on-close="true" :close-on-click-modal="false">
-      <bonds-delivery :deliveryFinishData="deliveryFinishData"
-        @change="handleBondsDeliveryDialogVisible"></bonds-delivery>
+    <el-dialog
+      title="今天（交割确认）"
+      width="80%"
+      :visible.sync="dialogBondsDeliveryFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <bonds-delivery
+        :deliveryFinishData="deliveryFinishData"
+        @change="handleBondsDeliveryDialogVisible"
+      ></bonds-delivery>
     </el-dialog>
   </div>
 </template>
@@ -233,6 +517,7 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import api from "@/api/kk_bonds"
+import apiLogin from '@/api/kk_login'
 import apiBreak from "@/api/kk_reward"
 import apiAdmin from '@/api/kk_power_admin'
 import apiBondPool from '@/api/kk_bond_pool'
@@ -253,7 +538,7 @@ let currentFinishCode = ''
 let finishCode = ''
 let finishCodeSameCount = 0
 export default {
-  props: ['height'],
+  props: ['height', 'showLoginName'],
   mixins: [commMixin, pageMixin],
   components: {
     BondsCover,
@@ -965,7 +1250,32 @@ export default {
       return moment(
         moment(scope.row.deliveryTime).format('YYYY-MM-DD')
       ).isSameOrAfter(moment(new Date()).format('YYYY-MM-DD'))
-    }
+    },
+    /* 下拉指令 */
+    handleCommand(command) {
+      switch (command) {
+        case "logout":
+          apiLogin.logout().then(response => {
+            if (response && response.code === 200) {
+              Promise.all([
+                this.$store.commit('SET_TOKEN', null),
+                this.$store.commit('SET_USER_INFO', null)
+              ]).then(() => {
+                this.$router.push({ path: '/' })
+              })
+            } else {
+              this.$message({
+                message: '退出失败',
+                type: 'error'
+              })
+            }
+          })
+          break;
+        case "updatePassword":
+          this.dialogUpdatePasswordVisible = true
+          break;
+      }
+    },
   },
   mounted() {
     this.dispatchUserBondedColumn()

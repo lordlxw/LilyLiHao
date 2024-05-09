@@ -1,219 +1,485 @@
 <template>
   <div>
     <div class="do">
-      <el-button v-if="['研究员', '交割员'].indexOf(userInfo.roleName) !== -1" size="mini" @click="handleDefaultExpandAll">{{
-        defaultExpandAll ? "全收" : "全展" }}</el-button>
-      <el-button v-if="setAuth('nobonds:allexport')" type="primary" size="mini"
-        @click="handleNobondsAllExport">全量导出</el-button>
-      <el-popover v-if="setAuth('nobonds:break') && noBondsIsSelection.length > 0" placement="bottom-start"
-        ref="popover-deliveryback">
+      <el-button
+        v-if="['研究员', '交割员'].indexOf(userInfo.roleName) !== -1"
+        size="mini"
+        @click="handleDefaultExpandAll"
+        >{{ defaultExpandAll ? "全收" : "全展" }}</el-button
+      >
+      <el-button
+        v-if="setAuth('nobonds:allexport')"
+        type="primary"
+        size="mini"
+        @click="handleNobondsAllExport"
+        >全量导出</el-button
+      >
+      <el-popover
+        v-if="setAuth('nobonds:break') && noBondsIsSelection.length > 0"
+        placement="bottom-start"
+        ref="popover-deliveryback"
+      >
         <p>
           单据号<span class="color-red">
-            {{ noBondsIsSelection[0].tradeNum }} </span>确认要<span class="color-red"> 改违约 </span>？
+            {{ noBondsIsSelection[0].tradeNum }} </span
+          >确认要<span class="color-red"> 改违约 </span>？
         </p>
         <el-table border :data="breakTableData">
           <template v-for="itemHead in breakTableHead">
-            <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
-              :formatter="itemHead.formatter
-        ? itemHead.formatter
-        : (row, column, cellValue, index) => {
-          return cellValue;
-        }
-        " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
+            <el-table-column
+              v-if="itemHead.show"
+              :key="itemHead.label"
+              :align="itemHead.align"
+              :prop="itemHead.prop"
+              :formatter="
+                itemHead.formatter
+                  ? itemHead.formatter
+                  : (row, column, cellValue, index) => {
+                      return cellValue;
+                    }
+              "
+              :label="itemHead.label"
+              :width="itemHead.width ? itemHead.width : ''"
+            >
             </el-table-column>
           </template>
-          <el-table-column v-if="doListOption && doListOption.length > 0" label="选择" width="300px">
+          <el-table-column
+            v-if="doListOption && doListOption.length > 0"
+            label="选择"
+            width="300px"
+          >
             <template slot-scope="scope">
-              <el-checkbox-group v-model="scope.row.mySelected" @input="handleDoCheck">
-                <el-checkbox v-for="item in doListOption" :label="item.value" :key="item.value">{{ item.label
-                  }}</el-checkbox>
+              <el-checkbox-group
+                v-model="scope.row.mySelected"
+                @input="handleDoCheck"
+              >
+                <el-checkbox
+                  v-for="item in doListOption"
+                  :label="item.value"
+                  :key="item.value"
+                  >{{ item.label }}</el-checkbox
+                >
               </el-checkbox-group>
             </template>
           </el-table-column>
           <el-table-column label="违约方" width="150px">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.weiyuePerson" v-if="scope.row.mySelected && scope.row.mySelected.length > 0
-        " placeholder="请选择">
-                <el-option v-for="(value, key) in config.breakTypeOptions" :key="key" :label="value"
-                  :value="key"></el-option>
+              <el-select
+                v-model="scope.row.weiyuePerson"
+                v-if="scope.row.mySelected && scope.row.mySelected.length > 0"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="(value, key) in config.breakTypeOptions"
+                  :key="key"
+                  :label="value"
+                  :value="key"
+                ></el-option>
               </el-select>
             </template>
           </el-table-column>
           <el-table-column label="违约量" width="150px">
             <template slot-scope="scope">
-              <el-input size="mini" v-model="scope.row.weiyueAmount" v-if="scope.row.mySelected && scope.row.mySelected.length > 0
-        " width="90"></el-input>
+              <el-input
+                size="mini"
+                v-model="scope.row.weiyueAmount"
+                v-if="scope.row.mySelected && scope.row.mySelected.length > 0"
+                width="90"
+              ></el-input>
             </template>
           </el-table-column>
           <el-table-column label="做市商" width="150px">
             <template slot-scope="scope">
-              <el-input size="mini" v-model="scope.row.marketMakerName" v-if="scope.row.mySelected && scope.row.mySelected.length > 0
-        " width="90"></el-input>
+              <el-input
+                size="mini"
+                v-model="scope.row.marketMakerName"
+                v-if="scope.row.mySelected && scope.row.mySelected.length > 0"
+                width="90"
+              ></el-input>
             </template>
           </el-table-column>
         </el-table>
         <div style="text-align: right" class="mt20">
-          <el-button type="primary" @click="_self.$refs['popover-deliveryback'].doClose()">取消</el-button>
-          <el-button type="primary" @click="handleDeliveryBackClick(noBondsIsSelection[0])">确认</el-button>
+          <el-button
+            type="primary"
+            @click="_self.$refs['popover-deliveryback'].doClose()"
+            >取消</el-button
+          >
+          <el-button
+            type="primary"
+            @click="handleDeliveryBackClick(noBondsIsSelection[0])"
+            >确认</el-button
+          >
         </div>
-        <el-button type="default" slot="reference" class="ml10" size="mini"
-          @click="handleLoadCurrentRow(noBondsIsSelection[0])">改违约</el-button>
+        <el-button
+          type="default"
+          slot="reference"
+          class="ml10"
+          size="mini"
+          @click="handleLoadCurrentRow(noBondsIsSelection[0])"
+          >改违约</el-button
+        >
       </el-popover>
-      <el-tag :type="totalFloatProfit.toString().indexOf('-') !== -1
-        ? 'danger'
-        : 'success'
-        " class="ml10" v-if="setAuth('reward:datatotal')">浮动盈亏：<b>{{ totalFloatProfit }}</b></el-tag>
-      <el-tag type="success" class="ml10">买：<b>{{ noBondsBuyVolumn }}</b></el-tag>
-      <el-tag type="danger" class="ml10">卖：<b>{{ noBondsSaleVolumn }}</b></el-tag>
+      <el-tag
+        :type="
+          totalFloatProfit.toString().indexOf('-') !== -1 ? 'danger' : 'success'
+        "
+        class="ml10"
+        v-if="setAuth('reward:datatotal')"
+        >浮动盈亏：<b>{{ totalFloatProfit }}</b></el-tag
+      >
+      <el-tag type="success" class="ml10"
+        >买：<b>{{ noBondsBuyVolumn }}</b></el-tag
+      >
+      <el-tag type="danger" class="ml10"
+        >卖：<b>{{ noBondsSaleVolumn }}</b></el-tag
+      >
     </div>
     <div class="table mt10" ref="noBondsDo">
-      <el-table v-if="isShow" ref="noBondsTable" v-loading="loading" :data="tableData" tooltip-effect="dark"
-        style="width: 100%" :height="height" border row-key="rowId"
-        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }" :row-class-name="tableRowClassName"
-        :cell-class-name="tableCellNoBondsClassName" :cell-style="cellStyle" :default-expand-all="defaultExpandAll"
-        header-row-style="height:30px;line-height:30px;" header-cell-style="background:#f8f8f8;" highlight-current-row
-        @selection-change="handleNoBondsSelectionChange" @sort-change="handleSortChangeNoBonds">
+      <el-table
+        v-if="isShow"
+        ref="noBondsTable"
+        v-loading="loading"
+        :data="tableData"
+        tooltip-effect="dark"
+        style="width: 100%"
+        :height="height"
+        border
+        row-key="rowId"
+        :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        :row-class-name="tableRowClassName"
+        :cell-class-name="tableCellNoBondsClassName"
+        :cell-style="cellStyle"
+        :default-expand-all="defaultExpandAll"
+        header-row-style="height:30px;line-height:30px;"
+        header-cell-style="background:#f8f8f8;"
+        highlight-current-row
+        @selection-change="handleNoBondsSelectionChange"
+        @sort-change="handleSortChangeNoBonds"
+      >
         <!-- :default-sort="{ prop: 'createTime', order: 'descending' }" -->
         <el-table-column width="30"></el-table-column>
-        <el-table-column v-if="setAuth('nobonds:break')" type="selection" align="center" width="40"></el-table-column>
+        <el-table-column
+          v-if="setAuth('nobonds:break')"
+          type="selection"
+          align="center"
+          width="40"
+        ></el-table-column>
         <template v-for="itemHead in tableHead">
-          <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
-            :sortable="[
-        'createTime',
-        'tscode',
-        'tradeNum',
-        'deliveryTime',
-        'updateTime',
-      ].indexOf(itemHead.prop) !== -1 &&
-        ['研究员'].indexOf(userInfo.roleName) === -1
-        ? 'custom'
-        : false
-        " :formatter="itemHead.formatter
-        ? itemHead.formatter
-        : (row, column, cellValue, index) => {
-          return cellValue;
-        }
-        " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''"
-            :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false">
+          <template
+            v-if="['createTime'].indexOf(itemHead.prop) !== -1 && itemHead.show"
+          >
+            <el-table-column
+              :key="itemHead.label"
+              :align="itemHead.align"
+              :prop="itemHead.prop"
+              :label="
+                ['createTime'].indexOf(itemHead.prop) !== -1 ? '成交日期' : ''
+              "
+              :width="itemHead.width ? parseInt(itemHead.width * (3 / 5)) : ''"
+              :formatter="
+                (row, column, cellValue, index) => {
+                  return funcFormatDateTime(cellValue, 'YYYY-MM-DD');
+                }
+              "
+            >
+            </el-table-column>
+            <el-table-column
+              :key="itemHead.label"
+              :align="itemHead.align"
+              :prop="itemHead.prop"
+              :sortable="
+                ['createTime'].indexOf(itemHead.prop) !== -1 &&
+                ['研究员'].indexOf(userInfo.roleName) === -1
+                  ? 'custom'
+                  : false
+              "
+              :label="
+                ['createTime'].indexOf(itemHead.prop) !== -1 ? '成交时间' : ''
+              "
+              :width="itemHead.width ? parseInt(itemHead.width * (2 / 3)) : ''"
+              :formatter="
+                (row, column, cellValue, index) => {
+                  return funcFormatDateTime(cellValue, 'HH:mm:ss');
+                }
+              "
+            >
+            </el-table-column>
+          </template>
+          <el-table-column
+            v-else-if="itemHead.show"
+            :key="itemHead.label"
+            :align="itemHead.align"
+            :prop="itemHead.prop"
+            :sortable="
+              [
+                'createTime',
+                'tscode',
+                'tradeNum',
+                'deliveryTime',
+                'updateTime',
+              ].indexOf(itemHead.prop) !== -1
+                ? 'custom'
+                : false
+            "
+            :formatter="
+              itemHead.formatter
+                ? itemHead.formatter
+                : (row, column, cellValue, index) => {
+                    return cellValue;
+                  }
+            "
+            :label="itemHead.label"
+            :width="itemHead.width ? itemHead.width : ''"
+            :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false"
+          >
           </el-table-column>
         </template>
         <el-table-column></el-table-column>
         <el-table-column fixed="right" align="center" label="操作" width="150">
           <template slot-scope="scope">
-            <el-button type="text" v-if="setAuth('bonds:cover') && scope.row.realTradeId === null
-        " @click="handleBondsCover(scope.row)">平仓</el-button>
-            <el-button type="text" v-if="setAuth('nobonds:roll') &&
-        scope.row.realTradeId === null &&
-        scope.row.gunnable
-        " @click="handleRoll(scope.row)">滚单</el-button>
-            <el-button @click="handleNoBondsEditClick(scope.row)" type="text" size="small" v-if="setAuth('nobonds:update') &&
-        scope.row.realTradeId !== null &&
-        scope.row.status === 11 &&
-        funcIsBreak(scope)
-        ">修改</el-button>
+            <el-button
+              type="text"
+              v-if="setAuth('bonds:cover') && scope.row.realTradeId === null"
+              @click="handleBondsCover(scope.row)"
+              >平仓</el-button
+            >
+            <el-button
+              type="text"
+              v-if="
+                setAuth('nobonds:roll') &&
+                scope.row.realTradeId === null &&
+                scope.row.gunnable
+              "
+              @click="handleRoll(scope.row)"
+              >滚单</el-button
+            >
+            <el-button
+              @click="handleNoBondsEditClick(scope.row)"
+              type="text"
+              size="small"
+              v-if="
+                setAuth('nobonds:update') &&
+                scope.row.realTradeId !== null &&
+                scope.row.status === 11 &&
+                funcIsBreak(scope)
+              "
+              >修改</el-button
+            >
 
-            <el-popover v-if="setAuth('nobonds:updateconfirm') &&
-        scope.row.realTradeId !== null &&
-        scope.row.status === 17
-        " placement="bottom-end" :ref="`popover-agreeupdatenobonds-${scope.$index}`">
+            <el-popover
+              v-if="
+                setAuth('nobonds:updateconfirm') &&
+                scope.row.realTradeId !== null &&
+                scope.row.status === 17
+              "
+              placement="bottom-end"
+              :ref="`popover-agreeupdatenobonds-${scope.$index}`"
+            >
               <p>
-                确认要<span class="color-red">同意修改</span>“<span class="color-main">{{ scope.row.tradeNum }}</span>”{{
-        scope.row.tscode }}？
+                确认要<span class="color-red">同意修改</span>“<span
+                  class="color-main"
+                  >{{ scope.row.tradeNum }}</span
+                >”{{ scope.row.tscode }}？
               </p>
-              <el-table border :data="diffTableData" :cell-style="cellStyleUpdate">
+              <el-table
+                border
+                :data="diffTableData"
+                :cell-style="cellStyleUpdate"
+              >
                 <template v-for="itemHead in diffTableHead">
-                  <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align"
-                    :prop="itemHead.prop" :formatter="itemHead.formatter
-        ? itemHead.formatter
-        : (row, column, cellValue, index) => {
-          return cellValue;
-        }
-        " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
+                  <el-table-column
+                    v-if="itemHead.show"
+                    :key="itemHead.label"
+                    :align="itemHead.align"
+                    :prop="itemHead.prop"
+                    :formatter="
+                      itemHead.formatter
+                        ? itemHead.formatter
+                        : (row, column, cellValue, index) => {
+                            return cellValue;
+                          }
+                    "
+                    :label="itemHead.label"
+                    :width="itemHead.width ? itemHead.width : ''"
+                  >
                   </el-table-column>
                 </template>
               </el-table>
               <div style="text-align: center" class="mt20">
-                <el-button type="primary" @click="handleAgreeNoBondsUpdateClick(scope)">同意</el-button>
-                <el-button type="default" @click="handleRejectNoBondsUpdateClick(scope)">拒绝</el-button>
+                <el-button
+                  type="primary"
+                  @click="handleAgreeNoBondsUpdateClick(scope)"
+                  >同意</el-button
+                >
+                <el-button
+                  type="default"
+                  @click="handleRejectNoBondsUpdateClick(scope)"
+                  >拒绝</el-button
+                >
+              </div>
+              <el-button
+                type="text"
+                slot="reference"
+                class="ml10"
+                @click="handlViewNobondsUpdateContent(scope)"
+                >修改审核</el-button
+              >
+            </el-popover>
+            <el-popover
+              v-if="
+                setAuth('nobonds:saybreak') &&
+                scope.row.realTradeId !== null &&
+                [1, 6].indexOf(scope.row.jiaogeStatus) === -1 &&
+                funcIsBreak(scope)
+              "
+              placement="bottom-end"
+              :ref="`popover-nobondssaybreak-${scope.$index}`"
+            >
+              <p>
+                确认要<span class="color-red">口头违约</span>“<span
+                  class="color-main"
+                  >{{ scope.row.tradeNum }}</span
+                >”{{ scope.row.tscode }}？
+              </p>
+              <div style="text-align: right">
+                <el-button
+                  type="text"
+                  @click="
+                    handlePopoverClose(
+                      scope,
+                      `popover-nobondssaybreak-${scope.$index}`
+                    )
+                  "
+                  >取消</el-button
+                >
+                <el-button
+                  type="text"
+                  @click="handleNoBondsSayBreakClick(scope)"
+                  >确认</el-button
+                >
               </div>
               <el-button type="text" slot="reference" class="ml10"
-                @click="handlViewNobondsUpdateContent(scope)">修改审核</el-button>
+                >口头违约</el-button
+              >
             </el-popover>
-            <el-popover v-if="setAuth('nobonds:saybreak') &&
-        scope.row.realTradeId !== null &&
-        [1, 6].indexOf(scope.row.jiaogeStatus) === -1 &&
-        funcIsBreak(scope)
-        " placement="bottom-end" :ref="`popover-nobondssaybreak-${scope.$index}`">
+            <el-popover
+              v-if="
+                setAuth('nobonds:saybreakok') &&
+                scope.row.realTradeId !== null &&
+                [6].indexOf(scope.row.jiaogeStatus) !== -1 &&
+                funcIsBreak(scope)
+              "
+              placement="bottom-end"
+              :ref="`popover-nobondssaybreakok-${scope.$index}`"
+            >
               <p>
-                确认要<span class="color-red">口头违约</span>“<span class="color-main">{{ scope.row.tradeNum }}</span>”{{
-        scope.row.tscode }}？
+                确认要<span class="color-red">同意口头违约</span>“<span
+                  class="color-main"
+                  >{{ scope.row.tradeNum }}</span
+                >”{{ scope.row.tscode }}？
               </p>
               <div style="text-align: right">
-                <el-button type="text" @click="
-        handlePopoverClose(
-          scope,
-          `popover-nobondssaybreak-${scope.$index}`
-        )
-        ">取消</el-button>
-                <el-button type="text" @click="handleNoBondsSayBreakClick(scope)">确认</el-button>
+                <el-button
+                  type="text"
+                  @click="
+                    handlePopoverClose(
+                      scope,
+                      `popover-nobondssaybreakok-${scope.$index}`
+                    )
+                  "
+                  >取消</el-button
+                >
+                <el-button
+                  type="text"
+                  @click="handleNoBondsSayBreakOKClick(scope)"
+                  >确认</el-button
+                >
               </div>
-              <el-button type="text" slot="reference" class="ml10">口头违约</el-button>
+              <el-button type="text" slot="reference" class="ml10"
+                >确认口违</el-button
+              >
             </el-popover>
-            <el-popover v-if="setAuth('nobonds:saybreakok') &&
-        scope.row.realTradeId !== null &&
-        [6].indexOf(scope.row.jiaogeStatus) !== -1 &&
-        funcIsBreak(scope)
-        " placement="bottom-end" :ref="`popover-nobondssaybreakok-${scope.$index}`">
+            <el-popover
+              v-if="
+                setAuth('nobonds:saybreakrejection') &&
+                scope.row.realTradeId !== null &&
+                [6].indexOf(scope.row.jiaogeStatus) !== -1 &&
+                funcIsBreak(scope)
+              "
+              placement="bottom-end"
+              :ref="`popover-nobondssaybreakrejection-${scope.$index}`"
+            >
               <p>
-                确认要<span class="color-red">同意口头违约</span>“<span class="color-main">{{ scope.row.tradeNum }}</span>”{{
-        scope.row.tscode }}？
+                确认要<span class="color-red">拒绝口头违约</span>“<span
+                  class="color-main"
+                  >{{ scope.row.tradeNum }}</span
+                >”{{ scope.row.tscode }}？
               </p>
               <div style="text-align: right">
-                <el-button type="text" @click="
-        handlePopoverClose(
-          scope,
-          `popover-nobondssaybreakok-${scope.$index}`
-        )
-        ">取消</el-button>
-                <el-button type="text" @click="handleNoBondsSayBreakOKClick(scope)">确认</el-button>
+                <el-button
+                  type="text"
+                  @click="
+                    handlePopoverClose(
+                      scope,
+                      `popover-nobondssaybreakrejection-${scope.$index}`
+                    )
+                  "
+                  >取消</el-button
+                >
+                <el-button
+                  type="text"
+                  @click="handleNoBondsSayBreakRejectionClick(scope)"
+                  >确认</el-button
+                >
               </div>
-              <el-button type="text" slot="reference" class="ml10">确认口违</el-button>
-            </el-popover>
-            <el-popover v-if="setAuth('nobonds:saybreakrejection') &&
-        scope.row.realTradeId !== null &&
-        [6].indexOf(scope.row.jiaogeStatus) !== -1 &&
-        funcIsBreak(scope)
-        " placement="bottom-end" :ref="`popover-nobondssaybreakrejection-${scope.$index}`">
-              <p>
-                确认要<span class="color-red">拒绝口头违约</span>“<span class="color-main">{{ scope.row.tradeNum }}</span>”{{
-        scope.row.tscode }}？
-              </p>
-              <div style="text-align: right">
-                <el-button type="text" @click="
-        handlePopoverClose(
-          scope,
-          `popover-nobondssaybreakrejection-${scope.$index}`
-        )
-        ">取消</el-button>
-                <el-button type="text" @click="handleNoBondsSayBreakRejectionClick(scope)">确认</el-button>
-              </div>
-              <el-button type="text" slot="reference" class="ml10">拒绝口违</el-button>
+              <el-button type="text" slot="reference" class="ml10"
+                >拒绝口违</el-button
+              >
             </el-popover>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <el-dialog title="平仓" width="500px;" :visible.sync="dialogBondsCoverFormVisible" append-to-body
-      :destroy-on-close="true" :close-on-click-modal="false">
-      <bonds-cover :row="currentRow" @change="handleBondsCoverDialogVisible"></bonds-cover>
+    <el-dialog
+      title="平仓"
+      width="500px;"
+      :visible.sync="dialogBondsCoverFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <bonds-cover
+        :row="currentRow"
+        @change="handleBondsCoverDialogVisible"
+      ></bonds-cover>
     </el-dialog>
-    <el-dialog title="未平仓修改申请" width="500px;" :visible.sync="dialogNoBondsFormVisible" append-to-body
-      :destroy-on-close="true" :close-on-click-modal="false">
-      <no-bonds-edit :row="nobondsRow" @change="handleNoBondsDialogVisible"></no-bonds-edit>
+    <el-dialog
+      title="未平仓修改申请"
+      width="500px;"
+      :visible.sync="dialogNoBondsFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <no-bonds-edit
+        :row="nobondsRow"
+        @change="handleNoBondsDialogVisible"
+      ></no-bonds-edit>
     </el-dialog>
-    <el-dialog title="滚单" width="50%" :visible.sync="dialogBondsRollFormVisible" append-to-body :destroy-on-close="true"
-      :close-on-click-modal="false">
-      <bonds-roll :overRow="overRow" :openRow="openRow" @change="handleBondsRollDialogVisible"></bonds-roll>
+    <el-dialog
+      title="滚单"
+      width="50%"
+      :visible.sync="dialogBondsRollFormVisible"
+      append-to-body
+      :destroy-on-close="true"
+      :close-on-click-modal="false"
+    >
+      <bonds-roll
+        :overRow="overRow"
+        :openRow="openRow"
+        @change="handleBondsRollDialogVisible"
+      ></bonds-roll>
     </el-dialog>
   </div>
 </template>
@@ -255,7 +521,7 @@ export default {
       tableHead: [],
       tableData: [],
       isShow: true,
-      defaultExpandAll: false,
+      defaultExpandAll: true,
       // 平仓弹框
       dialogBondsCoverFormVisible: false,
       currentRow: {},
@@ -894,7 +1160,7 @@ export default {
   mounted() {
     this.dispatchUserColumn()
     this.loadInitData()
-    this.defaultExpandAll = config.externalRoleName.indexOf(this.userInfo.roleName) !== -1
+    // this.defaultExpandAll = config.externalRoleName.indexOf(this.userInfo.roleName) !== -1
   },
   updated() {
     this.$nextTick(() => {

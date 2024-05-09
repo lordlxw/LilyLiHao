@@ -1,8 +1,5 @@
 <template>
   <div class="mt20" style="padding:0 15px;">
-    <div class="mb20" v-if="userInfo.roleName && ['研究员'].indexOf(userInfo.roleName) !== -1">
-      <account-risk-control></account-risk-control>
-    </div>
     <com-enquiry :height="enquiryH"></com-enquiry>
   </div>
 </template>
@@ -10,13 +7,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import ComEnquiry from '../components/ComEnquiry.vue';
-import AccountRiskControl from '../../components/AccountRiskControl.vue';
 import { commMixin } from '@/utils/commMixin'
 export default {
   mixins: [commMixin],
   components: {
-    ComEnquiry,
-    AccountRiskControl
+    ComEnquiry
   },
   created() {
     if (this.userInfo.roleName && ['研究员'].indexOf(this.userInfo.roleName) !== -1) {

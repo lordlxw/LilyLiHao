@@ -114,6 +114,13 @@ export const pageMixin = {
           break
       }
     },
+    // 日期时间格式
+    funcFormatDateTime(value, format) {
+      if (!value) {
+        return ''
+      }
+      return moment(value).format(format)
+    },
     typeIndex(index) {
       return (this.pageNum - 1) * this.pageSize + index + 1
     },

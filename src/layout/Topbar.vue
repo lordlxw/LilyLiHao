@@ -7,7 +7,7 @@
         <el-breadcrumb-item v-for="(item, index) in navigator" :key="item + index">{{ item }}</el-breadcrumb-item>
       </el-breadcrumb>
       <ul class="k-nav">
-        <li class="nav-right" v-if="setAuth('kline:view')">
+        <li class="nav-right">
           <router-link target="_blank" :to="{ path: '/fourscreen' }" class="i-text"><i
               class="el-icon-menu"></i></router-link>
         </li>

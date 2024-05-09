@@ -169,7 +169,9 @@ export default {
         // 用户名称
         userName: params.userName,
         // 交易ID
-        userTradeId: params.userTradeId
+        userTradeId: params.userTradeId,
+        orderBy: params.orderBy,
+        isAsc: params.isAsc
         // 当前页
         // pageNum: params.pageNum,
         // 显示条数

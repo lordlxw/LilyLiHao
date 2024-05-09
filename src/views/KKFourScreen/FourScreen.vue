@@ -1,25 +1,64 @@
 <template>
-  <div :style="{ height: parseInt(Math.floor(innerHeight)) + 'px', overflow: 'hidden' }">
+  <div
+    :style="{
+      height: parseInt(Math.floor(innerHeight)) + 'px',
+      overflow: 'hidden',
+    }"
+  >
     <el-row :gutter="0">
-      <el-col :span="12" :style="{ height: fourScreenHeight + 'px', padding: '0 5px 5px 0', boxSizing: 'border-box' }">
+      <el-col
+        :span="12"
+        :style="{
+          height: fourScreenHeight + 'px',
+          padding: '0 5px 5px 0',
+          boxSizing: 'border-box',
+        }"
+      >
         <div class="grid-content bg-purple">
-          <com-enquiry :height="fourScreenHeight - 70"></com-enquiry>
+          <com-enquiry :height="fourScreenHeight - 155"></com-enquiry>
         </div>
       </el-col>
-      <el-col :span="12" :style="{ height: fourScreenHeight + 'px', padding: '0 0 5px 5px', boxSizing: 'border-box' }">
+      <el-col
+        :span="12"
+        :style="{
+          height: fourScreenHeight + 'px',
+          padding: '0 0 5px 5px',
+          boxSizing: 'border-box',
+        }"
+      >
         <div class="grid-content bg-purple">
-          <com-bonds :height="fourScreenHeight - 70"></com-bonds>
+          <com-bonds
+            :height="fourScreenHeight - 60"
+            :showLoginName="true"
+          ></com-bonds>
         </div>
       </el-col>
-      <el-col :span="12" :style="{ height: fourScreenHeight + 'px', padding: '5px 5px 0 0', boxSizing: 'border-box' }">
+      <el-col
+        :span="12"
+        :style="{
+          height: fourScreenHeight + 'px',
+          padding: '5px 5px 0 0',
+          boxSizing: 'border-box',
+        }"
+      >
         <div class="grid-content bg-purple">
-          <com-no-bonds :height="fourScreenHeight - 70"></com-no-bonds>
+          <com-no-bonds :height="fourScreenHeight - 60"></com-no-bonds>
         </div>
       </el-col>
-      <el-col :span="12" :style="{ height: fourScreenHeight + 'px', padding: '5px 0 0 5px', boxSizing: 'border-box' }">
+      <el-col
+        :span="12"
+        :style="{
+          height: fourScreenHeight + 'px',
+          padding: '5px 0 0 5px',
+          boxSizing: 'border-box',
+        }"
+      >
         <div class="grid-content bg-purple">
           <com-reward :height="fourScreenHeight / 2 - 35"></com-reward>
-          <com-break :height="fourScreenHeight / 2 - 45" class="mt10"></com-break>
+          <com-break
+            :height="fourScreenHeight / 2 - 30"
+            class="mt10"
+          ></com-break>
         </div>
       </el-col>
     </el-row>
@@ -53,7 +92,7 @@ export default {
   computed: {
     fourScreenHeight() {
       return parseInt(Math.floor(this.innerHeight / 2))
-    },
+    }
   },
   mounted() {
     this.innerHeight = window.innerHeight;
