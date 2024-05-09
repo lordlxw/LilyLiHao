@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import api from "@/api/kk_trade";
 export default {
   data() {
@@ -36,7 +36,15 @@ export default {
   computed: {
     ...mapGetters({
       userInfo: 'getUserInfo'
+    }),
+    ...mapState({
+      enquiryInfo: (state) => state.enquiryInfo
     })
+  },
+  watch: {
+    enquiryInfo() {
+      this.initRiskControlData()
+    }
   },
   methods: {
     initRiskControlData() {
@@ -49,9 +57,6 @@ export default {
   },
   mounted() {
     this.initRiskControlData()
-    this.timer = setInterval(() => {
-      this.initRiskControlData()
-    }, 3000)
   }
 }
 </script>

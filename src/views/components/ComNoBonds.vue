@@ -898,7 +898,9 @@ export default {
   },
   updated() {
     this.$nextTick(() => {
-      this.$refs.noBondsTable.doLayout();
+      if (this.$refs.noBondsTable) {
+        this.$refs.noBondsTable.doLayout();
+      }
     })
   }
 }
