@@ -80,6 +80,7 @@ export default {
                     this.$store.commit('SET_USER_INFO', {
                       permissions: response.permissions,
                       userName: response.user.userName,
+                      userId: response.user.userId,
                       roleName: response.user.roles[0].roleName,
                       menutree: response.menutree
                     })

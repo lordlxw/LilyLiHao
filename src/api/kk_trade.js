@@ -295,5 +295,15 @@ export default {
         userTradeId: params.userTradeId
       }
     })
+  },
+  // 账号风控接口
+  accountRiskControl(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/tradeamountlimit/userlatestriskinfo`,
+      method: 'post',
+      data: {
+        userId: params.userId
+      }
+    })
   }
 }

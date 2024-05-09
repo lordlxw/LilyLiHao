@@ -2045,7 +2045,13 @@ export default {
                 self.businessForwardInList = msgJson.data
                 break
               case 'trade':
-                self.transactionAllList.unshift(msgJson.data)
+                if (['REF'].indexOf(msgJson.data.dealtype) !== -1) {
+                  self.transactionAllList = []
+                  self.initRightTransactionList()
+                } else {
+                  self.transactionAllList.unshift(msgJson.data)
+                }
+
                 break
               case 'error':
                 if (msgJson.data.errorCode === '0001') {
