@@ -42,7 +42,8 @@
           <template v-for="itemHead in tableHead">
             <template
               v-if="
-                ['createTime'].indexOf(itemHead.prop) !== -1 && itemHead.show
+                ['createTime', 'tradeTime'].indexOf(itemHead.prop) !== -1 &&
+                itemHead.show
               "
             >
               <el-table-column
