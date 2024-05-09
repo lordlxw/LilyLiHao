@@ -15,7 +15,13 @@
         }"
       >
         <div class="grid-content bg-purple">
-          <com-enquiry :height="fourScreenHeight - 155"></com-enquiry>
+          <com-enquiry
+            v-if="
+              userInfo.roleName && ['研究员'].indexOf(userInfo.roleName) !== -1
+            "
+            :height="fourScreenHeight - 155"
+          ></com-enquiry>
+          <com-enquiry v-else :height="fourScreenHeight - 65"></com-enquiry>
         </div>
       </el-col>
       <el-col
@@ -67,6 +73,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import ComEnquiry from '../components/ComEnquiry.vue';
 import ComNoBonds from '../components/ComNoBonds.vue';
 import ComBonds from '../components/ComBonds.vue';
@@ -92,7 +99,10 @@ export default {
   computed: {
     fourScreenHeight() {
       return parseInt(Math.floor(this.innerHeight / 2))
-    }
+    },
+    ...mapGetters({
+      userInfo: "getUserInfo"
+    }),
   },
   mounted() {
     this.innerHeight = window.innerHeight;
