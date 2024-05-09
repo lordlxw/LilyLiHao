@@ -136,6 +136,17 @@
       <el-tag type="danger" class="mr10"
         >卖：<b>{{ saleVolumn }}</b></el-tag
       >
+      <div style="float: right; margin-left: 20px; line-height:30px;" v-if="showLoginName">
+        <el-dropdown @command="handleCommand">
+          <span class="el-dropdown-link">
+            {{ userInfo ? userInfo.userName : "" }}
+            <i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="logout">退出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
       <el-button
         style="float: right"
         v-if="
@@ -148,17 +159,6 @@
         @click="handleDeliveryClick"
         >交割</el-button
       >
-      <div style="float: right" v-if="showLoginName">
-        <el-dropdown @command="handleCommand">
-          <span class="el-dropdown-link">
-            {{ userInfo ? userInfo.userName : "" }}
-            <i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="logout">退出</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </div>
     </div>
     <div class="table mt10">
       <el-table
