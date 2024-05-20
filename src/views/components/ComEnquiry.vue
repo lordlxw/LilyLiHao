@@ -1440,7 +1440,7 @@ export default {
       }
     },
     cellStyle(row, column, rowIndex, columnIndex) {
-      if ([3, 5].indexOf(row.row.status) !== -1) {
+      if ([2, 3, 5, 22].indexOf(row.row.status) !== -1) {
         return 'color:gray;font-weight:normal;'
       }
       if (row.column.label === '方向') {
