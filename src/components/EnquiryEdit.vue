@@ -31,14 +31,14 @@
       <el-form-item label="价格" prop="price">
         <el-input
           v-model="enquiryForm.price"
-          step="0.001"
+          :step="0.001"
           placeholder="请输入价格"
         ></el-input>
       </el-form-item>
       <el-form-item label="允许浮动" prop="worstPrice">
         <el-input-number
           v-model="enquiryForm.worstPrice"
-          step="0.05"
+          :step="0.05"
         ></el-input-number>
         BP
       </el-form-item>

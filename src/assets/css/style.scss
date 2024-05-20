@@ -4,453 +4,454 @@ $hover-color: #2cad98;
 $hover-color2: #5270bd;
 
 html {
-    overflow: hidden;
-    -webkit-text-size-adjust: none;
-    font-weight: bold;
+  overflow: hidden;
+  -webkit-text-size-adjust: none;
+  font-weight: bold;
 }
 
 ul,
 li {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 * {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 body {
-    background-color: white;
-    margin: 0;
+  background-color: white;
+  margin: 0;
 
-    .el-notification {
-        width: 360px;
+  .el-notification {
+    width: 360px;
+  }
+
+  .notify {
+    dl {
+      margin-block-start: 0;
+      margin-block-end: 0;
+      display: flex;
+      font-size: 12px;
     }
 
-    .notify {
-        dl {
-            margin-block-start: 0;
-            margin-block-end: 0;
-            display: flex;
-            font-size: 12px;
-        }
-
-        dt {
-            width: 85px;
-            text-align: right;
-        }
-
-        dd {
-            flex: 1;
-            color: teal;
-            font-weight: bold;
-            padding: 0;
-            padding-left: 10px;
-            margin: 0;
-            text-align: left;
-        }
+    dt {
+      width: 85px;
+      text-align: right;
     }
 
-    .notify-dd-red {
-        dd {
-            color: #f56c6c;
-        }
+    dd {
+      flex: 1;
+      color: teal;
+      font-weight: bold;
+      padding: 0;
+      padding-left: 10px;
+      margin: 0;
+      text-align: left;
+    }
+  }
+
+  .notify-dd-red {
+    dd {
+      color: #f56c6c;
+    }
+  }
+
+  .notify-red .el-notification__title {
+    // dd {
+    //     flex        : 1;
+    //     color       : #ec0000;
+    //     font-weight : bold;
+    //     padding     : 0;
+    //     padding-left: 10px;
+    //     margin      : 0;
+    //     text-align  : left;
+    // }
+    color: #da04fb;
+  }
+
+  .notify-yellow .el-notification__title {
+    color: #e78745;
+  }
+
+  .el-header,
+  .el-main {
+    padding: 0;
+  }
+
+  .el-header {
+    width: 100%;
+    position: fixed;
+    z-index: 200;
+  }
+
+  .el-menu {
+    border-right: $main-color;
+  }
+
+  .el-menu-item i,
+  .el-submenu__title i {
+    color: white;
+  }
+
+  .el-scrollbar__wrap {
+    overflow-x: hidden;
+  }
+
+  .el-select-dropdown .el-scrollbar .el-scrollbar__wrap,
+  .el-picker-panel__content.el-scrollbar__wrap {
+    overflow: scroll !important;
+  }
+
+  .el-menu-item.is-active {
+    color: $hover-color !important;
+  }
+
+  .color-main {
+    color: $main-color;
+  }
+
+  .color-gray {
+    color: #909399;
+  }
+
+  .color-red {
+    color: #ec0000;
+  }
+
+  .pointer {
+    cursor: pointer;
+  }
+
+  .rtl .el-drawer__body {
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+  }
+
+  .avatar-uploader .el-upload:hover {
+    border-color: $main-color;
+  }
+
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+  }
+
+  // 上传文件
+  .uploaded-file {
+    width: 100px;
+    height: 100px;
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    display: flex;
+    justify-items: center;
+  }
+
+  .float-left {
+    float: left;
+  }
+
+  .img-box {
+    width: 100px;
+    height: 100px;
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    position: relative;
+
+    .el-icon-circle-close {
+      position: absolute;
+      right: -10px;
+      top: -10px;
+      color: #ec0000;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  }
+
+  .audio-box {
+    width: 300px;
+    height: 100px;
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    justify-content: center;
+
+    .audio {
+      width: 280px;
+      margin: auto;
     }
 
-    .notify-red .el-notification__title {
-        // dd {
-        //     flex        : 1;
-        //     color       : #ec0000;
-        //     font-weight : bold;
-        //     padding     : 0;
-        //     padding-left: 10px;
-        //     margin      : 0;
-        //     text-align  : left;
-        // }
-        color: #da04fb;
+    .el-icon-circle-close {
+      position: absolute;
+      right: -10px;
+      top: -10px;
+      color: #ec0000;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  }
+
+  .video-box {
+    width: 200px;
+    height: 200px;
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 5px;
+
+    .video {
+      width: 100%;
+      height: 100%;
     }
 
-    .notify-yellow .el-notification__title {
-        color: #e78745;
+    .el-icon-circle-close {
+      position: absolute;
+      right: -10px;
+      top: -10px;
+      color: #ec0000;
+      font-size: 20px;
+      cursor: pointer;
     }
+  }
 
-    .el-header,
-    .el-main {
-        padding: 0;
-    }
+  // tabs-pane
+  .is-active {
+    font-weight: bold;
+  }
 
-    .el-header {
-        width: 100%;
-        position: fixed;
-        z-index: 200;
-    }
+  .avatar {
+    width: 100px;
+    height: 100px;
+  }
 
-    .el-menu {
-        border-right: $main-color;
-    }
+  .el-drawer__container ::-webkit-scrollbar {
+    display: none;
+  }
 
-    .el-menu-item i,
-    .el-submenu__title i {
-        color: white;
-    }
+  .slider {
+    position: absolute;
+    right: 60px;
+    top: 15px;
+  }
 
-    .el-scrollbar__wrap {
-        overflow-x: hidden;
-    }
+  .el-select-dropdown__list {
+    padding: 6px;
+  }
 
-    .el-select-dropdown .el-scrollbar .el-scrollbar__wrap,
-    .el-picker-panel__content.el-scrollbar__wrap {
-        overflow: scroll !important;
-    }
-
-    .el-menu-item.is-active {
-        color: $hover-color !important;
-    }
-
-    .color-main {
-        color: $main-color;
-    }
-
-    .color-gray {
-        color: #909399;
-    }
-
-    .color-red {
-        color: #ec0000;
-    }
-
-    .pointer {
-        cursor: pointer;
-    }
-
-    .rtl .el-drawer__body {
-        overflow-y: scroll;
-        overflow-x: hidden;
-    }
-
-    .avatar-uploader .el-upload {
-        border: 1px dashed #d9d9d9;
-        border-radius: 6px;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        width: 100px;
-        height: 100px;
-    }
-
-    .avatar-uploader .el-upload:hover {
-        border-color: $main-color;
-    }
-
-    .avatar-uploader-icon {
-        font-size: 28px;
-        color: #8c939d;
-        width: 100px;
-        height: 100px;
-        line-height: 100px;
-        text-align: center;
-    }
-
-    // 上传文件
-    .uploaded-file {
-        width: 100px;
-        height: 100px;
-        border: 1px dashed #d9d9d9;
-        border-radius: 6px;
-        display: flex;
-        justify-items: center;
-    }
-
-    .float-left {
-        float: left;
-    }
-
-    .img-box {
-        width: 100px;
-        height: 100px;
-        border: 1px dashed #d9d9d9;
-        border-radius: 6px;
-        position: relative;
-
-        .el-icon-circle-close {
-            position: absolute;
-            right: -10px;
-            top: -10px;
-            color: #ec0000;
-            font-size: 20px;
-            cursor: pointer;
-        }
-    }
-
-    .audio-box {
-        width: 300px;
-        height: 100px;
-        border: 1px dashed #d9d9d9;
-        border-radius: 6px;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-items: center;
-        justify-content: center;
-
-        .audio {
-            width: 280px;
-            margin: auto;
-        }
-
-        .el-icon-circle-close {
-            position: absolute;
-            right: -10px;
-            top: -10px;
-            color: #ec0000;
-            font-size: 20px;
-            cursor: pointer;
-        }
-    }
-
-    .video-box {
-        width: 200px;
-        height: 200px;
-        border: 1px dashed #d9d9d9;
-        border-radius: 6px;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-items: center;
-        justify-content: center;
-        box-sizing: border-box;
-        padding: 5px;
-
-        .video {
-            width: 100%;
-            height: 100%;
-        }
-
-        .el-icon-circle-close {
-            position: absolute;
-            right: -10px;
-            top: -10px;
-            color: #ec0000;
-            font-size: 20px;
-            cursor: pointer;
-        }
-    }
-
-    // tabs-pane
-    .is-active {
-        font-weight: bold;
-    }
-
-    .avatar {
-        width: 100px;
-        height: 100px;
-    }
-
-    .el-drawer__container ::-webkit-scrollbar {
-        display: none;
-    }
-
-    .slider {
-        position: absolute;
-        right: 60px;
-        top: 15px;
-    }
-
-    .el-select-dropdown__list {
-        padding: 6px;
-    }
-
-    .el-select-dropdown__item {
-        height: 24px;
-        line-height: 24px;
-    }
+  .el-select-dropdown__item {
+    height: 24px;
+    line-height: 24px;
+  }
 }
 
 a {
-    text-decoration: none;
-    color: $main-color;
+  text-decoration: none;
+  color: $main-color;
 }
 
 a:hover {
-    text-decoration: none;
-    color: $hover-color2;
+  text-decoration: none;
+  color: $hover-color2;
 }
 
 .mt10 {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .mr10 {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .mb10 {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .ml10 {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .mt20 {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .mr20 {
-    margin-right: 20px;
+  margin-right: 20px;
 }
 
 .mb20 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .ml20 {
-    margin-left: 20px;
+  margin-left: 20px;
 }
 
 .mt30 {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 .mr30 {
-    margin-right: 30px;
+  margin-right: 30px;
 }
 
 .mb30 {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .ml30 {
-    margin-left: 30px;
+  margin-left: 30px;
 }
 
 .pd10 {
-    padding: 10px;
+  padding: 10px;
 }
 
 .w100 {
-    width: 100px;
+  width: 100px;
 }
 
 .w150 {
-    width: 150px;
+  width: 150px;
 }
 
 .w200 {
-    width: 200px;
+  width: 200px;
 }
 
 .w300 {
-    width: 300px;
+  width: 300px;
 }
 
 .w500 {
-    width: 500px;
+  width: 500px;
 }
 
 .h100 {
-    height: 100px;
+  height: 100px;
 }
 
 .h150 {
-    height: 150px;
+  height: 150px;
 }
 
 .h200 {
-    height: 200px;
+  height: 200px;
 }
 
 .h300 {
-    height: 300px;
+  height: 300px;
 }
 
 .both-clear {
-    clear: both;
+  clear: both;
 }
 
 .my-detail {
-    img {
-        max-width: 100%;
-    }
+  img {
+    max-width: 100%;
+  }
 }
 
 .word-break {
-    padding-top: 6px;
-    word-break: break-all;
-    line-height: 20px;
+  padding-top: 6px;
+  word-break: break-all;
+  line-height: 20px;
 }
 
 .notigy-agree,
 .notigy-cancel {
-    display: inline-block;
-    line-height: 1;
-    white-space: nowrap;
-    cursor: pointer;
-    background: $main-color;
-    border: 1px solid $main-color;
-    color: white;
-    -webkit-appearance: none;
-    text-align: center;
-    box-sizing: border-box;
-    outline: none;
-    margin: 0;
-    transition: 0.1s;
-    font-weight: 500;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 4px;
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background: $main-color;
+  border: 1px solid $main-color;
+  color: white;
+  -webkit-appearance: none;
+  text-align: center;
+  box-sizing: border-box;
+  outline: none;
+  margin: 0;
+  transition: 0.1s;
+  font-weight: 500;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 4px;
 }
 
 .notigy-cancel {
-    margin-left: 20px;
-    background: white;
-    border: 1px solid #dcdfe6;
-    color: #606266;
+  margin-left: 20px;
+  background: white;
+  border: 1px solid #dcdfe6;
+  color: #606266;
 }
 
 .el-table .cell {
-    padding-right: 5px;
-    line-height: 16px;
+  padding-right: 5px;
+  line-height: 16px;
 }
+
 .el-table--border td:first-child .cell,
 .el-table--border th:first-child .cell {
-    padding-left: 5px;
+  padding-left: 5px;
 }
 
 .el-table .history-row {
-    background: rgb(252, 211, 168);
+  background: rgb(252, 211, 168);
 }
 
 .el-table .warning-row {
-    background: oldlace;
+  background: oldlace;
 }
 
 .el-table .success-row {
-    background: #f4ebf9;
+  background: #f4ebf9;
 }
 
 .el-table .odd-row {
-    background: #f3e2f3;
+  background: #f3e2f3;
 }
 
 .el-table .even-row {
-    background: white;
+  background: white;
 }
 
 .el-table .gd-odd-row {
-    background: #e9dae9;
+  background: #e9dae9;
 }
 
 .el-table .gd-even-row {
-    background: rgb(243, 223, 223);
+  background: rgb(243, 223, 223);
 }
 
 .el-table--small .el-table__cell {
-    padding: 3px 0;
+  padding: 3px 0;
 }
 
 /*
@@ -458,34 +459,73 @@ a:hover {
 */
 .el-table__footer-wrapper tbody td,
 .el-table__header-wrapper tbody td {
-    color: #ec0000;
-    font-weight: bold;
+  color: #ec0000;
+  font-weight: bold;
 }
 
 /**
 表格选中颜色
 */
-.el-table__body tr.current-row > td {
-    background-color: #b3f2e8;
+.el-table__body tr.current-row>td {
+  background-color: #b3f2e8;
 }
 
 .el-form-item .el-form-item__label {
-    font-weight: bold;
-    color: $hover-color;
+  font-weight: bold;
+  color: $hover-color;
 }
 
 .el-table--border,
 .el-table--group {
-    border: 1px solid #666666;
-    border-right: none;
+  border: 1px solid #666666;
+  border-right: none;
 }
 
 .el-table--border td,
 .el-table--border th {
-    border-right: 1px solid #666666;
-    border-bottom: 1px solid #666666;
+  border-right: 1px solid #666666;
+  border-bottom: 1px solid #666666;
 }
+
 .el-table td,
 .el-table th.is-leaf {
-    border-bottom: 1px solid #666666;
+  border-bottom: 1px solid #666666;
+}
+
+/* 自定义滚动条的宽度 */
+.el-table__body-wrapper::-webkit-scrollbar {
+  width: 10px;
+  /* 对于水平滚动条 */
+  height: 10px;
+  /* 对于垂直滚动条 */
+}
+
+/* 自定义滚动条的背景色 */
+.el-table__body-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+  /* 滚动条轨道的背景色 */
+}
+
+/* 自定义滚动条的滑块颜色 */
+.el-table__body-wrapper::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+  /* 滚动条滑块的背景色 */
+}
+
+/* 当鼠标悬停在滚动条上时，自定义滑块的颜色 */
+.el-table__body-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555;
+  /* 滚动条滑块的背景色 */
+}
+
+
+/** 设置表格内设的滚动条宽度，适应动态计算 */
+.el-table__body-wrapper,
+.el-scrollbar__wrap {
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
 }

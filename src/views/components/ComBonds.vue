@@ -174,8 +174,8 @@
         :cell-class-name="tableCellBondsClassName"
         :cell-style="finishCellStyle"
         :span-method="objectSpanMethod"
-        header-row-style="height:30px;line-height:30px;"
-        header-cell-style="background:#f8f8f8;"
+        :header-row-style="{height:'30px',lineHeight:'30px'}"
+        :header-cell-style="{background:'#f8f8f8'}"
         highlight-current-row
         @selection-change="handleBondsSelectionChange"
         @sort-change="handleSortChangeBonds"
@@ -206,7 +206,7 @@
             >
             </el-table-column>
             <el-table-column
-              :key="itemHead.label"
+              :key="itemHead.label + 1"
               :align="itemHead.align"
               :prop="itemHead.prop"
               :sortable="

@@ -29,8 +29,8 @@
           row-key="userTradeId"
           default-expand-all
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-          header-row-style="height:30px;line-height:30px;"
-          header-cell-style="background:#f8f8f8;"
+          :header-row-style="{ height: '30px', lineHeight: '30px' }"
+          :header-cell-style="{ background: '#f8f8f8' }"
           :row-class-name="tableRowClassName"
           :cell-style="cellStyle"
           :span-method="objectSpanMethod"
@@ -40,14 +40,10 @@
           <!-- :key="Math.random()" -->
           <el-table-column width="30"></el-table-column>
           <template v-for="itemHead in tableHead">
-            <template
-              v-if="
-                ['createTime', 'tradeTime'].indexOf(itemHead.prop) !== -1 &&
-                itemHead.show
-              "
-            >
+            <template v-if="itemHead.show">
               <el-table-column
-                :key="itemHead.label"
+                v-if="['createTime'].indexOf(itemHead.prop) !== -1"
+                :key="itemHead.prop"
                 :align="itemHead.align"
                 :prop="itemHead.prop"
                 :label="
@@ -66,7 +62,8 @@
               >
               </el-table-column>
               <el-table-column
-                :key="itemHead.label"
+                v-else-if="['tradeTime'].indexOf(itemHead.prop) !== -1"
+                :key="itemHead.prop + 1"
                 :align="itemHead.align"
                 :prop="itemHead.prop"
                 :sortable="
@@ -89,26 +86,26 @@
                 "
               >
               </el-table-column>
+              <el-table-column
+                v-else
+                :key="itemHead.prop + 2"
+                :align="itemHead.align"
+                :prop="itemHead.prop"
+                :formatter="
+                  itemHead.formatter
+                    ? itemHead.formatter
+                    : (row, column, cellValue, index) => {
+                        return cellValue;
+                      }
+                "
+                :label="itemHead.label"
+                :width="itemHead.width ? itemHead.width : ''"
+                :show-overflow-tooltip="
+                  itemHead.showOverflowTooltip ? true : false
+                "
+              >
+              </el-table-column>
             </template>
-            <el-table-column
-              v-else-if="itemHead.show"
-              :key="itemHead.label"
-              :align="itemHead.align"
-              :prop="itemHead.prop"
-              :formatter="
-                itemHead.formatter
-                  ? itemHead.formatter
-                  : (row, column, cellValue, index) => {
-                      return cellValue;
-                    }
-              "
-              :label="itemHead.label"
-              :width="itemHead.width ? itemHead.width : ''"
-              :show-overflow-tooltip="
-                itemHead.showOverflowTooltip ? true : false
-              "
-            >
-            </el-table-column>
           </template>
           <el-table-column></el-table-column>
           <el-table-column
@@ -134,7 +131,7 @@
                 type="text"
                 v-if="
                   setAuth('inquiry:edit') &&
-                  [0, 1, 4, 10].indexOf(scope.row.status) !== -1
+                    [0, 1, 4, 10].indexOf(scope.row.status) !== -1
                 "
                 @click="handleEditEnqury(scope.row)"
                 >修改</el-button
@@ -158,9 +155,9 @@
                 v-if="
                   ['1', '4', '8', '10'].indexOf(scope.row.status.toString()) !==
                     -1 &&
-                  setAuth('inquiry:deal') &&
-                  scope.row.relativeNum &&
-                  scope.row.relativeNum.indexOf('GD_') === -1
+                    setAuth('inquiry:deal') &&
+                    scope.row.relativeNum &&
+                    scope.row.relativeNum.indexOf('GD_') === -1
                 "
                 >成交</el-button
               >
@@ -200,7 +197,7 @@
                 size="small"
                 v-if="
                   [1, 4, 8].indexOf(scope.row.status) !== -1 &&
-                  setAuth('inquiry:difficult')
+                    setAuth('inquiry:difficult')
                 "
                 class="ml10"
                 >难成</el-button
@@ -209,7 +206,7 @@
                 type="text"
                 v-if="
                   setAuth('inquiry:difficultcanncel') &&
-                  [5, 19].indexOf(scope.row.status) !== -1
+                    [5, 19].indexOf(scope.row.status) !== -1
                 "
                 @click="handleDifficultNewEnqury(scope.row)"
                 >新建</el-button
@@ -284,7 +281,7 @@
                 type="text"
                 v-if="
                   setAuth('inquiry:accept') &&
-                  [1, 4, 7, 8, 9].indexOf(scope.row.status) !== -1
+                    [1, 4, 7, 8, 9].indexOf(scope.row.status) !== -1
                 "
                 @click="copy(scope, true)"
                 :style="
@@ -303,7 +300,7 @@
               <el-popover
                 v-if="
                   ['0', '1', '4'].indexOf(scope.row.status.toString()) !== -1 &&
-                  setAuth('inquiry:cancel')
+                    setAuth('inquiry:cancel')
                 "
                 placement="bottom-end"
                 :ref="`popover-cancel-${scope.$index}`"
@@ -338,7 +335,7 @@
               <el-popover
                 v-if="
                   ['7'].indexOf(scope.row.status.toString()) !== -1 &&
-                  setAuth('inquiry:agreecancel')
+                    setAuth('inquiry:agreecancel')
                 "
                 placement="bottom-end"
                 :ref="`popover-agreecancel-${scope.$index}`"
@@ -373,7 +370,7 @@
               <el-popover
                 v-if="
                   ['7'].indexOf(scope.row.status.toString()) !== -1 &&
-                  setAuth('inquiry:rejectioncancel')
+                    setAuth('inquiry:rejectioncancel')
                 "
                 placement="bottom-end"
                 :ref="`popover-rejectioncancel-${scope.$index}`"
@@ -408,7 +405,7 @@
               <el-popover
                 v-if="
                   ['9'].indexOf(scope.row.status.toString()) !== -1 &&
-                  setAuth('inquiry:agreedeal')
+                    setAuth('inquiry:agreedeal')
                 "
                 placement="bottom-end"
                 :ref="`popover-agreedeal-${scope.$index}`"
@@ -443,7 +440,7 @@
               <el-popover
                 v-if="
                   ['9'].indexOf(scope.row.status.toString()) !== -1 &&
-                  setAuth('inquiry:rejectiondeal')
+                    setAuth('inquiry:rejectiondeal')
                 "
                 placement="bottom-end"
                 :ref="`popover-rejectiondeal-${scope.$index}`"
@@ -602,10 +599,10 @@
                   ['1', '3', '4', '8', '10'].indexOf(
                     scope.row.status.toString()
                   ) !== -1 &&
-                  setAuth('inquiry:rolldeal') &&
-                  scope.row.relativeNum &&
-                  scope.row.relativeNum.indexOf('GD_') !== -1 &&
-                  !scope.row.gundanFinished
+                    setAuth('inquiry:rolldeal') &&
+                    scope.row.relativeNum &&
+                    scope.row.relativeNum.indexOf('GD_') !== -1 &&
+                    !scope.row.gundanFinished
                 "
                 >成交</el-button
               >
@@ -733,32 +730,32 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters } from "vuex";
 import api from "@/api/kk_trade";
-import apiAdmin from '@/api/kk_power_admin'
-import apiBreak from '@/api/kk_break'
-import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
-import RealEnquiryRoll from '@/components/RealEnquiryRoll.vue';
-import EnquiryEdit from '@/components/EnquiryEdit.vue'
-import EnquiryDifficult from '@/components/EnquiryDifficult.vue'
-import AccountRiskControl from '../../components/AccountRiskControl.vue';
-import { pageMixin } from '@/utils/pageMixin'
-import { commMixin } from '@/utils/commMixin'
-import config from '@/utils/config'
-import * as util from '@/utils/util'
-import { debounce } from '@/utils/debounce'
-import moment from 'moment'
-let tableCurrentRelativeNum = ''
-let currentRelativeNum = ''
+import apiAdmin from "@/api/kk_power_admin";
+import apiBreak from "@/api/kk_break";
+import DeliveryCanlendarUpdate from "@/components/DeliveryCanlendarUpdate.vue";
+import RealEnquiryRoll from "@/components/RealEnquiryRoll.vue";
+import EnquiryEdit from "@/components/EnquiryEdit.vue";
+import EnquiryDifficult from "@/components/EnquiryDifficult.vue";
+import AccountRiskControl from "../../components/AccountRiskControl.vue";
+import { pageMixin } from "@/utils/pageMixin";
+import { commMixin } from "@/utils/commMixin";
+import config from "@/utils/config";
+import * as util from "@/utils/util";
+import { debounce } from "@/utils/debounce";
+import moment from "moment";
+let tableCurrentRelativeNum = "";
+let currentRelativeNum = "";
 // 合并单元格
-let relativeNum = ''
-let relativeNumRoll = ''
+let relativeNum = "";
+let relativeNumRoll = "";
 // let relativeNumSameCount = 0
 export default {
   mixins: [pageMixin, commMixin],
   props: {
-    status: '',
-    height: ''
+    status: "",
+    height: ""
   },
   components: {
     DeliveryCanlendarUpdate,
@@ -771,19 +768,19 @@ export default {
     // 金额格式验证
     const moneyTest = async (rule, value, callback) => {
       if (!config.regExpSet.money.test(value)) {
-        callback(new Error('请输入正确格式（-.----）'))
+        callback(new Error("请输入正确格式（-.----）"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     // 大于0格式验证
     const plusAmountTest = async (rule, value, callback) => {
       if (!config.regExpSet.gtzero.test(value)) {
-        callback(new Error('请输入大于0的正整数'))
+        callback(new Error("请输入大于0的正整数"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       config,
       loading: false,
@@ -793,41 +790,41 @@ export default {
       dialogDealFormVisible: false,
       dealForm: {
         // 询价单号
-        usertradeId: '',
+        usertradeId: "",
         // 成交价格
-        price: '',
+        price: "",
         // 成交量
-        volume: '',
+        volume: "",
         // 备注
-        remark: '',
+        remark: "",
         // 交割日期
-        deliveryTime: '',
+        deliveryTime: "",
         // 交易对手
-        counterParty: '',
+        counterParty: "",
         // 联系人
-        contactPerson: '',
+        contactPerson: "",
         // 联系方式
-        contactType: ''
+        contactType: ""
       },
       rulesDealForm: {
         price: [
-          { required: true, message: '价格必选', trigger: 'blur' },
-          { validator: moneyTest, trigger: 'blur' }
+          { required: true, message: "价格必选", trigger: "blur" },
+          { validator: moneyTest, trigger: "blur" }
         ],
         volume: [
-          { required: true, message: '交易量必填', trigger: 'blur' },
-          { validator: plusAmountTest, trigger: 'blur' }
+          { required: true, message: "交易量必填", trigger: "blur" },
+          { validator: plusAmountTest, trigger: "blur" }
         ],
         deliveryTime: [
-          { required: true, message: '交割日期必选', trigger: 'blur' }
-        ],
+          { required: true, message: "交割日期必选", trigger: "blur" }
+        ]
         // counterParty: [
         //   { required: true, message: '交易对手必填', trigger: 'blur' }
         // ]
       },
       dealRows: {},
       dialogEnquiryFormVisible: false,
-      formLabelWidth: '0',
+      formLabelWidth: "0",
       // 难成
       dialogEnquiryDifficultFormVisible: false,
       currentDifficultRow: [],
@@ -838,19 +835,37 @@ export default {
       // 修改对比数据
       diffTableData: [],
       diffTableHead: [
-        { label: '修改项', prop: 'fieldName', width: '150', align: 'left', show: true },
-        { label: '旧值', prop: 'oldValue', width: '200', align: 'left', show: true },
-        { label: '新值', prop: 'newValue', width: '200', align: 'left', show: true }
+        {
+          label: "修改项",
+          prop: "fieldName",
+          width: "150",
+          align: "left",
+          show: true
+        },
+        {
+          label: "旧值",
+          prop: "oldValue",
+          width: "200",
+          align: "left",
+          show: true
+        },
+        {
+          label: "新值",
+          prop: "newValue",
+          width: "200",
+          align: "left",
+          show: true
+        }
       ],
       expandRollSheetCounts: {},
       // 难成新建
       currentDifficultData: {},
       action: 1
-    }
+    };
   },
   watch: {
     enquiryInfo() {
-      this.loadInitData()
+      this.loadInitData();
     }
   },
   computed: {
@@ -858,360 +873,389 @@ export default {
       userInfo: "getUserInfo"
     }),
     ...mapState({
-      enquiryInfo: (state) => state.enquiryInfo
+      enquiryInfo: state => state.enquiryInfo
     })
   },
   methods: {
     // 搜索事件
     handleSearch() {
-      this.loadInitData()
+      this.loadInitData();
     },
     // 清除事件
     handleClearCondition() {
-      Promise.all([
-
-      ]).then(() => {
-        this.handleSearch()
-      })
+      Promise.all([]).then(() => {
+        this.handleSearch();
+      });
     },
     // 导出
-    handleExport() {
-    },
+    handleExport() {},
     // 获取用户模版id下设置的column
     dispatchUserColumn() {
-      apiAdmin.getUserColumn({
-        templateId: 1,
-        userId: null,
-      }).then(response => {
-        if (response && response.code === '00000') {
-          const headContent = JSON.parse(response.value.headContent)
-          for (let i = 0; i < headContent.length; i++) {
-            if (config.enquiryHead[headContent[i]]) {
-              config.enquiryHead[headContent[i]].formatter = this.funcFormat
-              this.tableHead.push(config.enquiryHead[headContent[i]])
+      apiAdmin
+        .getUserColumn({
+          templateId: 1,
+          userId: null
+        })
+        .then(response => {
+          if (response && response.code === "00000") {
+            const headContent = JSON.parse(response.value.headContent);
+            for (let i = 0; i < headContent.length; i++) {
+              if (config.enquiryHead[headContent[i]]) {
+                config.enquiryHead[headContent[i]].formatter = this.funcFormat;
+                this.tableHead.push(config.enquiryHead[headContent[i]]);
+              }
             }
+            this.loadInitData();
           }
-          this.loadInitData()
-        }
-      })
+        });
     },
     // 初始化数据
     loadInitData(sort) {
       this.loading = true;
-      api.inquiryQuery({
-        pageNum: this.pageNum,
-        pageSize: this.pageSize,
-        orderBy: sort ? sort.field : 'create_time',
-        isAsc: sort ? sort.asc : false
-      }).then((response) => {
-        if (response && response.code === 200 && response.rows) {
-          this.tableData = response.rows;
-          this.totalCount = response.total;
-        } else {
-          this.tableData = [];
-          this.totalCount = 0;
-        }
-        this.calcRollSheetCanSee()
-        this.loading = false;
-      });
+      api
+        .inquiryQuery({
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
+          orderBy: sort ? sort.field : "create_time",
+          isAsc: sort ? sort.asc : false
+        })
+        .then(response => {
+          if (response && response.code === 200 && response.rows) {
+            this.tableData = response.rows;
+            this.totalCount = response.total;
+          } else {
+            this.tableData = [];
+            this.totalCount = 0;
+          }
+          this.calcRollSheetCanSee();
+          this.loading = false;
+        });
     },
     // 添加
     handleAddInquiry() {
-      this.currentDifficultData = {}
-      this.action = 1
-      this.dialogEnquiryFormVisible = true
+      this.currentDifficultData = {};
+      this.action = 1;
+      this.dialogEnquiryFormVisible = true;
     },
     // 编辑
     handleEditEnqury(row) {
-      this.currentDifficultData = JSON.parse(JSON.stringify(row))
-      this.currentDifficultData.lockDirection = true
-      this.action = 2
-      this.dialogEnquiryFormVisible = true
+      this.currentDifficultData = JSON.parse(JSON.stringify(row));
+      this.currentDifficultData.lockDirection = true;
+      this.action = 2;
+      this.dialogEnquiryFormVisible = true;
     },
     // 接受
-    handleAcceptClick: debounce(function (scope) {
-      if (scope.row.relativeNum.indexOf('GD_') !== -1) {
-        api.bondRollAccept({ relativeNum: scope.row.relativeNum }).then(response => {
-          if (response && response.code === '00000') {
-            // 根据相关单号查找优先成交行
-            for (let i = 0; i < this.tableData.length; i++) {
-              if (this.tableData[i].relativeNum === scope.row.relativeNum && this.tableData[i].youxianLevel === 2) {
-                let myScope = {}
-                myScope.row = this.tableData[i]
-                this.copy(myScope)
-                this.$message({
-                  message: '已接收并复制成功',
-                  type: 'success'
-                })
-                break
+    handleAcceptClick: debounce(function(scope) {
+      if (scope.row.relativeNum.indexOf("GD_") !== -1) {
+        api
+          .bondRollAccept({ relativeNum: scope.row.relativeNum })
+          .then(response => {
+            if (response && response.code === "00000") {
+              // 根据相关单号查找优先成交行
+              for (let i = 0; i < this.tableData.length; i++) {
+                if (
+                  this.tableData[i].relativeNum === scope.row.relativeNum &&
+                  this.tableData[i].youxianLevel === 2
+                ) {
+                  let myScope = {};
+                  myScope.row = this.tableData[i];
+                  this.copy(myScope);
+                  this.$message({
+                    message: "已接收并复制成功",
+                    type: "success"
+                  });
+                  break;
+                }
               }
+              this.loadInitData();
+            } else {
+              this.$message({
+                message: response.message,
+                type: "error"
+              });
             }
-            this.loadInitData()
-          } else {
-            this.$message({
-              message: response.message,
-              type: 'error'
-            })
-          }
-        })
+          });
       } else {
-        api.inquiryAccept({ usertradeId: scope.row.userTradeId }).then(response => {
-          if (response && response.code === '00000') {
-            this.copy(scope)
-            this.$message({
-              message: '已接收并复制成功',
-              type: 'success'
-            })
-            this.loadInitData()
-          } else {
-            this.$message({
-              message: response.message,
-              type: 'error'
-            })
-          }
-        })
+        api
+          .inquiryAccept({ usertradeId: scope.row.userTradeId })
+          .then(response => {
+            if (response && response.code === "00000") {
+              this.copy(scope);
+              this.$message({
+                message: "已接收并复制成功",
+                type: "success"
+              });
+              this.loadInitData();
+            } else {
+              this.$message({
+                message: response.message,
+                type: "error"
+              });
+            }
+          });
       }
     }),
     // 拒收
-    handleNotAcceptClick: debounce(function (scope) {
-      if (scope.row.relativeNum.indexOf('GD_') !== -1) {
-        api.bondRollReject({ relativeNum: scope.row.relativeNum }).then(response => {
-          if (response && response.code === '00000') {
-            this.$message({
-              message: '已拒收',
-              type: 'info'
-            })
-            this.handlePopoverClose(
-              scope,
-              `popover-notaccept-${scope.$index}`
-            )
-            this.loadInitData()
-          } else {
-            this.$message({
-              message: response.message,
-              type: 'error'
-            })
-          }
-        })
+    handleNotAcceptClick: debounce(function(scope) {
+      if (scope.row.relativeNum.indexOf("GD_") !== -1) {
+        api
+          .bondRollReject({ relativeNum: scope.row.relativeNum })
+          .then(response => {
+            if (response && response.code === "00000") {
+              this.$message({
+                message: "已拒收",
+                type: "info"
+              });
+              this.handlePopoverClose(
+                scope,
+                `popover-notaccept-${scope.$index}`
+              );
+              this.loadInitData();
+            } else {
+              this.$message({
+                message: response.message,
+                type: "error"
+              });
+            }
+          });
       } else {
-        api.inquiryRejection({ usertradeId: scope.row.userTradeId }).then(response => {
-          if (response && response.code === '00000') {
-            this.$message({
-              message: '已拒收',
-              type: 'info'
-            })
-            this.handlePopoverClose(
-              scope,
-              `popover-notaccept-${scope.$index}`
-            )
-            this.loadInitData()
-          } else {
-            this.$message({
-              message: response.message,
-              type: 'error'
-            })
-          }
-        })
+        api
+          .inquiryRejection({ usertradeId: scope.row.userTradeId })
+          .then(response => {
+            if (response && response.code === "00000") {
+              this.$message({
+                message: "已拒收",
+                type: "info"
+              });
+              this.handlePopoverClose(
+                scope,
+                `popover-notaccept-${scope.$index}`
+              );
+              this.loadInitData();
+            } else {
+              this.$message({
+                message: response.message,
+                type: "error"
+              });
+            }
+          });
       }
     }),
     // 点击成交
-    handleDealClick: debounce(function (row) {
-      Promise.all([
-        this.dialogDealFormVisible = true
-      ]).then(() => {
-        this.dealForm.deliveryTime = row.deliveryTime
-        this.$refs.deliveryCanlendar.deliveryTime = row.deliveryTime
-        if (moment(row.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {
-          row.deliveryTime = moment(row.deliveryTime).format('YYYY-MM-DD')
-        } else if (moment(row.deliveryTime).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isBefore(moment(new Date()).format('YYYY-MM-DD 15:30:00'))) {
-          row.deliveryTime = moment(new Date()).format('YYYY-MM-DD')
+    handleDealClick: debounce(function(row) {
+      Promise.all([(this.dialogDealFormVisible = true)]).then(() => {
+        this.dealForm.deliveryTime = row.deliveryTime;
+        this.$refs.deliveryCanlendar.deliveryTime = row.deliveryTime;
+        if (
+          moment(row.deliveryTime).format("YYYY-MM-DD") >
+          moment(new Date()).format("YYYY-MM-DD")
+        ) {
+          row.deliveryTime = moment(row.deliveryTime).format("YYYY-MM-DD");
+        } else if (
+          moment(row.deliveryTime).format("YYYY-MM-DD") ===
+            moment(new Date()).format("YYYY-MM-DD") &&
+          moment(moment(new Date()).format("YYYY-MM-DD HH:mm:ss")).isBefore(
+            moment(new Date()).format("YYYY-MM-DD 15:30:00")
+          )
+        ) {
+          row.deliveryTime = moment(new Date()).format("YYYY-MM-DD");
         } else {
-          this.$refs.deliveryCanlendar.getNextDealDay()
+          this.$refs.deliveryCanlendar.getNextDealDay();
         }
-        row.deliveryTime = moment(row.deliveryTime).format('YYYY-MM-DD')
-        this.dealRows = row
-        this.dealForm.usertradeId = row.userTradeId
-        this.dealForm.price = row.price
-        this.dealForm.volume = row.restVolume
-        this.dealForm.remark = row.remark
-        this.dealForm.counterParty = row.counterParty
-        this.dealForm.contactPerson = row.contactPerson
-        this.dealForm.contactType = row.contactType
-      })
+        row.deliveryTime = moment(row.deliveryTime).format("YYYY-MM-DD");
+        this.dealRows = row;
+        this.dealForm.usertradeId = row.userTradeId;
+        this.dealForm.price = row.price;
+        this.dealForm.volume = row.restVolume;
+        this.dealForm.remark = row.remark;
+        this.dealForm.counterParty = row.counterParty;
+        this.dealForm.contactPerson = row.contactPerson;
+        this.dealForm.contactType = row.contactType;
+      });
     }),
     handleSortChange(sort) {
-      if (sort.prop === 'createTime') {
-        sort.field = 'createTime'
+      if (sort.prop === "createTime") {
+        sort.field = "createTime";
       }
-      if (sort.order === 'ascending') {
-        sort.asc = true
+      if (sort.order === "ascending") {
+        sort.asc = true;
       } else {
-        sort.asc = false
+        sort.asc = false;
       }
       if (!sort.field) {
-        sort.field = 'createTime'
+        sort.field = "createTime";
       }
-      this.loadInitData(sort)
+      this.loadInitData(sort);
     },
     // 表单提交
-    submitForm: debounce(function (formName) {
-      this.$refs[formName].validate((valid) => {
+    submitForm: debounce(function(formName) {
+      this.$refs[formName].validate(valid => {
         if (valid) {
-          api.inquiryDeal({
-            usertradeId: this.dealForm.usertradeId,
-            price: this.dealForm.price,
-            volume: this.dealForm.volume,
-            remark: this.dealForm.remark,
-            deliveryTime: util.dateFormat(this.dealForm.deliveryTime, "YYYY-MM-DD 00:00:00"),
-            counterParty: this.dealForm.counterParty,
-            contactPerson: this.dealForm.contactPerson,
-            contactType: this.dealForm.contactType
-          }).then((response) => {
-            if (response && response.code === "00000") {
-              this.$message({
-                message: "已提交，如有变动请等待审核",
-                type: "warning",
-              });
-              this.dialogDealFormVisible = false
-              this.dealForm.price = ''
-              this.dealForm.volume = ''
-              this.dealForm.remark = ''
-              this.dealForm.deliveryTime = ''
-              this.dealForm.counterParty = ''
-              this.dealForm.contactPerson = ''
-              this.dealForm.contactType = ''
-              this.loadInitData()
-            } else {
-              this.$message({
-                message: `${response.message}`,
-                type: "error",
-              })
-            }
-          });
+          api
+            .inquiryDeal({
+              usertradeId: this.dealForm.usertradeId,
+              price: this.dealForm.price,
+              volume: this.dealForm.volume,
+              remark: this.dealForm.remark,
+              deliveryTime: util.dateFormat(
+                this.dealForm.deliveryTime,
+                "YYYY-MM-DD 00:00:00"
+              ),
+              counterParty: this.dealForm.counterParty,
+              contactPerson: this.dealForm.contactPerson,
+              contactType: this.dealForm.contactType
+            })
+            .then(response => {
+              if (response && response.code === "00000") {
+                this.$message({
+                  message: "已提交，如有变动请等待审核",
+                  type: "warning"
+                });
+                this.dialogDealFormVisible = false;
+                this.dealForm.price = "";
+                this.dealForm.volume = "";
+                this.dealForm.remark = "";
+                this.dealForm.deliveryTime = "";
+                this.dealForm.counterParty = "";
+                this.dealForm.contactPerson = "";
+                this.dealForm.contactType = "";
+                this.loadInitData();
+              } else {
+                this.$message({
+                  message: `${response.message}`,
+                  type: "error"
+                });
+              }
+            });
         }
-      })
+      });
     }),
     // 提交撤单申请
-    handleInquiryCancelClick: debounce(function (scope) {
-      api.inquiryCancel({ usertradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: `${response.message}`,
-            type: 'success'
-          })
-          this.handlePopoverClose(
-            scope,
-            `popover-cancel-${scope.$index}`
-          )
-          this.loadInitData()
-        }
-      })
+    handleInquiryCancelClick: debounce(function(scope) {
+      api
+        .inquiryCancel({ usertradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000") {
+            this.$message({
+              message: `${response.message}`,
+              type: "success"
+            });
+            this.handlePopoverClose(scope, `popover-cancel-${scope.$index}`);
+            this.loadInitData();
+          }
+        });
     }),
     // 确认撤单
-    handleInquiryCancelConfirmClick: debounce(function (scope) {
-      const self = this
-      api.inquiryCancelConfirm({ usertradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          self.$message({
-            message: "已撤单",
-            type: 'success'
-          })
-          this.handlePopoverClose(
-            scope,
-            `popover-agreecancel-${scope.$index}`
-          )
-          self.loadInitData()
-        }
-      })
+    handleInquiryCancelConfirmClick: debounce(function(scope) {
+      const self = this;
+      api
+        .inquiryCancelConfirm({ usertradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000") {
+            self.$message({
+              message: "已撤单",
+              type: "success"
+            });
+            this.handlePopoverClose(
+              scope,
+              `popover-agreecancel-${scope.$index}`
+            );
+            self.loadInitData();
+          }
+        });
     }),
     // 拒绝撤单
-    handleInquiryCancelRejectionClick: debounce(function (scope) {
-      const self = this
-      api.inquiryCancelRejection({ usertradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          self.$message({
-            message: "已拒绝",
-            type: 'success'
-          })
-          this.handlePopoverClose(
-            scope,
-            `popover-rejectioncancel-${scope.$index}`
-          )
-          self.loadInitData()
-        }
-      })
+    handleInquiryCancelRejectionClick: debounce(function(scope) {
+      const self = this;
+      api
+        .inquiryCancelRejection({ usertradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000") {
+            self.$message({
+              message: "已拒绝",
+              type: "success"
+            });
+            this.handlePopoverClose(
+              scope,
+              `popover-rejectioncancel-${scope.$index}`
+            );
+            self.loadInitData();
+          }
+        });
     }),
     // 同意成交
-    handleInquiryDealConfirmClick: debounce(function (scope) {
-      const self = this
-      api.inquiryDealConfirm({ userTradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: "已成交",
-            type: 'success'
-          })
-          this.handlePopoverClose(
-            scope,
-            `popover-agreedeal-${scope.$index}`
-          )
-          self.loadInitData()
-        }
-      })
+    handleInquiryDealConfirmClick: debounce(function(scope) {
+      const self = this;
+      api
+        .inquiryDealConfirm({ userTradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000") {
+            this.$message({
+              message: "已成交",
+              type: "success"
+            });
+            this.handlePopoverClose(scope, `popover-agreedeal-${scope.$index}`);
+            self.loadInitData();
+          }
+        });
     }),
     // 拒绝成交
-    handleInquiryDealRejectionClick: debounce(function (scope) {
-      const self = this
-      api.inquiryDealRejection({ userTradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: "已拒绝",
-            type: 'success'
-          })
-          this.handlePopoverClose(
-            scope,
-            `popover-rejectiondeal-${scope.$index}`
-          )
-          self.loadInitData()
-        }
-      })
+    handleInquiryDealRejectionClick: debounce(function(scope) {
+      const self = this;
+      api
+        .inquiryDealRejection({ userTradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000") {
+            this.$message({
+              message: "已拒绝",
+              type: "success"
+            });
+            this.handlePopoverClose(
+              scope,
+              `popover-rejectiondeal-${scope.$index}`
+            );
+            self.loadInitData();
+          }
+        });
     }),
     // 难成撤单
-    handleEnquiryDifficultCanncelClick: debounce(function (scope) {
-      const self = this
-      api.difficultAcheveCannel({ userTradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: "难成已撤单",
-            type: 'warning'
-          })
-          this.handlePopoverClose(
-            scope,
-            `popover-difficultcanncel-${scope.$index}`
-          )
-          self.loadInitData()
-        }
-      })
+    handleEnquiryDifficultCanncelClick: debounce(function(scope) {
+      const self = this;
+      api
+        .difficultAcheveCannel({ userTradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000") {
+            this.$message({
+              message: "难成已撤单",
+              type: "warning"
+            });
+            this.handlePopoverClose(
+              scope,
+              `popover-difficultcanncel-${scope.$index}`
+            );
+            self.loadInitData();
+          }
+        });
     }),
     // 保留
-    handleEnquiryDifficultDotMoveClick: debounce(function (scope) {
-      const self = this
-      api.difficultStay({ userTradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: "难成已保留",
-            type: 'warning'
-          })
-          this.handlePopoverClose(
-            scope,
-            `popover-notmove-${scope.$index}`
-          )
-          self.loadInitData()
-        }
-      })
+    handleEnquiryDifficultDotMoveClick: debounce(function(scope) {
+      const self = this;
+      api
+        .difficultStay({ userTradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000") {
+            this.$message({
+              message: "难成已保留",
+              type: "warning"
+            });
+            this.handlePopoverClose(scope, `popover-notmove-${scope.$index}`);
+            self.loadInitData();
+          }
+        });
     }),
     // 交割日期
     handleDeliveryCanlendar(obj) {
-      this.dealForm.deliveryTime = obj.value
+      this.dealForm.deliveryTime = obj.value;
     },
     // 数据格式化
     funcFormat(row, column) {
@@ -1219,91 +1263,97 @@ export default {
         case "status":
           return config.funcKeyValue(row.status.toString(), "inquiryStatus");
         case "direction":
-          return config.funcKeyValue(row.direction, "directionMeta")
+          return config.funcKeyValue(row.direction, "directionMeta");
         case "deliveryTime":
-          return moment(row.deliveryTime).format('YYYY-MM-DD') // + `（T+${row.deliverySpeed}）`
+          return moment(row.deliveryTime).format("YYYY-MM-DD"); // + `（T+${row.deliverySpeed}）`
         case "realDeliveryTime":
-          return row.realDeliveryTime ? moment(row.realDeliveryTime).format('YYYY-MM-DD') : "--"
+          return row.realDeliveryTime
+            ? moment(row.realDeliveryTime).format("YYYY-MM-DD")
+            : "--";
         case "price":
-          return util.moneyFormat(row.price, 4)
+          return util.moneyFormat(row.price, 4);
         case "realPrice":
-          return row.realPrice ? util.moneyFormat(row.realPrice, 4) : "--"
+          return row.realPrice ? util.moneyFormat(row.realPrice, 4) : "--";
         case "realVolume":
-          return row.realVolume ? row.realVolume : "--"
+          return row.realVolume ? row.realVolume : "--";
         case "tscode":
-          return row.tscode.replace(/.IB/, '')
+          return row.tscode.replace(/.IB/, "");
         case "worstPrice":
           // 允许最差价格
-          let worstPrice = row.price
+          let worstPrice = row.price;
           if (row.worstPrice) {
-            if (row.direction === 'bond_0') {
-              worstPrice = row.price - row.worstPrice / 100
+            if (row.direction === "bond_0") {
+              worstPrice = row.price - row.worstPrice / 100;
             }
-            if (row.direction === 'bond_1') {
-              worstPrice = row.price + row.worstPrice / 100
+            if (row.direction === "bond_1") {
+              worstPrice = row.price + row.worstPrice / 100;
             }
           }
-          return util.moneyFormat(worstPrice, 4)
+          return util.moneyFormat(worstPrice, 4);
       }
-      return row[column.property]
+      return row[column.property];
     },
     handleDialogVisible(obj) {
-      this.dialogEnquiryFormVisible = obj.dialogVisible
-      this.loadInitData()
+      this.dialogEnquiryFormVisible = obj.dialogVisible;
+      this.loadInitData();
     },
     // 难成新建
     handleDifficultNewEnqury(row) {
-      const self = this
-      this.action = 1
-      api.difficultAcheveCannel({ userTradeId: row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          // 锁住方向
-          response.value.lockDirection = true
-          Promise.all([
-            self.currentDifficultData = JSON.parse(JSON.stringify(response.value))
-          ]).then(() => {
-            self.dialogEnquiryFormVisible = true
-          })
-        } else {
-          self.$message({
-            message: `${response.message}`,
-            type: 'warning'
-          })
-        }
-      })
+      const self = this;
+      this.action = 1;
+      api
+        .difficultAcheveCannel({ userTradeId: row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000") {
+            // 锁住方向
+            response.value.lockDirection = true;
+            Promise.all([
+              (self.currentDifficultData = JSON.parse(
+                JSON.stringify(response.value)
+              ))
+            ]).then(() => {
+              self.dialogEnquiryFormVisible = true;
+            });
+          } else {
+            self.$message({
+              message: `${response.message}`,
+              type: "warning"
+            });
+          }
+        });
     },
     // 难成点击事件
-    handleEnquiryDifficultClick: debounce(function (row) {
+    handleEnquiryDifficultClick: debounce(function(row) {
       Promise.all([
-        this.currentDifficultRow = JSON.parse(JSON.stringify(row))
+        (this.currentDifficultRow = JSON.parse(JSON.stringify(row)))
       ]).then(() => {
-        this.dialogEnquiryDifficultFormVisible = true
-      })
+        this.dialogEnquiryDifficultFormVisible = true;
+      });
     }),
     // 关闭难成弹出框
     handleDialogDifficultVisible(obj) {
-      this.dialogEnquiryDifficultFormVisible = obj.dialogVisible
-      this.loadInitData()
+      this.dialogEnquiryDifficultFormVisible = obj.dialogVisible;
+      this.loadInitData();
     },
     // 滚单成交颜色框
     tableRowClassName({ row, rowIndex }) {
-      if (row.relativeNum && row.relativeNum.indexOf('GD_') !== -1) {
+      if (row.relativeNum && row.relativeNum.indexOf("GD_") !== -1) {
         if (rowIndex === 0) {
-          tableCurrentRelativeNum = 'gd-odd-row'
-          currentRelativeNum = row.relativeNum
+          tableCurrentRelativeNum = "gd-odd-row";
+          currentRelativeNum = row.relativeNum;
         }
         if (currentRelativeNum !== row.relativeNum) {
-          currentRelativeNum = row.relativeNum
-          if (tableCurrentRelativeNum === 'gd-even-row') {
-            tableCurrentRelativeNum = 'gd-odd-row'
+          currentRelativeNum = row.relativeNum;
+          if (tableCurrentRelativeNum === "gd-even-row") {
+            tableCurrentRelativeNum = "gd-odd-row";
           } else {
-            tableCurrentRelativeNum = 'gd-even-row'
+            tableCurrentRelativeNum = "gd-even-row";
           }
         }
       } else {
-        tableCurrentRelativeNum = ''
+        tableCurrentRelativeNum = "";
       }
-      return tableCurrentRelativeNum
+      return tableCurrentRelativeNum;
     },
     // 滚单成交弹出框
     handleRollDealClick(row) {
@@ -1314,74 +1364,87 @@ export default {
       //     break
       //   }
       // }
-      const self = this
-      this.getDetailByRelativeNum(row.relativeNum, row.createBy, function () { self.dialogBondsRollFormVisible = true })
+      const self = this;
+      this.getDetailByRelativeNum(row.relativeNum, row.createBy, function() {
+        self.dialogBondsRollFormVisible = true;
+      });
     },
     getDetailByRelativeNum(relativeNum, yanjiuyuanId, callback) {
-      const self = this
-      api.detailByRelativeNum({
-        relativeNum,
-        yanjiuyuanId
-      }).then(response => {
-        if (response && response.code === '00000') {
-          this.overRow = response.value.ping
-          this.openRow = response.value.kai
-          if (parseInt(this.overRow.restVolume) === 0 && parseInt(this.openRow.restVolume) === 0) {
-            self.dialogBondsRollFormVisible = false
-            self.loadInitData()
+      const self = this;
+      api
+        .detailByRelativeNum({
+          relativeNum,
+          yanjiuyuanId
+        })
+        .then(response => {
+          if (response && response.code === "00000") {
+            this.overRow = response.value.ping;
+            this.openRow = response.value.kai;
+            if (
+              parseInt(this.overRow.restVolume) === 0 &&
+              parseInt(this.openRow.restVolume) === 0
+            ) {
+              self.dialogBondsRollFormVisible = false;
+              self.loadInitData();
+            }
+            if (callback) {
+              callback();
+            }
+          } else {
+            this.$message({
+              message: `${response.message}`,
+              type: "error"
+            });
           }
-          if (callback) { callback() }
-        } else {
-          this.$message({
-            message: `${response.message}`,
-            type: 'error'
-          })
-        }
-      })
+        });
     },
     handleBondsRollDialogVisible(obj) {
       // this.dialogBondsRollFormVisible = obj.dialogVisible
       if (!obj.refresh) {
-        this.getDetailByRelativeNum(obj.relativeNum, obj.createBy)
+        this.getDetailByRelativeNum(obj.relativeNum, obj.createBy);
       }
-      this.loadInitData()
+      this.loadInitData();
     },
     // 收起和展开事件处理
     handleExpandChange(row, expandedRows) {
-      if (row.relativeNum.indexOf('GD_') !== -1) {
+      if (row.relativeNum.indexOf("GD_") !== -1) {
         if (expandedRows) {
-          this.expandRollSheetCounts[row.relativeNum] += row.children.length
+          this.expandRollSheetCounts[row.relativeNum] += row.children.length;
         } else {
-          this.expandRollSheetCounts[row.relativeNum] -= row.children.length
+          this.expandRollSheetCounts[row.relativeNum] -= row.children.length;
         }
       }
     },
     calcRollSheetCanSee() {
-      this.expandRollSheetCounts = {}
-      let tempRelativeNum = ''
-      let relativeNumCount = 0
+      this.expandRollSheetCounts = {};
+      let tempRelativeNum = "";
+      let relativeNumCount = 0;
       for (let i = 0; i < this.tableData.length; i++) {
-        if (this.tableData[i].relativeNum && this.tableData[i].relativeNum.indexOf('GD_') !== -1 && [2, 5, 6].indexOf(this.tableData[i].status) === -1) {
-          if (tempRelativeNum === '' && this.tableData[i].relativeNum) {
-            tempRelativeNum = this.tableData[i].relativeNum
+        if (
+          this.tableData[i].relativeNum &&
+          this.tableData[i].relativeNum.indexOf("GD_") !== -1 &&
+          [2, 5, 6].indexOf(this.tableData[i].status) === -1
+        ) {
+          if (tempRelativeNum === "" && this.tableData[i].relativeNum) {
+            tempRelativeNum = this.tableData[i].relativeNum;
           }
           if (tempRelativeNum === this.tableData[i].relativeNum) {
-            relativeNumCount++
-            relativeNumCount += this.tableData[i].children.length
-            this.expandRollSheetCounts[tempRelativeNum] = relativeNumCount
+            relativeNumCount++;
+            relativeNumCount += this.tableData[i].children.length;
+            this.expandRollSheetCounts[tempRelativeNum] = relativeNumCount;
           } else {
-            this.expandRollSheetCounts[tempRelativeNum] = relativeNumCount
-            relativeNumCount = 0
-            tempRelativeNum = this.tableData[i].relativeNum
-            relativeNumCount++
-            relativeNumCount += this.tableData[i].children.length
+            this.expandRollSheetCounts[tempRelativeNum] = relativeNumCount;
+            relativeNumCount = 0;
+            tempRelativeNum = this.tableData[i].relativeNum;
+            relativeNumCount++;
+            relativeNumCount += this.tableData[i].children.length;
           }
         } else {
           if (tempRelativeNum) {
-            this.expandRollSheetCounts[tempRelativeNum] = relativeNumCount
+            this.expandRollSheetCounts[tempRelativeNum] = relativeNumCount;
           }
-          relativeNumCount = 0
-          tempRelativeNum = ''
+          relativeNumCount = 0;
+          tempRelativeNum = "";
         }
       }
     },
@@ -1389,16 +1452,16 @@ export default {
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
         // 解决重复渲染问题，清空之前的数据
-        relativeNum = ''
-        relativeNumRoll = ''
+        relativeNum = "";
+        relativeNumRoll = "";
       }
-      if (column.label === '滚单成交') {
-        if (row.relativeNum && row.relativeNum.indexOf('GD_') !== -1) {
+      if (column.label === "滚单成交") {
+        if (row.relativeNum && row.relativeNum.indexOf("GD_") !== -1) {
           // 1、根据当前finishCode查找个数作为合并行数
           // relativeNumSameCount = 0
           // let flag = false
           if (relativeNum.toString() !== row.relativeNum) {
-            relativeNum = row.relativeNum
+            relativeNum = row.relativeNum;
             // for (let i = 0; i < this.tableData.length; i++) {
             //   if (this.tableData[i].relativeNum === row.relativeNum) {
             //     relativeNumSameCount = relativeNumSameCount + 1
@@ -1413,175 +1476,221 @@ export default {
             return {
               rowspan: this.expandRollSheetCounts[relativeNum],
               colspan: columnIndex
-            }
+            };
           } else {
             return {
               rowspan: 0,
               colspan: columnIndex
-            }
+            };
           }
         }
       }
-      if (column.label === '操作') {
-        if (row.relativeNum && row.relativeNum.indexOf('GD_') !== -1 && row.status === 0) {
+      if (column.label === "操作") {
+        if (
+          row.relativeNum &&
+          row.relativeNum.indexOf("GD_") !== -1 &&
+          row.status === 0
+        ) {
           if (relativeNumRoll.toString() !== row.relativeNum) {
-            relativeNumRoll = row.relativeNum
+            relativeNumRoll = row.relativeNum;
             return {
               rowspan: this.expandRollSheetCounts[relativeNumRoll],
               colspan: columnIndex
-            }
+            };
           } else {
             return {
               rowspan: 0,
               colspan: columnIndex
-            }
+            };
           }
         }
       }
     },
     cellStyle(row, column, rowIndex, columnIndex) {
-      if (row.column.label === '方向') {
+      if (row.column.label === "方向") {
         switch (row.row.direction) {
-          case 'bond_1': // 卖出
-            return 'color:#e88585';
-          case 'bond_0': // 买入
-            return 'color:#00da3c';
+          case "bond_1": // 卖出
+            return "color:#e88585";
+          case "bond_0": // 买入
+            return "color:#00da3c";
         }
       }
     },
     // 更新记录表
     cellStyleUpdate(row, column, rowIndex, columnIndex) {
-      if (row.column.label === '旧值') {
-        return 'color:#2cad98'
+      if (row.column.label === "旧值") {
+        return "color:#2cad98";
       }
-      if (row.column.label === '新值') {
-        return 'color:#ec0000'
+      if (row.column.label === "新值") {
+        return "color:#ec0000";
       }
     },
     // 同意违约续作
-    handleAgreeBreakContinueClick: debounce(function (scope) {
-      apiBreak.dealBreakRedoConfirm({ userTradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: "已同意续作",
-            type: 'success'
-          })
-        } else {
-          this.$message({
-            message: `${response.message}`,
-            type: 'warning'
-          })
-        }
-        this.loadInitData()
-      })
+    handleAgreeBreakContinueClick: debounce(function(scope) {
+      apiBreak
+        .dealBreakRedoConfirm({ userTradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000") {
+            this.$message({
+              message: "已同意续作",
+              type: "success"
+            });
+          } else {
+            this.$message({
+              message: `${response.message}`,
+              type: "warning"
+            });
+          }
+          this.loadInitData();
+        });
     }),
     // 拒绝违约续作
-    handleRejectBreakContinueClick: debounce(function (scope) {
-      apiBreak.dealBreakRedoRejection({ userTradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: "已拒绝续作",
-            type: 'success'
-          })
-        } else {
-          this.$message({
-            message: `${response.message}`,
-            type: 'warning'
-          })
-        }
-        this.loadInitData()
-      })
+    handleRejectBreakContinueClick: debounce(function(scope) {
+      apiBreak
+        .dealBreakRedoRejection({ userTradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000") {
+            this.$message({
+              message: "已拒绝续作",
+              type: "success"
+            });
+          } else {
+            this.$message({
+              message: `${response.message}`,
+              type: "warning"
+            });
+          }
+          this.loadInitData();
+        });
     }),
     // 违约续作内容对比
-    handlViewBreakContinueContent: debounce(function (scope) {
-      this.diffTableData = []
-      apiBreak.dealBreakRedoCheckField({ userTradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000' && response.value) {
-          let diffTableData = [];
-          if (response.value.compareResult.fieldlist && response.value.compareResult.fieldlist.length > 0) {
-            let fieldlist = response.value.compareResult.fieldlist
-            for (let i = 0; i < fieldlist.length; i++) {
-              if (fieldlist[i] === 'deliveryTime') {
-                diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD'), 'newValue': moment(response.value.rt[fieldlist[i]]).format('YYYY-MM-DD') })
-              } else {
-                diffTableData.push({ 'fieldName': config.bondsHead[fieldlist[i]]['label'], 'oldValue': response.value.rt[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
+    handlViewBreakContinueContent: debounce(function(scope) {
+      this.diffTableData = [];
+      apiBreak
+        .dealBreakRedoCheckField({ userTradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000" && response.value) {
+            let diffTableData = [];
+            if (
+              response.value.compareResult.fieldlist &&
+              response.value.compareResult.fieldlist.length > 0
+            ) {
+              let fieldlist = response.value.compareResult.fieldlist;
+              for (let i = 0; i < fieldlist.length; i++) {
+                if (fieldlist[i] === "deliveryTime") {
+                  diffTableData.push({
+                    fieldName: config.bondsHead[fieldlist[i]]["label"],
+                    oldValue: moment(response.value.rt[fieldlist[i]]).format(
+                      "YYYY-MM-DD"
+                    ),
+                    newValue: moment(response.value.rt[fieldlist[i]]).format(
+                      "YYYY-MM-DD"
+                    )
+                  });
+                } else {
+                  diffTableData.push({
+                    fieldName: config.bondsHead[fieldlist[i]]["label"],
+                    oldValue: response.value.rt[fieldlist[i]],
+                    newValue: response.value.dto[fieldlist[i]]
+                  });
+                }
               }
             }
+            this.diffTableData = diffTableData;
           }
-          this.diffTableData = diffTableData
-        }
-      })
+        });
     }),
     // 同意修改
-    handleAgreeEditClick: debounce(function (scope) {
-      api.inquiryEditConfirm({ userTradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: "已同意修改",
-            type: 'success'
-          })
-        } else {
-          this.$message({
-            message: `${response.message}`,
-            type: 'warning'
-          })
-        }
-        this.loadInitData()
-      })
+    handleAgreeEditClick: debounce(function(scope) {
+      api
+        .inquiryEditConfirm({ userTradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000") {
+            this.$message({
+              message: "已同意修改",
+              type: "success"
+            });
+          } else {
+            this.$message({
+              message: `${response.message}`,
+              type: "warning"
+            });
+          }
+          this.loadInitData();
+        });
     }),
     // 拒绝修改
-    handleRejectEditClick: debounce(function (scope) {
-      api.inquiryEditReject({ userTradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000') {
-          this.$message({
-            message: "已拒绝修改",
-            type: 'success'
-          })
-        } else {
-          this.$message({
-            message: `${response.message}`,
-            type: 'warning'
-          })
-        }
-        this.loadInitData()
-      })
+    handleRejectEditClick: debounce(function(scope) {
+      api
+        .inquiryEditReject({ userTradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000") {
+            this.$message({
+              message: "已拒绝修改",
+              type: "success"
+            });
+          } else {
+            this.$message({
+              message: `${response.message}`,
+              type: "warning"
+            });
+          }
+          this.loadInitData();
+        });
     }),
     // 修改内容对比
-    handlViewEditContent: debounce(function (scope) {
-      this.diffTableData = []
-      api.inquiryChangeCheck({ userTradeId: scope.row.userTradeId }).then(response => {
-        if (response && response.code === '00000' && response.value) {
-          let diffTableData = [];
-          if (response.value.compareResult.fieldlist && response.value.compareResult.fieldlist.length > 0) {
-            let fieldlist = response.value.compareResult.fieldlist
-            for (let i = 0; i < fieldlist.length; i++) {
-              if (fieldlist[i] === 'deliveryTime') {
-                diffTableData.push({ 'fieldName': config.enquiryHead[fieldlist[i]]['label'], 'oldValue': moment(response.value.ut[fieldlist[i]]).format('YYYY-MM-DD'), 'newValue': moment(response.value.ut[fieldlist[i]]).format('YYYY-MM-DD') })
-              } else {
-                diffTableData.push({ 'fieldName': config.enquiryHead[fieldlist[i]]['label'], 'oldValue': response.value.ut[fieldlist[i]], 'newValue': response.value.dto[fieldlist[i]] })
+    handlViewEditContent: debounce(function(scope) {
+      this.diffTableData = [];
+      api
+        .inquiryChangeCheck({ userTradeId: scope.row.userTradeId })
+        .then(response => {
+          if (response && response.code === "00000" && response.value) {
+            let diffTableData = [];
+            if (
+              response.value.compareResult.fieldlist &&
+              response.value.compareResult.fieldlist.length > 0
+            ) {
+              let fieldlist = response.value.compareResult.fieldlist;
+              for (let i = 0; i < fieldlist.length; i++) {
+                if (fieldlist[i] === "deliveryTime") {
+                  diffTableData.push({
+                    fieldName: config.enquiryHead[fieldlist[i]]["label"],
+                    oldValue: moment(response.value.ut[fieldlist[i]]).format(
+                      "YYYY-MM-DD"
+                    ),
+                    newValue: moment(response.value.ut[fieldlist[i]]).format(
+                      "YYYY-MM-DD"
+                    )
+                  });
+                } else {
+                  diffTableData.push({
+                    fieldName: config.enquiryHead[fieldlist[i]]["label"],
+                    oldValue: response.value.ut[fieldlist[i]],
+                    newValue: response.value.dto[fieldlist[i]]
+                  });
+                }
               }
             }
+            this.diffTableData = diffTableData;
           }
-          this.diffTableData = diffTableData
-        }
-      })
-    }),
+        });
+    })
   },
   mounted() {
-    this.dispatchUserColumn()
-    this.initFrameW('formLabelWidth', 120)
+    this.dispatchUserColumn();
+    this.initFrameW("formLabelWidth", 120);
     window.onresize = () => {
-      this.initFrameW('formLabelWidth', 120)
-    }
+      this.initFrameW("formLabelWidth", 120);
+    };
   },
   updated() {
     this.$nextTick(() => {
       if (this.$refs.multipleTable) {
         this.$refs.multipleTable.doLayout();
       }
-    })
+    });
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 @import "@/assets/css/style.scss";

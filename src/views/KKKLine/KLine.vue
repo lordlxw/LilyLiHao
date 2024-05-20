@@ -93,7 +93,7 @@
           <hr color="#ec0000" size="1" style="margin: 0" />
           <el-scrollbar>
             <ul>
-              <li v-for="item in tscodeList" :key="item.id" @click="handlerTscode(item)"
+              <li v-for="item in tscodeList" :key="item.tscode" @click="handlerTscode(item)"
                 :class="{ active: activeTscode == item.tscode }">
                 {{ item.bondname }}<br />
                 <strong class="l-strong">{{ item.tscode }}</strong>
@@ -106,7 +106,7 @@
           <el-scrollbar>
             <ul>
               <draggable v-model="tscodeListFavorite" animation="300" @start="onStart" @end="onEnd">
-                <li v-for="item in tscodeListFavorite" :key="item.id" @click="handlerTscode(item)"
+                <li v-for="item in tscodeListFavorite" :key="item.tscode" @click="handlerTscode(item)"
                   :class="{ active: activeTscode == item.tscode }">
                   <strong class="l-strong">{{ item.tscode }}</strong>
                 </li>
@@ -176,10 +176,10 @@
             }}</span>
                 </el-form-item>
                 <el-form-item label="价格 | 允许浮动" prop="price">
-                  <el-input-number v-model="buyForm.price" step="0.001" placeholder="请输入价格"
+                  <el-input-number v-model="buyForm.price" :step="0.001" placeholder="请输入价格"
                     @focus="handleMaxWait('buyForm')" class="pricew"></el-input-number><br />
                   <el-form-item prop="worstPrice">
-                    <el-input-number v-model="buyForm.worstPrice" step="0.05" class="mt10 numbw"></el-input-number>
+                    <el-input-number v-model="buyForm.worstPrice" :step="0.05" class="mt10 numbw"></el-input-number>
                     <span class="txt-green">BP</span>
                   </el-form-item>
                 </el-form-item>
@@ -242,10 +242,10 @@
             }}</span>
                 </el-form-item>
                 <el-form-item label="价格 | 允许浮动" prop="price">
-                  <el-input-number v-model="saleForm.price" step="0.001" placeholder="请输入价格"
+                  <el-input-number v-model="saleForm.price" :step="0.001" placeholder="请输入价格"
                     @focus="handleMaxWait('saleForm')" class="pricew"></el-input-number><br />
                   <el-form-item prop="worstPrice">
-                    <el-input-number v-model="saleForm.worstPrice" step="0.05" class="mt10 numbw"></el-input-number>
+                    <el-input-number v-model="saleForm.worstPrice" :step="0.05" class="mt10 numbw"></el-input-number>
                     <span class="txt-red">BP</span>
                   </el-form-item>
                 </el-form-item>
