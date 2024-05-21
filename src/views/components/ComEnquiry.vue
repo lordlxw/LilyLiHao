@@ -66,7 +66,7 @@
               >
               </el-table-column>
               <el-table-column
-                :key="itemHead.label"
+                :key="itemHead.label + 1"
                 :align="itemHead.align"
                 :prop="itemHead.prop"
                 :sortable="
