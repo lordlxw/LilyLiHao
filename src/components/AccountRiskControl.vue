@@ -32,24 +32,24 @@
         万
       </li>
       <li class="grid-content">
-        <span style="color: #0103ff">日允撤：{{
-          riskControlData["minBackDaily"]
-        }}</span>
+        <span style="color: #0103ff"
+          >日允撤：{{ riskControlData["minBackDaily"] }}</span
+        >
         万
       </li>
       <li class="grid-content">
-        日回撤：<span :style="calcToColor(riskControlData['back'])"
-          >{{ riskControlData["back"] }}</span
-        >
+        日回撤：<span :style="calcToColor(riskControlData['back'])">{{
+          riskControlData["back"]
+        }}</span>
         万
       </li>
     </ul>
 
     <ul>
       <li class="grid-content">
-        <span style="color: #0103ff">加权限仓：{{
-          riskControlData["maxVolume"]
-        }}</span>
+        <span style="color: #0103ff"
+          >加权限仓：{{ riskControlData["maxVolume"] }}</span
+        >
         万
       </li>
       <li class="grid-content">
@@ -156,10 +156,13 @@ export default {
   box-sizing: border-box;
   ul {
     overflow: hidden;
-    li {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    /*li {
       float: left;
       margin-right: 20px;
-    }
+    }*/
   }
 }
 
@@ -185,6 +188,7 @@ export default {
 
   span {
     color: #999999;
+    font-size:14px;
   }
 }
 
