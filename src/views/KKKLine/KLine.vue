@@ -67,53 +67,64 @@
     <div class="container" style="background-color: #202020">
       <!-- 左侧 -->
       <div class="left-group" :style="{
-              width: leftWith + 'px',
-            }">
+        width: leftWith + 'px',
+      }">
         <!-- 关闭和打开左侧侧面板 -->
-        <div class="open-colse" :class="leftFold" @click="handleLeftOpenOrClose"></div>
-        <ul class="left-tabs">
-          <li :class="activeTab == tabList[0] ? 'active' : ''" @click="handleClickTab(tabList[0])">
-            单券
-          </li>
-          <!-- <li
-            :class="activeTab == tabList[1] ? 'active' : ''"
-            @click="handleClickTab(tabList[1])"
-          >
-            JC
-          </li> -->
-          <li :class="activeTab == tabList[1] ? 'active' : ''" @click="handleClickTab(tabList[1])">
-            收藏
-          </li>
-        </ul>
-        <div class="tab-common tab-0" v-if="activeTab == tabList[0]">
-          <div class="search-box">
-            <com-tscode-select ref="refComTscodeSelect" @change="handlerTscodeSelect" style="width: 100%">
-            </com-tscode-select>
-          </div>
-          <hr color="#ec0000" size="1" style="margin: 0" />
-          <el-scrollbar>
-            <ul>
-              <li v-for="item in tscodeList" :key="item.tscode" @click="handlerTscode(item)"
-                :class="{ active: activeTscode == item.tscode }">
-                {{ item.bondname }}<br />
-                <strong class="l-strong">{{ item.tscode }}</strong>
-              </li>
-            </ul>
-          </el-scrollbar>
-        </div>
-        <div class="tab-common tab-2" v-if="activeTab == tabList[1]">
-          <hr color="#ec0000" size="1" style="margin: 0" />
-          <el-scrollbar>
-            <ul>
-              <draggable v-model="tscodeListFavorite" animation="300" @start="onStart" @end="onEnd">
-                <li v-for="item in tscodeListFavorite" :key="item.tscode" @click="handlerTscode(item)"
+        <!-- <div class="open-colse" :class="leftFold" @click="handleLeftOpenOrClose"></div> -->
+        <el-tabs type="left-tabs" class="left-tabs" :stretch="true" @tab-click="handleClickTab">
+          <el-tab-pane label="单券">
+            <div class="tab-common tab-0">
+              <div class="search-box">
+                <com-tscode-select ref="refComTscodeSelect" @change="handlerTscodeSelect" style="width: 100%">
+                </com-tscode-select>
+              </div>
+              <!-- <hr color="#ec0000" size="1" style="margin: 0" /> -->
+              <el-scrollbar ref="scrollTscodes">
+                <el-row class="left-tabs-item" :gutter="20" v-for="item in tscodeList" :key="item.tscode" @click.native="handlerTscode(item)"
                   :class="{ active: activeTscode == item.tscode }">
-                  <strong class="l-strong">{{ item.tscode }}</strong>
-                </li>
-              </draggable>
-            </ul>
-          </el-scrollbar>
-        </div>
+                  <!-- {{ item.bondname }}<br />
+                    <strong class="l-strong">{{ item.tscode }}</strong> -->
+                  <el-col :span="16">
+                    <div class="grid-content bg-purple font-size-large">{{ item.tscode }}</div>
+                    <div class="grid-content bg-purple">{{ item.bondname }}</div>
+                  </el-col>
+                  <el-col :span="8">
+                    <div class="grid-content bg-purple">{{ item.issuerate }}</div>
+                  </el-col>
+                </el-row>
+              </el-scrollbar>
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="收藏">
+            <div class="tab-common tab-2">
+              <!-- <hr color="#ec0000" size="1" style="margin: 0" /> -->
+              <el-scrollbar>
+                <draggable v-model="tscodeListFavorite" animation="300" @start="onStart" @end="onEnd">
+                  <el-row class="left-tabs-item" :gutter="20" v-for="item in tscodeListFavorite" :key="item.tscode"
+                    @click.native="handlerTscode(item)" :class="{ active: activeTscode == item.tscode }">
+                    <!-- {{ item.bondname }}<br />
+                    <strong class="l-strong">{{ item.tscode }}</strong> -->
+                    <el-col :span="16">
+                      <div class="grid-content bg-purple font-size-large">{{ item.tscode }}</div>
+                      <div class="grid-content bg-purple">{{ item.bondname }}</div>
+                    </el-col>
+                    <el-col :span="8">
+                      <div class="grid-content bg-purple">{{ item.issuerate }}</div>
+                    </el-col>
+                  </el-row>
+                </draggable>
+                <!-- <ul>
+                  <draggable v-model="tscodeListFavorite" animation="300" @start="onStart" @end="onEnd">
+                    <li v-for="item in tscodeListFavorite" :key="item.tscode" @click="handlerTscode(item)"
+                      :class="{ active: activeTscode == item.tscode }">
+                      <strong class="l-strong">{{ item.tscode }}</strong>
+                    </li>
+                  </draggable>
+                </ul> -->
+              </el-scrollbar>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
       </div>
       <!-- 中间 -->
       <div class="center">
@@ -162,7 +173,7 @@
             </li>
             <li>
               <el-button v-if="(activeName === 'buy' && buyForm.isMarketRoll === false) ||
-              (activeName === 'sale' && saleForm.isMarketRoll === false)
+                (activeName === 'sale' && saleForm.isMarketRoll === false)
               " type="default" size="mini" @click="handleGetPrice">市价</el-button>
             </li>
           </ul>
@@ -172,8 +183,8 @@
                 label-width="`${widthList.w80}px`" size="mini" class="buy-form">
                 <el-form-item label="券码">
                   <span class="txt-green">{{
-              buyForm.tscode.replace(/.IB/, "")
-            }}</span>
+                    buyForm.tscode.replace(/.IB/, "")
+                  }}</span>
                 </el-form-item>
                 <el-form-item label="价格 | 允许浮动" prop="price">
                   <el-input-number v-model="buyForm.price" :step="0.001" placeholder="请输入价格"
@@ -223,8 +234,8 @@
                   </el-select>
                   <br />
                   <el-button v-if="setAuth('inquiry:insert') &&
-              activeTscode.indexOf('.CTD') === -1
-              " class="btn-green mt10" :disabled="loading" :loading="loading"
+                    activeTscode.indexOf('.CTD') === -1
+                  " class="btn-green mt10" :disabled="loading" :loading="loading"
                     @click="submitForm('buyForm')">发送</el-button>
                 </el-form-item>
                 <el-form-item label="备注" style="width: 100%">
@@ -238,8 +249,8 @@
                 :label-width="`${widthList.w80}px`" size="mini" class="sale-form">
                 <el-form-item label="券码">
                   <span class="txt-red">{{
-              saleForm.tscode.replace(/.IB/, "")
-            }}</span>
+                    saleForm.tscode.replace(/.IB/, "")
+                  }}</span>
                 </el-form-item>
                 <el-form-item label="价格 | 允许浮动" prop="price">
                   <el-input-number v-model="saleForm.price" :step="0.001" placeholder="请输入价格"
@@ -302,8 +313,8 @@
       </div>
       <!-- 右侧 -->
       <div class="right-group" :style="{
-              width: rightWith + 'px',
-            }">
+        width: rightWith + 'px',
+      }">
         <!-- 关闭和打开右侧面板 -->
         <div class="open-colse" :class="rightFold" @click="handleRightOpenOrClose"></div>
         <!-- 及期卖出 -->
@@ -313,20 +324,25 @@
               <li v-for="(item, index) in businessOutList" :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px">
                 <span :style="`width: ${widthList.w50}px`">{{
-              item.brokerName
-            }}</span>
+                  item.brokerName
+                }}</span>
                 <span style="flex: 1" class="ellipsis">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
-                <span :style="`width: ${widthList.w50}px`">{{
-              item.price | moneyFormat(4)
-            }}</span>
+                <span class="txt-red" :style="`width: ${widthList.w50}px`">{{
+                  item.price | moneyFormat(4)
+                }}</span>
                 <span :style="`width: ${widthList.w60}px`">{{
-              item.updatetime
-            }}</span>
+                  item.updatetime
+                }}</span>
               </li>
             </ul>
           </el-scrollbar>
+          <el-skeleton v-else animated>
+            <template #template>
+              <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
+            </template>
+          </el-skeleton>
         </div>
         <!-- 及期买入 -->
         <div class="r-in" style="height: 120px">
@@ -335,20 +351,25 @@
               <li v-for="(item, index) in businessInList" :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px">
                 <span :style="`width: ${widthList.w50}px`">{{
-              item.brokerName
-            }}</span>
+                  item.brokerName
+                }}</span>
                 <span class="ellipsis" style="flex: 1">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
-                <span :style="`width: ${widthList.w50}px`">{{
-              item.price | moneyFormat(4)
-            }}</span>
+                <span class="txt-green" :style="`width: ${widthList.w50}px`">{{
+                  item.price | moneyFormat(4)
+                }}</span>
                 <span :style="`width: ${widthList.w60}px`">{{
-              item.updatetime
-            }}</span>
+                  item.updatetime
+                }}</span>
               </li>
             </ul>
           </el-scrollbar>
+          <!-- <el-skeleton v-else animated>
+            <template #template>
+              <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
+            </template>
+          </el-skeleton> -->
         </div>
         <!-- 远期卖出 -->
         <div class="r-out" style="height: 120px">
@@ -357,20 +378,25 @@
               <li v-for="(item, index) in businessForwardOutList" :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px">
                 <span :style="`width: ${widthList.w50}px`">{{
-              item.brokerName
-            }}</span>
+                  item.brokerName
+                }}</span>
                 <span style="flex: 1" class="ellipsis">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
-                <span :style="`width: ${widthList.w50}px`">{{
-              item.price | moneyFormat(4)
-            }}</span>
+                <span class="txt-red" :style="`width: ${widthList.w50}px`">{{
+                  item.price | moneyFormat(4)
+                }}</span>
                 <span :style="`width: ${widthList.w60}px`">{{
-              item.updatetime
-            }}</span>
+                  item.updatetime
+                }}</span>
               </li>
             </ul>
           </el-scrollbar>
+          <!-- <el-skeleton v-else animated>
+            <template #template>
+              <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
+            </template>
+          </el-skeleton> -->
         </div>
         <!-- 远期买入 -->
         <div class="r-in" style="height: 120px">
@@ -379,24 +405,29 @@
               <li v-for="(item, index) in businessForwardInList" :key="index"
                 :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px">
                 <span :style="`width: ${widthList.w50}px`">{{
-              item.brokerName
-            }}</span>
+                  item.brokerName
+                }}</span>
                 <span class="ellipsis" style="flex: 1">
                   {{ item.volumecomment ? item.volumecomment : item.volume }}
                 </span>
-                <span :style="`width: ${widthList.w50}px`">{{
-              item.price | moneyFormat(4)
-            }}</span>
+                <span class="txt-green" :style="`width: ${widthList.w50}px`">{{
+                  item.price | moneyFormat(4)
+                }}</span>
                 <span :style="`width: ${widthList.w60}px`">{{
-              item.updatetime
-            }}</span>
+                  item.updatetime
+                }}</span>
               </li>
             </ul>
           </el-scrollbar>
+          <!-- <el-skeleton v-else animated>
+            <template #template>
+              <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
+            </template>
+          </el-skeleton> -->
         </div>
         <!-- 交易 -->
-        <div class="r-trans" v-if="transactionAllList.length > 0">
-          <el-scrollbar>
+        <div class="r-trans">
+          <el-scrollbar v-if="transactionAllList.length > 0">
             <ul class="mt20" style="margin-top: 20px">
               <li class="li-first" style="height: 20px; line-height: 20px">
                 <span class="colume1">方向</span>
@@ -409,14 +440,19 @@
                 style="height: 20px; line-height: 20px">
                 <span class="colume1">{{ item.dealtype }}</span>
                 <span class="colume2">{{
-              item.tradeprice | moneyFormat(4)
-            }}</span>
+                  item.tradeprice | moneyFormat(4)
+                }}</span>
                 <span class="colume3">{{ item.brokerName }}</span>
                 <span class="colume4">{{ item.tradetime }}</span>
                 <!-- <span style="width: 60px">{{ item.netprice }}</span> -->
               </li>
             </ul>
           </el-scrollbar>
+          <!-- <el-skeleton v-else  animated >
+            <template #template>
+              <el-skeleton-item v-for="item in 100" :key="item" class="custom-skeleton-item"/>
+            </template>
+          </el-skeleton> -->
         </div>
       </div>
     </div>
@@ -485,15 +521,15 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="
-              quickSubmit(
-                `${activeName === 'buy'
-                  ? 'buyForm'
-                  : activeName === 'sale'
-                    ? 'saleForm'
-                    : ''
-                }`
-              )
-              ">确 定</el-button>
+          quickSubmit(
+            `${activeName === 'buy'
+              ? 'buyForm'
+              : activeName === 'sale'
+                ? 'saleForm'
+                : ''
+            }`
+          )
+          ">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog title="新建询价单" :visible.sync="dialogEnquiryAddVisible" width="40%" append-to-body :destroy-on-close="true"
@@ -1518,7 +1554,12 @@ export default {
     favoriteList() {
       api.favoriteList().then(response => {
         if (response && response.code === '00000') {
-          this.tscodeListFavorite = response.value
+          if (this.tscodeList.length > 0) {
+            let arr = response.value
+            this.tscodeListFavorite = this.tscodeList.filter((item) => arr.find(a => a.tscode === item.tscode));
+          } else {
+            this.tscodeListFavorite = response.value
+          }
           this.calcFavoriteIcon()
         }
       })
@@ -1592,7 +1633,18 @@ export default {
         this.calcFavoriteIcon()
         this.klinemethods[this.klineactive]()
         this.initRightTransactionList()
+        // this.scrollToTscode(this.activeTscode)
       })
+    },
+    scrollToTscode(activeTscode) {
+      console.log("============================", activeTscode)
+      const item = this.$refs.scrollTscodes.wrap; // 获取滚动条的 DOM 容器
+      const element = item.getElementsByClassName("left-tabs-item")[10]; // 获取指定索引的列表项
+      if (element) {
+        const scrollTop = element.offsetTop; // 计算需要滚动的距离
+        this.$refs.scrollTscodes.setScrollTop(scrollTop); // 使用 setScrollTop 方法滚动到指定位置
+        element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     },
     // 债券点击事件
     handlerTscode: debounce(function (item) {
@@ -1766,12 +1818,12 @@ export default {
       })
     },
     // 左侧tab切换
-    handleClickTab: debounce(function (tab) {
-      this.activeTab = tab;
-      if (tab === this.tabList[1]) {
+    handleClickTab(tab, event) {
+      this.activeTab = this.tabList[tab.index];
+      if (tab.index === '1') {
         this.favoriteList()
       }
-    }),
+    },
     // 右侧
     // 卖出，买入数据
     initRightBusinessList(params) {
@@ -3467,21 +3519,21 @@ export default {
     this.saleForm.quickSubmit = this.setForm.quickSubmit
 
     // this.initPriceWait()
-    window.onresize = () => {
-      this.initFrameW('leftWith', 200)
-      this.initFrameW('rightWith', 360)
-      this.initFrameW('canlendarW', 150)
-      this.widthList.w50 = this.returnFrameW(50)
-      this.widthList.w60 = this.returnFrameW(60)
-      this.widthList.w80 = this.returnFrameW(80)
-      this.widthList.w100 = this.returnFrameW(100)
-      this.widthList.w120 = this.returnFrameW(120)
-      setTimeout(() => {
-        if (this.myChart) {
-          this.myChart.resize()
-        }
-      }, 300)
-    }
+    // window.onresize = () => {
+    //   this.initFrameW('leftWith', 200)
+    //   this.initFrameW('rightWith', 360)
+    //   this.initFrameW('canlendarW', 150)
+    //   this.widthList.w50 = this.returnFrameW(50)
+    //   this.widthList.w60 = this.returnFrameW(60)
+    //   this.widthList.w80 = this.returnFrameW(80)
+    //   this.widthList.w100 = this.returnFrameW(100)
+    //   this.widthList.w120 = this.returnFrameW(120)
+    //   setTimeout(() => {
+    //     if (this.myChart) {
+    //       this.myChart.resize()
+    //     }
+    //   }, 300)
+    // }
   },
 }
 </script>
@@ -3575,8 +3627,16 @@ export default {
   bottom: 0px;
 
   .left-group {
-    border-right: 1px solid #ec0000;
+    //border-right: 1px solid #ec0000;
     position: relative;
+    padding: 8px;
+    border-radius: 5px;
+    background-color: #2f3032;
+    margin: 0 10px 10px 10px;
+    text-align: left;
+    color: #fff;
+    overflow: inherit;
+    width:max-content;
 
     .open-colse {
       position: absolute;
@@ -3590,24 +3650,44 @@ export default {
       z-index: 1000;
     }
 
-    .left-tabs {
-      overflow: hidden;
+    // 修改el-tabs
+    .left-tabs>>>.el-tabs__item.is-active {
+      background: #fff;
+      color: #000;
+      border-radius: 4px 4px 3px 3px;
+    }
+
+    .left-tabs>>>.el-tabs__active-bar {
+      background-color: #166fe8;
+      /* 修改底部横杠的颜色 */
+      height: 3px;
+      /* 修改底部横杠的高度 */
+      // width: 100px !important;
+      // left: 30%;
+    }
+
+    .left-tabs>>>.el-tabs__active-bar::after {
+      //给激活的时底部tab横线添加三角
+      content: "";
+      width: 0;
+      height: 0;
+      position: absolute;
+      left: 39%;
+      bottom: 2px;
+      border-top: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-left: 10px solid transparent;
+      border-bottom: 5px solid #166fe8;
+    }
+
+    .left-tabs>>>.el-tabs__item {
+      //
+      padding: 0 !important;
+      color: #fff;
+    }
+
+    .left-tabs>>>.el-tabs__nav.is-top {
       display: flex;
-      justify-content: center;
-      flex: 3;
-      line-height: 40px;
-
-      li {
-        flex: 1;
-        text-align: center;
-        color: white;
-        font-size: 14px;
-        cursor: pointer;
-      }
-
-      li.active {
-        color: #54ffff;
-      }
     }
 
     .tab-common {
@@ -3616,45 +3696,60 @@ export default {
     }
 
     .search-box {
-      padding: 5px 4px;
+      //padding: 5px 4px;
     }
 
     .el-scrollbar {
-      width: 100%;
+      .left-tabs-item {
+        line-height: 23px;
+        padding: 10px 0 0;
+        margin: 5px 0 !important;
+        border-radius: 3px;
+        cursor: pointer;
 
-      .el-scrollbar__wrap {
-        height: 100%;
-        overflow: scroll;
-        overflow-x: auto;
+      }
 
-        ul {
-          padding-right: 10px;
-        }
+      .left-tabs-item.active {
+        background-color: #e4e7ed;
+        border-radius: 3px;
+        color: #303133;
+      }
 
-        ul li {
-          color: #f0f888;
-          box-sizing: border-box;
-          padding: 10px 20px;
-          font-size: 12px;
-          border-bottom: 1px solid #ec0000;
-          cursor: pointer;
-        }
+      .left-tabs-item:hover {
+        background-color: #e4e7ed;
+        color: #303133;
+      }
 
-        ul li.active {
-          background-color: #000080;
-        }
+      ul {
+        padding-right: 10px;
+      }
+
+      ul li {
+        color: #fff;
+        box-sizing: border-box;
+        padding: 5px 10px;
+        margin: 5px 0;
+        font-size: 12px;
+        //border-bottom: 1px solid #ec0000;
+        cursor: pointer;
+      }
+
+      ul li.active {
+        background-color: #606266;
+        border-radius: 3px;
+        color: red;
       }
     }
 
     .tab-0 {
       .el-scrollbar {
-        height: calc(100% - 81px);
+        height: calc(100vh - 160px);
       }
     }
 
     .tab-2 {
       .el-scrollbar {
-        height: calc(100% - 40px);
+        height: calc(100vh - 120px);
       }
     }
   }
@@ -3713,8 +3808,8 @@ export default {
     display: flex;
     flex-direction: column;
     position: relative;
-    border-top: 1px solid #ec0000;
-    border-left: 1px solid #ec0000;
+    // border-top: 1px solid #ec0000;
+    // border-left: 1px solid #ec0000;
 
     .open-colse {
       position: absolute;
@@ -3759,7 +3854,7 @@ export default {
     .r-out,
     .r-trans {
       height: 120px;
-      border-bottom: 1px solid #ec0000;
+      //border-bottom: 1px solid #ec0000;
 
       .el-scrollbar {
         width: 100%;
@@ -3773,17 +3868,19 @@ export default {
           ul li {
             height: 20px;
             line-height: 20px;
-            color: #ec0000;
+            color: #ffffff;
             box-sizing: border-box;
             font-size: 12px;
             display: flex;
             padding: 0 5px;
             cursor: pointer;
-            border-bottom: 1px dashed rgb(51, 51, 51);
+            // border-bottom: 1px dashed rgb(51, 51, 51);
+            font-family: serif;
+            font-weight: normal;
 
             span {
               justify-content: flex-start;
-              padding: 0 5px;
+              padding: 0 3px;
             }
           }
 
@@ -3797,6 +3894,11 @@ export default {
 
           .colume1 {
             width: 60px;
+            background-color: #289c89;
+            border-radius: 3px;
+            margin: 1px;
+            color: #fff;
+            text-align: center;
           }
 
           .colume2 {
@@ -3815,11 +3917,23 @@ export default {
       }
     }
 
+    .r-out {
+      padding: 8px;
+      border-radius: 5px;
+      background-color: rgb(236 0 0 / 20%);
+      margin: 0 10px 10px 10px;
+    }
+
     .r-in {
+      padding: 8px;
+      border-radius: 5px;
+      background-color: rgb(0 128 0 / 20%);
+      margin: 0 10px 10px 10px;
+
       .el-scrollbar {
         .el-scrollbar__wrap {
           ul li {
-            color: #00da3c;
+            // color: #00da3c;
           }
         }
       }
@@ -3828,6 +3942,11 @@ export default {
     .r-trans {
       flex: 1;
       transform: scale(1);
+      padding: 8px 0px 8px 8px;
+      border-radius: 5px;
+      background-color: hsl(220 3% 19% / 1);
+      margin: 0 10px 10px 10px;
+      text-align: center;
 
       .el-scrollbar {
         width: 100%;
@@ -3836,13 +3955,36 @@ export default {
       ul {
         .li-first {
           font-weight: bold;
-          background: #202020;
+          background-color: hsl(220 3% 19% / 1);
           border-bottom: 1px solid rgb(51, 51, 51) !important;
-          position: fixed;
+          position: absolute;
           top: 0px;
           right: 0;
           left: 0;
+
+          .colume1 {
+            color: #fff;
+            background-color: hsl(220 3% 19% / 1) !important;
+          }
         }
+      }
+    }
+
+    .custom-skeleton-item {
+      background: -webkit-gradient(linear, left top, right top, color-stop(25%, #f2f2f2), color-stop(37%, #e6e6e6), color-stop(63%, #f2f2f2));
+      background: linear-gradient(90deg, #656565 25%, #938b8b 37%, #6f5353 63%);
+      background-size: 400% 100%;
+      -webkit-animation: el-skeleton-loading 1.4s ease infinite;
+      animation: el-skeleton-loading 1.4s ease infinite;
+    }
+
+    .custom-skeleton-item {
+      margin: 2px 0;
+
+      .el-skeleton__text {
+        width: 100%;
+        height: 14px;
+        line-height: 20px;
       }
     }
   }

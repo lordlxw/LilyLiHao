@@ -6,7 +6,7 @@ $hover-color2: #5270bd;
 html {
   overflow: hidden;
   -webkit-text-size-adjust: none;
-  font-weight: bold;
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
 
 ul,
@@ -479,6 +479,7 @@ a:hover {
 .el-table--group {
   border: 1px solid #666666;
   border-right: none;
+  font-weight: bold;
 }
 
 .el-table--border td,
@@ -493,7 +494,7 @@ a:hover {
 }
 
 /* 自定义滚动条的宽度 */
-.el-table__body-wrapper::-webkit-scrollbar {
+.el-scrollbar__wrap::-webkit-scrollbar,.el-table__body-wrapper::-webkit-scrollbar {
   width: 10px;
   /* 对于水平滚动条 */
   height: 10px;
@@ -501,22 +502,22 @@ a:hover {
 }
 
 /* 自定义滚动条的背景色 */
-.el-table__body-wrapper::-webkit-scrollbar-track {
+.el-scrollbar__wrap::-webkit-scrollbar-track,.el-table__body-wrapper::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 3px;
   /* 滚动条轨道的背景色 */
 }
 
 /* 自定义滚动条的滑块颜色 */
-.el-table__body-wrapper::-webkit-scrollbar-thumb {
-  background: #888;
+.el-scrollbar__wrap::-webkit-scrollbar-thumb,.el-table__body-wrapper::-webkit-scrollbar-thumb {
+  background: #888 !important;
   border-radius: 3px;
   /* 滚动条滑块的背景色 */
 }
 
 /* 当鼠标悬停在滚动条上时，自定义滑块的颜色 */
-.el-table__body-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #555;
+.el-scrollbar__wrap::-webkit-scrollbar-thumb:hover,.el-table__body-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555 !important;
   /* 滚动条滑块的背景色 */
 }
 
@@ -528,4 +529,9 @@ a:hover {
     width: 10px;
     height: 10px;
   }
+}
+
+
+.font-size-large{
+  font-size: large;
 }

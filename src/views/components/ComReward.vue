@@ -27,7 +27,6 @@
         tooltip-effect="dark"
         style="width: 100%"
         :height="height"
-        border
         :header-row-style="{ height: '30px', lineHeight: '30px' }"
         :header-cell-style="{ background: '#f8f8f8' }"
         :key="Math.random()"
@@ -101,7 +100,7 @@
                   scope.row.tscode
                 }}"？
               </p>
-              <el-table border :data="breakTableData">
+              <el-table  :data="breakTableData">
                 <template v-for="itemHead in breakTableHead">
                   <el-table-column
                     v-if="itemHead.show"

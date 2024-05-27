@@ -11,7 +11,7 @@
             {{ bondsIsSelection[0].tradeNum }} </span
           >确认要<span class="color-red"> 改违约 </span>？
         </p>
-        <el-table border :data="breakTableData">
+        <el-table :data="breakTableData">
           <template v-for="itemHead in breakTableHead">
             <el-table-column
               v-if="itemHead.show"
@@ -168,7 +168,6 @@
         tooltip-effect="dark"
         style="width: 100%"
         :height="height"
-        border
         row-key="rowId"
         :row-class-name="tableRowFinishClassName"
         :cell-class-name="tableCellBondsClassName"
@@ -288,7 +287,6 @@
                 >”{{ scope.row.tscode }}？
               </p>
               <el-table
-                border
                 :data="diffTableData"
                 :cell-style="cellStyleUpdate"
               >

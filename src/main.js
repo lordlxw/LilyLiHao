@@ -6,7 +6,7 @@ import store from "./store";
 import "amfe-flexible";
 import "@/assets/theme/index.css";
 import ElementUI from "element-ui";
-// import 'element-ui/lib/theme-chalk/index.css'
+import 'element-ui/lib/theme-chalk/index.css'
 // font icon
 import "@/assets/font-awesome-4.7.0/css/font-awesome.min.css";
 import "@/assets/css/style.scss";

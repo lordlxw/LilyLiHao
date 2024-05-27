@@ -25,7 +25,7 @@
           tooltip-effect="dark"
           style="width: 100%"
           :height="height"
-          border
+          
           row-key="userTradeId"
           default-expand-all
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
