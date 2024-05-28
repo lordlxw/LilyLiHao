@@ -27,7 +27,6 @@
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
-          border
           highlight-current-row
         >
           <el-table-column
@@ -145,6 +144,7 @@
       </div>
       <div class="pagination mt10">
         <el-pagination
+          background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="page"
@@ -271,7 +271,8 @@ export default {
         ]
       },
       // 重置密码表单label宽度
-      resetPassFormLabelWidth: 100
+      resetPassFormLabelWidth: 100,
+      page: 1
     };
   },
   methods: {

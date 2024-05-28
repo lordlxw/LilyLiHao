@@ -338,11 +338,11 @@
               </li>
             </ul>
           </el-scrollbar>
-          <el-skeleton v-else animated>
+          <!-- <el-skeleton v-else animated>
             <template #template>
               <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
             </template>
-          </el-skeleton>
+          </el-skeleton> -->
         </div>
         <!-- 及期买入 -->
         <div class="r-in" style="height: 120px">

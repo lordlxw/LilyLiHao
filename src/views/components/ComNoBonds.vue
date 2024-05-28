@@ -166,7 +166,7 @@
         ></el-table-column>
         <template v-for="itemHead in tableHead">
           <template v-if="itemHead.show">
-            <template v-if="['createTime'].indexOf(itemHead.prop) !== -1">
+            <!-- <template v-if="['createTime'].indexOf(itemHead.prop) !== -1">
               <el-table-column
                 :key="itemHead.label"
                 :align="itemHead.align"
@@ -207,9 +207,8 @@
                 "
               >
               </el-table-column>
-            </template>
+            </template> -->
             <el-table-column
-              v-else
               :key="itemHead.label"
               :align="itemHead.align"
               :prop="itemHead.prop"
@@ -219,7 +218,8 @@
                   'tscode',
                   'tradeNum',
                   'deliveryTime',
-                  'updateTime'
+                  'updateTime',
+                  'tradeTime',
                 ].indexOf(itemHead.prop) !== -1
                   ? 'custom'
                   : false

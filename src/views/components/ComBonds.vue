@@ -186,7 +186,7 @@
           width="40"
         ></el-table-column>
         <template v-for="itemHead in tableHeadFinish">
-          <template
+          <!-- <template
             v-if="['createTime'].indexOf(itemHead.prop) !== -1 && itemHead.show"
           >
             <el-table-column
@@ -225,10 +225,10 @@
               "
             >
             </el-table-column>
-          </template>
+          </template> -->
           <el-table-column
-            v-else-if="itemHead.show"
-            :key="itemHead.label"
+            v-if="itemHead.show"
+            :key="itemHead.prop"
             :align="itemHead.align"
             :prop="itemHead.prop"
             :sortable="
@@ -238,6 +238,7 @@
                 'tradeNum',
                 'deliveryTime',
                 'updateTime',
+                'tradeTime'
               ].indexOf(itemHead.prop) !== -1
                 ? 'custom'
                 : false

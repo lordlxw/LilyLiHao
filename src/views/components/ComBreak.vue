@@ -11,7 +11,6 @@
           tooltip-effect="dark"
           style="width: 100%"
           :height="height"
-          
           :key="Math.random()"
           default-expand-all
           row-key="realTradeId"

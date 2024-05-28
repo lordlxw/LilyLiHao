@@ -25,7 +25,6 @@
           tooltip-effect="dark"
           style="width: 100%"
           :height="height"
-          
           row-key="userTradeId"
           default-expand-all
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
@@ -40,7 +39,7 @@
           <!-- :key="Math.random()" -->
           <el-table-column width="30"></el-table-column>
           <template v-for="itemHead in tableHead">
-            <template
+            <!-- <template
               v-if="
                 ['createTime', 'tradeTime'].indexOf(itemHead.prop) !== -1 &&
                 itemHead.show
@@ -89,10 +88,10 @@
                 "
               >
               </el-table-column>
-            </template>
+            </template> -->
             <el-table-column
-              v-else-if="itemHead.show"
-              :key="itemHead.label"
+              v-if="itemHead.show"
+              :key="itemHead.prop"
               :align="itemHead.align"
               :prop="itemHead.prop"
               :formatter="
