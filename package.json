@@ -14,7 +14,8 @@
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
     "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs",
-    "build": "node build/build.js"
+    "build": "cross-env NODE_ENV=production node build/build.js",
+    "build:dev": "cross-env NODE_ENV=development node build/build.js"
   },
   "dependencies": {
     "@antv/g2": "^4.1.12",
@@ -123,7 +124,7 @@
       "icon": "public/icons/icon.icns"
     },
     "win": {
-      
+
     },
     "nsis": {
       "oneClick": false,
