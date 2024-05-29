@@ -535,3 +535,15 @@ a:hover {
 .font-size-large{
   font-size: large;
 }
+
+
+//公共 .el-dialog 样式
+.el-dialog {
+  border-radius: 5px;
+  min-width: 100px;
+}
+
+//公共 .el-loading 样式
+.el-loading-mask{
+  background-color: rgba(110, 110, 110, 0.62);
+}

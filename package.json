@@ -121,7 +121,7 @@
     "copyright": "Copyright © 2024",
     "mac": {
       "category": "public.app-category.utilities",
-      "icon": "public/icons/icon.icns"
+      "icon": "favicon.ico"
     },
     "win": {
 

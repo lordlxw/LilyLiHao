@@ -113,6 +113,10 @@ export default {
   .list {
     padding: 0 15px;
 
+    .mt20 >>>.el-tabs__item {
+      font-size: 12px !important;
+    }
+
     .do {
       height: 40px;
       line-height: 40px;

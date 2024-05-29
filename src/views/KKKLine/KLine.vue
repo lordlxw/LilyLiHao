@@ -80,8 +80,8 @@
               </div>
               <!-- <hr color="#ec0000" size="1" style="margin: 0" /> -->
               <el-scrollbar ref="scrollTscodes">
-                <el-row class="left-tabs-item" :gutter="20" v-for="item in tscodeList" :key="item.tscode" @click.native="handlerTscode(item)"
-                  :class="{ active: activeTscode == item.tscode }">
+                <el-row class="left-tabs-item" :gutter="20" v-for="item in tscodeList" :key="item.tscode"
+                  @click.native="handlerTscode(item)" :class="{ active: activeTscode == item.tscode }">
                   <!-- {{ item.bondname }}<br />
                     <strong class="l-strong">{{ item.tscode }}</strong> -->
                   <el-col :span="16">
@@ -128,10 +128,10 @@
       </div>
       <!-- 中间 -->
       <div class="center">
-        <div ref="refKline" if="data0.length>0" class="kline"></div>
+        <div ref="refKline" if="data0.length>0" class="kline" ></div>
         <div class="volume"></div>
         <!-- 交易框 -->
-        <div class="chatbox">
+        <div class="chatbox" v-loading="leftChangeLoad">
           <ul class="best-price-wapper">
             <el-popover placement="bottom-end" width="300" trigger="manual" ref="popover-set"
               v-model="popoverSetVisible">
@@ -318,7 +318,7 @@
         <!-- 关闭和打开右侧面板 -->
         <div class="open-colse" :class="rightFold" @click="handleRightOpenOrClose"></div>
         <!-- 及期卖出 -->
-        <div class="r-out" style="height: 120px">
+        <div class="r-out" style="height: 120px" v-loading="leftChangeLoad">
           <el-scrollbar v-if="businessOutList && businessOutList.length > 0">
             <ul>
               <li v-for="(item, index) in businessOutList" :key="index"
@@ -342,10 +342,10 @@
             <template #template>
               <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
             </template>
-          </el-skeleton> -->
+</el-skeleton> -->
         </div>
         <!-- 及期买入 -->
-        <div class="r-in" style="height: 120px">
+        <div class="r-in" style="height: 120px" v-loading="leftChangeLoad">
           <el-scrollbar v-if="businessInList && businessInList.length > 0">
             <ul>
               <li v-for="(item, index) in businessInList" :key="index"
@@ -372,7 +372,7 @@
           </el-skeleton> -->
         </div>
         <!-- 远期卖出 -->
-        <div class="r-out" style="height: 120px">
+        <div class="r-out" style="height: 120px" v-loading="leftChangeLoad">
           <el-scrollbar v-if="businessForwardOutList && businessForwardOutList.length > 0">
             <ul>
               <li v-for="(item, index) in businessForwardOutList" :key="index"
@@ -399,7 +399,7 @@
           </el-skeleton> -->
         </div>
         <!-- 远期买入 -->
-        <div class="r-in" style="height: 120px">
+        <div class="r-in" style="height: 120px" v-loading="leftChangeLoad">
           <el-scrollbar v-if="businessForwardInList && businessForwardInList.length > 0">
             <ul>
               <li v-for="(item, index) in businessForwardInList" :key="index"
@@ -426,19 +426,18 @@
           </el-skeleton> -->
         </div>
         <!-- 交易 -->
-        <div class="r-trans">
+        <div class="r-trans" v-loading="leftChangeLoad">
           <el-scrollbar v-if="transactionAllList.length > 0">
-            <ul class="mt20" style="margin-top: 20px">
-              <li class="li-first" style="height: 20px; line-height: 20px">
+            <ul class="mt20" style="margin-top: 25px">
+              <li class="li-first" style="height: 25px; line-height: 25px">
                 <span class="colume1">方向</span>
                 <span class="colume2">价格</span>
                 <span class="colume3">中介</span>
                 <span class="colume4">交易时间</span>
-                <!-- <span style="width: 60px">净价</span> -->
               </li>
-              <li v-for="(item, index) in transactionAllList" :key="index" :class="funcSelectColor(item.dealtype)"
-                style="height: 20px; line-height: 20px">
-                <span class="colume1">{{ item.dealtype }}</span>
+              <li v-for="(item, index) in transactionAllList" :key="index" class="trans_item"
+                :class="funcSelectColor(item.dealtype)" style="height: 20px; line-height: 20px">
+                <span class="colume1"><span>{{ item.dealtype }}</span></span>
                 <span class="colume2">{{
                   item.tradeprice | moneyFormat(4)
                 }}</span>
@@ -516,10 +515,10 @@
     <audio controls ref="playAudio" style="display: none">
       <source src="@/assets/audio/1.wav" type="audio/wav" />
     </audio>
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" :before-close="()=>{dialogVisible = false,loading = false}">
       <span>请确认需要提交询价单？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="dialogVisible = false, loading = false">取 消</el-button>
         <el-button type="primary" @click="
           quickSubmit(
             `${activeName === 'buy'
@@ -840,7 +839,8 @@ export default {
       dialogEnquiryAddVisible: false,
       currentDifficultData: {},
       // 修改密码
-      dialogUpdatePasswordVisible: false
+      dialogUpdatePasswordVisible: false,
+      leftChangeLoad: false
     }
   },
   computed: {
@@ -1648,6 +1648,7 @@ export default {
     },
     // 债券点击事件
     handlerTscode: debounce(function (item) {
+      this.leftChangeLoad = true;
       Promise.all([
         this.activeId = item.id,
         this.tscode = item.tscode,
@@ -1657,6 +1658,9 @@ export default {
         this.klinemethods[this.klineactive]()
         this.calcFavoriteIcon()
         this.initRightTransactionList()
+        setTimeout(() => {
+          this.leftChangeLoad = false;
+        }, 500)
       })
     }),
     // 图表数据分类方法
@@ -2078,7 +2082,7 @@ export default {
         // 浏览器端收消息，获得从服务端发送过来的文本消息
         self.socketKLine.onmessage = function (msg) {
           const timestamp = moment().valueOf()
-          console.log("收到数据====" + msg.data);
+          // console.log("收到数据====" + msg.data);
           let msgJson = JSON.parse(msg.data)
           const h = self.$createElement;
           let notify = null
@@ -3518,22 +3522,22 @@ export default {
     this.buyForm.quickSubmit = this.setForm.quickSubmit
     this.saleForm.quickSubmit = this.setForm.quickSubmit
 
-    // this.initPriceWait()
-    // window.onresize = () => {
-    //   this.initFrameW('leftWith', 200)
-    //   this.initFrameW('rightWith', 360)
-    //   this.initFrameW('canlendarW', 150)
-    //   this.widthList.w50 = this.returnFrameW(50)
-    //   this.widthList.w60 = this.returnFrameW(60)
-    //   this.widthList.w80 = this.returnFrameW(80)
-    //   this.widthList.w100 = this.returnFrameW(100)
-    //   this.widthList.w120 = this.returnFrameW(120)
-    //   setTimeout(() => {
-    //     if (this.myChart) {
-    //       this.myChart.resize()
-    //     }
-    //   }, 300)
-    // }
+    this.initPriceWait()
+    window.onresize = () => {
+      this.initFrameW('leftWith', 200)
+      this.initFrameW('rightWith', 360)
+      this.initFrameW('canlendarW', 150)
+      this.widthList.w50 = this.returnFrameW(50)
+      this.widthList.w60 = this.returnFrameW(60)
+      this.widthList.w80 = this.returnFrameW(80)
+      this.widthList.w100 = this.returnFrameW(100)
+      this.widthList.w120 = this.returnFrameW(120)
+      setTimeout(() => {
+        if (this.myChart) {
+          this.myChart.resize()
+        }
+      }, 300)
+    }
   },
 }
 </script>
@@ -3549,7 +3553,9 @@ export default {
     overflow: hidden;
 
     .top-type {
-      width: 190px;
+      min-width: 240px;
+      max-width: 240px;
+      padding: 0 8px;
     }
 
     .tscode {
@@ -3567,9 +3573,11 @@ export default {
     li {
       float: left;
       padding: 0px 5px;
-      font-size: 12px;
+      font-size: 14px;
       cursor: pointer;
       color: rgb(240, 239, 239);
+      font-weight: bold;
+      font-family: fangsong;
     }
 
     li.active {
@@ -3628,6 +3636,8 @@ export default {
 
   .left-group {
     //border-right: 1px solid #ec0000;
+    min-width: 220px;
+    max-width: 220px;
     position: relative;
     padding: 8px;
     border-radius: 5px;
@@ -3636,15 +3646,14 @@ export default {
     text-align: left;
     color: #fff;
     overflow: inherit;
-    width:max-content;
+    width: max-content;
 
     .open-colse {
       position: absolute;
       width: 16px;
       height: 16px;
       right: -16px;
-      top: -5px;
-      color: #54ffff;
+      color: #fff;
       font-size: 16px;
       cursor: pointer;
       z-index: 1000;
@@ -3767,13 +3776,15 @@ export default {
       width: 100%;
       height: 200px;
       position: relative;
-      bottom: 0;
+      bottom: 10px;
       color: #ec0000;
-      border-top: 1px solid #ec0000;
+      -webkit-box-sizing: border-box;
       box-sizing: border-box;
       padding: 0px;
-      background: #202020;
       overflow: hidden;
+      background-color: #2f3032;
+      border-radius: 5px;
+      padding: 3px;
 
       .best-price-wapper {
         position: absolute;
@@ -3815,11 +3826,15 @@ export default {
       position: absolute;
       width: 16px;
       height: 16px;
-      left: -16px;
-      top: -5px;
-      color: #54ffff;
+      left: -20px;
+      color: #fff;
       font-size: 16px;
       cursor: pointer;
+    }
+
+    .open-colse:hover{
+      color: #00da3c;
+      font-size: 20px;
     }
 
     .r-in,
@@ -3893,24 +3908,36 @@ export default {
           }
 
           .colume1 {
-            width: 60px;
-            background-color: #289c89;
+            min-width: 30px;
+            width: 20%;
             border-radius: 3px;
             margin: 1px;
             color: #fff;
             text-align: center;
           }
 
+          .trans_item .colume1 span {
+            min-width: 30px;
+            width: 60%;
+            border-radius: 3px;
+            display: inline-block;
+            background-color: #289c89;
+            height: -webkit-fill-available;
+          }
+
           .colume2 {
-            width: 100px;
+            width: 25%;
+            min-width: 30px;
           }
 
           .colume3 {
-            width: 100px;
+            width: 25%;
+            min-width: 30px;
           }
 
           .colume4 {
-            width: 100px;
+            width: 25%;
+            min-width: 30px;
             text-align: center;
           }
         }
@@ -3922,6 +3949,7 @@ export default {
       border-radius: 5px;
       background-color: rgb(236 0 0 / 20%);
       margin: 0 10px 10px 10px;
+      overflow: hidden;
     }
 
     .r-in {
@@ -3929,6 +3957,7 @@ export default {
       border-radius: 5px;
       background-color: rgb(0 128 0 / 20%);
       margin: 0 10px 10px 10px;
+      overflow: hidden;
 
       .el-scrollbar {
         .el-scrollbar__wrap {
@@ -3947,6 +3976,7 @@ export default {
       background-color: hsl(220 3% 19% / 1);
       margin: 0 10px 10px 10px;
       text-align: center;
+      overflow: hidden;
 
       .el-scrollbar {
         width: 100%;
@@ -3955,16 +3985,15 @@ export default {
       ul {
         .li-first {
           font-weight: bold;
-          background-color: hsl(220 3% 19% / 1);
           border-bottom: 1px solid rgb(51, 51, 51) !important;
           position: absolute;
           top: 0px;
           right: 0;
           left: 0;
+          background-color: hsl(220 3% 19% / 1);
 
           .colume1 {
             color: #fff;
-            background-color: hsl(220 3% 19% / 1) !important;
           }
         }
       }
@@ -4045,32 +4074,32 @@ export default {
       border-color: #ec0000;
     }
 
-    .el-button--primary:hover {
-      background-color: rgb(221, 28, 28);
-      border-color: rgb(221, 28, 28);
-    }
+    // .el-button--primary:hover {
+    //   background-color: rgb(221, 28, 28);
+    //   border-color: rgb(221, 28, 28);
+    // }
 
-    .el-button--primary:last-child {
-      border-left-color: rgba(255, 255, 255, 0.5);
-    }
+    // .el-button--primary:last-child {
+    //   border-left-color: rgba(255, 255, 255, 0.5);
+    // }
 
-    .btn-red,
-    .btn-active {
-      background: #ec0000 !important;
-      color: white;
-      border: 1px solid rgb(238, 3, 3);
-    }
+    // .btn-red,
+    // .btn-active {
+    //   background: #ec0000 !important;
+    //   color: white;
+    //   border: 1px solid rgb(238, 3, 3);
+    // }
 
-    .btn-red:hover {
-      background: rgb(250, 64, 64) !important;
-      color: white;
-    }
+    // .btn-red:hover {
+    //   background: rgb(250, 64, 64) !important;
+    //   color: white;
+    // }
 
-    .el-form-item__label {
-      font-size: 12px;
-      font-weight: normal;
-      color: #ec0000 !important;
-    }
+    // .el-form-item__label {
+    //   font-size: 12px;
+    //   font-weight: normal;
+    //   color: #ec0000 !important;
+    // }
   }
 
   .buy-form {
