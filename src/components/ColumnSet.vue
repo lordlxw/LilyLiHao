@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <el-transfer :titles="['原始字段', '展示字段']" v-model="value" :data="data"
-      target-order="push">
+  <div :class="'id_' + templateId">
+    <el-transfer :titles="['原始字段', '展示字段']" v-model="value" :data="data" target-order="push">
     </el-transfer>
     <el-button type="primary" @click="handleSaveColumn" class="mt20">保存设置</el-button>
   </div>
@@ -74,6 +73,7 @@ export default {
     },
   },
   mounted() {
+    console.log("==========================")
     Promise.all([(this.userId = this.urlParams.userId)]).then(() => {
       this.dispatchUserColumn()
       this.dispatchColumn()
@@ -88,6 +88,7 @@ export default {
       this.shiftKey = false;
     });
     let el = document
+      .querySelector(".id_" + this.templateId)
       .querySelector(".el-transfer")
       .querySelectorAll(".el-checkbox-group")[1];
     const sortable = new Sortable(el, {

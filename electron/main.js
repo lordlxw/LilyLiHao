@@ -38,7 +38,7 @@ function initialize() {
       }
     });
     // mainWindow.maximize();
-    // mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools();
     mainWindow.show();
     // 如果是开发环境就把当前运行的web端口做成客户端预览
     // 如果是生产环境就把打包后的index做成客户端预览
@@ -120,7 +120,11 @@ function makeSingleInstance() {
 
 // Require each JS file in the main-process dir
 function loadDemos() {
-  const files = glob.sync(path.join(__dirname, "./main-process/**/*.js"));
+  let pattern = path.join(__dirname, "./main-process/**/*.js");
+  pattern = pattern.replace(/\\/g, "/");
+  // 将反斜杠替换为正斜杠
+  const files = glob.sync(pattern);
+  console.log(files);
   files.forEach(file => {
     require(file);
   });

@@ -1662,7 +1662,7 @@ export default {
         this.initRightTransactionList()
         setTimeout(() => {
           this.leftChangeLoad = false;
-        }, 500)
+        }, 100)
       })
     }),
     // 图表数据分类方法
