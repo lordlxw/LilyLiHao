@@ -14,7 +14,6 @@
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
-          border
           highlight-current-row
         >
           <el-table-column

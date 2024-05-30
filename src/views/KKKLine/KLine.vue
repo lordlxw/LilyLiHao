@@ -58,7 +58,7 @@
             </el-badge>
           </span>
         </li> -->
-        <li class="nav-right">
+        <li class="nav-right" v-if="!isElectron">
           <router-link target="_blank" :to="{ path: '/trade/bonds' }" class="i-text" style="color: white"><i
               class="el-icon-s-home"></i></router-link>
         </li>
@@ -128,7 +128,7 @@
       </div>
       <!-- 中间 -->
       <div class="center">
-        <div ref="refKline" if="data0.length>0" class="kline" ></div>
+        <div ref="refKline" if="data0.length>0" class="kline"></div>
         <div class="volume"></div>
         <!-- 交易框 -->
         <div class="chatbox" v-loading="leftChangeLoad">
@@ -515,7 +515,8 @@
     <audio controls ref="playAudio" style="display: none">
       <source src="@/assets/audio/1.wav" type="audio/wav" />
     </audio>
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" :before-close="()=>{dialogVisible = false,loading = false}">
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%"
+      :before-close="() => { dialogVisible = false, loading = false }">
       <span>请确认需要提交询价单？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false, loading = false">取 消</el-button>
@@ -840,7 +841,8 @@ export default {
       currentDifficultData: {},
       // 修改密码
       dialogUpdatePasswordVisible: false,
-      leftChangeLoad: false
+      leftChangeLoad: false,
+      isElectron: window.v1.isElectron(),
     }
   },
   computed: {
@@ -3461,18 +3463,23 @@ export default {
     handleCommand: debounce(function (command) {
       switch (command) {
         case "logout":
-          apiLogin.logout().then(response => {
-            if (response && response.code === 200) {
-              this.$store.commit('SET_TOKEN', null)
-              this.$store.commit('SET_USER_INFO', null)
-              this.$router.push({ path: '/' })
-            } else {
-              this.$message({
-                message: '退出失败',
-                type: 'error'
-              })
-            }
-          })
+          if (this.isElectron) {
+            window.v1.quit()
+          } else {
+            apiLogin.logout().then(response => {
+              if (response && response.code === 200) {
+                this.$store.commit('SET_TOKEN', null)
+                this.$store.commit('SET_USER_INFO', null)
+                this.$router.push({ path: '/' })
+              } else {
+                this.$message({
+                  message: '退出失败',
+                  type: 'error'
+                })
+              }
+            })
+          }
+
           break;
         case "updatePassword":
           this.dialogUpdatePasswordVisible = true
@@ -3832,7 +3839,7 @@ export default {
       cursor: pointer;
     }
 
-    .open-colse:hover{
+    .open-colse:hover {
       color: #00da3c;
       font-size: 20px;
     }

@@ -23,14 +23,6 @@ Vue.use(ElementUI, {
 });
 Vue.component(Layout.name, Layout);
 
-// import wapi_json from "../static/config.json";
-if (process.env.NODE_ENV === "testing") {
-  console.log("正在运行 测试 环境");
-} else if (process.env.NODE_ENV === "development") {
-  console.log("正在运行 开发 环境");
-} else {
-  console.log("正在运行 正式 环境");
-}
 Vue.prototype.$apiUrl = process.env.BASE_API;
 Vue.prototype.$wsUrl = process.env.WS_URL;
 /* eslint-disable no-new */

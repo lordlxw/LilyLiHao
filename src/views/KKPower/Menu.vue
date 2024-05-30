@@ -17,7 +17,6 @@
           tooltip-effect="dark"
           style="width: 100%"
           max-height="600"
-          border
           row-key="menuId"
           @selection-change="handleSelectionChange"
           default-expand-all

@@ -100,21 +100,26 @@ export default {
     handleCommand(command) {
       switch (command) {
         case "logout":
-          apiLogin.logout().then(response => {
-            if (response && response.code === 200) {
-              Promise.all([
-                this.$store.commit('SET_TOKEN', null),
-                this.$store.commit('SET_USER_INFO', null)
-              ]).then(() => {
-                this.$router.push({ path: '/' })
-              })
-            } else {
-              this.$message({
-                message: '退出失败',
-                type: 'error'
-              })
-            }
-          })
+          if (window.v1.isElectron()) {
+            window.v1.quit()
+          } else {
+            apiLogin.logout().then(response => {
+              if (response && response.code === 200) {
+                Promise.all([
+                  this.$store.commit('SET_TOKEN', null),
+                  this.$store.commit('SET_USER_INFO', null)
+                ]).then(() => {
+                  this.$router.push({ path: '/' })
+                })
+              } else {
+                this.$message({
+                  message: '退出失败',
+                  type: 'error'
+                })
+              }
+            })
+          }
+
           break;
         case "updatePassword":
           this.dialogUpdatePasswordVisible = true
