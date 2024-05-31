@@ -28,5 +28,14 @@ export default {
       url: `${Vue.prototype.$apiUrl}/logout`,
       method: 'get',
     })
-  }
+  },
+  verifyToken(token) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/api/verifyToken`,
+      method: 'post',
+      data: {
+        token: token,
+      }
+    })
+  },
 }

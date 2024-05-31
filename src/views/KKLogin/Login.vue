@@ -38,6 +38,7 @@ import { mapState, mapMutations } from 'vuex'
 import Velocity from 'velocity-animate'
 import api from '@/api/kk_login'
 import { debounce } from '@/utils/debounce'
+import configUtil from '@/utils/config.js'
 export default {
   data() {
     return {
@@ -77,12 +78,39 @@ export default {
               ]).then(() => {
                 api.auth().then(response => {
                   if (response && response.code === 200) {
+                    let menutree = [
+                      ...response.menutree,
+                      {
+                        "searchValue": null,
+                        "createBy": null,
+                        "createTime": "2023-02-23 02:52:37",
+                        "updateBy": null,
+                        "updateTime": null,
+                        "remark": null,
+                        "params": {},
+                        "menuId": 10123,
+                        "menuName": "聊天",
+                        "parentName": null,
+                        "parentId": 0,
+                        "orderNum": "1",
+                        "path": null,
+                        "component": "/chat",
+                        "isFrame": "1",
+                        "isCache": "0",
+                        "menuType": "M",
+                        "visible": "0",
+                        "status": "0",
+                        "perms": "",
+                        "icon": null,
+                        "children": []
+                      }
+                    ]
                     this.$store.commit('SET_USER_INFO', {
                       permissions: response.permissions,
                       userName: response.user.userName,
                       userId: response.user.userId,
                       roleName: response.user.roles[0].roleName,
-                      menutree: response.menutree
+                      menutree: menutree
                     })
                   }
                   this.$router.push({ path: '/trade/bonds' })
@@ -134,11 +162,18 @@ export default {
       })
     }
   },
-  mounted() {
-    if (this.socketMain != null) {
-      this.socketMain.close()
+  async mounted() {
+    if (localStorage.getItem(configUtil.keys.tokenKey) && localStorage.getItem(configUtil.keys.tokenKey) !== 'null') {
+      const { code } = await api.verifyToken(localStorage.getItem(configUtil.keys.tokenKey))
+      if (code === '00000') {
+        this.$router.push({ path: '/trade/bonds' })
+      }
+    } else {
+      if (this.socketMain != null) {
+        this.socketMain.close()
+      }
+      this["SET_SOCKET_MAIN"](null)
     }
-    this["SET_SOCKET_MAIN"](null)
   }
 }
 </script>
@@ -149,7 +184,7 @@ export default {
 .login-wrapper {
   height: 100%;
   padding-top: 100px;
-  background-color: $hover-color;
+  background: $background-style;
 
   .logo {
     width: 60px;
@@ -166,6 +201,7 @@ export default {
   .login-form {
     width: 324px;
     margin: auto;
+    border-radius: 5px;
     background: white;
     padding: 10px 30px;
     box-shadow: 0 0 10px #333;

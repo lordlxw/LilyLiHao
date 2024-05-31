@@ -15,6 +15,10 @@
           <router-link target="_blank" :to="{ path: '/kline' }" class="i-text"><i
               class="fa fa-line-chart"></i></router-link>
         </li>
+        <li class="nav-right" >
+          <router-link target="_blank" :to="{ path: '/chat' }" class="i-text"><i
+              class="fa fa-line-chart"></i></router-link>
+        </li>
         <li class="nav-right">
           <el-dropdown @command="handleCommand">
             <span class="el-dropdown-link">
@@ -100,7 +104,7 @@ export default {
     handleCommand(command) {
       switch (command) {
         case "logout":
-          if (window.v1.isElectron()) {
+          if (window.v1 && window.v1.isElectron()) {
             window.v1.quit()
           } else {
             apiLogin.logout().then(response => {

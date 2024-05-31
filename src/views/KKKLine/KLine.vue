@@ -842,7 +842,7 @@ export default {
       // 修改密码
       dialogUpdatePasswordVisible: false,
       leftChangeLoad: false,
-      isElectron: window.v1.isElectron(),
+      isElectron: false,
     }
   },
   computed: {
@@ -874,6 +874,9 @@ export default {
     this.initFrameW('rightWith', 360)
     this.keyDown()
     this.initSocket()
+    if (window.v1) {
+      this.isElectron = window.v1.isElectron()
+    }
   },
   beforeDestroy() {
     this.keyDownReview()
