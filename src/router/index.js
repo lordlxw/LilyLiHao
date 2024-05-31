@@ -48,6 +48,24 @@ const router = new Router({
         }
       ]
     },
+    // 模拟
+    {
+      path: '/',
+      component: () => import('@/views/KKSimulation/Index.vue'),
+      redirect: '/simulation',
+      children: [
+        {
+          path: '/simulation',
+          component: () => import('@/views/KKSimulation/Index.vue')
+        },
+         // 聊天
+         {
+          path: '/simulation/chat',
+          component: () => import('@/views/KKSimulation/Chat.vue'),
+        },
+      ]
+
+    },
     {
       path: '/main',
       component: () => import('@/views/Index.vue'),
@@ -136,7 +154,7 @@ const router = new Router({
         {
           path: '/trade/break',
           component: () => import('@/views/KKTrade/Break.vue')
-        }
+        },
       ]
     }
   ],

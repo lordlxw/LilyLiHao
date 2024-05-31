@@ -15,10 +15,6 @@
           <router-link target="_blank" :to="{ path: '/kline' }" class="i-text"><i
               class="fa fa-line-chart"></i></router-link>
         </li>
-        <li class="nav-right" >
-          <router-link target="_blank" :to="{ path: '/chat' }" class="i-text"><i
-              class="fa fa-line-chart"></i></router-link>
-        </li>
         <li class="nav-right">
           <el-dropdown @command="handleCommand">
             <span class="el-dropdown-link">

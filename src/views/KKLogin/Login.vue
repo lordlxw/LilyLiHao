@@ -78,39 +78,12 @@ export default {
               ]).then(() => {
                 api.auth().then(response => {
                   if (response && response.code === 200) {
-                    let menutree = [
-                      ...response.menutree,
-                      {
-                        "searchValue": null,
-                        "createBy": null,
-                        "createTime": "2023-02-23 02:52:37",
-                        "updateBy": null,
-                        "updateTime": null,
-                        "remark": null,
-                        "params": {},
-                        "menuId": 10123,
-                        "menuName": "聊天",
-                        "parentName": null,
-                        "parentId": 0,
-                        "orderNum": "1",
-                        "path": null,
-                        "component": "/chat",
-                        "isFrame": "1",
-                        "isCache": "0",
-                        "menuType": "M",
-                        "visible": "0",
-                        "status": "0",
-                        "perms": "",
-                        "icon": null,
-                        "children": []
-                      }
-                    ]
                     this.$store.commit('SET_USER_INFO', {
                       permissions: response.permissions,
                       userName: response.user.userName,
                       userId: response.user.userId,
                       roleName: response.user.roles[0].roleName,
-                      menutree: menutree
+                      menutree: response.menutree
                     })
                   }
                   this.$router.push({ path: '/trade/bonds' })

@@ -4,7 +4,7 @@
   "description": "Lily管理系统",
   "author": "xxx",
   "private": true,
-  "main": "electron/main.js",
+  "main": "background.js",
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "ele": "wait-on tcp:8080 && cross-env NODE_ENV=development electron . --platform=win32",
@@ -135,7 +135,8 @@
     },
     "files": [
       "dist/**/*",
-      "electron/**/*"
+      "electron/**/*",
+      "background.js"
     ],
     "directories": {
       "buildResources": "assets",

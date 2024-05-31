@@ -53,7 +53,6 @@ function initialize() {
       console.log("router-link action");
       mainWindow.webContents.on(
         "new-window",
-
         (event, url, frameName, disposition, options, additionalFeatures) => {
           console.log("router-link action ", frameName);
           event.preventDefault();

@@ -14,7 +14,6 @@ import "@/assets/css/style.scss";
 import { default as Layout } from "@/layout";
 import Filters from "@/utils/filter";
 // import axios from "axios";
-
 Vue.use(Filters);
 Vue.config.productionTip = false;
 sync(store, router);
