@@ -7,11 +7,15 @@
                         <el-row>
                             <el-col :span="8">
                                 <div class="demo-basic--circle">
-                                    <div class="block"><el-avatar :size="50" :src="circleUrl"></el-avatar></div>
+                                    <div class="block"><el-avatar :size="46" :src="circleUrl"></el-avatar></div>
                                 </div>
                             </el-col>
                             <el-col :span="16">
-                                <span class="item_name">中介 {{ i }}</span>
+                                <div class="item_name">中介 {{ i }}</div>
+                                <el-tooltip class="item" effect="dark" content="bid 240004 2k 06月03日+0 2.3160"
+                                    placement="top-start">
+                                    <div class="item_name item_content">bid 240004 2k 06月03日+0 2.3160</div>
+                                </el-tooltip>
                             </el-col>
                         </el-row>
 
@@ -19,9 +23,63 @@
                 </div>
             </el-aside>
             <el-container>
-                <el-header></el-header>
-                <el-main></el-main>
-                <el-footer></el-footer>
+                <el-header>
+                    <el-row>
+                        <el-col :span="8" class="chat_header_left">
+                            <el-row>
+                                <el-col :span="8">
+                                    <div class="demo-basic--circle">
+                                        <div class="block"><el-avatar :size="50" :src="circleUrl"></el-avatar></div>
+                                    </div>
+                                </el-col>
+                                <el-col :span="16">
+                                    <div class="item_name">中介 1</div>
+                                    <el-tooltip class="item" effect="dark" content="bid 240004 2k 06月03日+0 2.3160"
+                                        placement="top-start">
+                                        <div class="item_name item_content">bid 240004 2k 06月03日+0 2.3160</div>
+                                    </el-tooltip>
+                                </el-col>
+                            </el-row>
+                        </el-col>
+                        <el-col :span="16">
+                        </el-col>
+                    </el-row>
+                    <el-divider></el-divider>
+                </el-header>
+                <el-main>
+                    <div v-for="i in count" class="main_item" :key="i">
+                        <el-row>
+                            <el-col :span="3" v-if="i % 2 === 0">
+                                <div class="demo-basic--circle">
+                                    <div class="block"><el-avatar :size="40" :src="circleUrl"></el-avatar></div>
+                                </div>
+                            </el-col>
+                            <el-col :span="21" :class="i % 2 === 0 ? 'main_left' : 'main_right'">
+                                <div class="main_name">中介 {{ i }}</div>
+                                <div class="main_content">
+                                    测试123123，测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123
+                                </div>
+                            </el-col>
+                            <el-col :span="3" v-if="i % 2 === 1">
+                                <div class="demo-basic--circle">
+                                    <div class="block"><el-avatar :size="40" :src="circleUrl"></el-avatar></div>
+                                </div>
+                            </el-col>
+                        </el-row>
+
+                    </div>
+                </el-main>
+                <el-footer>
+                    <div class="footer_send">
+                        <el-select v-model="value" placeholder="请选择">
+                            <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+
+                        <el-button type="success" plain>发送</el-button>
+                    </div>
+                </el-footer>
             </el-container>
         </el-container>
     </div>
@@ -67,6 +125,23 @@ export default {
             chats: [],
             count: 0,
             // chats: [],
+            options: [{
+                value: '选项1',
+                label: '黄金糕'
+            }, {
+                value: '选项2',
+                label: '双皮奶'
+            }, {
+                value: '选项3',
+                label: '蚵仔煎'
+            }, {
+                value: '选项4',
+                label: '龙须面'
+            }, {
+                value: '选项5',
+                label: '北京烤鸭'
+            }],
+            value: ''
 
         }
     },
@@ -94,24 +169,31 @@ export default {
     background-color: #F6F6F6;
     color: #333;
 
-    .chat_item {
-        height: 60px;
-        margin: 5px;
-
+    .chat_header_left {
+        max-height: 80px;
         cursor: pointer;
         border-radius: 3px;
+        padding: 15px 0;
 
         .el-avatar {
-            vertical-align: middle;
+            line-height: 60px;
         }
 
         .item_name {
             font-size: 14px;
             text-align: left;
             font-weight: bold;
-            display: inline-block;
             width: 100%;
             padding-left: 5px;
+            line-height: 25px;
+        }
+
+        .item_content {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: normal;
+            font-size: 12px;
         }
     }
 
@@ -122,8 +204,38 @@ export default {
     .el-aside {
         color: #333;
         text-align: center;
-        line-height: 60px;
         background-color: #EFEFEF;
+
+        .chat_item {
+            max-height: 60px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 3px;
+            padding: 7px 0;
+
+            .el-avatar {
+                vertical-align: middle;
+                line-height: 60px;
+            }
+
+            .item_name {
+                font-size: 14px;
+                text-align: left;
+                font-weight: bold;
+                display: inline-block;
+                width: 100%;
+                padding-left: 5px;
+                line-height: 23px;
+            }
+
+            .item_content {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-weight: normal;
+                font-size: 12px;
+            }
+        }
     }
 
     .el-aside::-webkit-scrollbar {
@@ -146,19 +258,119 @@ export default {
     }
 
     .el-header {
-        line-height: 60px;
-        background-color: #B3C0D1;
+        height: 80px !important;
+
+        .el-divider--horizontal {
+            margin: 0px;
+        }
     }
 
     .el-footer {
         background-color: #ffffff;
 
+        .footer_send {
+            text-align: right;
+            line-height: 60px;
+
+            .is-plain {
+                display: inline-block;
+                font-size: 14px;
+                line-height: 32px;
+                margin-left: 5px;
+                padding: 0 20px;
+                background-color: #F5F5F5;
+                border: none;
+                color: #606060;
+                width: 80px;
+            }
+
+            .el-select--small >>> .el-input__inner:hover,
+            .is-plain:hover {
+                background-color: #189100;
+                color: #fff;
+            }
+
+            .el-select--small >>> .el-input__inner {
+                width: 120px;
+                background-color: #f5f5f5;
+                border: none;
+                font-size: 12px;
+            }
+        }
+
     }
 
     .el-main {
-        background-color: #E9EEF3;
         color: #333;
         text-align: center;
+
+        .main_item {
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 3px;
+            padding: 5px 0;
+
+            .el-avatar {
+                vertical-align: middle;
+                line-height: 60px;
+            }
+
+            .main_left {
+                text-align: left;
+            }
+
+            .main_right {
+                text-align: right;
+
+                .main_content {
+                    background-color: #9EEA6A;
+                }
+
+                .main_content:after {
+                    left: auto;
+                    right: -10px;
+                    border-top-color: #9EEA6A;
+                }
+            }
+
+            .main_name {
+                font-size: 14px;
+                font-weight: bold;
+                display: inline-block;
+                width: 100%;
+                line-height: 25px;
+            }
+
+            .main_content {
+                position: relative;
+                line-height: 22px;
+                padding: 8px 15px;
+                background-color: #fff;
+                border-radius: 3px;
+                color: #000;
+                word-break: break-all;
+                max-width: 262px;
+                border: solid 1px #EDEDED;
+                font-weight: normal;
+                font-size: 12px;
+                text-align: left;
+                width: fit-content;
+                display: inline-block;
+            }
+
+            .main_content:after {
+                content: '';
+                position: absolute;
+                left: -10px;
+                top: 13px;
+                width: 0;
+                height: 0;
+                border-style: solid dashed dashed;
+                border-color: #fff transparent transparent;
+                overflow: hidden;
+                border-width: 10px;
+            }
+        }
     }
 
     .el-container {
@@ -173,5 +385,42 @@ export default {
     .el-container:nth-child(7) .el-aside {
         line-height: 320px;
     }
+
+    /* 自定义滚动条的宽度 */
+    .el-main::-webkit-scrollbar {
+        width: 10px;
+        /* 对于水平滚动条 */
+        height: 10px;
+        /* 对于垂直滚动条 */
+    }
+
+    /* 自定义滚动条的背景色 */
+    .el-main::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+        /* 滚动条轨道的背景色 */
+    }
+
+    /* 自定义滚动条的滑块颜色 */
+    .el-main::-webkit-scrollbar-thumb {
+        background: #888 !important;
+        border-radius: 3px;
+        /* 滚动条滑块的背景色 */
+    }
+
+    /* 当鼠标悬停在滚动条上时，自定义滑块的颜色 */
+    .el-main::-webkit-scrollbar-thumb:hover {
+        background: #555 !important;
+        /* 滚动条滑块的背景色 */
+    }
+
+    /** 设置表格内设的滚动条宽度，适应动态计算 */
+    .el-main {
+        &::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+    }
+
 }
 </style>

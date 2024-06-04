@@ -22,6 +22,13 @@
             </el-input>
           </el-form-item>
           <el-form-item>
+            <el-radio-group v-model="labelPosition" size="small">
+              <el-radio-button label="lily">管理</el-radio-button>
+              <el-radio-button label="Simulation">模拟</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+
+          <el-form-item>
             <el-button type="primary" class="btn-login" @click="submitForm('ruleForm')" size="medium">进入系统</el-button>
           </el-form-item>
         </el-form>
@@ -52,7 +59,8 @@ export default {
       rules: {
         username: [{ required: true, message: '账号必填', trigger: 'blue' }],
         password: [{ required: true, message: '密码必填', trigger: 'blue' }]
-      }
+      },
+      labelPosition: 'lily'
     }
   },
   computed: {
@@ -86,7 +94,11 @@ export default {
                       menutree: response.menutree
                     })
                   }
-                  this.$router.push({ path: '/trade/bonds' })
+                  if (this.labelPosition === 'lily') {
+                    this.$router.push({ path: '/trade/bonds' })
+                  } else {
+                    this.$router.push({ path: '/simulation' })
+                  }
                 })
               })
             } else {

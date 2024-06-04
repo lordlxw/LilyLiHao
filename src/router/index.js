@@ -56,7 +56,7 @@ const router = new Router({
       children: [
         {
           path: '/simulation',
-          component: () => import('@/views/KKSimulation/Index.vue')
+          component: () => import('@/views/KKSimulation/Kline.vue')
         },
          // 聊天
          {

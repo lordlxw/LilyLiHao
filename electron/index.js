@@ -53,6 +53,12 @@ class MultiWindows {
       minWidth: 1440,
       minHeight: 900,
       show: false,
+      // autoHideMenuBar: true,
+      // titleBarStyle: "hidden",
+      // resizable: true,
+      // minimizable: true,
+      // maximizable: true,
+      // frame: false,
       webPreferences: {
         defaultEncoding: "utf-8",
         partition: String(+new Date()),
@@ -72,17 +78,11 @@ class MultiWindows {
     // console.log(args);
 
     // 判断窗口是否存在
-    console.log(this.winLs)
     for (let i in this.winLs) {
-      console.log(
-        this.getWin(i) &&
-          this.winLs[i].route === args.route &&
-          !this.winLs[i].isMultiWin
-      );
       if (
         this.getWin(i) &&
         this.winLs[i].route === args.route &&
-        !this.winLs[i].isMultiWin
+        this.winLs[i].isMultiWin
       ) {
         this.getWin(i).focus();
         return;
@@ -126,7 +126,7 @@ class MultiWindows {
     args.id = win.id;
 
     console.log("current id ", args.id);
-    console.log("current opt ", opt);
+    // console.log("current opt ", opt);
 
     // 加载页面
     let $url;
@@ -149,10 +149,23 @@ class MultiWindows {
 
     win.on("close", () => win.setOpacity(0));
 
+    if (args.isMainWin) {
+      win.on("close", e => {
+        // 阻止默认的窗口关闭
+        e.preventDefault();
+        win.setOpacity(0);
+        e.defaultPrevented = false;
+        win.destroy();
+        app.quit();
+      });
+    } else {
+      win.on("close", () => win.setOpacity(0));
+    }
+
     // 初始化渲染进程
     win.webContents.on("did-finish-load", () => {
       // win.webContents.send('win-loaded', '加载完成~！')
-      // win.webContents.send("win-loaded", args);
+      win.webContents.send("win-loaded", args);
 
       win.webContents.on(
         "new-window",
@@ -166,8 +179,7 @@ class MultiWindows {
           if (url && url.substring(url.indexOf("#") + 2) === "fourscreen") {
             isMultiWin = true;
           }
-          let window = new MultiWindows();
-          window.createWin({
+          this.createWin({
             route: url,
             isMultiWin: isMultiWin,
             webPreferences: {
