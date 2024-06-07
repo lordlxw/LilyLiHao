@@ -1,4 +1,8 @@
-const { app, BrowserWindow, ipcMain, Menu } = require("electron");
+const { app, BrowserWindow, ipcMain, screen } = require("electron");
+// 第一步：引入remote
+const remote = require('@electron/remote/main');
+// 第二步： 初始化remote
+remote.initialize();
 const { join } = require("path");
 const glob = require("glob");
 
@@ -17,20 +21,25 @@ const defaultConfig = {
   route: "", // 路由地址url
   title: "", // 标题
   data: null, // 传入数据参数
-  width: "", // 窗口宽度
-  height: "", // 窗口高度
-  minWidth: "", // 窗口最小宽度
-  minHeight: "", // 窗口最小高度
+  width: 1440, // 窗口宽度
+  height: 900, // 窗口高度
+  minWidth: 1440, // 窗口最小宽度
+  minHeight: 900, // 窗口最小高度
+  maxWidth: 0,
+  maxHeight: 0,
   x: "", // 窗口相对于屏幕左侧坐标
   y: "", // 窗口相对于屏幕顶端坐标
-  resize: false, // 是否支持缩放
-  maximize: true, // 最大化窗口
+  resize: true, // 是否支持缩放
+  maximizable: true,
+  minimizable: true,
+  maximize: false, // 最大化窗口
   isMultiWin: false, // 是否支持多开窗口
   isMainWin: false, // 是否主窗口
   parent: "", // 父窗口（需传入父窗口id）
   modal: false, // 模态窗口（模态窗口是浮于父窗口上，禁用父窗口）
   alwaysOnTop: false, // 置顶窗口
-  webPreferences: {}
+  webPreferences: {},
+  sharSession: true
 };
 
 class MultiWindows {
@@ -48,17 +57,13 @@ class MultiWindows {
       // 窗口图标
       icon: join(process.env.ROOT, "/static/favicon.ico"),
       backgroundColor: "#fff",
-      width: 1440,
-      height: 900,
-      minWidth: 1440,
-      minHeight: 900,
       show: false,
-      // autoHideMenuBar: true,
+      autoHideMenuBar: true,
       // titleBarStyle: "hidden",
-      // resizable: true,
-      // minimizable: true,
-      // maximizable: true,
-      // frame: false,
+      resizable: true,
+      minimizable: true,
+      maximizable: false,
+      frame: true,
       webPreferences: {
         defaultEncoding: "utf-8",
         partition: String(+new Date()),
@@ -75,14 +80,14 @@ class MultiWindows {
   // 创建新窗口
   createWin(options) {
     const args = Object.assign({}, defaultConfig, options);
-    // console.log(args);
+    console.log(args);
 
     // 判断窗口是否存在
     for (let i in this.winLs) {
       if (
         this.getWin(i) &&
         this.winLs[i].route === args.route &&
-        this.winLs[i].isMultiWin
+        !this.winLs[i].isMultiWin
       ) {
         this.getWin(i).focus();
         return;
@@ -107,21 +112,29 @@ class MultiWindows {
     if (args.minHeight) opt.minHeight = args.minHeight;
     if (args.x) opt.x = args.x;
     if (args.y) opt.y = args.y;
+    if (args.maximizable) opt.maximizable = args.maximizable;
 
+    if (args.maxWidth >= args.minWidth) opt.maxWidth = args.maxWidth;
+    if (args.maxHeight >= args.minHeight) opt.maxHeight = args.maxHeight;
+
+    const allWin = this.getAllWin();
     if (args.webPreferences && args.webPreferences.session) {
       opt.webPreferences.session = args.webPreferences.session;
+    } else if (args.sharSession && allWin.length > 0) {
+      opt.webPreferences.session = allWin[0].webContents.session;
     }
 
     // 创建窗口对象
-    Menu.setApplicationMenu(null);
+    // Menu.setApplicationMenu(null);
     let win = new BrowserWindow(opt);
     // 是否最大化
-    if (args.maximize && args.resize) {
+    if (args.maximize && args.resize && args.maximizable) {
       win.maximize();
     }
     this.winLs[win.id] = {
       route: args.route,
-      isMultiWin: args.isMultiWin
+      isMultiWin: args.isMultiWin,
+      data: args.data
     };
     args.id = win.id;
 
@@ -137,7 +150,7 @@ class MultiWindows {
         $url = winURL;
       }
     } else {
-      $url = `${args.route}`;
+      $url = `${winURL}#${args.route}`;
     }
     win.loadURL($url);
 
@@ -172,15 +185,19 @@ class MultiWindows {
         (event, url, frameName, disposition, options, additionalFeatures) => {
           console.log(
             "router-link action ",
-            url.substring(url.indexOf("#") + 2)
+            url.substring(url.indexOf("#") + 1)
           );
           event.preventDefault();
           let isMultiWin = false;
-          if (url && url.substring(url.indexOf("#") + 2) === "fourscreen") {
+          if (
+            url &&
+            (url.substring(url.indexOf("#") + 1) === "/fourscreen" ||
+              url.substring(url.indexOf("#") + 1) === "/simulation/fourScreen")
+          ) {
             isMultiWin = true;
           }
           this.createWin({
-            route: url,
+            route: url.substring(url.indexOf("#") + 1),
             isMultiWin: isMultiWin,
             webPreferences: {
               session: win.webContents.session
@@ -189,6 +206,8 @@ class MultiWindows {
         }
       );
     });
+
+    remote.enable(win.webContents);
   }
 
   // 获取窗口
@@ -219,14 +238,43 @@ class MultiWindows {
   makeSingleInstance() {
     if (process.mas) return;
 
-    app.requestSingleInstanceLock();
+    if (!app.requestSingleInstanceLock()) {
+      app.quit();
+    } else {
+      app.on("second-instance", () => {
+        console.log("=============requestSingleInstanceLock===============");
+        const allWin = this.getAllWin();
+        if (allWin.length > 0) {
+          if (allWin[0].isMinimized()) allWin[0].restore();
+          allWin[0].focus();
+        }
+      });
 
-    app.on("second-instance", () => {
-      if (this.mainWin) {
-        if (this.mainWin.isMinimized()) this.mainWin.restore();
-        this.mainWin.focus();
-      }
-    });
+      const loginArg = {
+        id: "login",
+        width: 650, // 窗口宽度
+        height: 480, // 窗口高度
+        minWidth: 650, // 窗口最小宽度
+        minHeight: 480, // 窗口最小高度
+        resize: false, // 是否支持缩放
+        maximize: false, // 最大化窗口
+        isMultiWin: false, // 是否支持多开窗口
+        isMainWin: false, // 是否主窗口
+        alwaysOnTop: true // 置顶窗口
+      };
+      this.createWin(loginArg);
+    }
+
+    // app.requestSingleInstanceLock();
+
+    // app.on("second-instance", () => {
+    //   console.log("=============requestSingleInstanceLock===============");
+    //   const allWin = this.getAllWin();
+    //   if (allWin.length > 0) {
+    //     if (allWin[0].isMinimized()) allWin[0].restore();
+    //     allWin[0].focus();
+    //   }
+    // });
   }
 
   // Require each JS file in the main-process dir
@@ -268,16 +316,67 @@ class MultiWindows {
         return true;
       }
     });
-    ipcMain.on("close", (e, data) => {
-      // const wins = BrowserWindow.getFocusedWindow()
-      // wins.close()
-      this.closeAllWin();
+
+    ipcMain.handle("createWin", (event, args) => this.createWin(args));
+
+    ipcMain.handle("setArgs", (event, args) => {
+      let win = BrowserWindow.getFocusedWindow();
+      if (args.parent) win.setParentWindow(this.getWin(args.parent));
+      if (typeof args.resize === "boolean") win.setResizable(args.resize);
+      if (typeof args.alwaysOnTop === "boolean") {
+        win.setAlwaysOnTop(args.alwaysOnTop);
+      }
+
+      if (args.background) win.setBackgroundColor(args.background);
+      if (args.width && args.height) win.setSize(args.width, args.height);
+      if (args.minWidth && args.minHeight) {
+        win.setMinimumSize(args.minWidth, args.minHeight);
+      }
+      if (args.x && args.y) win.setBounds(args.x, args.y);
+      // 是否最大化
+      if (args.maximize && args.resize) {
+        win.maximize();
+      }
+      // console.log("current id ", args.id);
+      // console.log("current opt ", opt);
+
+      if (args.route) {
+        win.loadURL(`${winURL}#${args.route}`);
+      }
+    });
+
+    ipcMain.handle("close", (e, data) => {
+      const wins = BrowserWindow.getFocusedWindow();
+      wins.close();
     });
 
     ipcMain.on("win-create", (event, args) => this.createWin(args));
 
     ipcMain.handle("quit", e => {
       this.closeAllWin();
+    });
+
+    ipcMain.handle("getAllDisplays", e => {
+      return screen.getAllDisplays();
+    });
+
+    ipcMain.handle("getWinThis", (event, id) => {
+      return this.winLs[id];
+    });
+
+    ipcMain.handle("getPosition", (event, id) => {
+      if (id) {
+        const win = this.getWin(id);
+        const { x, y } = win.getPosition();
+        return [{ x, y }];
+      } else {
+        const wins = this.getAllWin();
+        return wins.map(win => {
+          const { x, y } = win.getPosition();
+          console.log(win.getPosition());
+          return { x, y };
+        });
+      }
     });
 
     // ...

@@ -55,8 +55,16 @@ const router = new Router({
       redirect: '/simulation',
       children: [
         {
-          path: '/simulation',
+          path: '/simulation/kline',
           component: () => import('@/views/KKSimulation/Kline.vue')
+        },
+        {
+          path: '/simulation/klinevertical',
+          component: () => import('@/views/KKSimulation/KLineVertical.vue')
+        },
+        {
+          path: '/simulation/fourScreen',
+          component: () => import('@/views/KKSimulation/FourScreen.vue')
         },
          // 聊天
          {

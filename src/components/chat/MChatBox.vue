@@ -1,112 +1,96 @@
 <template>
     <div>
-        <el-scrollbar :style="{ height: tipsHeight }">
-            <div v-for="i in count" class="chat_tips" :key="i" @click="dialogChatBoxVisible = true">
-                <div class="tips_tit">
-                    bid xxxxxx xk xx月xx日+0 2.3160
-                </div>
-                <div class="tips_name">
-                    中介xxx
-                </div>
+        <div class="chat_box" @click="() => { msgShow = false }" :class="msgShow ? 'message show' : ''"
+            :style="{ height: boxHeight + 'px' }">
+            <el-container>
+                <el-aside width="200px" v-if="asideShow">
+                    <div class="aside_top"></div>
+                    <div v-infinite-scroll="load">
+                        <div v-for="i in count" class="chat_item" :key="i">
+                            <el-row>
+                                <el-col :span="8">
+                                    <div class="demo-basic--circle">
+                                        <div class="block"><el-avatar :size="46" :src="circleUrl"></el-avatar></div>
+                                    </div>
+                                </el-col>
+                                <el-col :span="16">
+                                    <div class="item_name">中介 {{ i }}</div>
+                                    <el-tooltip class="item" effect="dark" content="bid 240004 2k 06月03日+0 2.3160"
+                                        placement="top-start">
+                                        <div class="item_name item_content">bid 240004 2k 06月03日+0 2.3160</div>
+                                    </el-tooltip>
+                                </el-col>
+                            </el-row>
 
-                <div class="tips-right">
-                    <!-- <i class="el-icon-chat-square"></i> -->
-                    <!-- <i @click="dialogChatBoxVisible = false" class="el-icon-close"></i> -->
-                </div>
-            </div>
-        </el-scrollbar>
-        <el-dialog custom-class="no-header-dialog" :visible.sync="dialogChatBoxVisible" center append-to-body>
-            <div class="chat_box">
+                        </div>
+                    </div>
+                </el-aside>
                 <el-container>
-                    <el-aside width="200px">
-                        <div class="aside_top"></div>
-                        <div v-infinite-scroll="load">
-                            <div v-for="i in count" class="chat_item" :key="i">
+                    <el-header>
+                        <el-row>
+                            <el-col :span="8" class="chat_header_left">
                                 <el-row>
                                     <el-col :span="8">
                                         <div class="demo-basic--circle">
-                                            <div class="block"><el-avatar :size="46" :src="circleUrl"></el-avatar></div>
+                                            <div class="block"><el-avatar :size="50" :src="circleUrl"></el-avatar>
+                                            </div>
                                         </div>
                                     </el-col>
                                     <el-col :span="16">
-                                        <div class="item_name">中介 {{ i }}</div>
+                                        <div class="item_name">中介 1</div>
                                         <el-tooltip class="item" effect="dark" content="bid 240004 2k 06月03日+0 2.3160"
                                             placement="top-start">
                                             <div class="item_name item_content">bid 240004 2k 06月03日+0 2.3160</div>
                                         </el-tooltip>
                                     </el-col>
                                 </el-row>
-
-                            </div>
+                            </el-col>
+                            <el-col :span="16">
+                            </el-col>
+                        </el-row>
+                        <div class="header-right">
+                            <i class="el-icon-minus"></i>
+                            <i @click="closeDialog" class="el-icon-close"></i>
                         </div>
-                    </el-aside>
-                    <el-container>
-                        <el-header>
+                        <el-divider></el-divider>
+                    </el-header>
+                    <el-main>
+                        <div v-for="i in chats" class="main_item" :key="i">
                             <el-row>
-                                <el-col :span="8" class="chat_header_left">
-                                    <el-row>
-                                        <el-col :span="8">
-                                            <div class="demo-basic--circle">
-                                                <div class="block"><el-avatar :size="50" :src="circleUrl"></el-avatar>
-                                                </div>
-                                            </div>
-                                        </el-col>
-                                        <el-col :span="16">
-                                            <div class="item_name">中介 1</div>
-                                            <el-tooltip class="item" effect="dark"
-                                                content="bid 240004 2k 06月03日+0 2.3160" placement="top-start">
-                                                <div class="item_name item_content">bid 240004 2k 06月03日+0 2.3160</div>
-                                            </el-tooltip>
-                                        </el-col>
-                                    </el-row>
+                                <el-col :span="3" v-if="i % 2 === 0">
+                                    <div class="demo-basic--circle">
+                                        <div class="block"><el-avatar :size="40" :src="circleUrl"></el-avatar></div>
+                                    </div>
                                 </el-col>
-                                <el-col :span="16">
+                                <el-col :span="21" :class="i % 2 === 0 ? 'main_left' : 'main_right'">
+                                    <div class="main_name">中介 {{ i }}</div>
+                                    <div class="main_content">
+                                        测试123123，测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123
+                                    </div>
+                                </el-col>
+                                <el-col :span="3" v-if="i % 2 === 1">
+                                    <div class="demo-basic--circle">
+                                        <div class="block"><el-avatar :size="40" :src="circleUrl"></el-avatar></div>
+                                    </div>
                                 </el-col>
                             </el-row>
-                            <div class="header-right">
-                                <i class="el-icon-minus"></i>
-                                <i @click="closeDialog" class="el-icon-close"></i>
-                            </div>
-                            <el-divider></el-divider>
-                        </el-header>
-                        <el-main>
-                            <div v-for="i in count" class="main_item" :key="i">
-                                <el-row>
-                                    <el-col :span="3" v-if="i % 2 === 0">
-                                        <div class="demo-basic--circle">
-                                            <div class="block"><el-avatar :size="40" :src="circleUrl"></el-avatar></div>
-                                        </div>
-                                    </el-col>
-                                    <el-col :span="21" :class="i % 2 === 0 ? 'main_left' : 'main_right'">
-                                        <div class="main_name">中介 {{ i }}</div>
-                                        <div class="main_content">
-                                            测试123123，测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123
-                                        </div>
-                                    </el-col>
-                                    <el-col :span="3" v-if="i % 2 === 1">
-                                        <div class="demo-basic--circle">
-                                            <div class="block"><el-avatar :size="40" :src="circleUrl"></el-avatar></div>
-                                        </div>
-                                    </el-col>
-                                </el-row>
 
-                            </div>
-                        </el-main>
-                        <el-footer>
-                            <div class="footer_send">
-                                <el-select v-model="value" placeholder="请选择">
-                                    <el-option v-for="item in options" :key="item.value" :label="item.label"
-                                        :value="item.value">
-                                    </el-option>
-                                </el-select>
+                        </div>
+                    </el-main>
+                    <el-footer>
+                        <div class="footer_send">
+                            <el-select v-model="value" placeholder="请选择">
+                                <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
 
-                                <el-button type="success" plain>发送</el-button>
-                            </div>
-                        </el-footer>
-                    </el-container>
+                            <el-button type="success" plain>发送</el-button>
+                        </div>
+                    </el-footer>
                 </el-container>
-            </div>
-        </el-dialog>
+            </el-container>
+        </div>
     </div>
 
 </template>
@@ -114,16 +98,30 @@
 <script>
 
 export default {
-    name: "M-Chat",
+    name: "M-ChatBox",
     created() {
     },
     props: {
+        asideShow: {
+            type: Boolean,
+            default: false
+        },
         tipsHeight: {
             type: String
         },
         tipsWidth: {
             type: Number,
             default: 200
+        },
+        boxHeight: {
+            type: Number,
+            default: 200
+        },
+        chats: {
+            type: Array,
+            default() {
+                return []
+            }
         },
         config: {
             type: Object,
@@ -158,6 +156,7 @@ export default {
                     // 签名
                     sign: "与其感慨路难行,不如马上出发！",
                     avatar: '',
+
                 }
             }
         }
@@ -165,8 +164,6 @@ export default {
     data() {
         return {
             circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
-            // 会话
-            chats: [],
             count: 5,
             // chats: [],
             options: [{
@@ -187,6 +184,7 @@ export default {
             }],
             value: '',
             dialogChatBoxVisible: false,
+            msgShow: false
 
         }
     },
@@ -197,6 +195,9 @@ export default {
         closeDialog() {
             this.dialogChatBoxVisible = false;
         }
+    },
+    mounted() {
+        this.msgShow = this.chats.length > 0 ? true : false;
     }
 }
 </script>
@@ -260,11 +261,11 @@ export default {
 
 .chat_box {
     min-width: 500px;
-    width: 850px;
-    height: 600px;
+    width: -webkit-fill-available;
+    margin: 10px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
-    position: absolute;
+    position: relative;
     top: unset;
     left: unset;
     border: 1px solid #D9D9D9;
@@ -549,5 +550,30 @@ export default {
         }
     }
 
+}
+
+.message {
+    animation: fadeInOut 2s infinite;
+    opacity: 0.5;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    box-shadow: 0 0 10px #ec0000;
+    z-index: 1000;
+}
+
+.message.show {
+    display: block;
+}
+
+@keyframes fadeInOut {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
 }
 </style>

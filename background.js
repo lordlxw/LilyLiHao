@@ -10,10 +10,10 @@ process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
 
 const createWindow = () => {
   let window = new MultiWindows();
-  window.makeSingleInstance();
-  window.loadDemos();
 
-  window.createWin({ isMainWin: true });
+  window.loadDemos();
+  window.makeSingleInstance();
+  
   window.ipcMainListen();
   
 };

@@ -6,35 +6,36 @@
         class="logo"
         :src="require('@/assets/images/logo.png')"
       ></el-image> -->
-      <h3>Lily系统</h3>
+      <div class="login-body">
+        <div class="login-title">Lily系统</div>
+        <transition appear @before-enter="handleFormBeforeEnter" @enter="handleFormEnter">
+          <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="login-form" size="medium">
+            <div class="tit">登录</div>
+            <el-form-item prop="username">
+              <el-input placeholder="请输入账号" prefix-icon="el-icon-user" v-model="ruleForm.username"
+                @keyup.enter.native="submitForm('ruleForm')" size="medium">
+              </el-input>
+            </el-form-item>
+            <el-form-item prop="password">
+              <el-input placeholder="请输入密码" prefix-icon="el-icon-lock" v-model="ruleForm.password" show-password
+                @keyup.enter.native="submitForm('ruleForm')" size="medium">
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-radio-group v-model="labelPosition" size="small">
+                <el-radio-button label="lily">管理</el-radio-button>
+                <el-radio-button label="Simulation">模拟</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
 
-      <transition appear @before-enter="handleFormBeforeEnter" @enter="handleFormEnter">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="login-form" size="medium">
-          <div class="tit">登录</div>
-          <el-form-item prop="username">
-            <el-input placeholder="请输入账号" prefix-icon="el-icon-user" v-model="ruleForm.username"
-              @keyup.enter.native="submitForm('ruleForm')" size="medium">
-            </el-input>
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input placeholder="请输入密码" prefix-icon="el-icon-lock" v-model="ruleForm.password" show-password
-              @keyup.enter.native="submitForm('ruleForm')" size="medium">
-            </el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-radio-group v-model="labelPosition" size="small">
-              <el-radio-button label="lily">管理</el-radio-button>
-              <el-radio-button label="Simulation">模拟</el-radio-button>
-            </el-radio-group>
-          </el-form-item>
-
-          <el-form-item>
-            <el-button type="primary" class="btn-login" @click="submitForm('ruleForm')" size="medium">进入系统</el-button>
-          </el-form-item>
-        </el-form>
-      </transition>
-      <div class="icp">
-        <a href="http://beian.miit.gov.cn" target="_blank">琼ICP备2023001153号-1</a>
+            <el-form-item>
+              <el-button type="primary" class="btn-login" @click="submitForm('ruleForm')" size="medium">进入系统</el-button>
+            </el-form-item>
+          </el-form>
+        </transition>
+        <div class="icp" v-if="!isElectron">
+          <a href="http://beian.miit.gov.cn" target="_blank">琼ICP备2023001153号-1</a>
+        </div>
       </div>
     </div>
   </transition>
@@ -60,13 +61,19 @@ export default {
         username: [{ required: true, message: '账号必填', trigger: 'blue' }],
         password: [{ required: true, message: '密码必填', trigger: 'blue' }]
       },
-      labelPosition: 'lily'
+      labelPosition: 'lily',
+      isElectron: false
     }
   },
   computed: {
     ...mapState({
       socketMain: (state) => state.socketMain
     })
+  },
+  created() {
+    if (window.v1) {
+      this.isElectron = window.v1.isElectron()
+    }
   },
   methods: {
     ...mapMutations(["SET_SOCKET_MAIN", "SET_SOCKET_KLINE"]),
@@ -94,10 +101,109 @@ export default {
                       menutree: response.menutree
                     })
                   }
+                  let $path = '/simulation/kline';
                   if (this.labelPosition === 'lily') {
-                    this.$router.push({ path: '/trade/bonds' })
+                    $path = '/trade/bonds'
+                  }
+
+                  if (this.isElectron) {
+                    const allocation = {
+                      klineWins: [
+                        {
+                          isMainWin: true,
+                          resize: false, // 是否支持缩放
+                          maximize: false, // 最大化窗口
+                          isMultiWin: true, // 是否支持多开窗口
+                          route: 'simulation/kline',
+                          data: '',
+                          x: 1,
+                          y: 325,
+                        },
+                        {
+                          width: 640,
+                          height: 1390,
+                          minWidth: 640,
+                          minHeight: 900,
+                          maxWidth: 640,
+                          route: '/simulation/klinevertical?' + Math.random(),
+                          isMainWin: false,
+                          resize: true, // 是否支持缩放
+                          maximizable: false, // 最大化窗口
+                          isMultiWin: true, // 是否支持多开窗口
+                          data: {
+                            tscode: '240006.IB'
+                          },
+                          x: 1918,
+                          y: 1,
+                        },
+                        {
+                          width: 640,
+                          height: 1390,
+                          minWidth: 640,
+                          minHeight: 900,
+                          maxWidth: 640,
+                          route: '/simulation/klinevertical?' + Math.random(),
+                          isMainWin: false,
+                          resize: true, // 是否支持缩放
+                          maximizable: false, // 最大化窗口
+                          isMultiWin: true, // 是否支持多开窗口
+                          data: {
+                            tscode: '240203.IB'
+                          },
+                          x: 662,
+                          y: 1,
+                        }, {
+                          width: 640,
+                          height: 1390,
+                          minWidth: 640,
+                          minHeight: 900,
+                          maxWidth: 640,
+                          route: '/simulation/klinevertical?' + Math.random(),
+                          isMainWin: false,
+                          resize: true, // 是否支持缩放
+                          maximizable: false, // 最大化窗口
+                          isMultiWin: true, // 是否支持多开窗口
+                          data: {
+                            tscode: '240004.IB'
+                          },
+                          x: 1290,
+                          y: 1,
+                        }
+                      ]
+                    }
+
+                    if (allocation.klineWins.length > 0) {
+                      allocation.klineWins.forEach((args, index) => {
+                        window.v1.createWin(args).then((response) => {
+                          console.log('args: ', response, args);
+                        }).catch((error) => {
+                          // 处理错误
+                          console.error(error);
+                        });
+
+                        window.v1.close();
+                      });
+                    } else {
+                      window.v1.getAllDisplays().then((response) => {
+                        const args = {
+                          isMainWin: true,
+                          resize: false, // 是否支持缩放
+                          maximize: false, // 最大化窗口
+                          isMultiWin: true, // 是否支持多开窗口
+                          route: $path
+                        }
+
+                        console.log(args)
+                        window.v1.createWin(args).then((response) => {
+                          window.v1.close();
+                        }).catch((error) => {
+                          // 处理错误
+                          console.error(error);
+                        });
+                      });
+                    }
                   } else {
-                    this.$router.push({ path: '/simulation' })
+                    this.$router.push({ path: $path })
                   }
                 })
               })
@@ -168,8 +274,24 @@ export default {
 
 .login-wrapper {
   height: 100%;
-  padding-top: 100px;
   background: $background-style;
+
+  .login-body {
+    position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
+    /* 如需水平居中，还需添加以下属性 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .login-title {
+    text-align: center;
+    font-size: 30px;
+    color: white;
+    font-weight: bold;
+    line-height: 60px;
+  }
 
   .logo {
     width: 60px;

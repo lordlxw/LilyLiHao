@@ -1,16 +1,43 @@
 <template>
-    <div class="mt20" style="padding: 0 15px;">
-        <MChat ref="mchat" :config="config" :chats="chats" :mine="mine" ></MChat>
+    <div style="background-color: rgb(32, 32, 32);    height: -webkit-fill-available;">
+        <el-row>
+            <el-col :span="12">
+                <MChatBox :boxHeight="boxHeight" :config="config" :dialogChatBoxVisible="false" :mine="mine"></MChatBox>
+            </el-col>
+            <el-col :span="12">
+                <MChatBox :boxHeight="boxHeight" :config="config" :dialogChatBoxVisible="false" :chats="chats"
+                    :mine="mine"></MChatBox>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12">
+                <MChatBox :boxHeight="boxHeight" :config="config" :dialogChatBoxVisible="false" :mine="mine"
+                    :chats="chats"></MChatBox>
+            </el-col>
+            <el-col :span="12">
+                <MChatBox :boxHeight="boxHeight" :config="config" :dialogChatBoxVisible="false" :mine="mine"></MChatBox>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12">
+                <MChatBox :boxHeight="boxHeight" :config="config" :dialogChatBoxVisible="false" :mine="mine"></MChatBox>
+            </el-col>
+            <el-col :span="12">
+                <MChatBox :boxHeight="boxHeight" :config="config" :dialogChatBoxVisible="false" :chats="chats"
+                    :mine="mine"></MChatBox>
+            </el-col>
+        </el-row>
     </div>
+
 </template>
 
 <script>
 import { commMixin } from '@/utils/commMixin'
-import MChat from '../../components/chat/MChat';
+import MChatBox from '../../components/chat/MChatBox';
 export default {
     mixins: [commMixin],
     components: {
-        MChat
+        MChatBox
     },
     created() {
         this.initFrameH('breakH', 200)
@@ -46,12 +73,27 @@ export default {
                 avatar: '',
             },
             // 会话
-            chats: [],
+            chats: [1, 2, 3, 4, 5],
             // chats: [],
+            boxHeight: 400
 
+        }
+    },
+    mounted() {
+        if (window.v1 && window.v1.isElectron()) {
+            window.v1.getAllDisplays().then((response) => {
+                const maxHeight = Math.max(...response.map(display => display.bounds.height));
+                this.boxHeight = (maxHeight - 150) / 3
+            });
+        } else {
+            this.boxHeight = 400
         }
     }
 }
 </script>
 
-<style></style>
+<style>
+.chat-box {
+    display: inline-block;
+}
+</style>

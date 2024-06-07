@@ -1,6 +1,8 @@
 // const { contextBridge, ipcRenderer } = require("electron");
 const isElectron = require("is-electron");
 const { contextBridge, ipcRenderer } = require("electron");
+// 第一步：引入remote
+const remote = require("@electron/remote");
 
 const isInElectron = isElectron();
 console.log("=====================", isInElectron);
@@ -16,7 +18,16 @@ contextBridge.exposeInMainWorld("v1", {
   isOsx,
   isWin,
   isLinux,
-  quit: () => ipcRenderer.invoke("quit")
+  close: () => ipcRenderer.invoke("close"),
+  quit: () => ipcRenderer.invoke("quit"),
+  setArgs: args => ipcRenderer.invoke("setArgs", args),
+  createWin: args => ipcRenderer.invoke("createWin", args),
+  getAllDisplays: () => ipcRenderer.invoke("getAllDisplays"),
+  getPosition: id => ipcRenderer.invoke("getPosition", id),
+  getWinThis: () => {
+    const win = remote.getCurrentWindow()
+    return ipcRenderer.invoke("getWinThis", win.id);
+  }
 });
 
 window.addEventListener("DOMContentLoaded", () => {

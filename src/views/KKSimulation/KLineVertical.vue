@@ -1,27 +1,7 @@
 <template>
-  <div style="background-color: #202020">
+  <div style="background-color: #202020; min-width: 550px; margin: auto; height: 100%;">
     <div class="head">
       <ul class="k-nav">
-        <li class="top-type">
-          <el-row class="slt-type">
-            <el-col :span="14">
-              <div class="grid-content">
-                <el-select v-model="tstype" clearable placeholder="债券类型" @change="handleChangeTSType">
-                  <el-option v-for="item in optionTSType" :key="item.value" :label="item.label" :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
-            </el-col>
-            <el-col :span="10">
-              <div class="grid-content">
-                <el-select v-model="tslength" clearable placeholder="年限" @change="handleChangeTSType">
-                  <el-option v-for="item in optionYear" :key="item.value" :label="item.label" :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
-            </el-col>
-          </el-row>
-        </li>
         <li v-for="item in loopmethodskey" @click="klinemethods[item]" :class="{ active: klineactive == item }"
           :key="item">
           {{ item }}
@@ -29,18 +9,6 @@
         <li class="tscode">
           {{ tscode }}
         </li>
-        <!-- <li class="nav-right">
-          <el-dropdown @command="handleCommand">
-            <span class="el-dropdown-link">
-              {{ userInfo ? userInfo.userName : "" }}
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="updatePassword">修改密码</el-dropdown-item>
-              <el-dropdown-item divided command="logout">退出</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </li> -->
         <li class="tscode" v-if="favoriteTscodeIcon == favoriteTscodeIconList[0]" @click="handleFavorite">
           <span class="i-text">
             <i :class="favoriteTscodeIconList[0]"></i>
@@ -51,519 +19,221 @@
             <i :class="favoriteTscodeIconList[1]"></i>
           </span>
         </li>
-
         <li class="nav-right">
-          <router-link target="_blank" :to="{ path: '/simulation/fourScreen' }" class="i-text blank_fourScreen"><i
-              class="el-icon-menu"></i></router-link>
+          <el-button @click="openMoreThis('/simulation/kline')" type="primary" icon="el-icon-menu"></el-button>
         </li>
         <li class="nav-right">
-          <el-button @click="openMoreThis" type="primary" icon="el-icon-menu"></el-button>
+          <el-button @click="openMoreThis('/simulation/chat')" type="primary"
+            icon="el-icon-chat-dot-square"></el-button>
         </li>
       </ul>
     </div>
     <div class="container" style="background-color: #202020">
-      <!-- 左侧 -->
-      <div class="left-group" :style="{
-        width: leftWith + 'px',
-      }">
-        <!-- 关闭和打开左侧侧面板 -->
-        <!-- <div class="open-colse" :class="leftFold" @click="handleLeftOpenOrClose"></div> -->
-        <el-tabs type="left-tabs" class="left-tabs" :stretch="true" @tab-click="handleClickTab">
-          <el-tab-pane label="单券">
-            <div class="tab-common tab-0">
-              <div class="search-box">
-                <com-tscode-select ref="refComTscodeSelect" @change="handlerTscodeSelect" style="width: 100%">
-                </com-tscode-select>
-              </div>
-              <!-- <hr color="#ec0000" size="1" style="margin: 0" /> -->
-              <el-scrollbar ref="scrollTscodes">
-                <el-row class="left-tabs-item" :gutter="20" v-for="item in tscodeList" :key="item.tscode"
-                  @click.native="handlerTscode(item)" :class="{ active: activeTscode == item.tscode }">
-                  <!-- {{ item.bondname }}<br />
-                    <strong class="l-strong">{{ item.tscode }}</strong> -->
-                  <el-col :span="16">
-                    <div class="grid-content bg-purple font-size-large">{{ item.tscode }}</div>
-                    <div class="grid-content bg-purple">{{ item.bondname }}</div>
-                  </el-col>
-                  <el-col :span="8">
-                    <div class="grid-content bg-purple">{{ item.issuerate }}</div>
-                  </el-col>
-                </el-row>
-              </el-scrollbar>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="收藏">
-            <div class="tab-common tab-2">
-              <!-- <hr color="#ec0000" size="1" style="margin: 0" /> -->
-              <el-scrollbar>
-                <draggable v-model="tscodeListFavorite" animation="300" @start="onStart" @end="onEnd">
-                  <el-row class="left-tabs-item" :gutter="20" v-for="item in tscodeListFavorite" :key="item.tscode"
-                    @click.native="handlerTscode(item)" :class="{ active: activeTscode == item.tscode }">
-                    <!-- {{ item.bondname }}<br />
-                    <strong class="l-strong">{{ item.tscode }}</strong> -->
-                    <el-col :span="16">
-                      <div class="grid-content bg-purple font-size-large">{{ item.tscode }}</div>
-                      <div class="grid-content bg-purple">{{ item.bondname }}</div>
-                    </el-col>
-                    <el-col :span="8">
-                      <div class="grid-content bg-purple">{{ item.issuerate }}</div>
-                    </el-col>
-                  </el-row>
-                </draggable>
-                <!-- <ul>
-                  <draggable v-model="tscodeListFavorite" animation="300" @start="onStart" @end="onEnd">
-                    <li v-for="item in tscodeListFavorite" :key="item.tscode" @click="handlerTscode(item)"
-                      :class="{ active: activeTscode == item.tscode }">
-                      <strong class="l-strong">{{ item.tscode }}</strong>
-                    </li>
-                  </draggable>
-                </ul> -->
-              </el-scrollbar>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+
       <!-- 中间 -->
       <div class="center">
         <div ref="refKline" class="kline"></div>
         <!-- 交易框 -->
         <div class="chatbox" v-loading="leftChangeLoad || loading">
-          <ul class="best-price-wapper">
-            <el-popover placement="bottom-end" width="300" trigger="manual" ref="popover-set"
-              v-model="popoverSetVisible">
-              <div class="default-set-wrapper">
-                <el-form ref="setForm" :model="setForm" :rules="setFormRules" :label-width="`${widthList.w100}px`">
-                  <el-form-item label="交易量" prop="volume">
-                    <el-input v-model="setForm.volume"></el-input>
-                  </el-form-item>
-                  <el-form-item label="快速提交">
-                    <el-checkbox label="是" v-model="setForm.quickSubmit" name="quickSubmit"></el-checkbox>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" @click="submitForm('setForm')">保存默认设置</el-button>
-                    <el-button type="default" @click="popoverSetVisible = false">取消</el-button>
-                  </el-form-item>
-                </el-form>
-              </div>
-              <li slot="reference" class="txt-white chat-set" @click="popoverSetVisible = !popoverSetVisible">
-                <i class="el-icon-setting"></i>
-              </li>
-            </el-popover>
-            <li class="txt-bold txt-white font-" style="float: left;">
-              券码 : {{ buyForm.tscode.replace(/.IB/, "") }}
-            </li>
-            <li class="txt-red txt-bold">
-              总差 {{ forwardDiffPrice ? forwardDiffPrice : "0.00BP" }}
-            </li>
-            <li class="txt-red txt-bold">
-              总卖 {{ saleFormForwardPrice | moneyFormat(4) }}
-            </li>
-            <li class="txt-green txt-bold">
-              总买 {{ buyFormForwardPrice | moneyFormat(4) }}
-            </li>
-            <li class="txt-red txt-bold">
-              近差 {{ currentDiffPrice ? currentDiffPrice : "0.00BP" }}
-            </li>
-            <li class="txt-red txt-bold">
-              近卖 {{ saleFormPrice | moneyFormat(4) }}
-            </li>
-            <li class="txt-green txt-bold">
-              近买 {{ buyFormPrice | moneyFormat(4) }}
-            </li>
-            <li>
-              <el-button v-if="(activeName === 'buy' && buyForm.isMarketRoll === false) ||
-                (activeName === 'sale' && saleForm.isMarketRoll === false)
-              " type="default" size="mini" @click="handleGetPrice">市价</el-button>
-            </li>
-          </ul>
-          <div class="mt10">
-            <el-row>
-              <el-col :span="4" class="buyBtn">
-                <div class="grid-content bg-purple">
-                  <!-- <el-button circle>BUY</el-button> -->
+          <el-tabs type="border-card" style="border-radius: 3px;" v-model="activeName">
+            <el-tab-pane label="买（F1）" class="buy-form" name="buy">
+              <el-form :inline="true" label-width="80px" :model="buyForm" ref="buyForm" :rules="buyFormRules">
+                <el-form-item label="价格">
+                  <el-input-number v-model="buyForm.price" :step="0.001" placeholder="请输入价格"
+                    @focus="handleMaxWait('buyForm')" class="pricew"></el-input-number>
+                  <!-- <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
+                    <span class="txt-green"> BP</span> -->
+                </el-form-item>
+                <el-form-item label="债券号">
+                  <el-select v-model="buyForm.tscode" filterable placeholder="请选择" class="slt-user"
+                    @change="handlerTscodeSelectWin">
+                    <el-option v-for="item in tscodeList" :key="item.tscode" :label="item.tscode" :value="item.tscode">
+                      <span style="float: left">{{ item.tscode }}</span>
+                      <span style="float: right;margin-left: 10px;">{{ item.bondname }}</span>
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="交易量">
+                  <el-input class="ipt-volume" v-model.number="buyForm.volume" placeholder="请输入交易量"></el-input>
+                </el-form-item>
+                <el-form-item label="中介">
+                  <el-select v-model="buyForm.tradeuserId" placeholder="请选择" class="slt-user">
+                    <el-option v-for="item in tradeUsersOption" :key="item.userId" :label="item.nickName"
+                      :value="item.userId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="交割日期">
+                  <delivery-canlendar :w="`${canlendarW}px`" ref="buyDeliveryCanlendar"
+                    @change="handleBuyDeliveryCanlendar"></delivery-canlendar>
+                  <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
+                </el-form-item>
+                <el-form-item label=" ">
+                  <el-button type="primary" v-if="setAuth('inquiry:insert')"
+                    @click="submitForm('buyForm')">提交(enter)</el-button>
+                </el-form-item>
 
-                  <div class="btn" v-if="setAuth('inquiry:insert') && activeTscode.indexOf('.CTD') === -1"
-                    @click=" submitForm('buyForm')">
-                    买(F1)
-                  </div>
-
-                </div>
-              </el-col>
-              <el-col :span="16" class="itemContent">
-                <!-- <el-form  ref="buyForm" :model="buyForm" :rules="buyFormRules"
-                    label-width="`100px`">
-                    <div class="txt-green">券码 : {{
-                      buyForm.tscode.replace(/.IB/, "")
-                    }}</div>
-                    <el-form-item label="价格 | 允许浮动" prop="price">
-                      <el-input-number v-model="buyForm.price" :step="0.001" placeholder="请输入价格"
-                        @focus="handleMaxWait('buyForm')" class="pricew"></el-input-number>
-                      <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
-                      <span class="txt-green">BP</span>
-                    </el-form-item>
-                    <el-form-item label="交易量" prop="volume">
-                      <el-input class="ipt-volume" v-model="buyForm.volume" placeholder="请输入交易量"></el-input>
-                      <el-button-group>
-                        <el-button type="primary" style="background: white; color: #202020"
-                          @click="funcVolumeAdd('buyForm', 0)">0</el-button>
-                        <el-button type="primary" @click="funcVolumeAdd('buyForm', 5000)">5</el-button>
-                        <el-button type="primary" @click="funcVolumeAdd('buyForm', 3000)">3</el-button>
-                        <el-button type="primary" @click="funcVolumeAdd('buyForm', 10000)">10</el-button>
-                        <el-button type="primary" @click="funcVolumeAdd('buyForm', 2000)">2</el-button>
-                        <el-button type="primary" @click="funcVolumeAdd('buyForm', 1000)">1</el-button>
-                      </el-button-group>
-                    </el-form-item>
-                    <el-form-item label="交割日期" prop="deliveryTime">
-                      <delivery-canlendar :w="`${canlendarW}px`" ref="buyDeliveryCanlendar"
-                        @change="handleBuyDeliveryCanlendar"></delivery-canlendar>
-                      <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
-                    </el-form-item>
-                  </el-form> -->
-                <el-form :inline="true" label-width="100px" :model="buyForm" ref="buyForm" :rules="buyFormRules">
-                  <el-form-item label="价格 | 允许浮动">
-                    <el-input-number v-model="buyForm.price" :step="0.001" placeholder="请输入价格"
-                      @focus="handleMaxWait('buyForm')" class="pricew"></el-input-number>
-                    <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
-                    <span class="txt-green"> BP</span>
-                  </el-form-item>
-                  <el-form-item label="交易量">
-                    <el-input class="ipt-volume" v-model.number="buyForm.volume" placeholder="请输入交易量"></el-input>
-                    <!-- <el-button-group>
-                        <el-button type="primary" style="background: white; color: #202020"
-                          @click="funcVolumeAdd('buyForm', 0)">0</el-button>
-                        <el-button type="primary" @click="funcVolumeAdd('buyForm', 5000)">5</el-button>
-                        <el-button type="primary" @click="funcVolumeAdd('buyForm', 3000)">3</el-button>
-                        <el-button type="primary" @click="funcVolumeAdd('buyForm', 10000)">10</el-button>
-                        <el-button type="primary" @click="funcVolumeAdd('buyForm', 2000)">2</el-button>
-                        <el-button type="primary" @click="funcVolumeAdd('buyForm', 1000)">1</el-button>
-                      </el-button-group> -->
-                    <el-select v-model="buyForm.tradeuserId" placeholder="请选择" class="slt-user">
-                      <el-option v-for="item in tradeUsersOption" :key="item.userId" :label="item.nickName"
-                        :value="item.userId">
-                      </el-option>
-                    </el-select>
-                    <span class="txt-white"> 中介</span>
-                  </el-form-item>
-                  <el-form-item label="交割日期">
-                    <delivery-canlendar :w="`${canlendarW}px`" ref="buyDeliveryCanlendar"
-                      @change="handleBuyDeliveryCanlendar"></delivery-canlendar>
-                    <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
-                  </el-form-item>
-                </el-form>
-              </el-col>
-              <el-col :span="4" class="saleBtn">
-                <div class="grid-content bg-purple-light">
-                  <div class="btn" v-if="setAuth('inquiry:insert')" :disabled="loading" :loading="loading"
-                    @click="submitForm('saleForm')">
-                    卖(F2)
-                  </div>
-                </div>
-              </el-col>
-            </el-row>
-          </div>
-          <!-- <el-tabs v-model="activeName">
-            <el-tab-pane label="买(F1)" name="buy">
-              <el-row>
-                <el-col :span="4" class="buyBtn">
-                  <div class="grid-content bg-purple">
-
-                    <div class="btn">
-                      BUY(F1)
-                    </div>
-
-                  </div>
-                </el-col>
-                <el-col :span="16" class="itemContent">
-                  <el-form label-width="100px" :model="buyForm" :rules="buyFormRules">
-                    <el-form-item label="价格 | 允许浮动">
-                      <el-input-number v-model="buyForm.price" :step="0.001" placeholder="请输入价格"
-                        @focus="handleMaxWait('buyForm')" class="pricew"></el-input-number>
-                      <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
-                      <span class="txt-green">BP</span>
-                    </el-form-item>
-                    <el-form-item label="交易量">
-                      <el-input class="ipt-volume"  v-model.number="buyForm.volume" placeholder="请输入交易量"></el-input>
-
-                    </el-form-item>
-                    <el-form-item label="交割日期">
-                      <delivery-canlendar :w="`${canlendarW}px`" ref="buyDeliveryCanlendar"
-                        @change="handleBuyDeliveryCanlendar"></delivery-canlendar>
-                      <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
-                    </el-form-item>
-                  </el-form>
-                </el-col>
-                <el-col :span="4" class="saleBtn">
-                  <div class="grid-content bg-purple-light">
-                    <div class="btn">
-                      SALE(F2)
-                    </div>
-                  </div>
-                </el-col>
-              </el-row>
+              </el-form>
 
             </el-tab-pane>
-            <<el-tab-pane label="卖(F2)" name="sale">
-              <el-form :inline="true" label-position="top" ref="saleForm" :model="saleForm" :rules="saleFormRules"
-                :label-width="`${widthList.w80}px`" size="mini" class="sale-form">
-                <el-form-item label="券码">
-                  <span class="txt-red">{{
-                    saleForm.tscode.replace(/.IB/, "")
-                  }}</span>
-                </el-form-item>
-                <el-form-item label="价格 | 允许浮动" prop="price">
+            <el-tab-pane label="卖（F2）" class="sale-form" name="sale">
+              <el-form :inline="true" label-width="80px" :model="saleForm" ref="saleForm" :rules="saleFormRules">
+                <el-form-item label="价格">
                   <el-input-number v-model="saleForm.price" :step="0.001" placeholder="请输入价格"
-                    @focus="handleMaxWait('saleForm')" class="pricew"></el-input-number><br />
-                  <el-form-item prop="worstPrice">
-                    <el-input-number v-model="saleForm.worstPrice" :step="0.05" class="mt10 numbw"></el-input-number>
-                    <span class="txt-red">BP</span>
-                  </el-form-item>
+                    @focus="handleMaxWait('saleForm')" class="pricew"></el-input-number>
+                  <!-- <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
+                    <span class="txt-green"> BP</span> -->
                 </el-form-item>
-                <el-form-item label="交易量" prop="volume">
-                  <el-input class="ipt-volume" v-model="saleForm.volume" placeholder="请输入交易量"></el-input><br />
-                  <el-button-group class="mt10" style="display: flex">
-                    <el-button type="primary" style="background: white; color: #202020"
-                      @click="funcVolumeAdd('saleForm', 0)">0</el-button>
-                    <el-button type="primary" @click="funcVolumeAdd('saleForm', 5000)">5</el-button>
-                    <el-button type="primary" @click="funcVolumeAdd('saleForm', 3000)">3</el-button>
-                    <el-button type="primary" @click="funcVolumeAdd('saleForm', 10000)">10</el-button>
-                    <el-button type="primary" @click="funcVolumeAdd('saleForm', 2000)">2</el-button>
-                    <el-button type="primary" @click="funcVolumeAdd('saleForm', 1000)">1</el-button>
-                  </el-button-group>
+                <el-form-item label="债券号">
+                  <el-select v-model="saleForm.tscode" filterable placeholder="请选择" class="slt-user"
+                    @change="handlerTscodeSelectWin">
+                    <el-option v-for="item in tscodeList" :key="item.tscode" :label="item.tscode" :value="item.tscode">
+                      <span style="float: left">{{ item.tscode }}</span>
+                      <span style="float: right;margin-left: 10px;">{{ item.bondname }}</span>
+                    </el-option>
+                  </el-select>
                 </el-form-item>
-                <el-form-item label="交割日期" prop="deliveryTime">
-                  <delivery-canlendar :w="`${canlendarW}px`" ref="saleDeliveryCanlendar"
-                    @change="handleSaleDeliveryCanlendar"></delivery-canlendar>
-                  <br />
-                  <span class="txt-red">{{ saleForm.deliveryTimeMsg }}</span>
+                <el-form-item label="交易量">
+                  <el-input class="ipt-volume" v-model.number="saleForm.volume" placeholder="请输入交易量"></el-input>
                 </el-form-item>
-                <el-form-item label="交易员" prop="tradeuserId">
+                <el-form-item label="中介">
                   <el-select v-model="saleForm.tradeuserId" placeholder="请选择" class="slt-user">
                     <el-option v-for="item in tradeUsersOption" :key="item.userId" :label="item.nickName"
                       :value="item.userId">
                     </el-option>
                   </el-select>
-                  <br />
-                  <el-button v-if="setAuth('inquiry:insert')" class="btn-red mt10" :disabled="loading"
-                    :loading="loading" @click="submitForm('saleForm')">发送</el-button>
                 </el-form-item>
-                <el-form-item label="备注" style="width: 100%">
-                  <el-input type="textarea" v-model="saleForm.remark" placeholder="请输入内容" resize="none" rows="3"
-                    class="ipt-remark"></el-input>
+                <el-form-item label="交割日期">
+                  <delivery-canlendar :w="`${canlendarW}px`" ref="buyDeliveryCanlendar"
+                    @change="handleSaleDeliveryCanlendar"></delivery-canlendar>
+                  <span class="txt-green">{{ saleForm.deliveryTimeMsg }}</span>
+                </el-form-item>
+                <el-form-item label=" ">
+                  <el-button v-if="setAuth('inquiry:insert')" @click="submitForm('saleForm')"
+                    type="primary">提交(enter)</el-button>
                 </el-form-item>
               </el-form>
             </el-tab-pane>
-          </el-tabs> -->
+          </el-tabs>
+          <div class="shijia">
+            <el-button
+              v-if="(activeName === 'buy' && buyForm.isMarketRoll === false) || (activeName === 'sale' && saleForm.isMarketRoll === false)"
+              type="default" size="mini" @click="handleGetPrice">市价</el-button>
+          </div>
+          <el-popover placement="bottom-end" width="300" trigger="manual" ref="popover-set" v-model="popoverSetVisible">
+            <div class="default-set-wrapper">
+              <el-form ref="setForm" :model="setForm" :rules="setFormRules" :label-width="`${widthList.w100}px`">
+                <el-form-item label="交易量" prop="volume">
+                  <el-input v-model="setForm.volume"></el-input>
+                </el-form-item>
+                <el-form-item label="快速提交">
+                  <el-checkbox label="是" v-model="setForm.quickSubmit" name="quickSubmit"></el-checkbox>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="submitForm('setForm')">保存默认设置</el-button>
+                  <el-button type="default" @click="popoverSetVisible = false">取消</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
+            <div slot="reference" class="txt-white chat-set" @click="popoverSetVisible = !popoverSetVisible">
+              <i class="el-icon-setting"></i>
+            </div>
+          </el-popover>
         </div>
-        <div class="record" :style="{ height: recordHeight }">
-          <MChat ref="mchat" :dialogChatBoxVisible="false" :style="{ height: recordHeight }" :tipsHeight="recordHeight">
-          </MChat>
-        </div>
-      </div>
-      <!-- 右侧 -->
-      <div class="right-group" :style="{
-        width: rightWith + 'px',
-      }">
-        <!-- 关闭和打开右侧面板 -->
-        <!-- <div class="open-colse" :class="rightFold" @click="handleRightOpenOrClose"></div> -->
-        <!-- 及期卖出 -->
-        <div class="r-out" style="height: 120px" v-loading="leftChangeLoad">
-          <el-scrollbar v-if="businessOutList && businessOutList.length > 0">
-            <ul>
-              <li v-for="(item, index) in businessOutList" :key="index"
-                :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px">
-                <span :style="`width: ${widthList.w50}px`">{{
-                  item.brokerName
-                }}</span>
-                <span style="flex: 1" class="ellipsis">
-                  {{ item.volumecomment ? item.volumecomment : item.volume }}
-                </span>
-                <span class="txt-red" :style="`width: ${widthList.w50}px`">{{
-                  item.price | moneyFormat(4)
-                }}</span>
-                <span :style="`width: ${widthList.w60}px`">{{
-                  item.updatetime
-                }}</span>
-              </li>
-            </ul>
-          </el-scrollbar>
-          <!-- <el-skeleton v-else animated>
+        <div class="right-group">
+          <!-- 关闭和打开右侧面板 -->
+          <!-- <div class="open-colse" :class="rightFold" @click="handleRightOpenOrClose"></div> -->
+          <!-- 及期卖出 -->
+          <div class="r-out" style="height: 120px" v-loading="leftChangeLoad">
+            <el-scrollbar v-if="businessOutList && businessOutList.length > 0">
+              <ul>
+                <li v-for="(item, index) in businessOutList" :key="index"
+                  :title="item.volumecomment ? item.volumecomment : item.volume"
+                  style="height: 20px; line-height: 20px">
+                  <span>{{
+                    item.brokerName
+                  }}</span>
+                  <span style="flex: 1" class="ellipsis">
+                    {{ item.volumecomment ? item.volumecomment : item.volume }}
+                  </span>
+                  <span class="txt-red">{{
+                    item.price | moneyFormat(4)
+                  }}</span>
+                  <span>{{
+                    item.updatetime
+                  }}</span>
+                </li>
+              </ul>
+            </el-scrollbar>
+            <!-- <el-skeleton v-else animated>
             <template #template>
               <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
             </template>
 </el-skeleton> -->
-        </div>
-        <!-- 及期买入 -->
-        <div class="r-in" style="height: 120px" v-loading="leftChangeLoad">
-          <el-scrollbar v-if="businessInList && businessInList.length > 0">
-            <ul>
-              <li v-for="(item, index) in businessInList" :key="index"
-                :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px">
-                <span :style="`width: ${widthList.w50}px`">{{
-                  item.brokerName
-                }}</span>
-                <span class="ellipsis" style="flex: 1">
-                  {{ item.volumecomment ? item.volumecomment : item.volume }}
-                </span>
-                <span class="txt-green" :style="`width: ${widthList.w50}px`">{{
-                  item.price | moneyFormat(4)
-                }}</span>
-                <span :style="`width: ${widthList.w60}px`">{{
-                  item.updatetime
-                }}</span>
-              </li>
-            </ul>
-          </el-scrollbar>
-          <!-- <el-skeleton v-else animated>
+          </div>
+          <!-- 及期买入 -->
+          <div class="r-in" style="height: 120px" v-loading="leftChangeLoad">
+            <el-scrollbar v-if="businessInList && businessInList.length > 0">
+              <ul>
+                <li v-for="(item, index) in businessInList" :key="index"
+                  :title="item.volumecomment ? item.volumecomment : item.volume"
+                  style="height: 20px; line-height: 20px">
+                  <span>{{
+                    item.brokerName
+                  }}</span>
+                  <span style="flex: 1" class="ellipsis">
+                    {{ item.volumecomment ? item.volumecomment : item.volume }}
+                  </span>
+                  <span class="txt-green">{{
+                    item.price | moneyFormat(4)
+                  }}</span>
+                  <span>{{
+                    item.updatetime
+                  }}</span>
+                </li>
+              </ul>
+            </el-scrollbar>
+            <!-- <el-skeleton v-else animated>
             <template #template>
               <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
             </template>
           </el-skeleton> -->
-        </div>
-        <!-- 远期卖出 -->
-        <div class="r-out" v-if="false" style="height: 120px" v-loading="leftChangeLoad">
-          <el-scrollbar v-if="businessForwardOutList && businessForwardOutList.length > 0">
-            <ul>
-              <li v-for="(item, index) in businessForwardOutList" :key="index"
-                :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px">
-                <span :style="`width: ${widthList.w50}px`">{{
-                  item.brokerName
-                }}</span>
-                <span style="flex: 1" class="ellipsis">
-                  {{ item.volumecomment ? item.volumecomment : item.volume }}
-                </span>
-                <span class="txt-red" :style="`width: ${widthList.w50}px`">{{
-                  item.price | moneyFormat(4)
-                }}</span>
-                <span :style="`width: ${widthList.w60}px`">{{
-                  item.updatetime
-                }}</span>
-              </li>
-            </ul>
-          </el-scrollbar>
-          <!-- <el-skeleton v-else animated>
-            <template #template>
-              <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
-            </template>
-          </el-skeleton> -->
-        </div>
-        <!-- 远期买入 -->
-        <div class="r-in" v-if="false" style="height: 120px" v-loading="leftChangeLoad">
-          <el-scrollbar v-if="businessForwardInList && businessForwardInList.length > 0">
-            <ul>
-              <li v-for="(item, index) in businessForwardInList" :key="index"
-                :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px">
-                <span :style="`width: ${widthList.w50}px`">{{
-                  item.brokerName
-                }}</span>
-                <span class="ellipsis" style="flex: 1">
-                  {{ item.volumecomment ? item.volumecomment : item.volume }}
-                </span>
-                <span class="txt-green" :style="`width: ${widthList.w50}px`">{{
-                  item.price | moneyFormat(4)
-                }}</span>
-                <span :style="`width: ${widthList.w60}px`">{{
-                  item.updatetime
-                }}</span>
-              </li>
-            </ul>
-          </el-scrollbar>
-          <!-- <el-skeleton v-else animated>
-            <template #template>
-              <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
-            </template>
-          </el-skeleton> -->
-        </div>
-        <!-- 交易 -->
-        <div class="r-trans" v-loading="leftChangeLoad">
-          <el-scrollbar v-if="transactionAllList.length > 0">
-            <ul class="mt20" style="margin-top: 25px">
-              <li class="li-first" style="height: 25px; line-height: 25px">
-                <span class="colume1">方向</span>
-                <span class="colume2">价格</span>
-                <span class="colume3">中介</span>
-                <span class="colume4">交易时间</span>
-              </li>
-              <li v-for="(item, index) in transactionAllList" :key="index" class="trans_item"
-                :class="funcSelectColor(item.dealtype)" style="height: 20px; line-height: 20px">
-                <span class="colume1"><span>{{ item.dealtype }}</span></span>
-                <span class="colume2">{{
-                  item.tradeprice | moneyFormat(4)
-                }}</span>
-                <span class="colume3">{{ item.brokerName }}</span>
-                <span class="colume4">{{ item.tradetime }}</span>
-                <!-- <span style="width: 60px">{{ item.netprice }}</span> -->
-              </li>
-            </ul>
-          </el-scrollbar>
-          <!-- <el-skeleton v-else  animated >
+          </div>
+          <!-- 交易 -->
+          <div class="r-trans" v-loading="leftChangeLoad" :style="{ height: recordHeight }">
+            <el-scrollbar v-if="transactionAllList.length > 0">
+              <ul class="mt20" style="margin-top: 25px">
+                <li class="li-first" style="height: 25px; line-height: 25px">
+                  <span class="colume1">方向</span>
+                  <span class="colume2">价格</span>
+                  <span class="colume3">中介</span>
+                  <span class="colume4">交易时间</span>
+                </li>
+                <li v-for="(item, index) in transactionAllList" :key="index" class="trans_item"
+                  :class="funcSelectColor(item.dealtype)" style="height: 20px; line-height: 20px">
+                  <span class="colume1"><span>{{ item.dealtype }}</span></span>
+                  <span class="colume2">{{
+                    item.tradeprice | moneyFormat(4)
+                  }}</span>
+                  <span class="colume3">{{ item.brokerName }}</span>
+                  <span class="colume4">{{ item.tradetime }}</span>
+                  <!-- <span style="width: 60px">{{ item.netprice }}</span> -->
+                </li>
+              </ul>
+            </el-scrollbar>
+            <!-- <el-skeleton v-else  animated >
             <template #template>
               <el-skeleton-item v-for="item in 100" :key="item" class="custom-skeleton-item"/>
             </template>
           </el-skeleton> -->
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- <el-dialog title="消息框" :visible.sync="dialogTableVisible">
-      <el-table :data="gridDataMsg">
-        <el-table-column
-          property="tscode"
-          label="债券编号"
-          width="150"
-        ></el-table-column>
-        <el-table-column property="status" label="状态" width="150">
-          <template slot-scope="scope">
-            <span
-              v-if="
-                scope.row.status === 'start_bond' ||
-                scope.row.status === 'delegate_bond'
-              "
-              >待接收</span
-            >
-            <span
-              v-if="
-                ['accept_bond_0', 'accept_bond_1'].indexOf(scope.row.status) !==
-                -1
-              "
-              >已接收</span
-            >
-          </template>
-</el-table-column>
-<el-table-column property="direction" label="方向" width="150">
-  <template slot-scope="scope">
-            <span v-if="scope.row.direction === 'bond_0'">买入</span>
-            <span v-if="scope.row.direction === 'bond_1'">卖出</span>
-          </template>
-</el-table-column>
-<el-table-column property="price" label="价格" width="200"></el-table-column>
-<el-table-column property="volume" label="交易量"></el-table-column>
-<el-table-column fixed="right" label="操作" width="100">
-  <template slot-scope="scope">
-            <el-button
-              @click="handleReceiveClick(scope.row)"
-              type="text"
-              size="small"
-              v-if="
-                ['delegate_bond_0', 'delegate_bond_1'].indexOf(
-                  scope.row.status
-                ) !== -1
-              "
-              >接收</el-button
-            >
-          </template>
-</el-table-column>
-</el-table>
-</el-dialog> -->
-
-    <!-- 暂时不用 -->
-    <!-- <el-dialog title="消息框" width="80%" :visible.sync="dialogTableVisible">
-      <trade-enquiry ref="tradeEnquiry"></trade-enquiry>
-      <div class="both-clear"></div>
-    </el-dialog> -->
     <audio controls ref="playAudio" style="display: none">
       <source src="@/assets/audio/1.wav" type="audio/wav" />
     </audio>
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%"
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="300px"
       :before-close="() => { dialogVisible = false, loading = false }">
       <span>请确认需要提交询价单？</span>
       <span slot="footer" class="dialog-footer">
@@ -659,7 +329,7 @@ export default {
       config,
       dialogVisible: false,
       // k线栏目
-      klineactive: '日线',
+      klineactive: 'Ticket图',
       loopmethodskey: ['1分钟', '5分钟', '日线', 'Ticket图'],
       klinemethods: {
         '1分钟': () => {
@@ -897,7 +567,7 @@ export default {
       leftChangeLoad: false,
       isElectron: false,
       dataZoom: {
-        start: 40,
+        start: 0,
         end: 100,
       }
     }
@@ -912,7 +582,7 @@ export default {
       socketKLine: (state) => state.socketKLine,
     }),
     recordHeight: function () {
-      return (window.innerHeight - 800) + 'px';
+      return (window.innerHeight - 905) + 'px';
     }
   },
   watch: {
@@ -966,12 +636,18 @@ export default {
           localStorage.setItem("tscodeAll", JSON.stringify(res.value))
           Promise.all([
             this.tscodeList = res.value
-          ]).then(() => {
-            if (this.tscodeGlobal !== '') {
-              this.activeTscode = this.tscode = this.tscodeGlobal
+          ]).then(async () => {
+            if (this.isElectron && this.activeTscode === '') {
+              const response = await window.v1.getWinThis();
+              this.activeTscode = this.tscode = response.data.tscode
             } else {
-              this.activeTscode = this.tscode = this.tscodeList.length > 0 ? this.tscodeList[0].tscode : ''
+              if (this.tscodeGlobal !== '') {
+                this.activeTscode = this.tscode = this.tscodeGlobal
+              } else {
+                this.activeTscode = this.tscode = this.tscodeList.length > 0 ? this.tscodeList[0].tscode : ''
+              }
             }
+
             this.klinemethods[this.klineactive]()
             // 初始化实时交易数据
             this.initRightTransactionList()
@@ -1368,17 +1044,6 @@ export default {
         }
       })
     },
-    // 拖拽
-    onStart() { },
-    onEnd() {
-      // 准备数据
-      const tscodeList = []
-      for (let i = 0; i < this.tscodeListFavorite.length; i++) {
-        tscodeList.push(this.tscodeListFavorite[i].tscode)
-      }
-      api.favoriteOrder({ tscodeList }).then(resposne => {
-      })
-    },
     // 计算收藏按钮样式
     calcFavoriteIcon() {
       for (let i = 0; i < this.tscodeListFavorite.length; i++) {
@@ -1431,6 +1096,7 @@ export default {
     }),
     // 下拉框选择债券
     handlerTscodeSelect(obj) {
+      console.log(obj)
       Promise.all([
         this.activeTscode = this.tscode = obj.value
       ]).then(res => {
@@ -1438,6 +1104,20 @@ export default {
         this.klinemethods[this.klineactive]()
         this.initRightTransactionList()
         // this.scrollToTscode(this.activeTscode)
+      })
+    },
+    handlerTscodeSelectWin(val) {
+      this.leftChangeLoad = true;
+      Promise.all([
+        this.activeTscode = this.tscode = val
+      ]).then(res => {
+        this.calcFavoriteIcon()
+        this.klinemethods[this.klineactive]()
+        this.initRightTransactionList()
+        // this.scrollToTscode(this.activeTscode)
+        setTimeout(() => {
+          this.leftChangeLoad = false;
+        }, 100)
       })
     },
     scrollToTscode(activeTscode) {
@@ -1508,6 +1188,7 @@ export default {
       document.onkeydown = function (event) {
         var e = event || window.event
         var keyCode = e.keyCode || e.which
+        console.log("keyCode: ", keyCode)
         switch (keyCode) {
           case 13:
             // 检查K线轮询个数
@@ -1835,6 +1516,12 @@ export default {
       }
     }),
     submitForm: debounce(function (formName) {
+      if (this.isElectron) {
+        window.v1.getPosition().then((response) => {
+          console.log(response)
+        })
+      }
+
       this.loading = true;
       switch (formName) {
         case 'setForm':
@@ -3329,33 +3016,27 @@ export default {
         this.forwardDiffPrice = (util.moneyFormat((this.buyFormForwardPrice - this.saleFormForwardPrice) * 100, 2)) + 'BP'
       }
     },
-    openMoreThis() {
-      let $path = '/simulation/klinevertical?' + Math.random();
+    openMoreThis($path) {
       if (this.isElectron) {
         window.v1.getAllDisplays().then((response) => {
-          console.log(response)
           const maxWidth = Math.max(...response.map(display => display.bounds.width));
           const maxHeight = Math.max(...response.map(display => display.bounds.height));
 
-          const args = {
-            width: maxWidth / 4, // 窗口宽度
-            height: maxHeight - 50, // 窗口高度
-            minWidth: maxWidth / 4, // 窗口最小宽度
-            maxWidth: maxWidth / 4,
-            isMainWin: false,
-            resize: true, // 是否支持缩放
-            maximizable: false, // 最大化窗口
-            isMultiWin: true, // 是否支持多开窗口
-            route: $path
-          }
+          if ($path === '/simulation/chat') {
+            const args = {
+              width: maxWidth / 2, // 窗口宽度
+              height: maxHeight, // 窗口高度
+              minWidth: maxWidth / 2, // 窗口最小宽度
+              minHeight: maxHeight, // 窗口最小高度
+              isMainWin: false,
+              resize: false, // 是否支持缩放
+              maximize: false, // 最大化窗口
+              isMultiWin: false, // 是否支持多开窗口
+              route: $path
+            }
 
-          console.log(args)
-          window.v1.createWin(args).then((response) => {
-            // window.v1.close();
-          }).catch((error) => {
-            // 处理错误
-            console.error(error);
-          });
+            window.v1.createWin(args)
+          }
         });
       } else {
         const href = this.$router.resolve({
@@ -3402,7 +3083,6 @@ export default {
 <style lang="scss" scoped>
 // @import "@/assets/css/kline.scss";
 .head {
-  border-bottom: 1px solid #ec0000;
   height: 50px;
   line-height: 50px;
   padding: 0 10px;
@@ -3498,8 +3178,8 @@ export default {
 }
 
 .kline {
-  height: 500px;
-  min-height: 500px;
+  min-height: 300px;
+  min-width: 300px;
   padding: 10px;
   border-radius: 3px;
   background-color: azure;
@@ -3510,10 +3190,10 @@ export default {
 }
 
 .container {
-  position: absolute;
+  position: relative;
   width: 100%;
+  height: 100%;
   display: flex;
-  top: 50px;
   bottom: 0px;
 
   .left-group {
@@ -3649,7 +3329,8 @@ export default {
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-width: 700px;
+    width: 100%;
+    padding: 0 10px;
 
     .volume {
       flex: 1;
@@ -3662,29 +3343,29 @@ export default {
       // bottom: 10px;
       margin-top: 10px;
       color: #ec0000;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
       padding: 0px;
-      overflow: hidden;
       background-color: #2f3032;
-      border-radius: 5px;
-      padding: 3px;
+      border-radius: 3px;
 
-      .best-price-wapper {
-        overflow: hidden;
-        border-bottom: 1px solid red;
+      .chat-set {
+        line-height: 40px;
+        width: 40px;
+        text-align: center;
+        position: absolute;
+        top: 0;
+        right: 0;
 
-        li {
-          height: 40px;
-          line-height: 40px;
-          float: right;
-          padding: 0 10px;
+        i {
+          color: #000;
+          font-size: 16px;
         }
+      }
 
-        li.chat-set:hover {
-          cursor: pointer;
-          background: #333131;
-        }
+      .shijia {
+        position: absolute;
+        top: 0;
+        right: 50px;
+        line-height: 40px;
       }
 
       .pricew {
@@ -3708,11 +3389,7 @@ export default {
       // }
 
       .itemContent {
-
-        // .el-form {
-        //   width: 430px;
-        //   margin: auto;
-        // }
+        min-width: 505px;
 
         >>>.el-form-item__label {
           font-size: 12px;
@@ -3764,10 +3441,6 @@ export default {
 
     .record {
       width: 100%;
-      height: 200px;
-      background-color: #2f3032;
-      border-radius: 5px;
-      margin-top: 10px;
     }
   }
 
@@ -3775,6 +3448,7 @@ export default {
     display: flex;
     flex-direction: column;
     position: relative;
+    min-width: 100%;
     // border-top: 1px solid #ec0000;
     // border-left: 1px solid #ec0000;
 
@@ -3796,6 +3470,10 @@ export default {
     .r-in,
     .r-out {
       position: relative;
+
+      span {
+        width: 50px;
+      }
     }
 
     .r-in:after {
@@ -3888,11 +3566,13 @@ export default {
           .colume2 {
             width: 25%;
             min-width: 30px;
+            text-align: center;
           }
 
           .colume3 {
             width: 25%;
             min-width: 30px;
+            text-align: center;
           }
 
           .colume4 {
@@ -3906,36 +3586,27 @@ export default {
 
     .r-out {
       padding: 8px;
-      border-radius: 5px;
+      border-radius: 3px;
       background-color: rgb(236 0 0 / 20%);
-      margin: 0 10px 10px 10px;
+      margin-top: 10px;
       overflow: hidden;
     }
 
     .r-in {
       padding: 8px;
-      border-radius: 5px;
+      border-radius: 3px;
       background-color: rgb(0 128 0 / 20%);
-      margin: 0 10px 10px 10px;
+      margin-top: 10px;
       overflow: hidden;
 
-      .el-scrollbar {
-        .el-scrollbar__wrap {
-          ul li {
-            // color: #00da3c;
-          }
-        }
-      }
     }
 
     .r-trans {
-      flex: 1;
       transform: scale(1);
       padding: 8px 0px 8px 8px;
-      border-radius: 5px;
+      border-radius: 3px;
       background-color: hsl(220 3% 19% / 1);
-      margin: 0 10px 10px 10px;
-      text-align: center;
+      margin-top: 10px;
       overflow: hidden;
 
       .el-scrollbar {
@@ -4027,46 +3698,50 @@ export default {
   // }
   .sale-form {
     width: 100%;
+    height: 100%;
     display: flex;
     justify-content: flex-start;
+    padding: 10px 0;
 
     .el-button--primary {
       background-color: #ec0000;
       border-color: #ec0000;
     }
 
-    // .el-button--primary:hover {
-    //   background-color: rgb(221, 28, 28);
-    //   border-color: rgb(221, 28, 28);
-    // }
+    .el-button--primary:hover {
+      background-color: rgb(221, 28, 28);
+      border-color: rgb(221, 28, 28);
+    }
 
-    // .el-button--primary:last-child {
-    //   border-left-color: rgba(255, 255, 255, 0.5);
-    // }
+    .el-button--primary:last-child {
+      border-left-color: rgba(255, 255, 255, 0.5);
+    }
 
-    // .btn-red,
-    // .btn-active {
-    //   background: #ec0000 !important;
-    //   color: white;
-    //   border: 1px solid rgb(238, 3, 3);
-    // }
+    .btn-red,
+    .btn-active {
+      background: #ec0000 !important;
+      color: white;
+      border: 1px solid rgb(238, 3, 3);
+    }
 
-    // .btn-red:hover {
-    //   background: rgb(250, 64, 64) !important;
-    //   color: white;
-    // }
+    .btn-red:hover {
+      background: rgb(250, 64, 64) !important;
+      color: white;
+    }
 
-    // .el-form-item__label {
-    //   font-size: 12px;
-    //   font-weight: normal;
-    //   color: #ec0000 !important;
-    // }
+    .el-form-item__label {
+      font-size: 12px;
+      font-weight: normal;
+      color: #ec0000 !important;
+    }
   }
 
   .buy-form {
     width: 100%;
+    height: 100%;
     display: flex;
     justify-content: flex-start;
+    padding: 10px 0;
 
     .el-button--primary {
       background-color: #00da3c;
@@ -4103,10 +3778,13 @@ export default {
   }
 
   .el-tabs__item {
-    color: rgb(113, 112, 112);
     font-size: 12px;
     padding: 0 10px;
     font-weight: bold;
+  }
+
+  .el-tabs__item:hover {
+    color: rgb(0, 0, 0) !important;
   }
 
   #tab-buy.el-tabs__item.is-active {
