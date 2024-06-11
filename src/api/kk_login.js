@@ -38,4 +38,17 @@ export default {
       }
     })
   },
+  getProfile(userId) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/userProfile/userId/${userId}`,
+      method: 'get'
+    })
+  },
+  saveProfile(obj) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/userProfile`,
+      method: 'post',
+      data: obj
+    })
+  },
 }

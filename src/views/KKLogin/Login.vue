@@ -61,7 +61,7 @@ export default {
         username: [{ required: true, message: '账号必填', trigger: 'blue' }],
         password: [{ required: true, message: '密码必填', trigger: 'blue' }]
       },
-      labelPosition: 'lily',
+      labelPosition: 'Simulation',
       isElectron: false
     }
   },
@@ -91,7 +91,7 @@ export default {
               Promise.all([
                 this.$store.commit('SET_TOKEN', response.token)
               ]).then(() => {
-                api.auth().then(response => {
+                api.auth().then(async response => {
                   if (response && response.code === 200) {
                     this.$store.commit('SET_USER_INFO', {
                       permissions: response.permissions,
@@ -107,73 +107,80 @@ export default {
                   }
 
                   if (this.isElectron) {
-                    const allocation = {
-                      klineWins: [
-                        {
-                          isMainWin: true,
-                          resize: false, // 是否支持缩放
-                          maximize: false, // 最大化窗口
-                          isMultiWin: true, // 是否支持多开窗口
-                          route: 'simulation/kline',
-                          data: '',
-                          x: 1,
-                          y: 325,
-                        },
-                        {
-                          width: 640,
-                          height: 1390,
-                          minWidth: 640,
-                          minHeight: 900,
-                          maxWidth: 640,
-                          route: '/simulation/klinevertical?' + Math.random(),
-                          isMainWin: false,
-                          resize: true, // 是否支持缩放
-                          maximizable: false, // 最大化窗口
-                          isMultiWin: true, // 是否支持多开窗口
-                          data: {
-                            tscode: '240006.IB'
-                          },
-                          x: 1918,
-                          y: 1,
-                        },
-                        {
-                          width: 640,
-                          height: 1390,
-                          minWidth: 640,
-                          minHeight: 900,
-                          maxWidth: 640,
-                          route: '/simulation/klinevertical?' + Math.random(),
-                          isMainWin: false,
-                          resize: true, // 是否支持缩放
-                          maximizable: false, // 最大化窗口
-                          isMultiWin: true, // 是否支持多开窗口
-                          data: {
-                            tscode: '240203.IB'
-                          },
-                          x: 662,
-                          y: 1,
-                        }, {
-                          width: 640,
-                          height: 1390,
-                          minWidth: 640,
-                          minHeight: 900,
-                          maxWidth: 640,
-                          route: '/simulation/klinevertical?' + Math.random(),
-                          isMainWin: false,
-                          resize: true, // 是否支持缩放
-                          maximizable: false, // 最大化窗口
-                          isMultiWin: true, // 是否支持多开窗口
-                          data: {
-                            tscode: '240004.IB'
-                          },
-                          x: 1290,
-                          y: 1,
-                        }
-                      ]
+                    const { code, value, message } = await api.getProfile(response.user.userId)
+                    if (code !== '00000') {
+                      return this.$message({
+                        message: `${message}`,
+                        type: 'error'
+                      })
                     }
-
-                    if (allocation.klineWins.length > 0) {
-                      allocation.klineWins.forEach((args, index) => {
+                    // const allocation = {
+                    //   klineWins: [
+                    //     {
+                    //       isMainWin: true,
+                    //       resize: false, // 是否支持缩放
+                    //       maximize: false, // 最大化窗口
+                    //       isMultiWin: true, // 是否支持多开窗口
+                    //       route: 'simulation/kline',
+                    //       data: '',
+                    //       x: 1,
+                    //       y: 325,
+                    //     },
+                    //     {
+                    //       width: 640,
+                    //       height: 1390,
+                    //       minWidth: 640,
+                    //       minHeight: 900,
+                    //       maxWidth: 640,
+                    //       route: '/simulation/klinevertical?' + Math.random(),
+                    //       isMainWin: false,
+                    //       resize: true, // 是否支持缩放
+                    //       maximizable: false, // 最大化窗口
+                    //       isMultiWin: true, // 是否支持多开窗口
+                    //       data: {
+                    //         tscode: '240006.IB'
+                    //       },
+                    //       x: 1918,
+                    //       y: 1,
+                    //     },
+                    //     {
+                    //       width: 640,
+                    //       height: 1390,
+                    //       minWidth: 640,
+                    //       minHeight: 900,
+                    //       maxWidth: 640,
+                    //       route: '/simulation/klinevertical?' + Math.random(),
+                    //       isMainWin: false,
+                    //       resize: true, // 是否支持缩放
+                    //       maximizable: false, // 最大化窗口
+                    //       isMultiWin: true, // 是否支持多开窗口
+                    //       data: {
+                    //         tscode: '240203.IB'
+                    //       },
+                    //       x: 662,
+                    //       y: 1,
+                    //     }, {
+                    //       width: 640,
+                    //       height: 1390,
+                    //       minWidth: 640,
+                    //       minHeight: 900,
+                    //       maxWidth: 640,
+                    //       route: '/simulation/klinevertical?' + Math.random(),
+                    //       isMainWin: false,
+                    //       resize: true, // 是否支持缩放
+                    //       maximizable: false, // 最大化窗口
+                    //       isMultiWin: true, // 是否支持多开窗口
+                    //       data: {
+                    //         tscode: '240004.IB'
+                    //       },
+                    //       x: 1290,
+                    //       y: 1,
+                    //     }
+                    //   ]
+                    // }
+                    const klineWins = value && value.wins ? JSON.parse(value.wins) : [];
+                    if (klineWins.length > 0 && this.labelPosition !== 'lily') {
+                      klineWins.forEach((args, index) => {
                         window.v1.createWin(args).then((response) => {
                           console.log('args: ', response, args);
                         }).catch((error) => {
@@ -254,16 +261,18 @@ export default {
     }
   },
   async mounted() {
-    if (localStorage.getItem(configUtil.keys.tokenKey) && localStorage.getItem(configUtil.keys.tokenKey) !== 'null') {
-      const { code } = await api.verifyToken(localStorage.getItem(configUtil.keys.tokenKey))
-      if (code === '00000') {
-        this.$router.push({ path: '/trade/bonds' })
+    if (!this.isElectron) {
+      if (localStorage.getItem(configUtil.keys.tokenKey) && localStorage.getItem(configUtil.keys.tokenKey) !== 'null') {
+        const { code } = await api.verifyToken(localStorage.getItem(configUtil.keys.tokenKey))
+        if (code === '00000') {
+          this.$router.push({ path: '/trade/bonds' })
+        }
+      } else {
+        if (this.socketMain != null) {
+          this.socketMain.close()
+        }
+        this["SET_SOCKET_MAIN"](null)
       }
-    } else {
-      if (this.socketMain != null) {
-        this.socketMain.close()
-      }
-      this["SET_SOCKET_MAIN"](null)
     }
   }
 }

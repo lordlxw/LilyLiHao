@@ -2,8 +2,8 @@
   <div style="background-color: #202020; min-width: 550px; margin: auto; height: 100%;">
     <div class="head">
       <ul class="k-nav">
-        <li v-for="item in loopmethodskey" @click="klinemethods[item]" :class="{ active: klineactive == item }"
-          :key="item">
+        <li v-if="dailyLine || item === 'Ticket图'" v-for="item in loopmethodskey" @click="klinemethods[item]"
+          :class="{ active: klineactive == item }" :key="item">
           {{ item }}
         </li>
         <li class="tscode">
@@ -120,16 +120,29 @@
               v-if="(activeName === 'buy' && buyForm.isMarketRoll === false) || (activeName === 'sale' && saleForm.isMarketRoll === false)"
               type="default" size="mini" @click="handleGetPrice">市价</el-button>
           </div>
-          <el-popover placement="bottom-end" width="300" trigger="manual" ref="popover-set" v-model="popoverSetVisible">
+          <el-popover width="510" placement="bottom-start" trigger="manual" ref="popover-set"
+            v-model="popoverSetVisible">
             <div class="default-set-wrapper">
-              <el-form ref="setForm" :model="setForm" :rules="setFormRules" :label-width="`${widthList.w100}px`">
-                <el-form-item label="交易量" prop="volume">
-                  <el-input v-model="setForm.volume"></el-input>
+              <div class="default-title">用户个性配置</div>
+              <el-form :inline="true" ref="setForm" :model="setForm" :rules="setFormRules" :label-width="`80px`">
+                <el-form-item label="快速提交" prop="isKlineSubmit">
+                  <el-switch v-model="setForm.isKlineSubmit"></el-switch>
                 </el-form-item>
-                <el-form-item label="快速提交">
+                <el-form-item label="显示日线" prop="dailyLine">
+                  <el-switch v-model="setForm.dailyLine"></el-switch>
+                </el-form-item>
+                <el-form-item label="交易量" prop="defVolume">
+                  <!-- <el-slider style="padding-left: 10px;" v-model="setForm.volume" :step="1000" :min="2000" :max="10000" show-stops>
+                  </el-slider> -->
+                  <el-input-number v-model="setForm.defVolume" :step="1000" :min="2000" step-strictly></el-input-number>
+                </el-form-item>
+                <el-form-item label="看板背景" prop="klineColor">
+                  <el-color-picker v-model="setForm.klineColor"></el-color-picker>
+                </el-form-item>
+                <!-- <el-form-item label="快速提交">
                   <el-checkbox label="是" v-model="setForm.quickSubmit" name="quickSubmit"></el-checkbox>
-                </el-form-item>
-                <el-form-item>
+                </el-form-item> -->
+                <el-form-item label=" " style="width: max-content;">
                   <el-button type="primary" @click="submitForm('setForm')">保存默认设置</el-button>
                   <el-button type="default" @click="popoverSetVisible = false">取消</el-button>
                 </el-form-item>
@@ -287,6 +300,7 @@ import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
 import moment from 'moment'
+import isElectron from 'is-electron'
 let lockReconnect = false
 export default {
   mixins: [pageMixin, commMixin],
@@ -538,8 +552,12 @@ export default {
       // 近差
       currentDiffPrice: '',
       setForm: {
-        volume: 0,
-        quickSubmit: false
+        id: 0,
+        defVolume: 2000,
+        isKlineSubmit: false,
+        klineColor: '#f0ffff',
+        dailyLine: true,
+        wins: ""
       },
       setFormRules: {
         volume: [
@@ -566,6 +584,7 @@ export default {
       dialogUpdatePasswordVisible: false,
       leftChangeLoad: false,
       isElectron: false,
+      dailyLine: false,
       dataZoom: {
         start: 0,
         end: 100,
@@ -575,7 +594,7 @@ export default {
   computed: {
     ...mapGetters({
       tscodeGlobal: 'getTscodeGlobal',
-      defaultSet: 'getDefaultSet',
+      // defaultSet: 'getDefaultSet',
       userInfo: 'getUserInfo'
     }),
     ...mapState({
@@ -600,8 +619,8 @@ export default {
     if (!this.setAuth('kline:view')) {
       this.$router.push({ path: '/main' })
     }
-    this.initFrameW('leftWith', 200)
-    this.initFrameW('rightWith', 360)
+    // this.initFrameW('leftWith', 200)
+    // this.initFrameW('rightWith', 360)
     this.keyDown()
     this.initSocket()
     if (window.v1) {
@@ -1516,30 +1535,36 @@ export default {
       }
     }),
     submitForm: debounce(function (formName) {
-      if (this.isElectron) {
-        window.v1.getPosition().then((response) => {
-          console.log(response)
-        })
-      }
-
       this.loading = true;
       switch (formName) {
         case 'setForm':
-          this.$refs[formName].validate((valid) => {
+          this.$refs[formName].validate(async (valid) => {
             if (valid) {
-              this.$store.commit('SET_DEFAULT_SET', JSON.stringify(this[formName]))
-              this.buyForm.volume = parseInt(this[formName].volume)
-              this.saleForm.volume = parseInt(this[formName].volume)
-              this.buyForm.quickSubmit = this[formName].quickSubmit
-              this.saleForm.quickSubmit = this[formName].quickSubmit
+              if (this.isElectron) {
+                const wins = await window.v1.getProfile()
+                console.log(wins)
+                this[formName].wins = JSON.stringify(wins)
+              }
+              apiLogin.saveProfile(this[formName])
+              // this.$store.commit('SET_DEFAULT_SET', JSON.stringify(this[formName]))
+              this.buyForm.volume = parseInt(this[formName].defVolume)
+              this.saleForm.volume = parseInt(this[formName].defVolume)
+              this.buyForm.quickSubmit = this[formName].isKlineSubmit
+              this.saleForm.quickSubmit = this[formName].isKlineSubmit
+              this.dailyLine = this[formName].dailyLine
               this.$refs['popover-set'].doClose()
+
+              this.$message({
+                message: '用户个性配置 保存成功！',
+                type: 'success'
+              });
             }
           })
           this.loading = false
           break
         case 'buyForm':
         case 'saleForm':
-          if (this.defaultSet.quickSubmit) {
+          if (this.setForm.isKlineSubmit) {
             this.quickSubmit(formName)
           } else {
             this.dialogVisible = true
@@ -3016,6 +3041,23 @@ export default {
         this.forwardDiffPrice = (util.moneyFormat((this.buyFormForwardPrice - this.saleFormForwardPrice) * 100, 2)) + 'BP'
       }
     },
+    initDefaultSet() {
+      Promise.all([
+
+      ]).then(() => {
+        apiLogin.getProfile(this.userInfo.userId).then(res => {
+          if (res.code === '00000' && res.value !== null) {
+            this.setForm = res.value
+
+            this.buyForm.volume = parseInt(res.value.defVolume)
+            this.saleForm.volume = parseInt(res.value.defVolume)
+            this.buyForm.quickSubmit = res.value.isKlineSubmit
+            this.saleForm.quickSubmit = res.value.isKlineSubmit
+            this.dailyLine = res.value.dailyLine
+          }
+        })
+      })
+    },
     openMoreThis($path) {
       if (this.isElectron) {
         window.v1.getAllDisplays().then((response) => {
@@ -3047,18 +3089,17 @@ export default {
     }
   },
   mounted() {
+    this.initDefaultSet()
     this.initTSType()
     this.getAllBondPool()
     this.getByCodeBondPool()
     this.favoriteList()
     this.getTradeUserList()
     // 初始化默认设置和询价单表格默认设置
-    this.setForm.volume = this.defaultSet.volume
-    this.setForm.quickSubmit = this.defaultSet.quickSubmit
-    this.buyForm.volume = parseInt(this.setForm.volume)
-    this.saleForm.volume = parseInt(this.setForm.volume)
-    this.buyForm.quickSubmit = this.setForm.quickSubmit
-    this.saleForm.quickSubmit = this.setForm.quickSubmit
+    // this.buyForm.volume = parseInt(this.setForm.defVolume)
+    // this.saleForm.volume = parseInt(this.setForm.defVolume)
+    // this.buyForm.quickSubmit = this.setForm.isKlineSubmit
+    // this.saleForm.quickSubmit = this.setForm.isKlineSubmit
 
     this.initPriceWait()
     window.onresize = () => {
@@ -3112,7 +3153,7 @@ export default {
         .el-icon-star-on {
           line-height: 50px;
           font-size: 20px;
-          margin: 0 10px;
+          margin: 0;
         }
       }
     }
@@ -3684,9 +3725,25 @@ export default {
 }
 
 .default-set-wrapper {
+  padding: 0 10px;
+
+  .default-title {
+    width: 100%;
+    line-height: 45px;
+    color: black;
+    font-size: small;
+    text-align: center;
+    font-weight: bold;
+  }
+
   .el-form-item__label {
     font-size: 12px;
     font-weight: normal;
+    color: #000;
+  }
+
+  .el-form-item--small.el-form-item {
+    width: 230px;
   }
 }
 

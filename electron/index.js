@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain, screen } = require("electron");
 // 第一步：引入remote
-const remote = require('@electron/remote/main');
+const remote = require("@electron/remote/main");
 // 第二步： 初始化remote
 remote.initialize();
 const { join } = require("path");
@@ -39,7 +39,8 @@ const defaultConfig = {
   modal: false, // 模态窗口（模态窗口是浮于父窗口上，禁用父窗口）
   alwaysOnTop: false, // 置顶窗口
   webPreferences: {},
-  sharSession: true
+  sharSession: true,
+  transparent: true
 };
 
 class MultiWindows {
@@ -80,7 +81,7 @@ class MultiWindows {
   // 创建新窗口
   createWin(options) {
     const args = Object.assign({}, defaultConfig, options);
-    console.log(args);
+    // console.log(args);
 
     // 判断窗口是否存在
     for (let i in this.winLs) {
@@ -134,12 +135,11 @@ class MultiWindows {
     this.winLs[win.id] = {
       route: args.route,
       isMultiWin: args.isMultiWin,
-      data: args.data
+      ...options
     };
     args.id = win.id;
 
     console.log("current id ", args.id);
-    // console.log("current opt ", opt);
 
     // 加载页面
     let $url;
@@ -165,6 +165,7 @@ class MultiWindows {
     if (args.isMainWin) {
       win.on("close", e => {
         // 阻止默认的窗口关闭
+        this.winLs = {};
         e.preventDefault();
         win.setOpacity(0);
         e.defaultPrevented = false;
@@ -172,7 +173,10 @@ class MultiWindows {
         app.quit();
       });
     } else {
-      win.on("close", () => win.setOpacity(0));
+      win.on("close", () => {
+        delete this.winLs[win.id];
+        win.setOpacity(0);
+      });
     }
 
     // 初始化渲染进程
@@ -206,6 +210,14 @@ class MultiWindows {
         }
       );
     });
+
+    // ipcMain.on('renderer-ready', (event) => {
+    //   const win = BrowserWindow.fromWebContents(event.sender);
+    //   if (win) {
+    //     // 窗口准备好了，可以关闭加载动画或启动屏幕
+    //     win.show();
+    //   }
+    // });
 
     remote.enable(win.webContents);
   }
@@ -251,7 +263,6 @@ class MultiWindows {
       });
 
       const loginArg = {
-        id: "login",
         width: 650, // 窗口宽度
         height: 480, // 窗口高度
         minWidth: 650, // 窗口最小宽度
@@ -260,7 +271,8 @@ class MultiWindows {
         maximize: false, // 最大化窗口
         isMultiWin: false, // 是否支持多开窗口
         isMainWin: false, // 是否主窗口
-        alwaysOnTop: true // 置顶窗口
+        alwaysOnTop: true, // 置顶窗口
+        route: "/login"
       };
       this.createWin(loginArg);
     }
@@ -364,17 +376,16 @@ class MultiWindows {
       return this.winLs[id];
     });
 
-    ipcMain.handle("getPosition", (event, id) => {
+    ipcMain.handle("getProfile", (event, id) => {
       if (id) {
         const win = this.getWin(id);
-        const { x, y } = win.getPosition();
-        return [{ x, y }];
+        const { x, y, width, height } = win.getBounds();
+        return [{ ...this.win[id], x: x + 1, y: y + 1, width, height }];
       } else {
         const wins = this.getAllWin();
         return wins.map(win => {
-          const { x, y } = win.getPosition();
-          console.log(win.getPosition());
-          return { x, y };
+          const { x, y, width, height } = win.getBounds();
+          return { ...this.winLs[win.id], x: x + 1, y: y + 1, width, height };
         });
       }
     });

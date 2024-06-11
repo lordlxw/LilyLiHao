@@ -23,7 +23,7 @@ contextBridge.exposeInMainWorld("v1", {
   setArgs: args => ipcRenderer.invoke("setArgs", args),
   createWin: args => ipcRenderer.invoke("createWin", args),
   getAllDisplays: () => ipcRenderer.invoke("getAllDisplays"),
-  getPosition: id => ipcRenderer.invoke("getPosition", id),
+  getProfile: id => ipcRenderer.invoke("getProfile", id),
   getWinThis: () => {
     const win = remote.getCurrentWindow()
     return ipcRenderer.invoke("getWinThis", win.id);
