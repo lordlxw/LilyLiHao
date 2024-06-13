@@ -85,7 +85,7 @@ export default {
             password: this.ruleForm.password,
             uuid: this.uuid,
             code: this.ruleForm.code
-          }).then(response => {
+          }, this.isElectron ? 'BondHelper' : '').then(response => {
             if (response && response.code === 200) {
               // 保存token信息
               Promise.all([
@@ -101,7 +101,7 @@ export default {
                       menutree: response.menutree
                     })
                   }
-                  let $path = '/simulation/kline';
+                  let $path = '/simulation/enquiry';
                   if (this.labelPosition === 'lily') {
                     $path = '/trade/bonds'
                   }

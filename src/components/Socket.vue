@@ -216,6 +216,9 @@ export default {
                     Router.push({ path: '/login' })
                   }
                   break
+                case 'rank':
+                  self.$store.commit('SET_HOTS_LIST', msgJson.data)
+                  break
                 case 'deal_bond_0':
                 case 'deal_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))

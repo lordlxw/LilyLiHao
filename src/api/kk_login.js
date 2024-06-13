@@ -1,54 +1,57 @@
-import Vue from 'vue'
-import request from '@/utils/request'
+import Vue from "vue";
+import request from "@/utils/request";
 
 export default {
   // 登录
-  login(params) {
+  login(params, agent) {
     return request({
       url: `${Vue.prototype.$apiUrl}/login`,
-      method: 'post',
+      method: "post",
       data: {
         username: params.username,
         password: params.password,
         uuid: params.uuid,
         code: params.code
+      },
+      headers: {
+        Agent: agent
       }
-    })
+    });
   },
   // 权限
   auth() {
     return request({
       url: `${Vue.prototype.$apiUrl}/getUserInfo`,
-      method: 'get',
-    })
+      method: "get"
+    });
   },
   // 退出登录
   logout() {
     return request({
       url: `${Vue.prototype.$apiUrl}/logout`,
-      method: 'get',
-    })
+      method: "get"
+    });
   },
   verifyToken(token) {
     return request({
       url: `${Vue.prototype.$apiUrl}/api/verifyToken`,
-      method: 'post',
+      method: "post",
       data: {
-        token: token,
+        token: token
       }
-    })
+    });
   },
   getProfile(userId) {
     return request({
       url: `${Vue.prototype.$apiUrl}/userProfile/userId/${userId}`,
-      method: 'get'
-    })
+      method: "get"
+    });
   },
   saveProfile(obj) {
     return request({
       url: `${Vue.prototype.$apiUrl}/userProfile`,
-      method: 'post',
+      method: "post",
       data: obj
-    })
-  },
-}
+    });
+  }
+};

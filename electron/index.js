@@ -219,6 +219,11 @@ class MultiWindows {
     //   }
     // });
 
+    // 当窗口获得焦点时，改变头部颜色
+    // win.on("focus", () => {
+    //   win.setTitle("#0069b4");
+    // });
+
     remote.enable(win.webContents);
   }
 
@@ -334,6 +339,7 @@ class MultiWindows {
     ipcMain.handle("setArgs", (event, args) => {
       let win = BrowserWindow.getFocusedWindow();
       if (args.parent) win.setParentWindow(this.getWin(args.parent));
+      if (args.data) this.winLs[win.id].data = args.data;
       if (typeof args.resize === "boolean") win.setResizable(args.resize);
       if (typeof args.alwaysOnTop === "boolean") {
         win.setAlwaysOnTop(args.alwaysOnTop);

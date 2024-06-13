@@ -108,6 +108,12 @@ export default {
       method: 'get'
     })
   },
+  chatReceiverList() {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/chatReceiver`,
+      method: 'get'
+    })
+  },
   // 平仓时选择交易员优先级
   realTradeUserList(params) {
     return request({

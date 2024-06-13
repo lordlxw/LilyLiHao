@@ -7,11 +7,13 @@ import configUtil from "@/utils/config.js";
 const service = axios.create({
   // baseURL: process.env.BASE_API,
   // baseURL: Vue.prototype.$apiUrl,
-  timeout: 30000
+  timeout: 30000,
+
 });
 
 service.interceptors.request.use(config => {
   try {
+    config.headers["Agent"] = " _BondHelper";
     console.log("get:" + localStorage.getItem(configUtil.keys.tokenKey));
     if (
       localStorage.getItem(configUtil.keys.tokenKey) &&

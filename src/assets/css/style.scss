@@ -2,12 +2,15 @@ $main-color: #3f5ca8;
 $main-black: #202020;
 $hover-color: #2cad98;
 $hover-color2: #5270bd;
+$box-black: #2f3032;
+$color-white: #FFFFFF;
+$color-black: #000000;
 $background-style: linear-gradient(to bottom, #2cad98 30%, #5270bd 100%);
 
 html {
   overflow: hidden;
   -webkit-text-size-adjust: none;
-  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
 
 ul,
@@ -21,11 +24,14 @@ li {
   font-size: 12px;
 }
 
-body {
-  background-color: white;
-  margin: 0;
-  padding: 0 !important;
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#app::-webkit-scrollbar {
+  width: 0 !important;
+}
 
+
+body {
   .el-notification {
     width: 360px;
   }
@@ -497,7 +503,8 @@ a:hover {
 
 /* 自定义滚动条的宽度 */
 .el-dialog__wrapper::-webkit-scrollbar,
-.el-scrollbar__wrap::-webkit-scrollbar,.el-table__body-wrapper::-webkit-scrollbar {
+.el-scrollbar__wrap::-webkit-scrollbar,
+.el-table__body-wrapper::-webkit-scrollbar {
   width: 10px;
   /* 对于水平滚动条 */
   height: 10px;
@@ -506,7 +513,8 @@ a:hover {
 
 /* 自定义滚动条的背景色 */
 .el-dialog__wrapper::-webkit-scrollbar-track,
-.el-scrollbar__wrap::-webkit-scrollbar-track,.el-table__body-wrapper::-webkit-scrollbar-track {
+.el-scrollbar__wrap::-webkit-scrollbar-track,
+.el-table__body-wrapper::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 3px;
   /* 滚动条轨道的背景色 */
@@ -514,7 +522,8 @@ a:hover {
 
 /* 自定义滚动条的滑块颜色 */
 .el-dialog__wrapper::-webkit-scrollbar-thumb,
-.el-scrollbar__wrap::-webkit-scrollbar-thumb,.el-table__body-wrapper::-webkit-scrollbar-thumb {
+.el-scrollbar__wrap::-webkit-scrollbar-thumb,
+.el-table__body-wrapper::-webkit-scrollbar-thumb {
   background: #888 !important;
   border-radius: 3px;
   /* 滚动条滑块的背景色 */
@@ -522,7 +531,8 @@ a:hover {
 
 /* 当鼠标悬停在滚动条上时，自定义滑块的颜色 */
 .el-dialog__wrapper::-webkit-scrollbar-thumb:hover,
-.el-scrollbar__wrap::-webkit-scrollbar-thumb:hover,.el-table__body-wrapper::-webkit-scrollbar-thumb:hover {
+.el-scrollbar__wrap::-webkit-scrollbar-thumb:hover,
+.el-table__body-wrapper::-webkit-scrollbar-thumb:hover {
   background: #555 !important;
   /* 滚动条滑块的背景色 */
 }
@@ -539,7 +549,7 @@ a:hover {
 }
 
 
-.font-size-large{
+.font-size-large {
   font-size: large;
 }
 
@@ -551,6 +561,32 @@ a:hover {
 }
 
 //公共 .el-loading 样式
-.el-loading-mask{
+.el-loading-mask {
   background-color: rgba(110, 110, 110, 0.62);
 }
+
+
+.text-center{
+  text-align: center;
+}
+
+.text-right{
+  text-align: right;
+}
+
+.text-left{
+  text-align: left;
+}
+
+.txt-red {
+  color: #ec0000 !important;
+}
+
+.txt-green {
+  color: #00da3c !important;
+}
+
+.txt-cyan {
+  color: #20efde !important;
+}
+

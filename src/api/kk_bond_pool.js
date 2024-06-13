@@ -1,6 +1,6 @@
 /* 债券池 */
-import Vue from 'vue'
-import request from '@/utils/request'
+import Vue from "vue";
+import request from "@/utils/request";
 
 export default {
   /**
@@ -10,8 +10,8 @@ export default {
   getAll() {
     return request({
       url: `${Vue.prototype.$apiUrl}/tsinfo/getAll`,
-      method: 'get'
-    })
+      method: "get"
+    });
   },
   /**
    * 债券类型查询
@@ -20,8 +20,8 @@ export default {
   getPoolType() {
     return request({
       url: `${Vue.prototype.$apiUrl}/tstype/list`,
-      method: 'get'
-    })
+      method: "get"
+    });
   },
   /**
    * 债券池按类型全量查询
@@ -30,8 +30,8 @@ export default {
   getAllByType(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/tspool/getAll/${params.tstype}/${params.tslength}`,
-      method: 'get'
-    })
+      method: "get"
+    });
   },
   /**
    * 债券池根据债券码查询
@@ -40,11 +40,11 @@ export default {
   getByCode(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/tsinfo/getByCode`,
-      method: 'get',
+      method: "get",
       params: {
         tscode: params.tscode
       }
-    })
+    });
   },
   /**
    * 债券码根据债权池code模糊匹配查询
@@ -54,8 +54,8 @@ export default {
   getByCodeLike(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/tsinfo/likeTscode/${params.tscode}`,
-      method: 'get'
-    })
+      method: "get"
+    });
   },
   /**
    * 个人喜好列表
@@ -64,8 +64,8 @@ export default {
   favoriteList() {
     return request({
       url: `${Vue.prototype.$apiUrl}/favorite/list`,
-      method: 'get'
-    })
+      method: "get"
+    });
   },
   /**
    * 添加个人喜好
@@ -74,8 +74,8 @@ export default {
   favoriteAdd(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/favorite/add?tscode=${params.tscode}`,
-      method: 'post'
-    })
+      method: "post"
+    });
   },
   /**
    * 收藏排序
@@ -84,11 +84,11 @@ export default {
   favoriteOrder(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/favorite/order`,
-      method: 'post',
+      method: "post",
       data: {
         tscodeList: params.tscodeList
       }
-    })
+    });
   },
   /**
    * 删除个人喜好
@@ -97,8 +97,8 @@ export default {
   favoriteDelete(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/favorite/delete?tscode=${params.tscode}`,
-      method: 'delete'
-    })
+      method: "delete"
+    });
   },
   /**
    * 摆单数据
@@ -110,12 +110,12 @@ export default {
   businessList(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/latestbid/realtime`,
-      method: 'get',
+      method: "get",
       params: {
         tscode: params.tscode,
         bidtype: params.bidtype
       }
-    })
+    });
   },
   /**
    * 交易数据
@@ -125,10 +125,17 @@ export default {
   transactionList(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/tradehistory/realtime`,
-      method: 'get',
+      method: "get",
       params: {
         tscode: params.tscode
       }
-    })
+    });
+  },
+  tradehistory(data) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/tradehistory/list`,
+      method: "post",
+      data
+    });
   }
-}
+};
