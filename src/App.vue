@@ -5,7 +5,7 @@
   </div>
 </template>
 <script>
-import Vue from 'vue'
+// import Vue from 'vue'
 export default {
   name: 'App',
   data() {
@@ -17,7 +17,7 @@ export default {
     sessionStorage.clear()
   },
   mounted() {
-    this.testWaterText = Vue.prototype.$apiUrl === 'https://apitest.quants.top'
+    // this.testWaterText = Vue.prototype.$apiUrl === 'https://apitest.quants.top'
   }
 }
 </script>

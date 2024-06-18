@@ -29,6 +29,7 @@ const store = new Vuex.Store({
     userInfo: {},
     enquiryInfo: "",
     hotsList: [],
+    chatMessage: null,
     socketMain: null,
     socketKLine: null
   },
@@ -222,6 +223,9 @@ const store = new Vuex.Store({
     // 设置询价信息变化
     SET_ENQUIRY_INFO(state, enquiryInfo) {
       state.enquiryInfo = JSON.stringify(enquiryInfo);
+    },
+    SET_CHAT_MESSAGE(state, chatMessage) {
+      state.chatMessage = chatMessage;
     },
     SET_HOTS_LIST(state, hotsList) {
       if (state.hotsList && state.hotsList.length > 0) {

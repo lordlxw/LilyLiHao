@@ -32,12 +32,9 @@
           </span>
         </li>
         <!-- <li class="nav-right">
-          <el-button @click="openMoreThis('/simulation/kline')" type="primary" icon="el-icon-menu"></el-button>
-        </li> -->
-        <li class="nav-right">
           <el-button @click="openMoreThis('/simulation/chat')" type="primary"
             icon="el-icon-chat-dot-square"></el-button>
-        </li>
+        </li> -->
       </ul>
     </div>
     <div class="container" style="background-color: #202020">
@@ -71,7 +68,7 @@
                     step-strictly></el-input-number>
                 </el-form-item>
                 <el-form-item label="中介">
-                  <el-select v-model="saleForm.intention" clearable placeholder="系统选择" class="slt-user">
+                  <el-select v-model="buyForm.brokerid" clearable placeholder="系统选择" class="slt-user">
                     <el-option v-for="item in intendComerOption" :key="item.brokerid" :label="item.company"
                       :value="item.brokerid">
                       <div style="width: 50px; float: left">{{ item.company }}</div>
@@ -122,7 +119,7 @@
                     step-strictly></el-input-number>
                 </el-form-item>
                 <el-form-item label="中介">
-                  <el-select v-model="saleForm.intention" clearable placeholder="系统选择" class="slt-user">
+                  <el-select v-model="saleForm.brokerid" clearable placeholder="系统选择" class="slt-user">
                     <el-option v-for="item in intendComerOption" :key="item.brokerid" :label="item.company"
                       :value="item.brokerid">
                       <span style="float: left">{{ item.company }}</span>
@@ -500,7 +497,7 @@ export default {
         // 是否开启市价滚动
         isMarketRoll: true,
 
-        intention: '',
+        brokerid: null,
       },
       saleFormRules: {
         direction: [
@@ -553,7 +550,7 @@ export default {
         maxWait: 0,
         // 是否开启市价滚动
         isMarketRoll: true,
-        intention: ''
+        brokerid: null
       },
       buyFormRules: {
         direction: [
@@ -765,10 +762,10 @@ export default {
           axisPointer: {
             type: 'cross',
             lineStyle: {
-              opacity: 0
+              opacity: 1
             },
             crossStyle: {
-              opacity: 0
+              opacity: 1
             }
           },
         },
@@ -891,7 +888,6 @@ export default {
           this.klinemethods[this.klineactive]()
         }, 5 * 60 * 1000)
       } else if (klinekey === 'Ticket图') {
-        console.log(this.transactionAllList)
         if (this.transactionAllList && this.transactionAllList.length > 0) {
           result = {
             code: '00000',
@@ -1152,7 +1148,6 @@ export default {
     }),
     // 下拉框选择债券
     handlerTscodeSelect(obj) {
-      console.log(obj)
       Promise.all([
         this.activeTscode = this.tscode = obj.value
       ]).then(res => {
@@ -1248,45 +1243,88 @@ export default {
         var e = event || window.event
         var keyCode = e.keyCode || e.which
         console.log("keyCode: ", keyCode)
-        switch (keyCode) {
-          case 13:
-            // 检查K线轮询个数
-            // const klineLoopCount = self.loopmethodskey.length
-            // const indecator = self.loopmethodskey.indexOf(self.klineactive)
-            // if (klineLoopCount - 1 <= indecator) {
-            //   self.klinemethods[self.loopmethodskey[0]]()
-            // } else {
-            //   self.klinemethods[self.loopmethodskey[indecator + 1]]()
-            // }
-            // if (e && e.preventDefault) {
-            //   e.preventDefault()
-            // } else {
-            //   window.event.returnValue = false
-            // }
+
+        const setPrice = setp => {
+          if (self.activeName === 'buy') {
+            self.buyForm.price = (self.buyForm.price * 1000 + setp) / 1000;
+          }
+          if (self.activeName === 'sale') {
+            self.saleForm.price = (self.saleForm.price * 1000 + setp) / 1000;
+          }
+        }
+        const volumeKeys = {
+          96: 10000,
+          97: 1000,
+          98: 2000,
+          99: 3000,
+          100: 4000,
+          101: 5000,
+          102: 6000,
+          103: 7000,
+          104: 8000,
+          105: 9000,
+          38: () => { return setPrice(1) },
+          40: () => { return setPrice(-1) },
+          13: () => {
             if (self.activeName === 'buy') {
               self.submitForm('buyForm')
             }
             if (self.activeName === 'sale') {
               self.submitForm('saleForm')
             }
-            break
-          case 112:
+          },
+          112: () => {
             self.activeName = 'buy'
             if (e && e.preventDefault) {
               e.preventDefault()
             } else {
               window.event.returnValue = false
             }
-            break;
-          case 113:
+          },
+          113: () => {
             self.activeName = 'sale'
             if (e && e.preventDefault) {
               e.preventDefault()
             } else {
               window.event.returnValue = false
             }
-            break;
+          }
         }
+
+        // const key = Object.keys(volumeKeys).filter(key => key === keyCode).find(num => true);
+        if (keyCode >= 96 && keyCode <= 105) {
+          self.saleForm.volume = volumeKeys[keyCode]
+          self.buyForm.volume = volumeKeys[keyCode]
+        } else if (volumeKeys[keyCode] instanceof Function) {
+          volumeKeys[keyCode]();
+        }
+
+        // switch (keyCode) {
+        //   case 13:
+        //     if (self.activeName === 'buy') {
+        //       self.submitForm('buyForm')
+        //     }
+        //     if (self.activeName === 'sale') {
+        //       self.submitForm('saleForm')
+        //     }
+        //     break
+        //   case 112:
+        //     self.activeName = 'buy'
+        //     if (e && e.preventDefault) {
+        //       e.preventDefault()
+        //     } else {
+        //       window.event.returnValue = false
+        //     }
+        //     break;
+        //   case 113:
+        //     self.activeName = 'sale'
+        //     if (e && e.preventDefault) {
+        //       e.preventDefault()
+        //     } else {
+        //       window.event.returnValue = false
+        //     }
+        //     break;
+        // }
       }
     },
     keyDownReview() {
@@ -1492,10 +1530,10 @@ export default {
     changeForm(price, brokerid) {
       if (this.activeName === 'buy') {
         this.buyForm.price = price
-        this.buyForm.intention = brokerid
+        this.buyForm.brokerid = brokerid
       } else if (this.activeName === 'sale') {
         this.saleForm.price = price
-        this.saleForm.intention = brokerid
+        this.saleForm.brokerid = brokerid
       }
     },
     // 买卖最优值(type:min最小，type:max最大;arr:初始数组;flag:true参与最近一笔交易进行计算)
@@ -1589,19 +1627,39 @@ export default {
             // 备注
             remark: this[formName].remark,
             // 允许浮动
-            worstPrice: this[formName].worstPrice
+            worstPrice: this[formName].worstPrice,
+
+            brokerId: this[formName].brokerid
+
           }).then(res => {
             if (res && res.code === '00000' && res.value) {
-              const h = this.$createElement;
+              const { price, tscode, volume, direction, deliveryTime, brokerId } = res.value;
+              const broker = this.intendComerOption.filter(n => { return n.brokerid === brokerId });
+
               this.$notify({
                 title: '提醒',
-                message: h('i', { style: 'color: teal' }, '询价单发送成功'),
-                position: 'top-left'
+                message: `<div>询价单发送成功！</div><div>优先使用：<span class="txt-red">${broker[0].company}</span> 发送</div > `,
+                position: 'top-left',
+                dangerouslyUseHTMLString: true,
+                duration: 0,
+                type: 'success'
               });
+              // bid 240205 2.3500 4月26日+0 2k
+
+              const md = new Date(deliveryTime);
+              const chatMessage = `${direction === 'bond_0' ? 'bid' : 'ref'} ${tscode.split('.')[0]} ${price} ${md.getMonth() + 1}月${md.getDate()} 日 + 0 ${volume} `
+              const data = {
+                chatId: this.userInfo.userId,
+                chatMessage: chatMessage,
+                brokerId: brokerId,
+                direction: 0,
+                isTrade: true
+              }
+              apiTrade.sendChatMessages(data, 'sim')
               this.dialogVisible = false
             } else {
               this.$message({
-                message: `${res.message}`,
+                message: `${res.message} `,
                 type: 'error'
               })
             }
@@ -1631,7 +1689,6 @@ export default {
             if (valid) {
               if (this.isElectron) {
                 const wins = await window.v1.getProfile()
-                console.log(wins)
                 this[formName].wins = JSON.stringify(wins)
               }
               this[formName].userId = this.userInfo.userId

@@ -1,46 +1,77 @@
 <template>
     <div style="background-color: rgb(32, 32, 32);    height: -webkit-fill-available;">
-        <el-row>
-            <el-col :span="12">
-                <MChatBox :boxHeight="boxHeight" :config="config" :dialogChatBoxVisible="false" :mine="mine"></MChatBox>
-            </el-col>
-            <el-col :span="12">
-                <MChatBox :boxHeight="boxHeight" :config="config" :dialogChatBoxVisible="false" :chats="chats"
-                    :mine="mine"></MChatBox>
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">
-                <MChatBox :boxHeight="boxHeight" :config="config" :dialogChatBoxVisible="false" :mine="mine"
-                    :chats="chats"></MChatBox>
-            </el-col>
-            <el-col :span="12">
-                <MChatBox :boxHeight="boxHeight" :config="config" :dialogChatBoxVisible="false" :mine="mine"></MChatBox>
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">
-                <MChatBox :boxHeight="boxHeight" :config="config" :dialogChatBoxVisible="false" :mine="mine"></MChatBox>
-            </el-col>
-            <el-col :span="12">
-                <MChatBox :boxHeight="boxHeight" :config="config" :dialogChatBoxVisible="false" :chats="chats"
-                    :mine="mine"></MChatBox>
-            </el-col>
-        </el-row>
+        <el-container class="chat-box">
+            <el-header class="chat-header">
+                <el-button @click="drawer = true" type="primary" style="margin-left: 16px;">
+                    设置
+                </el-button>
+            </el-header>
+            <el-main class="chat-main">
+                <div v-for="item in checkedChats" :key="item.brokerid" class="chat-item">
+                    <MChatBox :ref="'MChatBox' + JSON.parse(item).brokerid" :boxHeight="boxHeight" :config="config"
+                        :dialogChatBoxVisible="false" :userName="userInfo.userName"
+                        :messages="chatMessages[JSON.parse(item).brokerid] || []" :mine="JSON.parse(item)">
+                    </MChatBox>
+                </div>
+            </el-main>
+        </el-container>
+
+        <el-drawer direction="ltr" title="" :visible.sync="drawer" :with-header="false" :before-close="handleClose">
+            <div>
+                <div class="mt10 mb10 ml10 mr10"><el-alert :closable="false" title="最多只能选中6个消息看板" type="warning">
+                    </el-alert></div>
+                <el-checkbox-group v-model="checkedChats" @change="handleCheckedChatsChange" :max="6">
+                    <el-card shadow="hover" class="mt10 mb10 ml10 mr10" v-for="item in chats" :key="item.brokerid">
+                        <el-checkbox :label="JSON.stringify(item)">{{ item.company }} </el-checkbox>
+                    </el-card>
+                </el-checkbox-group>
+            </div>
+        </el-drawer>
+        <main-socket></main-socket>
     </div>
 
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex'
 import { commMixin } from '@/utils/commMixin'
-import MChatBox from '../../components/chat/MChatBox';
+import apiAdmin from '@/api/kk_power_admin'
+import apiTrade from '@/api/kk_trade'
+import apiLogin from '@/api/kk_login'
+import MChatBox from '@/components/chat/MChatBox';
+import MainSocket from '@/components/Socket.vue'
 export default {
     mixins: [commMixin],
     components: {
-        MChatBox
+        MChatBox,
+        MainSocket
     },
     created() {
-        this.initFrameH('breakH', 200)
+        if (window.v1) {
+            this.isElectron = window.v1.isElectron()
+        }
+    },
+    computed: {
+        ...mapGetters({
+            userInfo: 'getUserInfo'
+        }),
+        ...mapState({
+            chatMessage: (state) => state.chatMessage,
+            socketMain: (state) => state.socketMain,
+        })
+    },
+    watch: {
+        chatMessage(item) {
+            console.log("::::::::::::", item)
+            // if (!this.chatMessages[item.brokerId]) {
+            //     this.chatMessages[item.brokerId] = []
+            //     // this.$set(this.chatMessages, item.brokerId, item)
+            // }
+            // this.chatMessages[item.brokerId].push(item)
+            if (this.$refs[`MChatBox${item.brokerId}`]) {
+                this.$refs[`MChatBox${item.brokerId}`][0].pushMsgs(item);
+            }
+        },
     },
     data() {
         return {
@@ -60,40 +91,96 @@ export default {
                 tabRemove: false,
                 fixed: true,
             },
-            // 我的信息
-            mine: {
-                // 昵称
-                username: "七月",
-                // 用户id
-                id: "10001",
-                // 状态
-                status: "online",
-                // 签名
-                sign: "与其感慨路难行,不如马上出发！",
-                avatar: '',
-            },
             // 会话
-            chats: [1, 2, 3, 4, 5],
-            // chats: [],
-            boxHeight: 400
+            chats: [],
+            checkedChats: [],
+            boxHeight: 400,
+            isElectron: false,
+            drawer: false,
+            profile: {},
+            chatMessages: {},
+        }
+    },
+    methods: {
+        // 获取意向列表
+        getIntendComerList() {
+            Promise.all([
 
+            ]).then(async () => {
+                apiAdmin.chatReceiverList().then(async ({ code, value }) => {
+                    this.chats = code === '00000' ? value : []
+                })
+                const { value } = await apiLogin.getProfile(this.userInfo.userId)
+                this.profile = value ? value : {};
+                this.checkedChats = value && value.chats ? JSON.parse(value.chats) : [];
+                this.drawer = this.checkedChats.length <= 0;
+                const { value: msgs } = await apiTrade.getChatMessages()
+
+                this.chatMessages = groupBy(msgs, item => item.brokerId) || {}
+                console.log(this.chatMessages)
+            })
+        },
+        handleCheckedChatsChange(value) {
+            console.log(this.checkedChats)
+        },
+        handleClose() {
+            Promise.all([
+                this.drawer = false
+            ]).then(async () => {
+                const userId = this.userInfo.userId;
+                const chats = JSON.stringify(this.checkedChats);
+                const { value } = await apiLogin.getProfile(this.userInfo.userId)
+                await apiLogin.saveProfile({ id: value ? value.id : 0, userId, chats })
+            })
         }
     },
     mounted() {
-        if (window.v1 && window.v1.isElectron()) {
+        this.getIntendComerList()
+        if (window.v1 && this.isElectron) {
             window.v1.getAllDisplays().then((response) => {
                 const maxHeight = Math.max(...response.map(display => display.bounds.height));
-                this.boxHeight = (maxHeight - 150) / 3
+                this.boxHeight = (maxHeight - 190) / 3
             });
         } else {
-            this.boxHeight = 400
+            this.boxHeight = 390
         }
-    }
+    },
+
 }
+
+const groupBy = (array, key) => {
+    return array.reduce((result, currentItem) => {
+        // 使用 key 函数提取分组依据，如果不存在则创建对象数组
+        const group = key(currentItem);
+        if (!result[group]) {
+            result[group] = [];
+        }
+        result[group].push(currentItem);
+        return result;
+    }, {});
+};
 </script>
 
-<style>
+<style lang="scss" scoped>
 .chat-box {
-    display: inline-block;
+    .chat-header {
+        background-color: #474747;
+        color: #333;
+        text-align: center;
+        line-height: 40px;
+        height: 40px !important;
+        text-align: right;
+        padding: 0 10px;
+    }
+
+    .chat-main {
+        margin-top: 40px;
+
+        .chat-item {
+            display: inline-block;
+            width: calc(50% - 0px);
+        }
+    }
+
 }
 </style>

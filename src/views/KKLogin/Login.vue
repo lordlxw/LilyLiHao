@@ -85,7 +85,7 @@ export default {
             password: this.ruleForm.password,
             uuid: this.uuid,
             code: this.ruleForm.code
-          }, this.isElectron ? 'BondHelper' : '').then(response => {
+          }, this.labelPosition === 'Simulation' ? 'BondHelper' : '').then(response => {
             if (response && response.code === 200) {
               // 保存token信息
               Promise.all([
@@ -114,70 +114,7 @@ export default {
                         type: 'error'
                       })
                     }
-                    // const allocation = {
-                    //   klineWins: [
-                    //     {
-                    //       isMainWin: true,
-                    //       resize: false, // 是否支持缩放
-                    //       maximize: false, // 最大化窗口
-                    //       isMultiWin: true, // 是否支持多开窗口
-                    //       route: 'simulation/kline',
-                    //       data: '',
-                    //       x: 1,
-                    //       y: 325,
-                    //     },
-                    //     {
-                    //       width: 640,
-                    //       height: 1390,
-                    //       minWidth: 640,
-                    //       minHeight: 900,
-                    //       maxWidth: 640,
-                    //       route: '/simulation/klinevertical?' + Math.random(),
-                    //       isMainWin: false,
-                    //       resize: true, // 是否支持缩放
-                    //       maximizable: false, // 最大化窗口
-                    //       isMultiWin: true, // 是否支持多开窗口
-                    //       data: {
-                    //         tscode: '240006.IB'
-                    //       },
-                    //       x: 1918,
-                    //       y: 1,
-                    //     },
-                    //     {
-                    //       width: 640,
-                    //       height: 1390,
-                    //       minWidth: 640,
-                    //       minHeight: 900,
-                    //       maxWidth: 640,
-                    //       route: '/simulation/klinevertical?' + Math.random(),
-                    //       isMainWin: false,
-                    //       resize: true, // 是否支持缩放
-                    //       maximizable: false, // 最大化窗口
-                    //       isMultiWin: true, // 是否支持多开窗口
-                    //       data: {
-                    //         tscode: '240203.IB'
-                    //       },
-                    //       x: 662,
-                    //       y: 1,
-                    //     }, {
-                    //       width: 640,
-                    //       height: 1390,
-                    //       minWidth: 640,
-                    //       minHeight: 900,
-                    //       maxWidth: 640,
-                    //       route: '/simulation/klinevertical?' + Math.random(),
-                    //       isMainWin: false,
-                    //       resize: true, // 是否支持缩放
-                    //       maximizable: false, // 最大化窗口
-                    //       isMultiWin: true, // 是否支持多开窗口
-                    //       data: {
-                    //         tscode: '240004.IB'
-                    //       },
-                    //       x: 1290,
-                    //       y: 1,
-                    //     }
-                    //   ]
-                    // }
+
                     const klineWins = value && value.wins ? JSON.parse(value.wins) : [];
                     if (klineWins.length > 0 && this.labelPosition !== 'lily') {
                       klineWins.forEach((args, index) => {

@@ -479,8 +479,8 @@ a:hover {
 }
 
 .el-form-item .el-form-item__label {
-  font-weight: bold;
-  color: $hover-color;
+
+  color: $color-black;
 }
 
 .el-table--border,
@@ -548,6 +548,15 @@ a:hover {
   }
 }
 
+.el-dialog__header {
+  background-color: #f6f6f6;
+  line-height: 60px;
+  font-size: 16px;
+  font-weight: bold;
+  height: 60px;
+  padding: 0 10px;
+}
+
 
 .font-size-large {
   font-size: large;
@@ -558,6 +567,11 @@ a:hover {
 .el-dialog {
   border-radius: 5px;
   min-width: 100px;
+  overflow: hidden;
+
+  .el-dialog__close{
+    font-size: 20px;
+  }
 }
 
 //公共 .el-loading 样式
@@ -566,15 +580,15 @@ a:hover {
 }
 
 
-.text-center{
+.text-center {
   text-align: center;
 }
 
-.text-right{
+.text-right {
   text-align: right;
 }
 
-.text-left{
+.text-left {
   text-align: left;
 }
 
@@ -589,4 +603,3 @@ a:hover {
 .txt-cyan {
   color: #20efde !important;
 }
-

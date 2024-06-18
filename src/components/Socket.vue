@@ -216,6 +216,9 @@ export default {
                     Router.push({ path: '/login' })
                   }
                   break
+                case 'chat_message':
+                  self.$store.commit('SET_CHAT_MESSAGE', msgJson.data)
+                  break
                 case 'rank':
                   self.$store.commit('SET_HOTS_LIST', msgJson.data)
                   break

@@ -1,6 +1,6 @@
 // 交易管理
-import Vue from 'vue'
-import request from '@/utils/request'
+import Vue from "vue";
+import request from "@/utils/request";
 export default {
   /**
    * 新增询价单
@@ -10,7 +10,7 @@ export default {
   inquirySheetAdd(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/add`,
-      method: 'post',
+      method: "post",
       data: {
         // 交割速度
         deliverySpeed: params.deliverySpeed,
@@ -37,15 +37,17 @@ export default {
         // 优先
         isYouxian: params.isYouxian,
         // 优先级别
-        youxianLevel: params.youxianLevel
+        youxianLevel: params.youxianLevel,
+
+        brokerId: params.brokerId
       }
-    })
+    });
   },
   // 修改询价单
   inquirySheetEdit(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/changerequest`,
-      method: 'post',
+      method: "post",
       data: {
         userTradeId: params.userTradeId,
         // 交割速度
@@ -65,7 +67,7 @@ export default {
         // 允许浮动
         worstPrice: params.worstPrice
       }
-    })
+    });
   },
   /**
    * 询价单接收
@@ -74,8 +76,8 @@ export default {
   inquiryAccept(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/accept?usertradeId=${params.usertradeId}`,
-      method: 'POST'
-    })
+      method: "POST"
+    });
   },
   /**
    * 询价单拒绝
@@ -84,8 +86,8 @@ export default {
   inquiryRejection(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/deny?usertradeId=${params.usertradeId}`,
-      method: 'post'
-    })
+      method: "post"
+    });
   },
   /**
    * 成交修改
@@ -95,7 +97,7 @@ export default {
   inquiryDeal(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/deal`,
-      method: 'post',
+      method: "post",
       data: {
         // 询价单单号ID
         userTradeId: params.usertradeId,
@@ -116,7 +118,7 @@ export default {
         // 联系方式
         contactType: params.contactType
       }
-    })
+    });
   },
   /**
    * 撤单
@@ -126,22 +128,22 @@ export default {
   inquiryCancel(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/cancel?usertradeId=${params.usertradeId}`,
-      method: 'post'
-    })
+      method: "post"
+    });
   },
   // 确认撤单
   inquiryCancelConfirm(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/confirmcancel?usertradeId=${params.usertradeId}`,
-      method: 'post'
-    })
+      method: "post"
+    });
   },
   // 拒绝撤单
   inquiryCancelRejection(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/denycancel?usertradeId=${params.usertradeId}`,
-      method: 'post'
-    })
+      method: "post"
+    });
   },
   /**
    * 询价单查询列表
@@ -150,7 +152,7 @@ export default {
   inquiryQuery(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/listByCurrentUser`,
-      method: 'get',
+      method: "get",
       params: {
         // 交割结束日期,示例值(2022-10-10)
         deliveryDateEnd: params.deliveryDateEnd,
@@ -177,7 +179,7 @@ export default {
         // 显示条数
         // pageSize: params.pageSize
       }
-    })
+    });
   },
   /**
    * 确认成交
@@ -186,11 +188,11 @@ export default {
   inquiryDealConfirm(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/confirmdeal`,
-      method: 'post',
+      method: "post",
       data: {
         userTradeId: params.userTradeId
       }
-    })
+    });
   },
   /**
    * 拒绝成交
@@ -199,113 +201,126 @@ export default {
   inquiryDealRejection(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/denydeal`,
-      method: 'post',
+      method: "post",
       data: {
         userTradeId: params.userTradeId
       }
-    })
+    });
   },
   // 难成
   difficultAcheve(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/nancheng`,
-      method: 'post',
+      method: "post",
       data: {
         // 难成原因
         reason: params.reason,
         userTradeId: params.userTradeId
       }
-    })
+    });
   },
   // 难成保留
   difficultStay(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/nanchengbaoliu`,
-      method: 'post',
+      method: "post",
       data: {
         userTradeId: params.userTradeId
       }
-    })
+    });
   },
   // 难成撤单
   difficultAcheveCannel(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/nanchengchedan`,
-      method: 'post',
+      method: "post",
       data: {
         userTradeId: params.userTradeId
       }
-    })
+    });
   },
   // 根据滚单号查询开仓和平仓信息
   detailByRelativeNum(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/detailByRelativeNum`,
-      method: 'get',
+      method: "get",
       params: {
         relativeNum: params.relativeNum,
         yanjiuyuanId: params.yanjiuyuanId
       }
-    })
+    });
   },
   // 滚单接收
   bondRollAccept(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/gundanaccept`,
-      method: 'post',
+      method: "post",
       data: {
         relativeNum: params.relativeNum
       }
-    })
+    });
   },
   // 滚单拒收
   bondRollReject(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/gundandeny`,
-      method: 'post',
+      method: "post",
       data: {
         relativeNum: params.relativeNum
       }
-    })
+    });
   },
   // 询价修改内容查看详情
   inquiryChangeCheck(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/changecheck`,
-      method: 'post',
+      method: "post",
       data: {
         userTradeId: params.userTradeId
       }
-    })
+    });
   },
   // 询价修改确认
   inquiryEditConfirm(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/changeconfirm`,
-      method: 'post',
+      method: "post",
       data: {
         userTradeId: params.userTradeId
       }
-    })
+    });
   },
   // 询价修改拒绝
   inquiryEditReject(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/changedeny`,
-      method: 'post',
+      method: "post",
       data: {
         userTradeId: params.userTradeId
       }
-    })
+    });
   },
   // 账号风控接口
   accountRiskControl(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/tradeamountlimit/userlatestriskinfo`,
-      method: 'post',
+      method: "post",
       data: {
         userId: params.userId
       }
-    })
+    });
+  },
+  getChatMessages() {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/chatMessage`,
+      method: "get"
+    });
+  },
+  sendChatMessages(data, key) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/chatMessage/${key}/send`,
+      method: "post",
+      data
+    });
   }
-}
+};

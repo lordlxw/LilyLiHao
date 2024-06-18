@@ -38,14 +38,13 @@
                 ">
           </el-table-column>
         </template>
-        <el-table-column></el-table-column>
         <el-table-column fixed="right" align="center" label="操作" width="220">
           <template slot-scope="scope">
-            <el-button type="text" v-if="
+            <el-button type="primary" v-if="
               setAuth('inquiry:edit') &&
               [0, 1, 4, 10].indexOf(scope.row.status) !== -1
             " @click="handleEditEnqury(scope.row)">修改</el-button>
-            <el-button type="text" v-if="setAuth('inquiry:accept') && scope.row.status === 0"
+            <el-button type="primary" v-if="setAuth('inquiry:accept') && scope.row.status === 0"
               @click="handleAcceptClick(scope)">{{
                 scope.row.youxianLevel === 2
                   ? "接收优先复制"
@@ -53,7 +52,7 @@
                     ? "接收优先复制"
                     : "接收并复制"
               }}</el-button>
-            <el-button @click="handleDealClick(scope.row)" type="text" size="small" v-if="
+            <el-button @click="handleDealClick(scope.row)" type="primary" size="small" v-if="
               ['1', '4', '8', '10'].indexOf(scope.row.status.toString()) !==
               -1 &&
               setAuth('inquiry:deal') &&
@@ -74,13 +73,13 @@
                   ">取消</el-button>
                 <el-button type="text" @click="handleNotAcceptClick(scope)">确认</el-button>
               </div>
-              <el-button type="text" slot="reference" class="ml10">拒收</el-button>
+              <el-button type="primary" slot="reference" class="ml10">拒收</el-button>
             </el-popover>
-            <el-button @click="handleEnquiryDifficultClick(scope.row)" type="text" size="small" v-if="
+            <el-button @click="handleEnquiryDifficultClick(scope.row)" type="primary" size="small" v-if="
               [1, 4, 8].indexOf(scope.row.status) !== -1 &&
               setAuth('inquiry:difficult')
             " class="ml10">难成</el-button>
-            <el-button type="text" v-if="
+            <el-button type="primary" v-if="
               setAuth('inquiry:difficultcanncel') &&
               [5, 19].indexOf(scope.row.status) !== -1
             " @click="handleDifficultNewEnqury(scope.row)">新建</el-button>
@@ -99,7 +98,7 @@
                   ">取消</el-button>
                 <el-button type="text" @click="handleEnquiryDifficultCanncelClick(scope)">确认</el-button>
               </div>
-              <el-button type="text" slot="reference" class="ml10">撤单</el-button>
+              <el-button type="primary" slot="reference" class="ml10">撤单</el-button>
             </el-popover>
             <el-popover v-if="setAuth('inquiry:notmove') && scope.row.status === 19" placement="bottom-end"
               :ref="`popover-notmove-${scope.$index}`">
@@ -115,9 +114,9 @@
                   ">取消</el-button>
                 <el-button type="text" @click="handleEnquiryDifficultDotMoveClick(scope)">确认</el-button>
               </div>
-              <el-button type="text" slot="reference" class="ml10">保留</el-button>
+              <el-button type="primary" slot="reference" class="ml10">保留</el-button>
             </el-popover>
-            <el-button type="text" v-if="
+            <el-button type="primary" v-if="
               setAuth('inquiry:accept') &&
               [1, 4, 7, 8, 9].indexOf(scope.row.status) !== -1
             " @click="copy(scope, true)" :style="scope.row.youxianLevel === 2
@@ -147,7 +146,7 @@
                   ">取消</el-button>
                 <el-button type="text" @click="handleInquiryCancelClick(scope)">确认</el-button>
               </div>
-              <el-button type="text" slot="reference" class="ml10">撤单</el-button>
+              <el-button type="primary" slot="reference" class="ml10">撤单</el-button>
             </el-popover>
             <el-popover v-if="
               ['7'].indexOf(scope.row.status.toString()) !== -1 &&
@@ -166,7 +165,7 @@
                   ">取消</el-button>
                 <el-button type="text" @click="handleInquiryCancelConfirmClick(scope)">确认</el-button>
               </div>
-              <el-button type="text" slot="reference" class="ml10">同意撤单</el-button>
+              <el-button type="primary" slot="reference" class="ml10">同意撤单</el-button>
             </el-popover>
             <el-popover v-if="
               ['7'].indexOf(scope.row.status.toString()) !== -1 &&
@@ -185,7 +184,7 @@
                   ">取消</el-button>
                 <el-button type="text" @click="handleInquiryCancelRejectionClick(scope)">确认</el-button>
               </div>
-              <el-button type="text" slot="reference" class="ml10">拒绝撤单</el-button>
+              <el-button type="primary" slot="reference" class="ml10">拒绝撤单</el-button>
             </el-popover>
             <el-popover v-if="
               ['9'].indexOf(scope.row.status.toString()) !== -1 &&
@@ -204,7 +203,7 @@
                   ">取消</el-button>
                 <el-button type="text" @click="handleInquiryDealConfirmClick(scope)">确认</el-button>
               </div>
-              <el-button type="text" slot="reference" class="ml10">同意成交</el-button>
+              <el-button type="primary" slot="reference" class="ml10">同意成交</el-button>
             </el-popover>
             <el-popover v-if="
               ['9'].indexOf(scope.row.status.toString()) !== -1 &&
@@ -223,7 +222,7 @@
                   ">取消</el-button>
                 <el-button type="text" @click="handleInquiryDealRejectionClick(scope)">确认</el-button>
               </div>
-              <el-button type="text" slot="reference" class="ml10">拒绝成交</el-button>
+              <el-button type="primary" slot="reference" class="ml10">拒绝成交</el-button>
             </el-popover>
             <el-popover v-if="
               setAuth('inquiry:breaktobeconfirm') && scope.row.status === 20
@@ -248,7 +247,7 @@
                 <el-button type="primary" @click="handleAgreeBreakContinueClick(scope)">同意</el-button>
                 <el-button type="default" @click="handleRejectBreakContinueClick(scope)">拒绝</el-button>
               </div>
-              <el-button type="text" slot="reference" class="ml10"
+              <el-button type="primary" slot="reference" class="ml10"
                 @click="handlViewBreakContinueContent(scope)">违约续作审核</el-button>
             </el-popover>
             <el-popover v-if="setAuth('inquiry:agreeedit') && scope.row.status === 23" placement="bottom-end"
@@ -273,21 +272,8 @@
                 <el-button type="primary" @click="handleAgreeEditClick(scope)">同意</el-button>
                 <el-button type="default" @click="handleRejectEditClick(scope)">拒绝</el-button>
               </div>
-              <el-button type="text" slot="reference" class="ml10" @click="handlViewEditContent(scope)">修改审核</el-button>
+              <el-button type="primary" slot="reference" class="ml10" @click="handlViewEditContent(scope)">修改审核</el-button>
             </el-popover>
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" align="center" label="滚单成交" width="80">
-          <template slot-scope="scope">
-            <el-button @click="handleRollDealClick(scope.row)" type="text" size="small" v-if="
-              ['1', '3', '4', '8', '10'].indexOf(
-                scope.row.status.toString()
-              ) !== -1 &&
-              setAuth('inquiry:rolldeal') &&
-              scope.row.relativeNum &&
-              scope.row.relativeNum.indexOf('GD_') !== -1 &&
-              !scope.row.gundanFinished
-            ">成交</el-button>
           </template>
         </el-table-column>
       </el-table>

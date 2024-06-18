@@ -14,7 +14,7 @@
                                     </div>
                                 </el-col>
                                 <el-col :span="16">
-                                    <div class="item_name">中介 {{ i }}</div>
+                                    <div class="item_name">{{ mine.company }}</div>
                                     <el-tooltip class="item" effect="dark" content="bid 240004 2k 06月03日+0 2.3160"
                                         placement="top-start">
                                         <div class="item_name item_content">bid 240004 2k 06月03日+0 2.3160</div>
@@ -37,7 +37,7 @@
                                         </div>
                                     </el-col>
                                     <el-col :span="16">
-                                        <div class="item_name">中介 1</div>
+                                        <div class="item_name">{{ mine.company }}</div>
                                         <el-tooltip class="item" effect="dark" content="bid 240004 2k 06月03日+0 2.3160"
                                             placement="top-start">
                                             <div class="item_name item_content">bid 240004 2k 06月03日+0 2.3160</div>
@@ -54,21 +54,28 @@
                         </div>
                         <el-divider></el-divider>
                     </el-header>
-                    <el-main>
-                        <div v-for="i in chats" class="main_item" :key="i">
+                    <div class="el-main" ref="scrollContainer">
+                        <div v-for="item in messages" class="main_item" :key="item.id">
                             <el-row>
-                                <el-col :span="3" v-if="i % 2 === 0">
+                                <el-col :span="3" v-if="item.direction === 1">
                                     <div class="demo-basic--circle">
                                         <div class="block"><el-avatar :size="40" :src="circleUrl"></el-avatar></div>
                                     </div>
                                 </el-col>
-                                <el-col :span="21" :class="i % 2 === 0 ? 'main_left' : 'main_right'">
-                                    <div class="main_name">中介 {{ i }}</div>
+                                <el-col :span="21" :class="item.direction === 1 ? 'main_left' : 'main_right'">
+                                    <div class="main_name" v-if="item.direction === 0">
+                                        <span class="main-time mr10">{{ dateFormat(item.createTime) }}</span>
+                                        <span>{{ userName }}</span>
+                                    </div>
+                                    <div class="main_name" v-else>
+                                        <span>{{ mine.company }}</span>
+                                        <span class="main-time ml10">{{ dateFormat(item.createTime) }}</span>
+                                    </div>
                                     <div class="main_content">
-                                        测试123123，测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123测试123123
+                                        {{ item.chatMessage }}
                                     </div>
                                 </el-col>
-                                <el-col :span="3" v-if="i % 2 === 1">
+                                <el-col :span="3" v-if="item.direction === 0">
                                     <div class="demo-basic--circle">
                                         <div class="block"><el-avatar :size="40" :src="circleUrl"></el-avatar></div>
                                     </div>
@@ -76,7 +83,7 @@
                             </el-row>
 
                         </div>
-                    </el-main>
+                    </div>
                     <el-footer>
                         <div class="footer_send">
                             <el-select v-model="value" placeholder="请选择">
@@ -102,6 +109,7 @@ export default {
     created() {
     },
     props: {
+        userName: '',
         asideShow: {
             type: Boolean,
             default: false
@@ -117,7 +125,7 @@ export default {
             type: Number,
             default: 200
         },
-        chats: {
+        messages: {
             type: Array,
             default() {
                 return []
@@ -145,27 +153,12 @@ export default {
         },
         mine: {
             type: Object,
-            default() {
-                return {
-                    // 昵称
-                    username: "七月",
-                    // 用户id
-                    id: "10001",
-                    // 状态
-                    status: "online",
-                    // 签名
-                    sign: "与其感慨路难行,不如马上出发！",
-                    avatar: '',
-
-                }
-            }
         }
     },
     data() {
         return {
-            circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+            circleUrl: "",
             count: 5,
-            // chats: [],
             options: [{
                 value: '选项1',
                 label: '黄金糕'
@@ -185,8 +178,28 @@ export default {
             value: '',
             dialogChatBoxVisible: false,
             msgShow: false
-
         }
+    },
+    watch: {
+        // list(newVal, oldVal) {
+        //     console.log(this.mine.company + ":", newVal)
+        //     if (oldVal.length > 0 && newVal.length > oldVal.length) {
+        //         this.msgShow = true;
+        //     }
+        //     this.$nextTick(() => {
+        //         this.scrollToBottom();
+        //     });
+        // },
+        messages(newVal, oldVal) {
+            this.$nextTick(() => {
+                this.scrollToBottom();
+            });
+        }
+    },
+    computed: {
+        // list() {
+        //     return JSON.parse(JSON.stringify(this.messages))
+        // }
     },
     methods: {
         load() {
@@ -194,12 +207,31 @@ export default {
         },
         closeDialog() {
             this.dialogChatBoxVisible = false;
+        },
+        scrollToBottom() {
+            const container = this.$refs.scrollContainer;
+            container.scrollTop = container.scrollHeight;
+        },
+        pushMsgs(item) {
+            this.messages.push(item)
+            this.msgShow = item.direction === 1 ? true : false;
+            this.$nextTick(() => {
+                this.scrollToBottom();
+            });
+        },
+        dateFormat(date) {
+            if (date instanceof Object) {
+                return `${date.hour}:${date.minute}:${date.second}`
+            } else {
+                const time = new Date(date)
+                return `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`
+            }
         }
     },
     mounted() {
-        this.msgShow = this.chats.length > 0 ? true : false;
     }
 }
+
 </script>
 <style>
 .no-header-dialog .el-dialog__header {
@@ -467,6 +499,11 @@ export default {
                 display: inline-block;
                 width: 100%;
                 line-height: 25px;
+
+                .main-time {
+                    color: #8f8e8e;
+                    font-size: 10px;
+                }
             }
 
             .main_content {
