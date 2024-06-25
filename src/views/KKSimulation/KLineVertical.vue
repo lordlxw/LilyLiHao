@@ -1,306 +1,315 @@
 <template>
-  <div style="background-color: #202020; min-width: 550px; margin: auto; height: 100%;">
-    <div class="head">
-      <ul class="k-nav">
-        <li v-for="item in loopmethodskey" :class="{ active: klineactive == item }" :key="item">
-          <div v-if="item === 'Ticket图'" @click="klinemethods[item]">
-            <div class="el-dropdown-link">{{ item }}</div>
-            <el-dropdown @command="handleTicket" trigger="click">
-              <span class="el-dropdown-link">
-                <i class="el-icon-arrow-down "></i>
+  <div style="height: 100%;">
+    <title-bar>
+      <div slot="left_bar">
+        <div class="head">
+          <ul class="k-nav">
+            <li class="noDrag" v-for="item in loopmethodskey" :class="{ active: klineactive == item }" :key="item">
+              <div v-if="item === 'Ticket图'" @click="klinemethods[item]">
+                <div class="el-dropdown-link">{{ item }}</div>
+                <el-dropdown @command="handleTicket" trigger="click">
+                  <span class="el-dropdown-link">
+                    <i class="el-icon-arrow-down "></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item v-for="key in 10" :key="key" :command="key">{{ key }}日</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </div>
+              <div v-else-if="dailyLine" @click="klinemethods[item]">
+                {{ item }}
+              </div>
+            </li>
+            <li class="tscode">
+              {{ tscode }}
+            </li>
+            <li class="tscode noDrag" v-if="tscode && favoriteTscodeIcon == favoriteTscodeIconList[0]" @click="handleFavorite">
+              <span class="i-text">
+                <i :class="favoriteTscodeIconList[0]"></i>
               </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-for="key in 10" :key="key" :command="key">{{ key }}日</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </div>
-          <div v-else-if="dailyLine" @click="klinemethods[item]">
-            {{ item }}
-          </div>
-        </li>
-        <li class="tscode">
-          {{ tscode }}
-        </li>
-        <li class="tscode" v-if="favoriteTscodeIcon == favoriteTscodeIconList[0]" @click="handleFavorite">
-          <span class="i-text">
-            <i :class="favoriteTscodeIconList[0]"></i>
-          </span>
-        </li>
-        <li class="tscode" v-if="favoriteTscodeIcon == favoriteTscodeIconList[1]" @click="handleFavoriteCancel">
-          <span class="i-text" style="color: yellow">
-            <i :class="favoriteTscodeIconList[1]"></i>
-          </span>
-        </li>
-        <!-- <li class="nav-right">
+            </li>
+            <li class="tscode noDrag" v-if="tscode && favoriteTscodeIcon == favoriteTscodeIconList[1]" @click="handleFavoriteCancel">
+              <span class="i-text" style="color: yellow">
+                <i :class="favoriteTscodeIconList[1]"></i>
+              </span>
+            </li>
+            <!-- <li class="nav-right">
           <el-button @click="openMoreThis('/simulation/chat')" type="primary"
             icon="el-icon-chat-dot-square"></el-button>
         </li> -->
-      </ul>
-    </div>
-    <div class="container" style="background-color: #202020">
+          </ul>
+        </div>
+      </div>
+    </title-bar>
+    <div style="background-color: #202020; min-width: 550px; padding-top: 10px;height: calc(100% - 40px);">
+      <div class="container" style="background-color: #202020">
 
-      <!-- 中间 -->
-      <div class="center">
-        <div ref="refKline" class="kline"></div>
-        <!-- 交易框 -->
-        <div class="chatbox" v-loading="leftChangeLoad || loading">
-          <el-tabs type="border-card" style="border-radius: 3px;" v-model="activeName">
-            <el-tab-pane label="买（F1）" class="buy-form" name="buy">
-              <el-form :inline="true" label-width="80px" :model="buyForm" ref="buyForm" :rules="buyFormRules">
-                <el-form-item label="价格">
-                  <el-input-number v-model="buyForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
-                    @focus="handleMaxWait('buyForm')" class="pricew"></el-input-number>
-                  <!-- <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
+        <!-- 中间 -->
+        <div class="center">
+          <div ref="refKline" class="kline"></div>
+          <!-- 交易框 -->
+          <div class="chatbox" v-loading="leftChangeLoad || loading">
+            <el-tabs type="border-card" style="border-radius: 3px;" v-model="activeName">
+              <el-tab-pane label="买（F1）" class="buy-form" name="buy">
+                <el-form :inline="true" label-width="80px" :model="buyForm" ref="buyForm" :rules="buyFormRules">
+                  <el-form-item label="价格">
+                    <el-input-number v-model="buyForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
+                      @focus="handleMaxWait('buyForm')" class="pricew"></el-input-number>
+                    <!-- <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
                     <span class="txt-green"> BP</span> -->
-                </el-form-item>
-                <el-form-item label="债券号">
-                  <el-select v-model="buyForm.tscode" filterable placeholder="请选择" class="slt-user"
-                    @change="handlerTscodeSelectWin">
-                    <el-option v-for="item in tscodeList" :key="item.tscode" :label="item.tscode" :value="item.tscode">
-                      <span style="float: left">{{ item.tscode }}</span>
-                      <span style="float: right;margin-left: 10px;">{{ item.bondname }}</span>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="交易量">
-                  <!-- <el-input class="ipt-volume"  v-model.number="buyForm.volume" placeholder="请输入交易量"></el-input> -->
-                  <el-input-number class="ipt-volume" v-model="buyForm.volume" :step="1000" :min="2000"
-                    step-strictly></el-input-number>
-                </el-form-item>
-                <el-form-item label="中介">
-                  <el-select v-model="buyForm.brokerid" clearable placeholder="系统选择" class="slt-user">
-                    <el-option v-for="item in intendComerOption" :key="item.brokerid" :label="item.company"
-                      :value="item.brokerid">
-                      <div style="width: 50px; float: left">{{ item.company }}</div>
-                      <div class="text-left" style="width: 50px;">{{ item.target }}</div>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="交易员" v-if="false">
-                  <el-select v-model="saleForm.tradeuserId" placeholder="请选择" class="slt-user">
-                    <el-option v-for="item in tradeUsersOption" :key="item.userId" :label="item.nickName"
-                      :value="item.userId">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="交割日期">
-                  <delivery-canlendar :w="`${canlendarW}px`" ref="buyDeliveryCanlendar"
-                    @change="handleBuyDeliveryCanlendar"></delivery-canlendar>
-                  <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
-                </el-form-item>
-                <el-form-item label=" ">
-                  <el-button type="primary" v-if="setAuth('inquiry:insert')"
-                    @click="submitForm('buyForm')">提交(enter)</el-button>
-                </el-form-item>
+                  </el-form-item>
+                  <el-form-item label="债券号">
+                    <el-select v-model="buyForm.tscode" filterable placeholder="请选择" class="slt-user"
+                      @change="handlerTscodeSelectWin">
+                      <el-option v-for="item in tscodeList" :key="item.tscode" :label="item.tscode"
+                        :value="item.tscode">
+                        <span style="float: left">{{ item.tscode }}</span>
+                        <span style="float: right;margin-left: 10px;">{{ item.bondname }}</span>
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="交易量">
+                    <!-- <el-input class="ipt-volume"  v-model.number="buyForm.volume" placeholder="请输入交易量"></el-input> -->
+                    <el-input-number class="ipt-volume" v-model="buyForm.volume" :step="1000" :min="2000"
+                      step-strictly></el-input-number>
+                  </el-form-item>
+                  <el-form-item label="中介">
+                    <el-select v-model="buyForm.brokerid" clearable placeholder="系统选择" class="slt-user">
+                      <el-option v-for="item in intendComerOption" :key="item.id" :label="item.company"
+                        :value="item.brokerid">
+                        <div style="width: 50px; float: left">{{ item.company }}</div>
+                        <div class="text-left" style="width: 50px;">{{ item.target }}</div>
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="交易员" v-if="false">
+                    <el-select v-model="saleForm.tradeuserId" placeholder="请选择" class="slt-user">
+                      <el-option v-for="item in tradeUsersOption" :key="item.userId" :label="item.nickName"
+                        :value="item.userId">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="交割日期">
+                    <delivery-canlendar :w="`${canlendarW}px`" ref="buyDeliveryCanlendar"
+                      @change="handleBuyDeliveryCanlendar"></delivery-canlendar>
+                    <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
+                  </el-form-item>
+                  <el-form-item label=" ">
+                    <el-button type="primary" v-if="setAuth('inquiry:insert')"
+                      @click="submitForm('buyForm')">提交(enter)</el-button>
+                  </el-form-item>
 
-              </el-form>
+                </el-form>
 
-            </el-tab-pane>
-            <el-tab-pane label="卖（F2）" class="sale-form" name="sale">
-              <el-form :inline="true" label-width="80px" :model="saleForm" ref="saleForm" :rules="saleFormRules">
-                <el-form-item label="价格">
-                  <el-input-number v-model="saleForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
-                    @focus="handleMaxWait('saleForm')" class="pricew"></el-input-number>
-                  <!-- <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
+              </el-tab-pane>
+              <el-tab-pane label="卖（F2）" class="sale-form" name="sale">
+                <el-form :inline="true" label-width="80px" :model="saleForm" ref="saleForm" :rules="saleFormRules">
+                  <el-form-item label="价格">
+                    <el-input-number v-model="saleForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
+                      @focus="handleMaxWait('saleForm')" class="pricew"></el-input-number>
+                    <!-- <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
                     <span class="txt-green"> BP</span> -->
-                </el-form-item>
-                <el-form-item label="债券号">
-                  <el-select v-model="saleForm.tscode" filterable placeholder="请选择" class="slt-user"
-                    @change="handlerTscodeSelectWin">
-                    <el-option v-for="item in tscodeList" :key="item.tscode" :label="item.tscode" :value="item.tscode">
-                      <span style="float: left">{{ item.tscode }}</span>
-                      <span style="float: right;margin-left: 10px;">{{ item.bondname }}</span>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="交易量">
-                  <!-- <el-input class="ipt-volume" v-model.number="saleForm.volume" placeholder="请输入交易量"></el-input> -->
-                  <el-input-number class="ipt-volume" v-model="saleForm.volume" :step="1000" :min="2000"
-                    step-strictly></el-input-number>
-                </el-form-item>
-                <el-form-item label="中介">
-                  <el-select v-model="saleForm.brokerid" clearable placeholder="系统选择" class="slt-user">
-                    <el-option v-for="item in intendComerOption" :key="item.brokerid" :label="item.company"
-                      :value="item.brokerid">
-                      <span style="float: left">{{ item.company }}</span>
-                      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.target }}</span>
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="交易员" v-if="false">
-                  <el-select v-model="saleForm.tradeuserId" placeholder="请选择" class="slt-user">
-                    <el-option v-for="item in tradeUsersOption" :key="item.userId" :label="item.nickName"
-                      :value="item.userId">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="交割日期">
-                  <delivery-canlendar :w="`${canlendarW}px`" ref="buyDeliveryCanlendar"
-                    @change="handleSaleDeliveryCanlendar"></delivery-canlendar>
-                  <span class="txt-green">{{ saleForm.deliveryTimeMsg }}</span>
-                </el-form-item>
-                <el-form-item label=" ">
-                  <el-button v-if="setAuth('inquiry:insert')" @click="submitForm('saleForm')"
-                    type="primary">提交(enter)</el-button>
-                </el-form-item>
-              </el-form>
-            </el-tab-pane>
-          </el-tabs>
-          <div class="shijia">
-            <el-button
-              v-if="(activeName === 'buy' && buyForm.isMarketRoll === false) || (activeName === 'sale' && saleForm.isMarketRoll === false)"
-              type="default" size="mini" @click="handleGetPrice">市价</el-button>
-          </div>
-          <el-popover width="510" placement="bottom-start" trigger="manual" ref="popover-set"
-            v-model="popoverSetVisible">
-            <div class="default-set-wrapper">
-              <div class="default-title">用户个性配置</div>
-              <el-form :inline="true" ref="setForm" :model="setForm" :rules="setFormRules" :label-width="`80px`">
-                <el-form-item label="快速提交" prop="isKlineSubmit">
-                  <el-switch v-model="setForm.isKlineSubmit"></el-switch>
-                </el-form-item>
-                <el-form-item label="显示日线" prop="dailyLine">
-                  <el-switch v-model="setForm.dailyLine"></el-switch>
-                </el-form-item>
-                <el-form-item label="交易量" prop="defVolume">
-                  <!-- <el-slider style="padding-left: 10px;" v-model="setForm.volume" :step="1000" :min="2000" :max="10000" show-stops>
+                  </el-form-item>
+                  <el-form-item label="债券号">
+                    <el-select v-model="saleForm.tscode" filterable placeholder="请选择" class="slt-user"
+                      @change="handlerTscodeSelectWin">
+                      <el-option v-for="item in tscodeList" :key="item.tscode" :label="item.tscode"
+                        :value="item.tscode">
+                        <span style="float: left">{{ item.tscode }}</span>
+                        <span style="float: right;margin-left: 10px;">{{ item.bondname }}</span>
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="交易量">
+                    <!-- <el-input class="ipt-volume" v-model.number="saleForm.volume" placeholder="请输入交易量"></el-input> -->
+                    <el-input-number class="ipt-volume" v-model="saleForm.volume" :step="1000" :min="2000"
+                      step-strictly></el-input-number>
+                  </el-form-item>
+                  <el-form-item label="中介">
+                    <el-select v-model="saleForm.brokerid" clearable placeholder="系统选择" class="slt-user">
+                      <el-option v-for="item in intendComerOption" :key="item.id" :label="item.company"
+                        :value="item.brokerid">
+                        <span style="float: left">{{ item.company }}</span>
+                        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.target }}</span>
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="交易员" v-if="false">
+                    <el-select v-model="saleForm.tradeuserId" placeholder="请选择" class="slt-user">
+                      <el-option v-for="item in tradeUsersOption" :key="item.userId" :label="item.nickName"
+                        :value="item.userId">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item label="交割日期">
+                    <delivery-canlendar :w="`${canlendarW}px`" ref="buyDeliveryCanlendar"
+                      @change="handleSaleDeliveryCanlendar"></delivery-canlendar>
+                    <span class="txt-green">{{ saleForm.deliveryTimeMsg }}</span>
+                  </el-form-item>
+                  <el-form-item label=" ">
+                    <el-button v-if="setAuth('inquiry:insert')" @click="submitForm('saleForm')"
+                      type="primary">提交(enter)</el-button>
+                  </el-form-item>
+                </el-form>
+              </el-tab-pane>
+            </el-tabs>
+            <div class="shijia">
+              <el-button
+                v-if="(activeName === 'buy' && buyForm.isMarketRoll === false) || (activeName === 'sale' && saleForm.isMarketRoll === false)"
+                type="default" size="mini" @click="handleGetPrice">市价</el-button>
+            </div>
+            <el-popover width="510" placement="bottom-start" trigger="manual" ref="popover-set"
+              v-model="popoverSetVisible">
+              <div class="default-set-wrapper">
+                <div class="default-title">用户个性配置</div>
+                <el-form :inline="true" ref="setForm" :model="setForm" :rules="setFormRules" :label-width="`80px`">
+                  <el-form-item label="快速提交" prop="isKlineSubmit">
+                    <el-switch v-model="setForm.isKlineSubmit"></el-switch>
+                  </el-form-item>
+                  <el-form-item label="显示日线" prop="dailyLine">
+                    <el-switch v-model="setForm.dailyLine"></el-switch>
+                  </el-form-item>
+                  <el-form-item label="交易量" prop="defVolume">
+                    <!-- <el-slider style="padding-left: 10px;" v-model="setForm.volume" :step="1000" :min="2000" :max="10000" show-stops>
                   </el-slider> -->
-                  <el-input-number v-model="setForm.defVolume" :step="1000" :min="2000" step-strictly></el-input-number>
-                </el-form-item>
-                <el-form-item label="看板背景" prop="klineColor">
-                  <el-color-picker v-model="setForm.klineColor"></el-color-picker>
-                </el-form-item>
-                <!-- <el-form-item label="快速提交">
+                    <el-input-number v-model="setForm.defVolume" :step="1000" :min="2000"
+                      step-strictly></el-input-number>
+                  </el-form-item>
+                  <el-form-item label="看板背景" prop="klineColor">
+                    <el-color-picker v-model="setForm.klineColor"></el-color-picker>
+                  </el-form-item>
+                  <!-- <el-form-item label="快速提交">
                   <el-checkbox label="是" v-model="setForm.quickSubmit" name="quickSubmit"></el-checkbox>
                 </el-form-item> -->
-                <el-form-item label=" " style="width: max-content;">
-                  <el-button type="primary" @click="submitForm('setForm')">保存默认设置</el-button>
-                  <el-button type="default" @click="popoverSetVisible = false">取消</el-button>
-                </el-form-item>
-              </el-form>
-            </div>
-            <div slot="reference" class="txt-white chat-set" @click="popoverSetVisible = !popoverSetVisible">
-              <i class="el-icon-setting"></i>
-            </div>
-          </el-popover>
-        </div>
-        <div class="right-group">
-          <!-- 及期卖出 -->
-          <div class="r-out" style="height: 120px" v-loading="leftChangeLoad">
-            <el-scrollbar v-if="businessOutList && businessOutList.length > 0">
-              <ul>
-                <li v-for="(item, index) in businessOutList" :key="index"
-                  :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px"
-                  @dblclick="changeForm(item.price, item.brokerid)">
-                  <span>{{
-                    item.brokerName
-                  }}</span>
-                  <span style="flex: 1" class="ellipsis">
-                    {{ item.volumecomment ? item.volumecomment : item.volume }}
-                  </span>
-                  <span class="txt-red">{{
-                    item.price | moneyFormat(4)
-                  }}</span>
-                  <span>{{
-                    item.updatetime
-                  }}</span>
-                </li>
-              </ul>
-            </el-scrollbar>
-            <!-- <el-skeleton v-else animated>
+                  <el-form-item label=" " style="width: max-content;">
+                    <el-button type="primary" @click="submitForm('setForm')">保存默认设置</el-button>
+                    <el-button type="default" @click="popoverSetVisible = false">取消</el-button>
+                  </el-form-item>
+                </el-form>
+              </div>
+              <div slot="reference" class="txt-white chat-set" @click="popoverSetVisible = !popoverSetVisible">
+                <i class="el-icon-setting"></i>
+              </div>
+            </el-popover>
+          </div>
+          <div class="right-group">
+            <!-- 及期卖出 -->
+            <div class="r-out" style="height: 120px" v-loading="leftChangeLoad">
+              <el-scrollbar v-if="businessOutList && businessOutList.length > 0">
+                <ul>
+                  <li v-for="(item, index) in businessOutList" :key="index"
+                    :title="item.volumecomment ? item.volumecomment : item.volume"
+                    style="height: 20px; line-height: 20px" @dblclick="changeForm(item.price, item.brokerid)">
+                    <span>{{
+                      item.brokerName
+                    }}</span>
+                    <span style="flex: 1" class="ellipsis">
+                      {{ item.volumecomment ? item.volumecomment : item.volume }}
+                    </span>
+                    <span class="txt-red">{{
+                      item.price | moneyFormat(4)
+                    }}</span>
+                    <span>{{
+                      item.updatetime
+                    }}</span>
+                  </li>
+                </ul>
+              </el-scrollbar>
+              <!-- <el-skeleton v-else animated>
             <template #template>
               <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
             </template>
 </el-skeleton> -->
-          </div>
-          <!-- 及期买入 -->
-          <div class="r-in" style="height: 120px" v-loading="leftChangeLoad">
-            <el-scrollbar v-if="businessInList && businessInList.length > 0">
-              <ul>
-                <li v-for="(item, index) in businessInList" :key="index"
-                  :title="item.volumecomment ? item.volumecomment : item.volume" style="height: 20px; line-height: 20px"
-                  @dblclick="changeForm(item.price, item.brokerid)">
-                  <span>{{
-                    item.brokerName
-                  }}</span>
-                  <span style="flex: 1" class="ellipsis">
-                    {{ item.volumecomment ? item.volumecomment : item.volume }}
-                  </span>
-                  <span class="txt-green">{{
-                    item.price | moneyFormat(4)
-                  }}</span>
-                  <span>{{
-                    item.updatetime
-                  }}</span>
-                </li>
-              </ul>
-            </el-scrollbar>
-            <!-- <el-skeleton v-else animated>
+            </div>
+            <!-- 及期买入 -->
+            <div class="r-in" style="height: 120px" v-loading="leftChangeLoad">
+              <el-scrollbar v-if="businessInList && businessInList.length > 0">
+                <ul>
+                  <li v-for="(item, index) in businessInList" :key="index"
+                    :title="item.volumecomment ? item.volumecomment : item.volume"
+                    style="height: 20px; line-height: 20px" @dblclick="changeForm(item.price, item.brokerid)">
+                    <span>{{
+                      item.brokerName
+                    }}</span>
+                    <span style="flex: 1" class="ellipsis">
+                      {{ item.volumecomment ? item.volumecomment : item.volume }}
+                    </span>
+                    <span class="txt-green">{{
+                      item.price | moneyFormat(4)
+                    }}</span>
+                    <span>{{
+                      item.updatetime
+                    }}</span>
+                  </li>
+                </ul>
+              </el-scrollbar>
+              <!-- <el-skeleton v-else animated>
             <template #template>
               <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
             </template>
           </el-skeleton> -->
-          </div>
-          <!-- 交易 -->
-          <div class="r-trans" v-loading="leftChangeLoad" :style="{ height: recordHeight }">
-            <el-scrollbar v-if="transactionAllList.length > 0">
-              <ul class="mt20" style="margin-top: 25px">
-                <li class="li-first" style="height: 25px; line-height: 25px">
-                  <span class="colume1">方向</span>
-                  <span class="colume2">价格</span>
-                  <span class="colume3">中介</span>
-                  <span class="colume4">交易时间</span>
-                </li>
-                <li v-for="(item, index) in transactionAllList" :key="index" class="trans_item" v-if="!item.unToday"
-                  :class="funcSelectColor(item.dealtype)" style="height: 20px; line-height: 20px"
-                  @dblclick="changeForm(item.tradeprice, item.brokerid)">
-                  <span class="colume1"><span>{{ item.dealtype }}</span></span>
-                  <span class="colume2">{{
-                    item.tradeprice | moneyFormat(4)
-                  }}</span>
-                  <span class="colume3">{{ item.brokerName }}</span>
-                  <span class="colume4">{{ item.tradetime }}</span>
-                  <!-- <span style="width: 60px">{{ item.netprice }}</span> -->
-                </li>
-              </ul>
-            </el-scrollbar>
-            <!-- <el-skeleton v-else  animated >
+            </div>
+            <!-- 交易 -->
+            <div class="r-trans" v-loading="leftChangeLoad" :style="{ height: recordHeight }">
+              <el-scrollbar v-if="transactionAllList.length > 0">
+                <ul class="mt20" style="margin-top: 25px">
+                  <li class="li-first" style="height: 25px; line-height: 25px">
+                    <span class="colume1">方向</span>
+                    <span class="colume2">价格</span>
+                    <span class="colume3">中介</span>
+                    <span class="colume4">交易时间</span>
+                  </li>
+                  <li v-for="(item, index) in transactionAllList" :key="index" class="trans_item" v-if="!item.unToday"
+                    :class="funcSelectColor(item.dealtype)" style="height: 20px; line-height: 20px"
+                    @dblclick="changeForm(item.tradeprice, item.brokerid)">
+                    <span class="colume1"><span>{{ item.dealtype }}</span></span>
+                    <span class="colume2">{{
+                      item.tradeprice | moneyFormat(4)
+                    }}</span>
+                    <span class="colume3">{{ item.brokerName }}</span>
+                    <span class="colume4">{{ item.tradetime }}</span>
+                    <!-- <span style="width: 60px">{{ item.netprice }}</span> -->
+                  </li>
+                </ul>
+              </el-scrollbar>
+              <!-- <el-skeleton v-else  animated >
             <template #template>
               <el-skeleton-item v-for="item in 100" :key="item" class="custom-skeleton-item"/>
             </template>
           </el-skeleton> -->
+            </div>
           </div>
         </div>
       </div>
+      <audio controls ref="playAudio" style="display: none">
+        <source src="@/assets/audio/1.wav" type="audio/wav" />
+      </audio>
+      <el-dialog title="提示" :visible.sync="dialogVisible" width="300px"
+        :before-close="() => { dialogVisible = false, loading = false }">
+        <span>请确认需要提交询价单？</span>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false, loading = false">取 消</el-button>
+          <el-button type="primary" @click="
+            quickSubmit(
+              `${activeName === 'buy'
+                ? 'buyForm'
+                : activeName === 'sale'
+                  ? 'saleForm'
+                  : ''
+              }`
+            )
+            ">确 定</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog title="新建询价单" :visible.sync="dialogEnquiryAddVisible" width="40%" append-to-body
+        :destroy-on-close="true" :close-on-click-modal="false">
+        <enquiry-edit :row="currentDifficultData" @change="handleDialogEnquiryAddVisible"></enquiry-edit>
+      </el-dialog>
+      <el-dialog title="修改密码" :visible.sync="dialogUpdatePasswordVisible" width="30%" center append-to-body
+        :destroy-on-close="true" :close-on-click-modal="false">
+        <update-password @change="handleDialogUpdatePasswordVisible"></update-password>
+      </el-dialog>
     </div>
-    <audio controls ref="playAudio" style="display: none">
-      <source src="@/assets/audio/1.wav" type="audio/wav" />
-    </audio>
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="300px"
-      :before-close="() => { dialogVisible = false, loading = false }">
-      <span>请确认需要提交询价单？</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false, loading = false">取 消</el-button>
-        <el-button type="primary" @click="
-          quickSubmit(
-            `${activeName === 'buy'
-              ? 'buyForm'
-              : activeName === 'sale'
-                ? 'saleForm'
-                : ''
-            }`
-          )
-          ">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog title="新建询价单" :visible.sync="dialogEnquiryAddVisible" width="40%" append-to-body :destroy-on-close="true"
-      :close-on-click-modal="false">
-      <enquiry-edit :row="currentDifficultData" @change="handleDialogEnquiryAddVisible"></enquiry-edit>
-    </el-dialog>
-    <el-dialog title="修改密码" :visible.sync="dialogUpdatePasswordVisible" width="30%" center append-to-body
-      :destroy-on-close="true" :close-on-click-modal="false">
-      <update-password @change="handleDialogUpdatePasswordVisible"></update-password>
-    </el-dialog>
   </div>
 </template>
 
@@ -650,9 +659,9 @@ export default {
     }
   },
   created() {
-    if (!this.setAuth('kline:view')) {
-      this.$router.push({ path: '/main' })
-    }
+    // if (!this.setAuth('kline:view')) {
+    //   this.$router.push({ path: '/main' })
+    // }
     // this.initFrameW('leftWith', 200)
     // this.initFrameW('rightWith', 360)
     this.keyDown()
@@ -1633,7 +1642,7 @@ export default {
 
           }).then(res => {
             if (res && res.code === '00000' && res.value) {
-              const { price, tscode, volume, direction, deliveryTime, brokerId } = res.value;
+              const { price, tscode, volume, direction, deliveryTime, brokerId, channelId } = res.value;
               const broker = this.intendComerOption.filter(n => { return n.brokerid === brokerId });
 
               this.$notify({
@@ -1648,10 +1657,12 @@ export default {
 
               const md = new Date(deliveryTime);
               const chatMessage = `${direction === 'bond_0' ? 'bid' : 'ref'} ${tscode.split('.')[0]} ${price} ${md.getMonth() + 1}月${md.getDate()} 日 + 0 ${volume} `
+              console.log(chatMessage)
               const data = {
                 chatId: this.userInfo.userId,
                 chatMessage: chatMessage,
                 brokerId: brokerId,
+                channelId: channelId,
                 direction: 0,
                 isTrade: true
               }
@@ -3290,8 +3301,8 @@ export default {
 <style lang="scss" scoped>
 // @import "@/assets/css/kline.scss";
 .head {
-  height: 50px;
-  line-height: 50px;
+  height: 40px;
+  line-height: 40px;
   padding: 0 10px;
 
   .k-nav {
@@ -3315,20 +3326,20 @@ export default {
 
     .tscode {
       font-weight: bold;
-      font-size: 20px;
+      font-size: 18px;
       color: #ec0000;
 
       .i-text {
         display: flex;
-        height: 50px;
+        height: 40px;
         flex-direction: column;
         justify-content: center;
         text-align: center;
 
         .el-icon-star-off,
         .el-icon-star-on {
-          line-height: 50px;
-          font-size: 20px;
+          line-height: 40px;
+          font-size: 18px;
           margin: 0;
         }
       }
@@ -3361,7 +3372,7 @@ export default {
         justify-content: center;
         text-align: center;
         line-height: 50px;
-        font-size: 20px;
+        font-size: 18px;
 
         padding: 9px 15px;
         font-size: 12px;
@@ -3531,13 +3542,13 @@ export default {
 
     .tab-0 {
       .el-scrollbar {
-        height: calc(100vh - 160px);
+        height: calc(100% - 160px);
       }
     }
 
     .tab-2 {
       .el-scrollbar {
-        height: calc(100vh - 120px);
+        height: calc(100% - 120px);
       }
     }
   }

@@ -2,12 +2,14 @@
 <template>
   <transition appear name="fade" @before-enter="handleBeforeEnter" @enter="handleEnter" @after-enter="handleAfterEnter">
     <div class="login-wrapper">
+      <title-bar v-if="isElectron" backgroundColor="#2cad98">
+      </title-bar>
       <!-- <el-image
         class="logo"
         :src="require('@/assets/images/logo.png')"
       ></el-image> -->
       <div class="login-body">
-        <div class="login-title">Lily系统</div>
+        <div  class="login-title">Lily系统</div>
         <transition appear @before-enter="handleFormBeforeEnter" @enter="handleFormEnter">
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="login-form" size="medium">
             <div class="tit">登录</div>
@@ -23,7 +25,7 @@
             </el-form-item>
             <el-form-item>
               <el-radio-group v-model="labelPosition" size="small">
-                <el-radio-button label="lily">管理</el-radio-button>
+                <el-radio-button label="lily" disabled>管理</el-radio-button>
                 <el-radio-button label="Simulation">模拟</el-radio-button>
               </el-radio-group>
             </el-form-item>
@@ -124,9 +126,8 @@ export default {
                           // 处理错误
                           console.error(error);
                         });
-
-                        window.v1.close();
                       });
+                      window.v1.close();
                     } else {
                       window.v1.getAllDisplays().then((response) => {
                         const args = {
@@ -231,9 +232,17 @@ export default {
     transform: translate(-50%, -50%);
   }
 
+  .login-title-e{
+    text-align: left;
+    font-size: 18px;
+    color: white;
+    line-height: 40px;
+    margin-left: 10px;
+  }
+
   .login-title {
     text-align: center;
-    font-size: 30px;
+    font-size: 26px;
     color: white;
     font-weight: bold;
     line-height: 60px;

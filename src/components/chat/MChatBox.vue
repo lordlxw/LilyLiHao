@@ -50,7 +50,7 @@
                         </el-row>
                         <div class="header-right">
                             <i class="el-icon-minus"></i>
-                            <i @click="closeDialog" class="el-icon-close"></i>
+                            <i @click="handleClose" class="el-icon-close"></i>
                         </div>
                         <el-divider></el-divider>
                     </el-header>
@@ -205,8 +205,9 @@ export default {
         load() {
             // this.count += 2
         },
-        closeDialog() {
-            this.dialogChatBoxVisible = false;
+        handleClose(e) {
+            // this.dialogChatBoxVisible = false;
+            this.$emit('handleClose', e)
         },
         scrollToBottom() {
             const container = this.$refs.scrollContainer;

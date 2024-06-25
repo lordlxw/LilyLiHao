@@ -3351,7 +3351,6 @@ export default {
 
           console.log(args)
           window.v1.createWin(args).then((response) => {
-            // window.v1.close();
           }).catch((error) => {
             // 处理错误
             console.error(error);

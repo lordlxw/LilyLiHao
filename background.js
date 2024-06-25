@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, globalShortcut } = require("electron");
 const { join } = require("path");
 const glob = require("glob");
 
@@ -11,9 +11,8 @@ process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
 const createWindow = () => {
   let window = new MultiWindows();
 
-  window.loadDemos();
+  window.loadProcess();
   window.makeSingleInstance();
-  
   window.ipcMainListen();
   
 };
@@ -29,4 +28,8 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
+app.on('will-quit', () => {
+  // 注销所有快捷键
+  globalShortcut.unregisterAll()
+})
 

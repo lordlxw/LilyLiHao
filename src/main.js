@@ -13,6 +13,7 @@ import "@/assets/font-awesome-4.7.0/css/font-awesome.min.css";
 import "@/assets/css/style.scss";
 import { default as Layout } from "@/layout";
 import Filters from "@/utils/filter";
+import TitleBar from '@/components/electron/TitleBar.vue';
 // import axios from "axios";
 Vue.use(Filters);
 Vue.config.productionTip = false;
@@ -20,6 +21,7 @@ sync(store, router);
 Vue.use(ElementUI, {
   size: "small"
 });
+Vue.component('title-bar', TitleBar);
 Vue.component(Layout.name, Layout);
 
 Vue.prototype.$apiUrl = process.env.BASE_API;

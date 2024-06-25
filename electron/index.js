@@ -1,19 +1,21 @@
-const { app, BrowserWindow, ipcMain, screen } = require("electron");
-// 第一步：引入remote
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  screen,
+  globalShortcut
+} = require("electron");
 const remote = require("@electron/remote/main");
-// 第二步： 初始化remote
 remote.initialize();
 const { join } = require("path");
 const glob = require("glob");
-
 process.env.ROOT = join(__dirname, "../");
-
 const isDevelopment = process.env.NODE_ENV === "development";
 // const winURL = isDevelopment ? 'http://localhost:3000/' : join(__dirname, 'dist/index.html')
 const winURL = isDevelopment
   ? "http://localhost:8080"
   : join(process.env.ROOT, "/dist/index.html");
-
+const klinevertical = "/simulation/klinevertical";
 // 配置参数
 const defaultConfig = {
   id: null, // 窗口唯一id
@@ -59,12 +61,12 @@ class MultiWindows {
       icon: join(process.env.ROOT, "/static/favicon.ico"),
       backgroundColor: "#fff",
       show: false,
-      autoHideMenuBar: true,
-      // titleBarStyle: "hidden",
-      resizable: true,
-      minimizable: true,
-      maximizable: false,
-      frame: true,
+      // autoHideMenuBar: true,
+      // resizable: true,
+      // minimizable: true,
+      // maximizable: false,
+      frame: false,
+      titleBarStyle: "hidden",
       webPreferences: {
         defaultEncoding: "utf-8",
         partition: String(+new Date()),
@@ -99,13 +101,11 @@ class MultiWindows {
     if (args.parent) {
       opt.parent = this.getWin(args.parent);
     }
-
     if (typeof args.modal === "boolean") opt.modal = args.modal;
     if (typeof args.resize === "boolean") opt.resizable = args.resize;
     if (typeof args.alwaysOnTop === "boolean") {
       opt.alwaysOnTop = args.alwaysOnTop;
     }
-
     if (args.background) opt.backgroundColor = args.background;
     if (args.width) opt.width = args.width;
     if (args.height) opt.height = args.height;
@@ -124,7 +124,6 @@ class MultiWindows {
     } else if (args.sharSession && allWin.length > 0) {
       opt.webPreferences.session = allWin[0].webContents.session;
     }
-
     // 创建窗口对象
     // Menu.setApplicationMenu(null);
     let win = new BrowserWindow(opt);
@@ -132,54 +131,39 @@ class MultiWindows {
     if (args.maximize && args.resize && args.maximizable) {
       win.maximize();
     }
+    const $url = args.route
+      ? `${winURL}#${args.route}`
+      : process.env.VITE_DEV_SERVER_URL
+      ? process.env.VITE_DEV_SERVER_URL
+      : winURL;
+    win.loadURL($url);
+    win.once("ready-to-show", () => win.show());
     this.winLs[win.id] = {
       route: args.route,
       isMultiWin: args.isMultiWin,
       ...options
     };
-    args.id = win.id;
-
-    console.log("current id ", args.id);
-
-    // 加载页面
-    let $url;
-    if (!args.route) {
-      if (process.env.VITE_DEV_SERVER_URL) {
-        $url = process.env.VITE_DEV_SERVER_URL;
-      } else {
-        $url = winURL;
-      }
-    } else {
-      $url = `${winURL}#${args.route}`;
-    }
-    win.loadURL($url);
-
-    // win.webContents.openDevTools();
-
-    win.once("ready-to-show", () => {
-      win.show();
-    });
-
-    win.on("close", () => win.setOpacity(0));
-
+    // args.id = win.id;
+    console.log("current win ", this.winLs[win.id]);
     if (args.isMainWin) {
       win.on("close", e => {
-        // 阻止默认的窗口关闭
         this.winLs = {};
         e.preventDefault();
         win.setOpacity(0);
         e.defaultPrevented = false;
         win.destroy();
+        globalShortcut.unregisterAll();
         app.quit();
       });
     } else {
       win.on("close", () => {
         delete this.winLs[win.id];
+        console.log("BrowserWindow win close ", win.id);
+        globalShortcut.unregisterAll();
+        this.registerShortcut();
         win.setOpacity(0);
       });
     }
-
-    // 初始化渲染进程
     win.webContents.on("did-finish-load", () => {
       // win.webContents.send('win-loaded', '加载完成~！')
       win.webContents.send("win-loaded", args);
@@ -210,21 +194,24 @@ class MultiWindows {
         }
       );
     });
-
-    // ipcMain.on('renderer-ready', (event) => {
-    //   const win = BrowserWindow.fromWebContents(event.sender);
-    //   if (win) {
-    //     // 窗口准备好了，可以关闭加载动画或启动屏幕
-    //     win.show();
-    //   }
-    // });
-
-    // 当窗口获得焦点时，改变头部颜色
-    // win.on("focus", () => {
-    //   win.setTitle("#0069b4");
-    // });
-
+    this.registerShortcut();
     remote.enable(win.webContents);
+  }
+
+  registerShortcut() {
+    var count = 2;
+    for (const key in this.winLs) {
+      if (
+        this.winLs.hasOwnProperty(key) &&
+        this.winLs[key].route.includes(klinevertical)
+      ) {
+        count = count + 1;
+        globalShortcut.register("F" + count, () => {
+          BrowserWindow.fromId(Number(key)).focus();
+        });
+      }
+    }
+    return "F" + count;
   }
 
   // 获取窗口
@@ -281,21 +268,9 @@ class MultiWindows {
       };
       this.createWin(loginArg);
     }
-
-    // app.requestSingleInstanceLock();
-
-    // app.on("second-instance", () => {
-    //   console.log("=============requestSingleInstanceLock===============");
-    //   const allWin = this.getAllWin();
-    //   if (allWin.length > 0) {
-    //     if (allWin[0].isMinimized()) allWin[0].restore();
-    //     allWin[0].focus();
-    //   }
-    // });
   }
 
-  // Require each JS file in the main-process dir
-  loadDemos() {
+  loadProcess() {
     let pattern = join(process.env.ROOT, "/electron/main-process/**/*.js");
     pattern = pattern.replace(/\\/g, "/");
     // 将反斜杠替换为正斜杠
@@ -355,18 +330,17 @@ class MultiWindows {
       if (args.maximize && args.resize) {
         win.maximize();
       }
-      // console.log("current id ", args.id);
-      // console.log("current opt ", opt);
 
       if (args.route) {
         win.loadURL(`${winURL}#${args.route}`);
       }
     });
 
-    ipcMain.handle("close", (e, data) => {
-      const wins = BrowserWindow.getFocusedWindow();
-      wins.close();
-    });
+    // ipcMain.handle("close", (e, data) => {
+    //   const wins = BrowserWindow.getFocusedWindow();
+    //   console.log("BrowserWindow win handle close ", wins.id);
+    //   wins.close();
+    // });
 
     ipcMain.on("win-create", (event, args) => this.createWin(args));
 

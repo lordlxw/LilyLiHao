@@ -1,35 +1,41 @@
 <template>
-    <div style="background-color: rgb(32, 32, 32);    height: -webkit-fill-available;">
-        <el-container class="chat-box">
-            <el-header class="chat-header">
-                <el-button @click="drawer = true" type="primary" style="margin-left: 16px;">
-                    设置
-                </el-button>
-            </el-header>
-            <el-main class="chat-main">
-                <div v-for="item in checkedChats" :key="item.brokerid" class="chat-item">
-                    <MChatBox :ref="'MChatBox' + JSON.parse(item).brokerid" :boxHeight="boxHeight" :config="config"
-                        :dialogChatBoxVisible="false" :userName="userInfo.userName"
-                        :messages="chatMessages[JSON.parse(item).brokerid] || []" :mine="JSON.parse(item)">
-                    </MChatBox>
+    <div style="height: 100%;">
+        <title-bar>
+            <i slot="right_bar" @click="drawer = true" class="el-icon-s-tools noDrag txt-white right_bar"></i>
+        </title-bar>
+        <div style="background-color: rgb(32, 32, 32);    height: calc(100% - 40px)">
+            <el-container class="chat-box">
+                <!-- <el-header class="chat-header">
+                    <el-button @click="drawer = true" type="primary" style="margin-left: 16px;">
+                        设置
+                    </el-button>
+                </el-header> -->
+                <el-main class="chat-main">
+                    <div v-for="item in checkedChats" :key="item.brokerid" class="chat-item">
+                        <MChatBox :ref="'MChatBox' + JSON.parse(item).brokerid" :boxHeight="boxHeight" :config="config"
+                            :dialogChatBoxVisible="false" :userName="userInfo.userName"
+                            @handleClose="handleChatClose(JSON.parse(item))"
+                            :messages="chatMessages[JSON.parse(item).brokerid] || []" :mine="JSON.parse(item)">
+                        </MChatBox>
+                    </div>
+                </el-main>
+            </el-container>
+
+            <el-drawer direction="ltr" title="" :visible.sync="drawer" :with-header="false" :before-close="handleClose">
+                <div>
+                    <div class="mt10 mb10 ml10 mr10"><el-alert :closable="false" title="最多只能选中6个消息看板" type="warning">
+                        </el-alert></div>
+                    <el-checkbox-group v-model="checkedChats" @change="handleCheckedChatsChange" :max="6">
+                        <el-card shadow="hover" class="mt10 mb10 ml10 mr10" v-for="item in chats" :key="item.brokerid">
+                            <el-checkbox :label="JSON.stringify(item)">{{ item.company }}
+                            </el-checkbox>
+                        </el-card>
+                    </el-checkbox-group>
                 </div>
-            </el-main>
-        </el-container>
-
-        <el-drawer direction="ltr" title="" :visible.sync="drawer" :with-header="false" :before-close="handleClose">
-            <div>
-                <div class="mt10 mb10 ml10 mr10"><el-alert :closable="false" title="最多只能选中6个消息看板" type="warning">
-                    </el-alert></div>
-                <el-checkbox-group v-model="checkedChats" @change="handleCheckedChatsChange" :max="6">
-                    <el-card shadow="hover" class="mt10 mb10 ml10 mr10" v-for="item in chats" :key="item.brokerid">
-                        <el-checkbox :label="JSON.stringify(item)">{{ item.company }} </el-checkbox>
-                    </el-card>
-                </el-checkbox-group>
-            </div>
-        </el-drawer>
-        <main-socket></main-socket>
+            </el-drawer>
+            <main-socket></main-socket>
+        </div>
     </div>
-
 </template>
 
 <script>
@@ -112,12 +118,11 @@ export default {
                 })
                 const { value } = await apiLogin.getProfile(this.userInfo.userId)
                 this.profile = value ? value : {};
-                this.checkedChats = value && value.chats ? JSON.parse(value.chats) : [];
+                this.checkedChats = (value && value.chats) ? JSON.parse(value.chats) : [];
+                console.log(this.checkedChats)
                 this.drawer = this.checkedChats.length <= 0;
                 const { value: msgs } = await apiTrade.getChatMessages()
-
                 this.chatMessages = groupBy(msgs, item => item.brokerId) || {}
-                console.log(this.chatMessages)
             })
         },
         handleCheckedChatsChange(value) {
@@ -126,6 +131,16 @@ export default {
         handleClose() {
             Promise.all([
                 this.drawer = false
+            ]).then(async () => {
+                const userId = this.userInfo.userId;
+                const chats = JSON.stringify(this.checkedChats);
+                const { value } = await apiLogin.getProfile(this.userInfo.userId)
+                await apiLogin.saveProfile({ id: value ? value.id : 0, userId, chats })
+            })
+        },
+        handleChatClose(e) {
+            Promise.all([
+                this.checkedChats = this.checkedChats.filter(item => JSON.parse(item).brokerid !== e.brokerid)
             ]).then(async () => {
                 const userId = this.userInfo.userId;
                 const chats = JSON.stringify(this.checkedChats);
@@ -162,6 +177,16 @@ const groupBy = (array, key) => {
 </script>
 
 <style lang="scss" scoped>
+.right_bar {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    line-height: 40px;
+    color: #fff;
+    text-align: center;
+    -webkit-app-region: no-drag;
+}
+
 .chat-box {
     .chat-header {
         background-color: #474747;
@@ -174,7 +199,7 @@ const groupBy = (array, key) => {
     }
 
     .chat-main {
-        margin-top: 40px;
+        // margin-top: 40px;
 
         .chat-item {
             display: inline-block;

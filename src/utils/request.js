@@ -64,7 +64,10 @@ service.interceptors.response.use(
   error => {
     console.log(error);
     if (error.toString().indexOf("401") !== -1) {
-      Router.push({ path: "/login" });
+      if (window.v1) {
+      } else {
+        Router.push({ path: "/login" });
+      }
       Message({
         message: "登录超时，请重新登录",
         type: "warning",
