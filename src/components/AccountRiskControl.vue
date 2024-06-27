@@ -1,82 +1,101 @@
 <template>
   <div class="risk-control">
-    <ul>
-      <li class="grid-content">
-        <span style="color: #0103ff"
-          >总允亏：{{ riskControlData["minProfitAlltime"] }}</span
-        >
-        万
-      </li>
-      <li class="grid-content">
-        总盈亏：<span :style="calcToColor(riskControlData['profitAlltime'])">{{
-          riskControlData["profitAlltime"]
-        }}</span>
-        万
-      </li>
-      <li class="grid-content">
-        <span style="color: #0103ff">
-          日允亏：{{ riskControlData["minProfitDaily"] }}
-        </span>
-        万
-      </li>
-      <li class="grid-content">
-        日实盈：<span :style="calcToColor(riskControlData['solidProfit'])">{{
+    <el-row>
+      <el-col :span="4">
+        <div class="grid-content">
+          <span style="color: #0103ff">总允亏：{{ riskControlData["minProfitAlltime"] }}</span>
+          万
+        </div>
+      </el-col>
+      <el-col :span="4">
+        <div class="grid-content">
+          总盈亏：<span :style="calcToColor(riskControlData['profitAlltime'])">{{
+            riskControlData["profitAlltime"]
+          }}</span>
+          万
+        </div>
+      </el-col>
+      <el-col :span="4">
+        <div class="grid-content">
+          <span style="color: #0103ff">
+            日允亏：{{ riskControlData["minProfitDaily"] }}
+          </span>
+          万
+        </div>
+      </el-col>
+
+      <el-col :span="4">
+        <div class="grid-content ">
+          日实盈：<span :style="calcToColor(riskControlData['solidProfit'])">{{
           riskControlData["solidProfit"]
         }}</span>
         万
-      </li>
-      <li class="grid-content">
-        日浮盈：<span :style="calcToColor(riskControlData['floatProfit'])">{{
-          riskControlData["floatProfit"]
-        }}</span>
-        万
-      </li>
-      <li class="grid-content">
-        <span style="color: #0103ff"
-          >日允撤：{{ riskControlData["minBackDaily"] }}</span
-        >
-        万
-      </li>
-      <li class="grid-content">
-        日回撤：<span :style="calcToColor(riskControlData['back'])">{{
+        </div>
+      </el-col>
+      <el-col :span="4">
+        <div class="grid-content ">
+          日浮盈：<span :style="calcToColor(riskControlData['floatProfit'])">{{
+            riskControlData["floatProfit"]
+          }}</span>
+          万
+        </div>
+      </el-col>
+      <el-col :span="4">
+        <div class="grid-content">
+          <span style="color: #0103ff">日允撤：{{ riskControlData["minBackDaily"] }}</span>
+          万
+        </div>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="4">
+        <div class="grid-content">
+          日回撤：<span :style="calcToColor(riskControlData['back'])">{{
           riskControlData["back"]
         }}</span>
         万
-      </li>
-    </ul>
+        </div>
+      </el-col>
+      <el-col :span="4">
+        <div class="grid-content">
+          <span style="color: #0103ff">加权限仓：{{ riskControlData["maxVolume"] }}</span>
+          万
+        </div>
+      </el-col>
+      <el-col :span="4">
+        <div class="grid-content">
+          加权买仓：<span style="color: #4b6c19">{{
+            riskControlData["currentBid"]
+          }}</span>
+          万
+        </div>
+      </el-col>
 
-    <ul>
-      <li class="grid-content">
-        <span style="color: #0103ff"
-          >加权限仓：{{ riskControlData["maxVolume"] }}</span
-        >
-        万
-      </li>
-      <li class="grid-content">
-        加权买仓：<span style="color: #4b6c19">{{
-          riskControlData["currentBid"]
-        }}</span>
-        万
-      </li>
-      <li class="grid-content">
-        加权卖仓：<span style="color: #974f1a">{{
-          riskControlData["currentOffer"]
-        }}</span>
-        万
-      </li>
-      <li class="grid-content">
-        当前可买：<span style="color: #4b6c19">{{
-          riskControlData["limitBid"]
-        }}</span>
-        万
-      </li>
-      <li class="grid-content">
-        当前可卖：<span style="color: #974f1a">{{
-          riskControlData["limitOffer"]
-        }}</span>
-        万
-      </li>
-    </ul>
+      <el-col :span="4">
+        <div class="grid-content ">
+          加权卖仓：<span style="color: #974f1a">{{
+            riskControlData["currentOffer"]
+          }}</span>
+          万
+        </div>
+      </el-col>
+      <el-col :span="4">
+        <div class="grid-content ">
+          当前可买：<span style="color: #4b6c19">{{
+            riskControlData["limitBid"]
+          }}</span>
+          万
+        </div>
+      </el-col>
+      <el-col :span="4">
+        <div class="grid-content">
+          当前可卖：<span style="color: #974f1a">{{
+            riskControlData["limitOffer"]
+          }}</span>
+          万
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -143,7 +162,14 @@ export default {
 
 <style lang="scss" scoped>
 .el-row {
-  margin-bottom: 20px;
+  line-height: 40px;
+  height: 40px;
+
+  .grid-content {
+    padding: 0 10px;
+    font-weight: bold;
+    cursor: pointer;
+  }
 
   &:last-child {
     margin-bottom: 0;
@@ -152,8 +178,8 @@ export default {
 
 .risk-control {
   background: #f8f8f8;
-  padding: 10px 15px 0 15px;
   box-sizing: border-box;
+
   ul {
     overflow: hidden;
     display: flex;
@@ -188,7 +214,7 @@ export default {
 
   span {
     color: #999999;
-    font-size:14px;
+    font-size: 14px;
   }
 }
 

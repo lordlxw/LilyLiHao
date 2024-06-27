@@ -15,9 +15,8 @@
                                 </el-col>
                                 <el-col :span="16">
                                     <div class="item_name">{{ mine.company }}</div>
-                                    <el-tooltip class="item" effect="dark" content="bid 240004 2k 06月03日+0 2.3160"
-                                        placement="top-start">
-                                        <div class="item_name item_content">bid 240004 2k 06月03日+0 2.3160</div>
+                                    <el-tooltip class="item" effect="dark" :content="describe" placement="top-start">
+                                        <div class="item_name item_content">{{ describe }}</div>
                                     </el-tooltip>
                                 </el-col>
                             </el-row>
@@ -38,9 +37,9 @@
                                     </el-col>
                                     <el-col :span="16">
                                         <div class="item_name">{{ mine.company }}</div>
-                                        <el-tooltip class="item" effect="dark" content="bid 240004 2k 06月03日+0 2.3160"
+                                        <el-tooltip class="item" effect="dark" :content="describe || '没有新消息...'"
                                             placement="top-start">
-                                            <div class="item_name item_content">bid 240004 2k 06月03日+0 2.3160</div>
+                                            <div class="item_name item_content">{{ describe || '没有新消息...' }}</div>
                                         </el-tooltip>
                                     </el-col>
                                 </el-row>
@@ -161,36 +160,22 @@ export default {
             count: 5,
             options: [{
                 value: '选项1',
-                label: '黄金糕'
-            }, {
-                value: '选项2',
-                label: '双皮奶'
-            }, {
-                value: '选项3',
-                label: '蚵仔煎'
-            }, {
-                value: '选项4',
-                label: '龙须面'
-            }, {
-                value: '选项5',
-                label: '北京烤鸭'
+                label: '好的'
             }],
             value: '',
             dialogChatBoxVisible: false,
-            msgShow: false
+            msgShow: false,
+            describe: ""
+
         }
     },
     watch: {
-        // list(newVal, oldVal) {
-        //     console.log(this.mine.company + ":", newVal)
-        //     if (oldVal.length > 0 && newVal.length > oldVal.length) {
-        //         this.msgShow = true;
-        //     }
-        //     this.$nextTick(() => {
-        //         this.scrollToBottom();
-        //     });
-        // },
         messages(newVal, oldVal) {
+            if (newVal && newVal.length > 0) {
+                this.describe = newVal
+                    .filter(n => n.direction === 0) // 过滤掉小于3的数字
+                    .sort((a, b) => new Date(b.createTime) - new Date(a.createTime))[0].chatMessage;
+            }
             this.$nextTick(() => {
                 this.scrollToBottom();
             });

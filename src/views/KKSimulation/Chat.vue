@@ -46,6 +46,7 @@ import apiTrade from '@/api/kk_trade'
 import apiLogin from '@/api/kk_login'
 import MChatBox from '@/components/chat/MChatBox';
 import MainSocket from '@/components/Socket.vue'
+import * as util from '@/utils/util'
 export default {
     mixins: [commMixin],
     components: {
@@ -121,7 +122,8 @@ export default {
                 this.checkedChats = (value && value.chats) ? JSON.parse(value.chats) : [];
                 console.log(this.checkedChats)
                 this.drawer = this.checkedChats.length <= 0;
-                const { value: msgs } = await apiTrade.getChatMessages()
+                const createTime = `${util.dateFormat(new Date(), "YYYY-MM-DD")} 00:00:00`;
+                const { value: msgs } = await apiTrade.getChatMessagesByCondition({ createTime })
                 this.chatMessages = groupBy(msgs, item => item.brokerId) || {}
             })
         },

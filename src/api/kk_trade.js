@@ -49,6 +49,7 @@ export default {
       url: `${Vue.prototype.$apiUrl}/usertrade/changerequest`,
       method: "post",
       data: {
+        gaijiaTradeId: params.gaijiaTradeId,
         userTradeId: params.userTradeId,
         // 交割速度
         deliverySpeed: params.deliverySpeed,
@@ -128,6 +129,12 @@ export default {
   inquiryCancel(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/cancel?usertradeId=${params.usertradeId}`,
+      method: "post"
+    });
+  },
+  inquiryCancelRequest(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/cancelrequest?usertradeId=${params.usertradeId}`,
       method: "post"
     });
   },
@@ -314,6 +321,13 @@ export default {
     return request({
       url: `${Vue.prototype.$apiUrl}/chatMessage`,
       method: "get"
+    });
+  },
+  getChatMessagesByCondition(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/chatMessage/findCondition`,
+      method: "post",
+      data: params
     });
   },
   sendChatMessages(data, key) {

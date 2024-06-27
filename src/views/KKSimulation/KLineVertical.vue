@@ -23,20 +23,18 @@
             <li class="tscode">
               {{ tscode }}
             </li>
-            <li class="tscode noDrag" v-if="tscode && favoriteTscodeIcon == favoriteTscodeIconList[0]" @click="handleFavorite">
+            <li class="tscode noDrag" v-if="tscode && favoriteTscodeIcon == favoriteTscodeIconList[0]"
+              @click="handleFavorite">
               <span class="i-text">
                 <i :class="favoriteTscodeIconList[0]"></i>
               </span>
             </li>
-            <li class="tscode noDrag" v-if="tscode && favoriteTscodeIcon == favoriteTscodeIconList[1]" @click="handleFavoriteCancel">
+            <li class="tscode noDrag" v-if="tscode && favoriteTscodeIcon == favoriteTscodeIconList[1]"
+              @click="handleFavoriteCancel">
               <span class="i-text" style="color: yellow">
                 <i :class="favoriteTscodeIconList[1]"></i>
               </span>
             </li>
-            <!-- <li class="nav-right">
-          <el-button @click="openMoreThis('/simulation/chat')" type="primary"
-            icon="el-icon-chat-dot-square"></el-button>
-        </li> -->
           </ul>
         </div>
       </div>
@@ -53,8 +51,8 @@
               <el-tab-pane label="买（F1）" class="buy-form" name="buy">
                 <el-form :inline="true" label-width="80px" :model="buyForm" ref="buyForm" :rules="buyFormRules">
                   <el-form-item label="价格">
-                    <el-input-number v-model="buyForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
-                      @focus="handleMaxWait('buyForm')" class="pricew"></el-input-number>
+                    <el-input-number v-model="buyForm.price" :precision="4" :step="0.001" placeholder="请输入价格" @blur="keyDown"
+                      @focus="keyDownReview(),handleMaxWait('buyForm')" class="pricew"></el-input-number>
                     <!-- <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
                     <span class="txt-green"> BP</span> -->
                   </el-form-item>
@@ -70,7 +68,8 @@
                   </el-form-item>
                   <el-form-item label="交易量">
                     <!-- <el-input class="ipt-volume"  v-model.number="buyForm.volume" placeholder="请输入交易量"></el-input> -->
-                    <el-input-number class="ipt-volume" v-model="buyForm.volume" :step="1000" :min="2000"
+
+                    <el-input-number class="ipt-volume" v-model="buyForm.volume" :step="1000" :min="2000" :max="100000" @focus="keyDownReview" @blur="keyDown"
                       step-strictly></el-input-number>
                   </el-form-item>
                   <el-form-item label="中介">
@@ -105,8 +104,8 @@
               <el-tab-pane label="卖（F2）" class="sale-form" name="sale">
                 <el-form :inline="true" label-width="80px" :model="saleForm" ref="saleForm" :rules="saleFormRules">
                   <el-form-item label="价格">
-                    <el-input-number v-model="saleForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
-                      @focus="handleMaxWait('saleForm')" class="pricew"></el-input-number>
+                    <el-input-number v-model="saleForm.price" :precision="4" :step="0.001" placeholder="请输入价格" @blur="keyDown"
+                      @focus="keyDownReview(),handleMaxWait('saleForm')" class="pricew"></el-input-number>
                     <!-- <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
                     <span class="txt-green"> BP</span> -->
                   </el-form-item>
@@ -122,7 +121,7 @@
                   </el-form-item>
                   <el-form-item label="交易量">
                     <!-- <el-input class="ipt-volume" v-model.number="saleForm.volume" placeholder="请输入交易量"></el-input> -->
-                    <el-input-number class="ipt-volume" v-model="saleForm.volume" :step="1000" :min="2000"
+                    <el-input-number class="ipt-volume" v-model="saleForm.volume" :step="1000" :min="2000" @focus="keyDownReview" @blur="keyDown"
                       step-strictly></el-input-number>
                   </el-form-item>
                   <el-form-item label="中介">
@@ -172,11 +171,11 @@
                   <el-form-item label="交易量" prop="defVolume">
                     <!-- <el-slider style="padding-left: 10px;" v-model="setForm.volume" :step="1000" :min="2000" :max="10000" show-stops>
                   </el-slider> -->
-                    <el-input-number v-model="setForm.defVolume" :step="1000" :min="2000"
+                    <el-input-number v-model="setForm.defVolume" :step="1000" :min="2000" @focus="keyDownReview" @blur="keyDown"
                       step-strictly></el-input-number>
                   </el-form-item>
                   <el-form-item label="看板背景" prop="klineColor">
-                    <el-color-picker v-model="setForm.klineColor"></el-color-picker>
+                    <el-color-picker v-model="setForm.klineColor" ></el-color-picker>
                   </el-form-item>
                   <!-- <el-form-item label="快速提交">
                   <el-checkbox label="是" v-model="setForm.quickSubmit" name="quickSubmit"></el-checkbox>
@@ -484,7 +483,7 @@ export default {
         // 价格
         price: '',
         // 交易量
-        volume: 5000,
+        volume: 2000,
         // 债券号
         tscode: '',
         // 交割速度
@@ -492,7 +491,7 @@ export default {
         // 交割日期
         deliveryTime: '',
         // 交易员
-        tradeuserId: '109',
+        tradeuserId: '18',
         // 备注
         remark: '',
         // 快速交易
@@ -538,7 +537,7 @@ export default {
         // 价格
         price: '',
         // 交易量
-        volume: 5000,
+        volume: 2000,
         // 债券号
         tscode: '',
         // 交割速度
@@ -546,7 +545,7 @@ export default {
         // 交割日期
         deliveryTime: '',
         // 交易员
-        tradeuserId: '109',
+        tradeuserId: '18',
         // 备注
         remark: '',
         // 快速交易
@@ -597,7 +596,7 @@ export default {
         defVolume: 2000,
         isKlineSubmit: false,
         klineColor: '#f0ffff',
-        dailyLine: true,
+        dailyLine: false,
         wins: ""
       },
       setFormRules: {
@@ -1307,33 +1306,6 @@ export default {
         } else if (volumeKeys[keyCode] instanceof Function) {
           volumeKeys[keyCode]();
         }
-
-        // switch (keyCode) {
-        //   case 13:
-        //     if (self.activeName === 'buy') {
-        //       self.submitForm('buyForm')
-        //     }
-        //     if (self.activeName === 'sale') {
-        //       self.submitForm('saleForm')
-        //     }
-        //     break
-        //   case 112:
-        //     self.activeName = 'buy'
-        //     if (e && e.preventDefault) {
-        //       e.preventDefault()
-        //     } else {
-        //       window.event.returnValue = false
-        //     }
-        //     break;
-        //   case 113:
-        //     self.activeName = 'sale'
-        //     if (e && e.preventDefault) {
-        //       e.preventDefault()
-        //     } else {
-        //       window.event.returnValue = false
-        //     }
-        //     break;
-        // }
       }
     },
     keyDownReview() {
@@ -1641,13 +1613,14 @@ export default {
             brokerId: this[formName].brokerid
 
           }).then(res => {
-            if (res && res.code === '00000' && res.value) {
-              const { price, tscode, volume, direction, deliveryTime, brokerId, channelId } = res.value;
+            const { code, value, message } = res;
+            if (value && (code === '00000' || code === '00002' || code === '00003')) {
+              const { message: chatMessage, brokerId, channelId, userTradeId } = value;
               const broker = this.intendComerOption.filter(n => { return n.brokerid === brokerId });
-
+              const notifyMsg = `<div>询价单发送成功！</div><div class="txt-red">${code === '00002' ? message : ''}</div><div>优先使用：<span class="txt-red">${broker[0].company}</span> 发送</div > `
               this.$notify({
                 title: '提醒',
-                message: `<div>询价单发送成功！</div><div>优先使用：<span class="txt-red">${broker[0].company}</span> 发送</div > `,
+                message: notifyMsg,
                 position: 'top-left',
                 dangerouslyUseHTMLString: true,
                 duration: 0,
@@ -1655,16 +1628,16 @@ export default {
               });
               // bid 240205 2.3500 4月26日+0 2k
 
-              const md = new Date(deliveryTime);
-              const chatMessage = `${direction === 'bond_0' ? 'bid' : 'ref'} ${tscode.split('.')[0]} ${price} ${md.getMonth() + 1}月${md.getDate()} 日 + 0 ${volume} `
-              console.log(chatMessage)
+              // const md = new Date(deliveryTime);
+              // const chatMessage = `${direction === 'bond_0' ? 'bid' : 'ofr'} ${tscode.split('.')[0]} ${price} ${md.getMonth() + 1}月${md.getDate()} 日 + 0 ${volume} `
+              // console.log(chatMessage)
               const data = {
                 chatId: this.userInfo.userId,
-                chatMessage: chatMessage,
+                message: chatMessage,
                 brokerId: brokerId,
                 channelId: channelId,
                 direction: 0,
-                isTrade: true
+                tradeId: userTradeId
               }
               apiTrade.sendChatMessages(data, 'sim')
               this.dialogVisible = false
@@ -1805,12 +1778,12 @@ export default {
             // 近买
             self.buyFormPrice = self.funcGetBestPrice('max', self.businessOutList, false)
             if (self.buyForm.isMarketRoll) {
-              self.buyForm.price = self.funcGetBestPrice('max', self.businessOutList, true)
+              // self.buyForm.price = self.funcGetBestPrice('max', self.businessOutList, true)
             }
             // 近卖
             self.saleFormPrice = self.funcGetBestPrice('min', self.businessInList, false)
             if (self.saleForm.isMarketRoll) {
-              self.saleForm.price = self.funcGetBestPrice('min', self.businessInList, true)
+              // self.saleForm.price = self.funcGetBestPrice('min', self.businessInList, true)
             }
             self.calcuDiffPrice(1)
             // 远买
@@ -1820,30 +1793,6 @@ export default {
             self.calcuDiffPrice(2)
           } else {
             switch (msgJson.dataType) {
-              // 返回研究员待接收询价单（买）
-              // case 'start_bond_0':
-              //   console.log(msgJson.data)
-              //   msgJson.data.status = 'start_bond'
-              //   self.gridDataMsg.unshift(msgJson.data)
-              //   self.showMsg()
-              //   break
-              // case 'start_bond_1':
-              //   msgJson.data.status = 'start_bond'
-              //   self.gridDataMsg.unshift(msgJson.data)
-              //   self.showMsg()
-              //   break
-              // 交易员待接收询价单（买）
-              // case 'delegate_bond_0':
-              //   msgJson.data.status = 'delegate_bond_0'
-              //   self.gridDataMsg.unshift(msgJson.data)
-              //   self.showMsg()
-              //   break
-              // 交易员待接收询价单（卖）
-              // case 'delegate_bond_1':
-              //   msgJson.data.status = 'delegate_bond_1'
-              //   self.gridDataMsg.unshift(msgJson.data)
-              //   self.showMsg()
-              //   break
               case 'accept_bond_0':
               case 'accept_bond_1':
                 if (msgJson.actionType === 'refresh') {
@@ -3118,16 +3067,6 @@ export default {
     getIntendComerList() {
       apiAdmin.chatReceiverList().then(response => {
         if (response && response.code === '00000' && response.value) {
-          // const firstItem = {
-          //   "target": "系统选择",
-          //   "company": "系统选择",
-          //   "tscode": "系统选择",
-          //   "chatId": "系统选择",
-          //   "deleted": false,
-          //   "groupName": "系统选择",
-          //   "brokerid": -1,
-          //   "id": -1
-          // }
           this.intendComerOption = [...response.value]
         }
       })
@@ -3154,14 +3093,6 @@ export default {
     handleDialogEnquiryAddVisible(obj) {
       this.dialogEnquiryAddVisible = obj.dialogVisible
     },
-    // 消息
-    // showMsg() {
-    //   Promise.all([
-    //     this.dialogTableVisible = true
-    //   ]).then(() => {
-    //     this.$refs.tradeEnquiry.loadInitData()
-    //   })
-    // },
     /* 下拉指令 */
     handleCommand: debounce(function (command) {
       switch (command) {
@@ -3225,11 +3156,11 @@ export default {
           if (res.code === '00000' && res.value !== null) {
             this.setForm = res.value
 
-            this.buyForm.volume = parseInt(res.value.defVolume)
-            this.saleForm.volume = parseInt(res.value.defVolume)
-            this.buyForm.quickSubmit = res.value.isKlineSubmit
-            this.saleForm.quickSubmit = res.value.isKlineSubmit
-            this.dailyLine = res.value.dailyLine
+            this.buyForm.volume = res.value.defVolume ? parseInt(res.value.defVolume) : 2000;
+            this.saleForm.volume = res.value.defVolume ? parseInt(res.value.defVolume) : 2000;
+            this.buyForm.quickSubmit = res.value.isKlineSubmit;
+            this.saleForm.quickSubmit = res.value.isKlineSubmit;
+            this.dailyLine = res.value.dailyLine;
           }
         })
       })

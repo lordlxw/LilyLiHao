@@ -7,6 +7,7 @@
     :picker-options="pickerOptions"
     @input="handleChange"
     :editable="false"
+    :disabled="disabled"
     class="date-w"
   >
   </el-date-picker>
@@ -22,6 +23,10 @@ export default {
       default: '120px'
     },
     init: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
       type: Boolean,
       default: false
     }

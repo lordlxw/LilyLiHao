@@ -1,19 +1,10 @@
 <template>
-  <div>
-    <el-form
-      ref="enquiryForm"
-      :model="enquiryForm"
-      :rules="enquiryFormRules"
-      label-width="100px"
-    >
+  <div class="el-dialog__body">
+    <el-form ref="enquiryForm" :model="enquiryForm" :rules="enquiryFormRules" label-width="100px">
       <el-form-item label="方向" prop="direction">
         <el-button-group v-if="!this.enquiryForm.lockDirection">
-          <el-button @click="handleDirection('买')" :class="funcDirection('买')"
-            >买</el-button
-          >
-          <el-button @click="handleDirection('卖')" :class="funcDirection('卖')"
-            >卖</el-button
-          >
+          <el-button @click="handleDirection('买')" :class="funcDirection('买')">买</el-button>
+          <el-button @click="handleDirection('卖')" :class="funcDirection('卖')">卖</el-button>
         </el-button-group>
         <template v-else>
           <div>
@@ -22,31 +13,17 @@
         </template>
       </el-form-item>
       <el-form-item label="券码" prop="tscode">
-        <el-input
-          v-model="enquiryForm.tscode"
-          :disabled="action === 2"
-          placeholder="请输入券码"
-        ></el-input>
+        <el-input v-model="enquiryForm.tscode" :disabled="action === 2" placeholder="请输入券码"></el-input>
       </el-form-item>
       <el-form-item label="价格" prop="price">
-        <el-input
-          v-model="enquiryForm.price"
-          :step="0.001"
-          placeholder="请输入价格"
-        ></el-input>
+        <el-input v-model="enquiryForm.price" :step="0.001" placeholder="请输入价格"></el-input>
       </el-form-item>
       <el-form-item label="允许浮动" prop="worstPrice">
-        <el-input-number
-          v-model="enquiryForm.worstPrice"
-          :step="0.05"
-        ></el-input-number>
+        <el-input-number v-model="enquiryForm.worstPrice" :step="0.05"></el-input-number>
         BP
       </el-form-item>
       <el-form-item label="交易量" prop="volume">
-        <el-input
-          v-model="enquiryForm.volume"
-          placeholder="请输入交易量"
-        ></el-input>
+        <el-input v-model="enquiryForm.volume" placeholder="请输入交易量"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button-group>
@@ -59,11 +36,8 @@
         </el-button-group>
       </el-form-item>
       <el-form-item label="交割日期" prop="deliveryTime">
-        <delivery-canlendar
-          ref="buyDeliveryCanlendar"
-          :init="action === 2 ? true : false"
-          @change="handleBuyDeliveryCanlendar"
-        ></delivery-canlendar>
+        <delivery-canlendar ref="buyDeliveryCanlendar" :init="action === 2 ? true : false"
+          @change="handleBuyDeliveryCanlendar" :disabled="action === 2 ? true : false"></delivery-canlendar>
         <!-- <el-button-group>
           <el-button
             icon="el-icon-plus"
@@ -80,39 +54,23 @@
         </el-button-group> -->
       </el-form-item>
       <el-form-item label="交易员" prop="tradeuserId">
-        <el-select
-          v-model="enquiryForm.tradeuserId"
-          placeholder="请选择交易员"
-          :disabled="action === 2"
-        >
-          <el-option
-            v-for="item in tradeUsersOption"
-            :key="item.userId"
-            :label="item.userName"
-            :value="item.userId"
-          >
+        <el-select v-model="enquiryForm.tradeuserId" placeholder="请选择交易员" :disabled="action === 2">
+          <el-option v-for="item in tradeUsersOption" :key="item.userId" :label="item.userName" :value="item.userId">
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="备注">
-        <el-input
-          type="textarea"
-          v-model="enquiryForm.remark"
-          placeholder="请输入内容"
-          resize="none"
-          rows="2"
-        ></el-input>
+        <el-input type="textarea" v-model="enquiryForm.remark" placeholder="请输入内容" resize="none" rows="2"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button class="btn-green" @click="submitForm('enquiryForm')"
-          >保存</el-button
-        >
+        <el-button class="btn-green" @click="submitForm('enquiryForm')">保存</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import api from '@/api/kk_trade'
 import apiAdmin from '@/api/kk_power_admin'
 import * as util from '@/utils/util'
@@ -124,6 +82,11 @@ export default {
   props: ['row', 'action'],
   components: {
     DeliveryCanlendar
+  },
+  computed: {
+    ...mapGetters({
+      userInfo: 'getUserInfo'
+    }),
   },
   watch: {
     row() {
@@ -261,6 +224,7 @@ export default {
         if (valid) {
           if (this.action === 2) {
             api.inquirySheetEdit({
+              gaijiaTradeId: [this[formName].userTradeId],
               userTradeId: this[formName].userTradeId,
               // 交割速度
               deliverySpeed: this[formName].deliverySpeed,
@@ -287,6 +251,22 @@ export default {
                 this.$emit('change', {
                   dialogVisible: false
                 })
+
+                const { message, brokerId, channelId, userTradeId } = res.value;
+                // const md = new Date(deliveryTime);
+                // // (T01 240203 2.0725 6月20日+0 9k) 改 2.0750 8k
+                // const modifyTxt = `${this[formName].volume + ' '}${util.moneyFormat(this[formName].price, 4)}`
+                // const chatMessage = `(${direction === 'bond_0' ? 'bid' : 'ofr'} ${tscode.split('.')[0]} ${price} ${md.getMonth() + 1}月${md.getDate()}日+0 ${volume}) 改 ${modifyTxt}`
+                // console.log(chatMessage)
+                const data = {
+                  chatId: this.userInfo.userId,
+                  message: message,
+                  brokerId: brokerId,
+                  channelId: channelId,
+                  direction: 0,
+                  tradeId: userTradeId
+                }
+                api.sendChatMessages(data, 'sim')
               } else {
                 this.$message({
                   message: `${res.message}`,
@@ -382,5 +362,10 @@ export default {
   background: #409eff !important;
   color: white;
   border: 1px solid #409eff;
+}
+
+.el-dialog__body {
+  padding: 0;
+  padding-right: 30px;
 }
 </style>

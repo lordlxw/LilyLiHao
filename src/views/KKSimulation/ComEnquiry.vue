@@ -1,7 +1,7 @@
 <!-- 询价单 -->
 <template>
   <div style="height: 100%;">
-    <title-bar ></title-bar>
+    <title-bar></title-bar>
     <div class="content">
       <div class="do mb10">
         <el-row>
@@ -37,7 +37,7 @@
                   return cellValue;
                 }
                 " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''" :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false
-                ">
+                  ">
             </el-table-column>
           </template>
           <el-table-column fixed="right" align="center" label="操作" width="220">
@@ -122,9 +122,9 @@
                 setAuth('inquiry:accept') &&
                 [1, 4, 7, 8, 9].indexOf(scope.row.status) !== -1
               " @click="copy(scope, true)" :style="scope.row.youxianLevel === 2
-              ? { fontWeight: 'bold', color: '#ec0000' }
-              : ''
-              ">{{
+                ? { fontWeight: 'bold', color: '#ec0000' }
+                : ''
+                ">{{
                 scope.row.youxianLevel === 2
                   ? "先发复制"
                   : scope.row.youxianLevel === 1
@@ -397,7 +397,7 @@
         <real-enquiry-roll :overRow="overRow" :openRow="openRow"
           @change="handleBondsRollDialogVisible"></real-enquiry-roll>
       </el-dialog>
-      <el-dialog :title="`询价${action === 2 ? '修改' : ''}`" width="500px;" :visible.sync="dialogEnquiryFormVisible"
+      <el-dialog :title="`询价${action === 2 ? '修改' : ''}`" width="600px" :visible.sync="dialogEnquiryFormVisible"
         append-to-body :destroy-on-close="true" :close-on-click-modal="false">
         <enquiry-edit :row="currentDifficultData" :action="action" @change="handleDialogVisible"></enquiry-edit>
       </el-dialog>
@@ -786,12 +786,27 @@ export default {
     }),
     // 提交撤单申请
     handleInquiryCancelClick: debounce(function (scope) {
-      api.inquiryCancel({ usertradeId: scope.row.userTradeId }).then(response => {
+      api.inquiryCancelRequest({ usertradeId: scope.row.userTradeId }).then(response => {
         if (response && response.code === '00000') {
           this.$message({
             message: `${response.message}`,
             type: 'success'
           })
+
+          const {brokerId, channelId, userTradeId, message} = response.value;
+          // const md = new Date(deliveryTime);
+          // const chatMessage = `ref (${direction === 'bond_0' ? 'bid' : 'ofr'} ${tscode.split('.')[0]} ${price} ${md.getMonth() + 1}月${md.getDate()} 日 + 0 ${volume} )`
+          // console.log(chatMessage)
+          const data = {
+            chatId: this.userInfo.userId,
+            message: message,
+            brokerId: brokerId,
+            channelId: channelId,
+            direction: 0,
+            tradeId: userTradeId
+          }
+          api.sendChatMessages(data, 'sim')
+
           this.handlePopoverClose(
             scope,
             `popover-cancel-${scope.$index}`
