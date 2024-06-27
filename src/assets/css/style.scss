@@ -462,6 +462,16 @@ a:hover {
   padding: 3px 0;
 }
 
+.el-table .bg-green-column {
+  color: white;
+  background-color: green !important;
+  border-radius: 3px;
+  text-align: center;
+  line-height: 30px;
+  width: 60px;
+  cursor: pointer;
+}
+
 /*
 表格底部合计颜色
 */

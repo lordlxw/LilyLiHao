@@ -70,11 +70,6 @@ export default {
     watch: {
         chatMessage(item) {
             console.log("::::::::::::", item)
-            // if (!this.chatMessages[item.brokerId]) {
-            //     this.chatMessages[item.brokerId] = []
-            //     // this.$set(this.chatMessages, item.brokerId, item)
-            // }
-            // this.chatMessages[item.brokerId].push(item)
             if (this.$refs[`MChatBox${item.brokerId}`]) {
                 this.$refs[`MChatBox${item.brokerId}`][0].pushMsgs(item);
             }

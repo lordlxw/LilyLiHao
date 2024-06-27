@@ -47,6 +47,12 @@ export default {
       method: "get"
     });
   },
+  brokerList() {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/broker`,
+      method: 'get'
+    })
+  },
   saveProfile(obj) {
     return request({
       url: `${Vue.prototype.$apiUrl}/userProfile`,

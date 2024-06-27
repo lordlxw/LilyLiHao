@@ -9,7 +9,7 @@
         :src="require('@/assets/images/logo.png')"
       ></el-image> -->
       <div class="login-body">
-        <div  class="login-title">Lily系统</div>
+        <div class="login-title">Lily系统</div>
         <transition appear @before-enter="handleFormBeforeEnter" @enter="handleFormEnter">
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="login-form" size="medium">
             <div class="tit">登录</div>
@@ -95,12 +95,14 @@ export default {
               ]).then(() => {
                 api.auth().then(async response => {
                   if (response && response.code === 200) {
+                    const { value: brokers } = await api.brokerList()
                     this.$store.commit('SET_USER_INFO', {
                       permissions: response.permissions,
                       userName: response.user.userName,
                       userId: response.user.userId,
                       roleName: response.user.roles[0].roleName,
-                      menutree: response.menutree
+                      menutree: response.menutree,
+                      brokers: brokers
                     })
                   }
                   let $path = '/simulation/enquiry';
@@ -232,7 +234,7 @@ export default {
     transform: translate(-50%, -50%);
   }
 
-  .login-title-e{
+  .login-title-e {
     text-align: left;
     font-size: 18px;
     color: white;

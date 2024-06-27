@@ -6,16 +6,18 @@
   "private": true,
   "main": "background.js",
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "sim": "cross-env NODE_ENV=simulation webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "ele": "wait-on tcp:8080 && cross-env NODE_ENV=development electron . --platform=win32",
     "build:win": "electron-builder --win",
+    "build": "cross-env NODE_ENV=production node build/build.js",
+    "build:dev": "cross-env NODE_ENV=development node build/build.js",
+    "build:sim": "cross-env NODE_ENV=simulation node build/build.js",
     "start": "npm run dev",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
-    "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs",
-    "build": "cross-env NODE_ENV=production node build/build.js",
-    "build:dev": "cross-env NODE_ENV=development node build/build.js"
+    "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs"
   },
   "dependencies": {
     "@antv/g2": "^4.1.12",

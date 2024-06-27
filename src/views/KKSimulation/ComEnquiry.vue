@@ -22,16 +22,17 @@
         <account-risk-control></account-risk-control>
       </div>
       <div class="list" v-if="activeName == 0">
-        <el-table v-loading="loading" ref="multipleTable" :data="tableData" tooltip-effect="dark" :height="'100%'"
-          row-key="userTradeId" default-expand-all :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-          header-row-class-name="list-row" header-cell-class-name="list-row" :row-class-name="tableRowClassName"
+        <el-table v-swipe-copy="handleSwipeOrDblClick" v-loading="loading" ref="multipleTable" :data="tableData"
+          tooltip-effect="dark" :height="'100%'" row-key="userTradeId" default-expand-all
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }" header-row-class-name="list-row"
+          header-cell-class-name="list-row" :row-class-name="tableRowClassName" :cell-class-name="tableColumnClassName"
           :cell-style="cellStyle" :span-method="objectSpanMethod" @expand-change="handleExpandChange"
           @sort-change="handleSortChange">
           <!-- :key="Math.random()" -->
           <el-table-column width="30"></el-table-column>
           <template v-for="itemHead in tableHead">
             <el-table-column v-if="itemHead.show" :key="itemHead.prop" :align="itemHead.align" :prop="itemHead.prop"
-              :formatter="itemHead.formatter
+              :sortable="itemHead.sortable" :formatter="itemHead.formatter
                 ? itemHead.formatter
                 : (row, column, cellValue, index) => {
                   return cellValue;
@@ -40,7 +41,7 @@
                   ">
             </el-table-column>
           </template>
-          <el-table-column fixed="right" align="center" label="操作" width="220">
+          <el-table-column fixed="right" :align="'center'" label="操作" width="220">
             <template slot-scope="scope">
               <el-button type="primary" v-if="
                 setAuth('inquiry:edit') &&
@@ -125,12 +126,12 @@
                 ? { fontWeight: 'bold', color: '#ec0000' }
                 : ''
                 ">{{
-                scope.row.youxianLevel === 2
-                  ? "先发复制"
-                  : scope.row.youxianLevel === 1
-                    ? "后发复制"
-                    : "复制"
-              }}</el-button>
+                  scope.row.youxianLevel === 2
+                    ? "先发复制"
+                    : scope.row.youxianLevel === 1
+                      ? "后发复制"
+                      : "复制"
+                }}</el-button>
               <el-popover v-if="
                 ['0', '1', '4'].indexOf(scope.row.status.toString()) !== -1 &&
                 setAuth('inquiry:cancel')
@@ -542,7 +543,25 @@ export default {
           this.socketMain.send(JSON.stringify({ "dataKey": "", "dataType": "rank" }))
         }
       }
-    }
+    },
+    chatMessage(item) {
+      if (item.direction === 1) {
+        const broker = this.userInfo.brokers.filter(n => n.id === item.brokerId)
+        this.$notify.info({
+          title: '消息',
+          dangerouslyUseHTMLString: true,
+          message: `<div style="cursor: pointer;">您收到了${broker.length > 0 ? broker[0].broker : ''}一条新消息，点击我去查看！</div>`,
+          position: 'top-left',
+          type: 'success',
+          duration: 20000, // 设置时间为20秒
+          onClick: () => {
+            // 点击通知时触发的操作
+            console.log('Notification clicked');
+            this.openMoreThis('/simulation/chat');
+          }
+        });
+      }
+    },
   },
   computed: {
     ...mapGetters({
@@ -552,6 +571,7 @@ export default {
       enquiryInfo: (state) => state.enquiryInfo,
       hotsList: (state) => state.hotsList,
       socketMain: (state) => state.socketMain,
+      chatMessage: (state) => state.chatMessage,
     })
   },
   methods: {
@@ -793,7 +813,7 @@ export default {
             type: 'success'
           })
 
-          const {brokerId, channelId, userTradeId, message} = response.value;
+          const { brokerId, channelId, userTradeId, message } = response.value;
           // const md = new Date(deliveryTime);
           // const chatMessage = `ref (${direction === 'bond_0' ? 'bid' : 'ofr'} ${tscode.split('.')[0]} ${price} ${md.getMonth() + 1}月${md.getDate()} 日 + 0 ${volume} )`
           // console.log(chatMessage)
@@ -980,6 +1000,22 @@ export default {
         }
       })
     },
+    handleSwipeOrDblClick(e) {
+      if (e.target.nodeName === "DIV") {
+        console.log(e.target.nodeName, this);
+        var aux = document.createElement("input");
+        aux.setAttribute("value", e.target.outerText);
+        document.body.appendChild(aux);
+        aux.select();
+        document.execCommand("copy");
+        document.body.removeChild(aux);
+        if (document.execCommand("copy")) {
+          console.log("复制成功");
+        } else {
+          console.log("复制失败");
+        }
+      }
+    },
     // 难成点击事件
     handleEnquiryDifficultClick: debounce(function (row) {
       Promise.all([
@@ -1011,17 +1047,22 @@ export default {
       } else {
         tableCurrentRelativeNum = ''
       }
+
+      if (row.status === 3) {
+        tableCurrentRelativeNum += ' success-row'
+      }
       return tableCurrentRelativeNum + ' list-row'
+    },
+    tableColumnClassName({ row, column, columnIndex }) {
+      // if (row.status === 3 && column.property === "status") {
+      //   tableCurrentRelativeNum = ' bg-green-column '
+      // } else {
+      //   tableCurrentRelativeNum = '';
+      // }
+      // return tableCurrentRelativeNum
     },
     // 滚单成交弹出框
     handleRollDealClick(row) {
-      // for (let i = 0; i < this.tableData.length; i++) {
-      //   if (row.relativeNum === this.tableData[i].relativeNum) {
-      //     this.overRow = JSON.parse(JSON.stringify(this.tableData[i + 1]))
-      //     this.openRow = JSON.parse(JSON.stringify(this.tableData[i]))
-      //     break
-      //   }
-      // }
       const self = this
       this.getDetailByRelativeNum(row.relativeNum, row.createBy, function () { self.dialogBondsRollFormVisible = true })
     },

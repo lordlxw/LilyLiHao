@@ -13,6 +13,16 @@ const portfinder = require('portfinder')
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
+if (process.env.NODE_ENV === 'testing') {
+  console.log('正在编译 测试 环境')
+} else if(process.env.NODE_ENV === 'development') {
+  console.log('正在编译 开发 环境')
+} else if(process.env.NODE_ENV === 'simulation') {
+  console.log('正在编译 模拟 环境')
+} else {
+  console.log('正在编译 正式 环境')
+}
+
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
@@ -46,7 +56,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': require('../config/dev.env')
+      'process.env': process.env.NODE_ENV === 'development'
+      ? require('../config/dev.env')
+      : (process.env.NODE_ENV === 'simulation' ? require('../config/sim.env') : require('../config/prod.env'))
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.

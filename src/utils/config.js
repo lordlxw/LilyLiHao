@@ -140,7 +140,7 @@ export default {
     realDeliveryTime: { label: '成交交割', prop: 'realDeliveryTime', width: '90', align: 'left', show: true },
     tscode: { label: '券码', prop: 'tscode', width: '70', align: 'left', show: true },
     direction: { label: '方向', prop: 'direction', width: '50', align: 'left', show: true },
-    status: { label: '状态', prop: 'status', width: '70', align: 'left', show: true },
+    status: { label: '状态', prop: 'status', width: '70', align: 'left', show: true, sortable: true },
     remark: { label: '备注', prop: 'remark', width: '200', align: 'left', show: true, showOverflowTooltip: true },
     tradeNum: { label: '单据号', prop: 'tradeNum', width: '166', align: 'left', show: true },
     deliverySpeed: { label: '交割速度', prop: 'deliverySpeed', width: '90', align: 'left', show: false },

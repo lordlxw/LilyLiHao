@@ -6,7 +6,9 @@ if (process.env.NODE_ENV === 'testing') {
   console.log('正在编译 测试 环境')
 } else if(process.env.NODE_ENV === 'development') {
   console.log('正在编译 开发 环境')
-}else {
+} else if(process.env.NODE_ENV === 'simulation') {
+  console.log('正在编译 模拟 环境')
+} else {
   console.log('正在编译 正式 环境')
 }
 

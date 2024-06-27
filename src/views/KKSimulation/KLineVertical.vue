@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%;">
+  <div style="height: 100%; user-select: none;">
     <title-bar>
       <div slot="left_bar">
         <div class="head">
@@ -51,8 +51,9 @@
               <el-tab-pane label="买（F1）" class="buy-form" name="buy">
                 <el-form :inline="true" label-width="80px" :model="buyForm" ref="buyForm" :rules="buyFormRules">
                   <el-form-item label="价格">
-                    <el-input-number v-model="buyForm.price" :precision="4" :step="0.001" placeholder="请输入价格" @blur="keyDown"
-                      @focus="keyDownReview(),handleMaxWait('buyForm')" class="pricew"></el-input-number>
+                    <el-input-number v-model="buyForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
+                      @blur="keyDown" @focus="keyDownReview(), handleMaxWait('buyForm')"
+                      class="pricew"></el-input-number>
                     <!-- <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
                     <span class="txt-green"> BP</span> -->
                   </el-form-item>
@@ -69,8 +70,8 @@
                   <el-form-item label="交易量">
                     <!-- <el-input class="ipt-volume"  v-model.number="buyForm.volume" placeholder="请输入交易量"></el-input> -->
 
-                    <el-input-number class="ipt-volume" v-model="buyForm.volume" :step="1000" :min="2000" :max="100000" @focus="keyDownReview" @blur="keyDown"
-                      step-strictly></el-input-number>
+                    <el-input-number class="ipt-volume" v-model="buyForm.volume" :step="1000" :min="2000" :max="100000"
+                      @focus="keyDownReview" @blur="keyDown" step-strictly></el-input-number>
                   </el-form-item>
                   <el-form-item label="中介">
                     <el-select v-model="buyForm.brokerid" clearable placeholder="系统选择" class="slt-user">
@@ -104,8 +105,9 @@
               <el-tab-pane label="卖（F2）" class="sale-form" name="sale">
                 <el-form :inline="true" label-width="80px" :model="saleForm" ref="saleForm" :rules="saleFormRules">
                   <el-form-item label="价格">
-                    <el-input-number v-model="saleForm.price" :precision="4" :step="0.001" placeholder="请输入价格" @blur="keyDown"
-                      @focus="keyDownReview(),handleMaxWait('saleForm')" class="pricew"></el-input-number>
+                    <el-input-number v-model="saleForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
+                      @blur="keyDown" @focus="keyDownReview(), handleMaxWait('saleForm')"
+                      class="pricew"></el-input-number>
                     <!-- <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
                     <span class="txt-green"> BP</span> -->
                   </el-form-item>
@@ -121,8 +123,8 @@
                   </el-form-item>
                   <el-form-item label="交易量">
                     <!-- <el-input class="ipt-volume" v-model.number="saleForm.volume" placeholder="请输入交易量"></el-input> -->
-                    <el-input-number class="ipt-volume" v-model="saleForm.volume" :step="1000" :min="2000" @focus="keyDownReview" @blur="keyDown"
-                      step-strictly></el-input-number>
+                    <el-input-number class="ipt-volume" v-model="saleForm.volume" :step="1000" :min="2000"
+                      @focus="keyDownReview" @blur="keyDown" step-strictly></el-input-number>
                   </el-form-item>
                   <el-form-item label="中介">
                     <el-select v-model="saleForm.brokerid" clearable placeholder="系统选择" class="slt-user">
@@ -171,11 +173,11 @@
                   <el-form-item label="交易量" prop="defVolume">
                     <!-- <el-slider style="padding-left: 10px;" v-model="setForm.volume" :step="1000" :min="2000" :max="10000" show-stops>
                   </el-slider> -->
-                    <el-input-number v-model="setForm.defVolume" :step="1000" :min="2000" @focus="keyDownReview" @blur="keyDown"
-                      step-strictly></el-input-number>
+                    <el-input-number v-model="setForm.defVolume" :step="1000" :min="2000" @focus="keyDownReview"
+                      @blur="keyDown" step-strictly></el-input-number>
                   </el-form-item>
                   <el-form-item label="看板背景" prop="klineColor">
-                    <el-color-picker v-model="setForm.klineColor" ></el-color-picker>
+                    <el-color-picker v-model="setForm.klineColor"></el-color-picker>
                   </el-form-item>
                   <!-- <el-form-item label="快速提交">
                   <el-checkbox label="是" v-model="setForm.quickSubmit" name="quickSubmit"></el-checkbox>
@@ -1614,7 +1616,7 @@ export default {
 
           }).then(res => {
             const { code, value, message } = res;
-            if (value && (code === '00000' || code === '00002' || code === '00003')) {
+            if (value && (code === '00000' || code === '00002')) {
               const { message: chatMessage, brokerId, channelId, userTradeId } = value;
               const broker = this.intendComerOption.filter(n => { return n.brokerid === brokerId });
               const notifyMsg = `<div>询价单发送成功！</div><div class="txt-red">${code === '00002' ? message : ''}</div><div>优先使用：<span class="txt-red">${broker[0].company}</span> 发送</div > `
@@ -1623,7 +1625,7 @@ export default {
                 message: notifyMsg,
                 position: 'top-left',
                 dangerouslyUseHTMLString: true,
-                duration: 0,
+                duration: 20000,
                 type: 'success'
               });
               // bid 240205 2.3500 4月26日+0 2k
@@ -1641,6 +1643,8 @@ export default {
               }
               apiTrade.sendChatMessages(data, 'sim')
               this.dialogVisible = false
+            } else if (value && code === '00003') {
+              this.loading = false;
             } else {
               this.$message({
                 message: `${res.message} `,
