@@ -39,7 +39,7 @@
         </div>
       </div>
     </title-bar>
-    <div style="background-color: #202020; min-width: 550px; padding-top: 10px;height: calc(100% - 40px);">
+    <div style="background-color: #202020; min-width: 480px; padding-top: 10px;height: calc(100% - 40px);">
       <div class="container" style="background-color: #202020">
 
         <!-- 中间 -->
@@ -49,7 +49,7 @@
           <div class="chatbox" v-loading="leftChangeLoad || loading">
             <el-tabs type="border-card" style="border-radius: 3px;" v-model="activeName">
               <el-tab-pane label="买（F1）" class="buy-form" name="buy">
-                <el-form :inline="true" label-width="80px" :model="buyForm" ref="buyForm" :rules="buyFormRules">
+                <el-form :inline="true" label-width="65px" :model="buyForm" ref="buyForm" :rules="buyFormRules">
                   <el-form-item label="价格">
                     <el-input-number v-model="buyForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
                       @blur="keyDown" @focus="keyDownReview(), handleMaxWait('buyForm')"
@@ -103,7 +103,7 @@
 
               </el-tab-pane>
               <el-tab-pane label="卖（F2）" class="sale-form" name="sale">
-                <el-form :inline="true" label-width="80px" :model="saleForm" ref="saleForm" :rules="saleFormRules">
+                <el-form :inline="true" label-width="65px" :model="saleForm" ref="saleForm" :rules="saleFormRules">
                   <el-form-item label="价格">
                     <el-input-number v-model="saleForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
                       @blur="keyDown" @focus="keyDownReview(), handleMaxWait('saleForm')"
@@ -159,11 +159,11 @@
                 v-if="(activeName === 'buy' && buyForm.isMarketRoll === false) || (activeName === 'sale' && saleForm.isMarketRoll === false)"
                 type="default" size="mini" @click="handleGetPrice">市价</el-button>
             </div>
-            <el-popover width="510" placement="bottom-start" trigger="manual" ref="popover-set"
+            <el-popover width="425" placement="bottom-start" trigger="manual" ref="popover-set"
               v-model="popoverSetVisible">
               <div class="default-set-wrapper">
                 <div class="default-title">用户个性配置</div>
-                <el-form :inline="true" ref="setForm" :model="setForm" :rules="setFormRules" :label-width="`80px`">
+                <el-form :inline="true" ref="setForm" :model="setForm" :rules="setFormRules" :label-width="`65px`">
                   <el-form-item label="快速提交" prop="isKlineSubmit">
                     <el-switch v-model="setForm.isKlineSubmit"></el-switch>
                   </el-form-item>
@@ -285,21 +285,12 @@
       <audio controls ref="playAudio" style="display: none">
         <source src="@/assets/audio/1.wav" type="audio/wav" />
       </audio>
-      <el-dialog title="提示" :visible.sync="dialogVisible" width="300px"
-        :before-close="() => { dialogVisible = false, loading = false }">
-        <span>请确认需要提交询价单？</span>
+      <el-dialog :title="dialogVisible.title" :visible.sync="dialogVisible.show" width="300px"
+        :before-close="() => { dialogVisible.show = false, loading = false }">
+        <span>{{ dialogVisible.message }}</span>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false, loading = false">取 消</el-button>
-          <el-button type="primary" @click="
-            quickSubmit(
-              `${activeName === 'buy'
-                ? 'buyForm'
-                : activeName === 'sale'
-                  ? 'saleForm'
-                  : ''
-              }`
-            )
-            ">确 定</el-button>
+          <el-button @click="dialogVisible.show = false, loading = false">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible.fun()">确 定</el-button>
         </span>
       </el-dialog>
       <el-dialog title="新建询价单" :visible.sync="dialogEnquiryAddVisible" width="40%" append-to-body
@@ -380,7 +371,12 @@ export default {
     }
     return {
       config,
-      dialogVisible: false,
+      dialogVisible: {
+        title: "提示",
+        show: false,
+        message: "请确认需要提交询价单？",
+        fun: () => { }
+      },
       // k线栏目
       klineactive: 'Ticket图',
       loopmethodskey: ['1分钟', '5分钟', '日线', 'Ticket图'],
@@ -644,7 +640,7 @@ export default {
       socketKLine: (state) => state.socketKLine,
     }),
     recordHeight: function () {
-      return (window.innerHeight - 905) + 'px';
+      return (window.innerHeight - 890) + 'px';
     }
   },
   watch: {
@@ -819,6 +815,7 @@ export default {
           max: 'dataMax',
           axisLabel: {
             fontWeight: 'bold',
+            fontSize: '0.2rem',
           },
         }],
         yAxis: [{
@@ -829,14 +826,19 @@ export default {
             onZero: false,
           },
           axisLabel: {
-            inside: true,
+            // inside: true,
+            // position: 'outer',
+            // interval: 2,
+            // fontWeight: 'bold',
+            // formatter: (val, key) => {
+            //   if (key % 2 === 1) {
+            //     return val
+            //   }
+            // },
+            fontSize: '0.2rem',
+            position: 'outer',
             interval: 2,
             fontWeight: 'bold',
-            formatter: (val, key) => {
-              if (key % 2 === 1) {
-                return val
-              }
-            },
           },
           splitArea: {
             show: true,
@@ -1589,9 +1591,38 @@ export default {
       this[formType].deliverySpeed = val
     },
     // 快速提交
-    quickSubmit(formName) {
+    quickSubmit(formName, dostandard = true) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          if (dostandard) {
+            const transPrice = this.transactionAllList.length > 0 ? util.moneyFormat(this.transactionAllList[0].tradeprice, 4) : 0;
+            let standard = transPrice;
+            console.log(transPrice)
+            if (formName === 'buyForm') {
+              const inPrice = this.businessInList.length > 0 ? (this.businessInList.length > 1 ? (this.businessInList[0].volume.includes("+") ? util.moneyFormat(this.businessInList[0].price, 4) : util.moneyFormat(this.businessInList[1].price, 4)) : util.moneyFormat(this.businessInList[0].price, 4)) : 0;
+              standard = inPrice < transPrice ? inPrice : transPrice
+
+              if (standard - util.moneyFormat(this[formName].price, 4) > 0.0025) {
+                this.dialogVisible.title = "警告"
+                this.dialogVisible.message = "当前下单价格与市价偏离超过0.25BP!是否继续？"
+                this.dialogVisible.fun = () => { this.quickSubmit("buyForm", false) }
+                this.dialogVisible.show = true;
+                return;
+              }
+            } else {
+              const outPrice = this.businessOutList.length > 0 ? (this.businessOutList.length > 1 ? (this.businessOutList[0].volume.includes("+") ? util.moneyFormat(this.businessOutList[0].price, 4) : util.moneyFormat(this.businessOutList[1].price, 4)) : util.moneyFormat(this.businessOutList[0].price, 4)) : 0;
+              standard = outPrice > transPrice ? outPrice : transPrice
+
+              if (util.moneyFormat(this[formName].price, 4) - standard > 0.0025) {
+                this.dialogVisible.title = "警告"
+                this.dialogVisible.message = "当前卖出价格与市价偏离超过0.25BP!是否继续？"
+                this.dialogVisible.fun = () => { this.quickSubmit("saleForm", false) }
+                this.dialogVisible.show = true;
+                return;
+              }
+            }
+          }
+
           apiTrade.inquirySheetAdd({
             // 交割速度
             deliverySpeed: this[formName].deliverySpeed,
@@ -1642,8 +1673,12 @@ export default {
                 tradeId: userTradeId
               }
               apiTrade.sendChatMessages(data, 'sim')
-              this.dialogVisible = false
+              this.dialogVisible.show = false
             } else if (value && code === '00003') {
+              this.$message({
+                message: `${res.message} `,
+                type: 'error'
+              })
               this.loading = false;
             } else {
               this.$message({
@@ -1702,7 +1737,10 @@ export default {
           if (this.setForm.isKlineSubmit) {
             this.quickSubmit(formName)
           } else {
-            this.dialogVisible = true
+            this.dialogVisible.message = "请确认需要提交询价单？"
+            this.dialogVisible.title = "提示"
+            this.dialogVisible.fun = () => { this.quickSubmit(formName, true) }
+            this.dialogVisible.show = true
           }
           break
       }
@@ -3343,7 +3381,7 @@ export default {
 .kline {
   min-height: 300px;
   min-width: 300px;
-  padding: 10px;
+  padding: 0px;
   border-radius: 3px;
   background-color: azure;
 }
@@ -3824,6 +3862,7 @@ export default {
 }
 </style>
 <style lang="scss">
+
 .txt-red {
   color: #ec0000 !important;
 }
@@ -3849,13 +3888,13 @@ export default {
 }
 
 .default-set-wrapper {
-  padding: 0 10px;
+  padding: 0 0px;
 
   .default-title {
     width: 100%;
     line-height: 45px;
     color: black;
-    font-size: small;
+    font-size: 18px;
     text-align: center;
     font-weight: bold;
   }
@@ -3867,7 +3906,7 @@ export default {
   }
 
   .el-form-item--small.el-form-item {
-    width: 230px;
+    width: 200px;
   }
 }
 

@@ -1,7 +1,9 @@
 <!-- 询价单 -->
 <template>
   <div style="height: 100%;">
-    <title-bar></title-bar>
+    <title-bar>
+      <i slot="right_bar" @click="drawerBrokers = true" class="el-icon-chat-dot-round noDrag txt-white right_bar"></i>
+    </title-bar>
     <div class="content">
       <div class="do mb10">
         <el-row>
@@ -13,8 +15,8 @@
           </el-col>
           <el-col :span="2" class="text-right">
             <!-- <el-button class="btn-add mr10 " type="default" @click="openMoreThis">看版</el-button> -->
-            <el-button class="btn-add mr10 " @click="openMoreThis('/simulation/chat')" type="primary"
-              icon="el-icon-chat-dot-square"></el-button>
+            <!-- <el-button class="btn-add mr10 " @click="openMoreThis('/simulation/chat')" type="primary"
+              icon="el-icon-chat-dot-square"></el-button> -->
           </el-col>
         </el-row>
       </div>
@@ -82,10 +84,10 @@
                 [1, 4, 8].indexOf(scope.row.status) !== -1 &&
                 setAuth('inquiry:difficult')
               " class="ml10">难成</el-button>
-              <el-button type="primary" v-if="
+              <!-- <el-button type="primary" v-if="
                 setAuth('inquiry:difficultcanncel') &&
                 [5, 19].indexOf(scope.row.status) !== -1
-              " @click="handleDifficultNewEnqury(scope.row)">新建</el-button>
+              " @click="handleDifficultNewEnqury(scope.row)">新建</el-button> -->
               <el-popover v-if="
                 setAuth('inquiry:difficultcanncel') && scope.row.status === 19
               " placement="bottom-end" :ref="`popover-difficultcanncel-${scope.$index}`">
@@ -311,7 +313,7 @@
               <div class="grid-content bg-purple">今日最低</div>
             </el-col>
           </el-row>
-          <div style="margin-top: 40px;">
+          <div style="margin-top: 40px;" v-if="hotsList.length > 0">
             <el-row class="hot-item" v-for="item in hotsList" :key="item.TsCode"
               :style="{ backgroundColor: item.highlight ? '#f5776bcc' : '#ffffff00' }"
               @dblclick.native="openMoreThis('/simulation/klinevertical', item.TsCode)">
@@ -340,6 +342,9 @@
                 <div class="grid-content bg-purple">{{ item.LowPrice }}</div>
               </el-col>
             </el-row>
+          </div>
+          <div style="margin-top: 20%;" v-else>
+            <el-empty description="暂无龙虎榜数据"></el-empty>
           </div>
         </el-scrollbar>
       </div>
@@ -409,6 +414,30 @@
 
       <main-socket></main-socket>
     </div>
+
+    <el-drawer direction="ltr" title="" :visible.sync="drawerBrokers" :with-header="false">
+      <div class="chat_header_left">
+        <div class="mt10 mb10 ml10 mr10"><el-alert :closable="false" title="最多只能选中6个消息看板" type="warning">
+          </el-alert></div>
+        <el-card shadow="hover" class="mt10 mb10 ml10 mr10" v-for="item in userInfo.brokers" :key="item.id">
+          <el-row
+            @dblclick.native="openMoreThis(`/simulation/chatitem?brokerid=${item.id}&channelId=${item.channelId}`)">
+            <el-col :span="4">
+              <div class="demo-basic--circle">
+                <div class="block"><el-avatar :size="50">{{ item.broker.substr(0, 1) }}</el-avatar>
+                </div>
+              </div>
+            </el-col>
+            <el-col :span="20">
+              <div class="item_name">{{ item.broker }}</div>
+              <el-tooltip class="item" effect="dark" :content="'没有新消息...'" placement="top-start">
+                <div class="item_name item_content">{{ '没有新消息...' }}</div>
+              </el-tooltip>
+            </el-col>
+          </el-row>
+        </el-card>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -468,6 +497,7 @@ export default {
     }
     return {
       config,
+      drawerBrokers: false,
       loading: false,
       // 表头
       tableHead: [],
@@ -547,7 +577,7 @@ export default {
     chatMessage(item) {
       if (item.direction === 1) {
         const broker = this.userInfo.brokers.filter(n => n.id === item.brokerId)
-        this.$notify.info({
+        const notify = this.$notify({
           title: '消息',
           dangerouslyUseHTMLString: true,
           message: `<div style="cursor: pointer;">您收到了${broker.length > 0 ? broker[0].broker : ''}一条新消息，点击我去查看！</div>`,
@@ -556,8 +586,9 @@ export default {
           duration: 20000, // 设置时间为20秒
           onClick: () => {
             // 点击通知时触发的操作
+            notify.close()
             console.log('Notification clicked');
-            this.openMoreThis('/simulation/chat');
+            this.openMoreThis(`/simulation/chatitem?brokerid=${item.brokerId}&channelId=${item.channelId}`);
           }
         });
       }
@@ -1324,26 +1355,29 @@ export default {
           const maxWidth = Math.max(...response.map(display => display.bounds.width));
           const maxHeight = Math.max(...response.map(display => display.bounds.height));
 
-          if ($path === '/simulation/chat') {
+          if ($path.includes('/simulation/chatitem')) {
+            const minWidth = (maxWidth / 4) - 10 <= 500 ? 500 : (maxWidth / 4) - 10;
+            const minHeight = maxHeight / 3 - 20;
             const args = {
-              width: maxWidth / 2, // 窗口宽度
-              height: maxHeight - 50, // 窗口高度
-              minWidth: maxWidth / 2, // 窗口最小宽度
-              minHeight: maxHeight - 50, // 窗口最小高度
+              width: minWidth, // 窗口宽度
+              height: minHeight, // 窗口高度
+              minWidth: minWidth, // 窗口最小宽度
+              minHeight: minHeight, // 窗口最小高度
               isMainWin: false,
               resize: false, // 是否支持缩放
               maximize: false, // 最大化窗口
-              isMultiWin: false, // 是否支持多开窗口
+              isMultiWin: true, // 是否支持多开窗口
               route: $path
             }
 
             window.v1.createWin(args)
           } else {
+            const minWidth = maxWidth / 5.5 <= 480 ? 480 : maxWidth / 5.5;
             const args = {
-              width: maxWidth / 4, // 窗口宽度
+              width: minWidth, // 窗口宽度
               height: maxHeight - 50, // 窗口高度
-              minWidth: maxWidth / 4, // 窗口最小宽度
-              maxWidth: maxWidth / 4,
+              minWidth: minWidth, // 窗口最小宽度
+              maxWidth: minWidth,
               isMainWin: false,
               resize: true, // 是否支持缩放
               maximizable: false, // 最大化窗口
@@ -1389,6 +1423,43 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "@/assets/css/style.scss";
+
+.right_bar {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  line-height: 40px;
+  color: #fff;
+  text-align: center;
+  -webkit-app-region: no-drag;
+}
+
+.chat_header_left {
+  .el-card {
+    cursor: pointer;
+  }
+
+  .el-avatar {
+    line-height: 60px;
+  }
+
+  .item_name {
+    font-size: 14px;
+    text-align: left;
+    font-weight: bold;
+    width: 100%;
+    padding-left: 5px;
+    line-height: 25px;
+  }
+
+  .item_content {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: normal;
+    font-size: 12px;
+  }
+}
 
 .content {
   padding: 10px;

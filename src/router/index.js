@@ -75,6 +75,10 @@ const router = new Router({
           path: '/simulation/enquiry',
           component: () => import('@/views/KKSimulation/ComEnquiry.vue')
         },
+        {
+          path: '/simulation/chatitem',
+          component: () => import('@/views/KKSimulation/ChatItem.vue')
+        },
       ]
 
     },

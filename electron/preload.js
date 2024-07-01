@@ -18,20 +18,27 @@ contextBridge.exposeInMainWorld("v1", {
   isWin,
   isLinux,
   close: () => {
-    const win = remote.getCurrentWindow()
+    const win = remote.getCurrentWindow();
     return win.close();
   },
   minimize: () => {
-    const win = remote.getCurrentWindow()
+    const win = remote.getCurrentWindow();
     return win.minimize();
+  },
+  focus: () => {
+    const win = remote.getCurrentWindow();
+    return win.focus();
   },
   quit: () => ipcRenderer.invoke("quit"),
   setArgs: args => ipcRenderer.invoke("setArgs", args),
   createWin: args => ipcRenderer.invoke("createWin", args),
   getAllDisplays: () => ipcRenderer.invoke("getAllDisplays"),
   getProfile: id => ipcRenderer.invoke("getProfile", id),
+  hasWins: args => {
+    return ipcRenderer.invoke("hasWins", args);
+  },
   getWinThis: () => {
-    const win = remote.getCurrentWindow()
+    const win = remote.getCurrentWindow();
     return ipcRenderer.invoke("getWinThis", win.id);
   }
 });

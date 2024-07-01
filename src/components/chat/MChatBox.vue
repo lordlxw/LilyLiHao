@@ -1,102 +1,102 @@
 <template>
-    <div>
-        <div class="chat_box" @click="() => { msgShow = false }" :class="msgShow ? 'message show' : ''"
-            :style="{ height: boxHeight + 'px' }">
+    <div class="chat_box" @click="() => { msgShow = false }" :class="msgShow ? 'message show' : ''">
+        <el-container>
+            <el-aside width="200px" v-if="asideShow">
+                <div class="aside_top"></div>
+                <div v-infinite-scroll="load">
+                    <div v-for="i in count" class="chat_item" :key="i">
+                        <el-row>
+                            <el-col :span="8">
+                                <div class="demo-basic--circle">
+                                    <div class="block"><el-avatar :size="46" :src="circleUrl"></el-avatar></div>
+                                </div>
+                            </el-col>
+                            <el-col :span="16">
+                                <div class="item_name">{{ mine.company }}</div>
+                                <el-tooltip class="item" effect="dark" :content="describe" placement="top-start">
+                                    <div class="item_name item_content">{{ describe }}</div>
+                                </el-tooltip>
+                            </el-col>
+                        </el-row>
+
+                    </div>
+                </div>
+            </el-aside>
             <el-container>
-                <el-aside width="200px" v-if="asideShow">
-                    <div class="aside_top"></div>
-                    <div v-infinite-scroll="load">
-                        <div v-for="i in count" class="chat_item" :key="i">
+                <el-header style="-webkit-app-region: drag;">
+                    <el-row>
+                        <el-col :span="8" class="chat_header_left">
                             <el-row>
                                 <el-col :span="8">
                                     <div class="demo-basic--circle">
-                                        <div class="block"><el-avatar :size="46" :src="circleUrl"></el-avatar></div>
+                                        <div class="block"><el-avatar :size="50">{{ mine.company.substr(0, 1)
+                                                }}</el-avatar>
+                                        </div>
                                     </div>
                                 </el-col>
                                 <el-col :span="16">
                                     <div class="item_name">{{ mine.company }}</div>
-                                    <el-tooltip class="item" effect="dark" :content="describe" placement="top-start">
-                                        <div class="item_name item_content">{{ describe }}</div>
+                                    <el-tooltip class="item" effect="dark" :content="describe || '没有新消息...'"
+                                        placement="top-start">
+                                        <div class="item_name item_content">{{ describe || '没有新消息...' }}</div>
                                     </el-tooltip>
                                 </el-col>
                             </el-row>
-
-                        </div>
+                        </el-col>
+                        <el-col :span="16">
+                        </el-col>
+                    </el-row>
+                    <div class="header-right">
+                        <i @click="minimize" class="el-icon-minus"></i>
+                        <i @click="handleClose" class="el-icon-close"></i>
                     </div>
-                </el-aside>
-                <el-container>
-                    <el-header>
+                    <el-divider></el-divider>
+                </el-header>
+                <div class="el-main" ref="scrollContainer">
+                    <div v-for="item in messages" class="main_item" :key="item.id">
                         <el-row>
-                            <el-col :span="8" class="chat_header_left">
-                                <el-row>
-                                    <el-col :span="8">
-                                        <div class="demo-basic--circle">
-                                            <div class="block"><el-avatar :size="50" :src="circleUrl"></el-avatar>
-                                            </div>
-                                        </div>
-                                    </el-col>
-                                    <el-col :span="16">
-                                        <div class="item_name">{{ mine.company }}</div>
-                                        <el-tooltip class="item" effect="dark" :content="describe || '没有新消息...'"
-                                            placement="top-start">
-                                            <div class="item_name item_content">{{ describe || '没有新消息...' }}</div>
-                                        </el-tooltip>
-                                    </el-col>
-                                </el-row>
+                            <el-col :span="3" v-if="item.direction === 1">
+                                <div class="demo-basic--circle">
+                                    <div class="block"><el-avatar :size="40">{{ mine.company.substr(0, 1) }}</el-avatar>
+                                    </div>
+                                </div>
                             </el-col>
-                            <el-col :span="16">
+                            <el-col :span="21" :class="item.direction === 1 ? 'main_left' : 'main_right'">
+                                <div class="main_name" v-if="item.direction === 0">
+                                    <span class="main-time mr10">{{ dateFormat(item.createTime) }}</span>
+                                    <span>{{ userName }}</span>
+                                </div>
+                                <div class="main_name" v-else>
+                                    <span>{{ mine.company }}</span>
+                                    <span class="main-time ml10">{{ dateFormat(item.createTime) }}</span>
+                                </div>
+                                <div class="main_content">
+                                    {{ item.chatMessage }}
+                                </div>
+                            </el-col>
+                            <el-col :span="3" v-if="item.direction === 0">
+                                <div class="demo-basic--circle">
+                                    <div class="block"><el-avatar :size="40">{{ userName.substr(0, 1) }}</el-avatar>
+                                    </div>
+                                </div>
                             </el-col>
                         </el-row>
-                        <div class="header-right">
-                            <i class="el-icon-minus"></i>
-                            <i @click="handleClose" class="el-icon-close"></i>
-                        </div>
-                        <el-divider></el-divider>
-                    </el-header>
-                    <div class="el-main" ref="scrollContainer">
-                        <div v-for="item in messages" class="main_item" :key="item.id">
-                            <el-row>
-                                <el-col :span="3" v-if="item.direction === 1">
-                                    <div class="demo-basic--circle">
-                                        <div class="block"><el-avatar :size="40" :src="circleUrl"></el-avatar></div>
-                                    </div>
-                                </el-col>
-                                <el-col :span="21" :class="item.direction === 1 ? 'main_left' : 'main_right'">
-                                    <div class="main_name" v-if="item.direction === 0">
-                                        <span class="main-time mr10">{{ dateFormat(item.createTime) }}</span>
-                                        <span>{{ userName }}</span>
-                                    </div>
-                                    <div class="main_name" v-else>
-                                        <span>{{ mine.company }}</span>
-                                        <span class="main-time ml10">{{ dateFormat(item.createTime) }}</span>
-                                    </div>
-                                    <div class="main_content">
-                                        {{ item.chatMessage }}
-                                    </div>
-                                </el-col>
-                                <el-col :span="3" v-if="item.direction === 0">
-                                    <div class="demo-basic--circle">
-                                        <div class="block"><el-avatar :size="40" :src="circleUrl"></el-avatar></div>
-                                    </div>
-                                </el-col>
-                            </el-row>
 
-                        </div>
                     </div>
-                    <el-footer>
-                        <div class="footer_send">
-                            <el-select v-model="value" placeholder="请选择">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label"
-                                    :value="item.value">
-                                </el-option>
-                            </el-select>
+                </div>
+                <el-footer>
+                    <div class="footer_send">
+                        <el-select v-model="value" placeholder="请选择">
+                            <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
 
-                            <el-button type="success" plain>发送</el-button>
-                        </div>
-                    </el-footer>
-                </el-container>
+                        <el-button type="success" plain>发送</el-button>
+                    </div>
+                </el-footer>
             </el-container>
-        </div>
+        </el-container>
     </div>
 
 </template>
@@ -156,7 +156,7 @@ export default {
     },
     data() {
         return {
-            circleUrl: "",
+            circleUrl: "image.png",
             count: 5,
             options: [{
                 value: '选项1',
@@ -171,11 +171,11 @@ export default {
     },
     watch: {
         messages(newVal, oldVal) {
-            if (newVal && newVal.length > 0) {
-                this.describe = newVal
-                    .filter(n => n.direction === 0) // 过滤掉小于3的数字
-                    .sort((a, b) => new Date(b.createTime) - new Date(a.createTime))[0].chatMessage;
-            }
+            // if (newVal && newVal.length > 0) {
+            //     this.describe = newVal
+            //         .filter(n => n.direction === 0) // 过滤掉小于3的数字
+            //         .sort((a, b) => new Date(b.createTime) - new Date(a.createTime))[0].chatMessage;
+            // }
             this.$nextTick(() => {
                 this.scrollToBottom();
             });
@@ -193,24 +193,33 @@ export default {
         handleClose(e) {
             // this.dialogChatBoxVisible = false;
             this.$emit('handleClose', e)
+            window.v1.close()
+        },
+        minimize() {
+            window.v1.minimize()
         },
         scrollToBottom() {
             const container = this.$refs.scrollContainer;
-            container.scrollTop = container.scrollHeight;
+            return container ? (container.scrollTop = container.scrollHeight) : null;
         },
         pushMsgs(item) {
+            console.log("::::::::::::", item)
             this.messages.push(item)
             this.msgShow = item.direction === 1 ? true : false;
             this.$nextTick(() => {
                 this.scrollToBottom();
             });
+            window.v1.focus()
         },
         dateFormat(date) {
+            const padWithZero = (number) => {
+                return number < 10 ? '0' + number : number.toString();
+            }
             if (date instanceof Object) {
-                return `${date.hour}:${date.minute}:${date.second}`
+                return `${padWithZero(date.hour)}:${padWithZero(date.minute)}:${padWithZero(date.second)}`
             } else {
                 const time = new Date(date)
-                return `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`
+                return `${padWithZero(time.getHours())}:${padWithZero(time.getMinutes())}:${padWithZero(time.getSeconds())}`
             }
         }
     },
@@ -279,18 +288,19 @@ export default {
 
 .chat_box {
     min-width: 500px;
-    width: -webkit-fill-available;
-    margin: 10px;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
     position: relative;
     top: unset;
     left: unset;
-    border: 1px solid #D9D9D9;
     border-color: rgba(0, 0, 0, 0.05);
     background-repeat: no-repeat;
     background-color: #F6F6F6;
     color: #333;
+    overflow: hidden;
 
     .chat_header_left {
         max-height: 80px;
@@ -403,10 +413,11 @@ export default {
                 height: 30px;
                 font-size: 20px;
                 line-height: 30px;
+                -webkit-app-region: no-drag;
             }
 
             i:hover {
-                background-color: #b6b4b4;
+                color: #f78484;
             }
         }
     }
@@ -470,6 +481,7 @@ export default {
 
                 .main_content {
                     background-color: #9EEA6A;
+
                 }
 
                 .main_content:after {
@@ -497,16 +509,17 @@ export default {
                 line-height: 22px;
                 padding: 8px 15px;
                 background-color: #fff;
-                border-radius: 3px;
                 color: #000;
                 word-break: break-all;
                 max-width: 262px;
-                border: solid 1px #EDEDED;
                 font-weight: normal;
                 font-size: 12px;
                 text-align: left;
                 width: fit-content;
                 display: inline-block;
+                box-shadow: 0 2px 4px rgb(8 8 8 / 25%), 0 0 6px rgba(0, 0, 0, .04);
+                border-radius: 7px;
+                border: none;
             }
 
             .main_content:after {

@@ -370,7 +370,20 @@ class MultiWindows {
       }
     });
 
-    // ...
+    ipcMain.handle("hasWins", (event, args) => {
+      // 判断窗口是否存在
+      for (let i in this.winLs) {
+        if (
+          this.getWin(i) &&
+          this.winLs[i].route === args.route &&
+          !this.winLs[i].isMultiWin
+        ) {
+          this.getWin(i).focus();
+          return true;
+        }
+      }
+      return false;
+    });
   }
 }
 
