@@ -252,7 +252,7 @@
             </div>
             <!-- 交易 -->
             <div class="r-trans" v-loading="leftChangeLoad" :style="{ height: recordHeight }">
-              <el-scrollbar v-if="transactionAllList.length > 0">
+              <!-- <el-scrollbar v-if="transactionAllList.length > 0">
                 <ul class="mt20" style="margin-top: 25px">
                   <li class="li-first" style="height: 25px; line-height: 25px">
                     <span class="colume1">方向</span>
@@ -269,15 +269,28 @@
                     }}</span>
                     <span class="colume3">{{ item.brokerName }}</span>
                     <span class="colume4">{{ item.tradetime }}</span>
-                    <!-- <span style="width: 60px">{{ item.netprice }}</span> -->
                   </li>
                 </ul>
-              </el-scrollbar>
-              <!-- <el-skeleton v-else  animated >
-            <template #template>
-              <el-skeleton-item v-for="item in 100" :key="item" class="custom-skeleton-item"/>
-            </template>
-          </el-skeleton> -->
+              </el-scrollbar> -->
+              <div style="height: 100%">
+                <el-row :gutter="0" class="trans-header pr10">
+                  <el-col :span="5">
+                    <div class="grid-content txt-white">方向</div>
+                  </el-col>
+                  <el-col :span="6">
+                    <div class="grid-content txt-white">价格</div>
+                  </el-col>
+                  <el-col :span="5">
+                    <div class="grid-content txt-white">中介</div>
+                  </el-col>
+                  <el-col :span="8">
+                    <div class="grid-content txt-white">交易时间</div>
+                  </el-col>
+                </el-row>
+                <virtual-list class="trans-body custom-scrollbar " :data-key="'tradeid'" :extra-props="{changeForm}"
+                  :data-sources="transactionAllList" :data-component="itemComponent" :keeps="50">
+                </virtual-list>
+              </div>
             </div>
           </div>
         </div>
@@ -326,10 +339,11 @@ import Draggable from 'vuedraggable'
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
 import UpdatePassword from '@/components/UpdatePassword.vue'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
-import MChat from '@/components/chat/MChat.vue';
 import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
+import VirtualList from 'vue-virtual-scroll-list'
+import RTransItem from './RTransItem';
 import moment from 'moment'
 let lockReconnect = false
 export default {
@@ -340,8 +354,8 @@ export default {
     DeliveryCanlendar,
     EnquiryEdit,
     UpdatePassword,
-    MChat,
-    Draggable
+    Draggable,
+    VirtualList
   },
   data() {
     // 金额格式验证
@@ -370,6 +384,7 @@ export default {
       }
     }
     return {
+      itemComponent: RTransItem,
       config,
       dialogVisible: {
         title: "提示",
@@ -640,7 +655,7 @@ export default {
       socketKLine: (state) => state.socketKLine,
     }),
     recordHeight: function () {
-      return (window.innerHeight - 890) + 'px';
+      return (window.innerHeight - 870) + 'px';
     }
   },
   watch: {
@@ -3725,7 +3740,7 @@ export default {
             padding: 0 5px;
             cursor: pointer;
             // border-bottom: 1px dashed rgb(51, 51, 51);
-            font-family: serif;
+            font-family: fangsong;
             font-weight: normal;
 
             span {
@@ -3806,32 +3821,28 @@ export default {
 
     .r-trans {
       transform: scale(1);
-      padding: 8px 0px 8px 8px;
       border-radius: 3px;
       background-color: hsl(220 3% 19% / 1);
       margin-top: 10px;
       overflow: hidden;
 
-      .el-scrollbar {
-        width: 100%;
+      .grid-content {
+        text-align: center;
+        height: 35px;
+        line-height: 35px;
+        font-weight: bold;
+        font-family: fangsong;
       }
 
-      ul {
-        .li-first {
-          padding-left: 0;
-          font-weight: bold;
-          border-bottom: 1px solid rgb(51, 51, 51) !important;
-          position: absolute;
-          top: 0px;
-          right: 0;
-          left: 0;
-          background-color: hsl(220 3% 19% / 1);
-
-          .colume1 {
-            color: #fff;
-          }
-        }
+      .trans-header {
+        background-color: #000;
       }
+
+      .trans-body {
+        height: calc(100% - 35px);
+        overflow-y: auto;
+      }
+
     }
 
     .custom-skeleton-item {
@@ -3862,7 +3873,6 @@ export default {
 }
 </style>
 <style lang="scss">
-
 .txt-red {
   color: #ec0000 !important;
 }

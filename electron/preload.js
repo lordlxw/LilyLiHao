@@ -29,6 +29,8 @@ contextBridge.exposeInMainWorld("v1", {
     const win = remote.getCurrentWindow();
     return win.focus();
   },
+  isFocusedWindow: remote.getCurrentWindow().isFocused(),
+  isAlwaysOnTop: remote.getCurrentWindow().isAlwaysOnTop(),
   quit: () => ipcRenderer.invoke("quit"),
   setArgs: args => ipcRenderer.invoke("setArgs", args),
   createWin: args => ipcRenderer.invoke("createWin", args),
@@ -40,6 +42,13 @@ contextBridge.exposeInMainWorld("v1", {
   getWinThis: () => {
     const win = remote.getCurrentWindow();
     return ipcRenderer.invoke("getWinThis", win.id);
+  },
+  ipcRenderer: (arg, fun) => {
+    return {
+      On: (arg, fun) => {
+        ipcRenderer.on(arg, fun);
+      }
+    };
   }
 });
 

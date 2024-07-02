@@ -53,6 +53,12 @@ export default {
       method: 'get'
     })
   },
+  chatReceiver() {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/chatReceiver`,
+      method: 'get'
+    })
+  },
   saveProfile(obj) {
     return request({
       url: `${Vue.prototype.$apiUrl}/userProfile`,

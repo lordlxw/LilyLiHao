@@ -1,6 +1,6 @@
 <template>
     <div class="custom-title-bar" :style="{
-        backgroundColor: backgroundColor,
+        background: bgColor || backgroundColor,
     }">
         <!-- 这里可以添加 Element UI 组件或其他自定义内容 -->
         <!-- <el-button type="primary">一个按钮</el-button> -->
@@ -25,11 +25,15 @@
 export default {
     name: 'CustomTitleBar',
     props: {
-        backgroundColor: {
-            type: String,
-            default: '#303133' // 默认背景色
-        },
+        bgColor: ''
         // 其他自定义属性
+    },
+    data() {
+        return {
+            backgroundColor: '#303133'
+        }
+    },
+    watch: {
     },
     methods: {
         minimize() {
@@ -37,6 +41,28 @@ export default {
         },
         close() {
             window.v1.close()
+        },
+        onPageShow(isfocus) {
+            // 在这里编写你的逻辑
+            console.log('页面显示或重新激活', isfocus);
+        }
+    },
+    created() {
+        console.log('页面显示或重新激活');
+        if (window.v1) {
+            if (window.v1.isFocusedWindow) {
+                if (this.$route.path.includes("klinevertical")) {
+                    this.backgroundColor = "linear-gradient(135deg, #00ffcc, #ff0066)"
+                }
+            }
+            window.v1.ipcRenderer().On("window-focused", () => {
+                if (this.$route.path.includes("klinevertical")) {
+                    this.backgroundColor = "linear-gradient(135deg, #00ffcc, #ff0066)"
+                }
+            })
+            window.v1.ipcRenderer().On("window-blurred", () => {
+                this.backgroundColor = "#303133"
+            })
         }
     }
 };
@@ -63,8 +89,9 @@ export default {
 
         .grid-content-l {
             height: 40px;
-            line-height: 40px;i
-            .slot {
+            line-height: 40px;
+
+            i .slot {
                 -webkit-app-region: no-drag;
             }
         }

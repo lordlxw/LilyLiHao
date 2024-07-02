@@ -194,6 +194,13 @@ class MultiWindows {
         }
       );
     });
+
+    win.on("focus", () => {
+      win.webContents.send("window-focused");
+    });
+    win.on("blur", () => {
+      win.webContents.send("window-blurred");
+    });
     this.registerShortcut();
     remote.enable(win.webContents);
   }

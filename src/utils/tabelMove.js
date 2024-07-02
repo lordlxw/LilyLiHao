@@ -99,3 +99,15 @@ Vue.directive("swipe-copy", {
     }
   }
 });
+
+// 拦截 Element.Notification 的方法
+Vue.prototype.$notify = (function(notify) {
+  return function(options) {
+    console.log("拦截 Element.Notification 的方法", window.location.href)
+    if (window.location.href.includes("chatitem")) {
+      return;
+    }
+    // 调用原始的 $notify 方法
+    return notify.apply(this, arguments);
+  };
+})(Vue.prototype.$notify);

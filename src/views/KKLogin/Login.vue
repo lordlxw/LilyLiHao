@@ -2,7 +2,7 @@
 <template>
   <transition appear name="fade" @before-enter="handleBeforeEnter" @enter="handleEnter" @after-enter="handleAfterEnter">
     <div class="login-wrapper">
-      <title-bar v-if="isElectron" backgroundColor="#2cad98">
+      <title-bar v-if="isElectron" bgColor="#2cad98">
       </title-bar>
       <!-- <el-image
         class="logo"
@@ -95,7 +95,7 @@ export default {
               ]).then(() => {
                 api.auth().then(async response => {
                   if (response && response.code === 200) {
-                    const { value: brokers } = await api.brokerList()
+                    const { value: brokers } = await api.chatReceiver()
                     this.$store.commit('SET_USER_INFO', {
                       permissions: response.permissions,
                       userName: response.user.userName,

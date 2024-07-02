@@ -337,6 +337,10 @@ a:hover {
   padding: 10px;
 }
 
+.pr10 {
+  padding-right: 10px;
+}
+
 .w100 {
   width: 100px;
 }
@@ -512,38 +516,42 @@ a:hover {
 }
 
 /* 自定义滚动条的宽度 */
+.custom-scrollbar::-webkit-scrollbar,
 .el-dialog__wrapper::-webkit-scrollbar,
 .el-scrollbar__wrap::-webkit-scrollbar,
 .el-table__body-wrapper::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
   /* 对于水平滚动条 */
-  height: 10px;
+  height: 8px;
   /* 对于垂直滚动条 */
 }
 
 /* 自定义滚动条的背景色 */
+.custom-scrollbar::-webkit-scrollbar-track,
 .el-dialog__wrapper::-webkit-scrollbar-track,
 .el-scrollbar__wrap::-webkit-scrollbar-track,
 .el-table__body-wrapper::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
+  // background: #f1f1f1;
+  border-radius: 2px;
   /* 滚动条轨道的背景色 */
 }
 
 /* 自定义滚动条的滑块颜色 */
+.custom-scrollbar::-webkit-scrollbar-thumb,
 .el-dialog__wrapper::-webkit-scrollbar-thumb,
 .el-scrollbar__wrap::-webkit-scrollbar-thumb,
 .el-table__body-wrapper::-webkit-scrollbar-thumb {
-  background: #888 !important;
-  border-radius: 3px;
+  background: #555 !important;
+  border-radius: 2px;
   /* 滚动条滑块的背景色 */
 }
 
 /* 当鼠标悬停在滚动条上时，自定义滑块的颜色 */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover,
 .el-dialog__wrapper::-webkit-scrollbar-thumb:hover,
 .el-scrollbar__wrap::-webkit-scrollbar-thumb:hover,
 .el-table__body-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #555 !important;
+  background: #888 !important;
   /* 滚动条滑块的背景色 */
 }
 
@@ -553,8 +561,8 @@ a:hover {
 .el-table__body-wrapper,
 .el-scrollbar__wrap {
   &::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
   }
 }
 
@@ -579,7 +587,7 @@ a:hover {
   min-width: 100px;
   overflow: hidden;
 
-  .el-dialog__close{
+  .el-dialog__close {
     font-size: 20px;
   }
 }
@@ -620,7 +628,7 @@ a:hover {
 }
 
 
-.noDrag{
+.noDrag {
   -webkit-app-region: no-drag;
 }
 

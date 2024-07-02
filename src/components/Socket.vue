@@ -228,6 +228,9 @@ export default {
                   if (msgJson.actionType === 'refresh') {
                     break
                   }
+                  if (window.location.href.includes("chatitem")) {
+                    break
+                  }
                   self.$notify({
                     title: `${msgJson.data.tradeuser} 已成交`,
                     dangerouslyUseHTMLString: true,
@@ -491,44 +494,6 @@ export default {
                   if (msgJson.actionType === 'refresh') {
                     break
                   }
-                  // self.$notify({
-                  //   title: `${msgJson.data.yanjiuyuanName} 已同意未平仓修改`,
-                  //   dangerouslyUseHTMLString: true,
-                  //   position: 'bottom-left',
-                  //   message: `
-                  //   <div class="notify">
-                  //     <dl>
-                  //       <dt>债券码</dt>
-                  //       <dd>${msgJson.data.tscode.replace(/.IB/, '')}</dd>
-                  //     </dl>
-                  //     <dl>
-                  //       <dt>方向</dt>
-                  //       <dd>${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}</dd>
-                  //     </dl>
-                  //     <dl>
-                  //       <dt>成交价</dt>
-                  //       <dd>${util.moneyFormat(msgJson.data.price, 4)}</dd>
-                  //     </dl>
-                  //     <dl>
-                  //       <dt>成交量</dt>
-                  //       <dd>${msgJson.data.volume}</dd>
-                  //     </dl>
-                  //     <dl>
-                  //       <dt>交割日期</dt>
-                  //       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
-                  //     </dl>
-                  //     <dl>
-                  //       <dt>单据号</dt>
-                  //       <dd>${msgJson.data.tradeNum}</dd>
-                  //     </dl>
-                  //     <dl>
-                  //       <dt>备注</dt>
-                  //       <dd>${msgJson.data.remark}</dd>
-                  //     </dl>
-                  //   </div>
-                  //   `,
-                  //   duration: 0
-                  // });
                   notify = self.$notify({
                     title: `${msgJson.data.yanjiuyuanName} 已同意未平仓修改`,
                     dangerouslyUseHTMLString: true,

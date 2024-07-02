@@ -2,6 +2,10 @@
 <template>
   <div style="height: 100%;">
     <title-bar>
+      <div slot="left_bar">
+        <i slot="right_bar" class="el-icon-user-solid noDrag txt-white left_bar"></i>
+        <!-- <span class="left_span">{{ userInfo.userName }}</span> -->
+      </div>
       <i slot="right_bar" @click="drawerBrokers = true" class="el-icon-chat-dot-round noDrag txt-white right_bar"></i>
     </title-bar>
     <div class="content">
@@ -421,15 +425,15 @@
           </el-alert></div>
         <el-card shadow="hover" class="mt10 mb10 ml10 mr10" v-for="item in userInfo.brokers" :key="item.id">
           <el-row
-            @dblclick.native="openMoreThis(`/simulation/chatitem?brokerid=${item.id}&channelId=${item.channelId}`)">
+            @dblclick.native="openMoreThis(`/simulation/chatitem?brokerid=${item.brokerid}&channelId=${item.channelId}`)">
             <el-col :span="4">
               <div class="demo-basic--circle">
-                <div class="block"><el-avatar :size="50">{{ item.broker.substr(0, 1) }}</el-avatar>
+                <div class="block"><el-avatar :size="50">{{ item.company.substr(0, 1) }}</el-avatar>
                 </div>
               </div>
             </el-col>
             <el-col :span="20">
-              <div class="item_name">{{ item.broker }}</div>
+              <div class="item_name">{{ item.company }}</div>
               <el-tooltip class="item" effect="dark" :content="'没有新消息...'" placement="top-start">
                 <div class="item_name item_content">{{ '没有新消息...' }}</div>
               </el-tooltip>
@@ -576,11 +580,11 @@ export default {
     },
     chatMessage(item) {
       if (item.direction === 1) {
-        const broker = this.userInfo.brokers.filter(n => n.id === item.brokerId)
+        const broker = this.userInfo.brokers.filter(n => n.brokerid === item.brokerId)
         const notify = this.$notify({
           title: '消息',
           dangerouslyUseHTMLString: true,
-          message: `<div style="cursor: pointer;">您收到了${broker.length > 0 ? broker[0].broker : ''}一条新消息，点击我去查看！</div>`,
+          message: `<div style="cursor: pointer;">您收到了${broker.length > 0 ? broker[0].company : ''}一条新消息，点击我去查看！</div>`,
           position: 'top-left',
           type: 'success',
           duration: 20000, // 设置时间为20秒
@@ -1366,7 +1370,7 @@ export default {
               isMainWin: false,
               resize: false, // 是否支持缩放
               maximize: false, // 最大化窗口
-              isMultiWin: true, // 是否支持多开窗口
+              isMultiWin: false, // 是否支持多开窗口
               route: $path
             }
 
@@ -1384,7 +1388,7 @@ export default {
               isMultiWin: true, // 是否支持多开窗口
               route: $path,
               data: {
-                tscode
+                tscode,
               }
             }
             window.v1.createWin(args).then((response) => {
@@ -1432,6 +1436,23 @@ export default {
   color: #fff;
   text-align: center;
   -webkit-app-region: no-drag;
+}
+
+.left_bar {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  line-height: 40px;
+  color: #fff;
+  text-align: center;
+  -webkit-app-region: no-drag;
+}
+
+.left_span {
+  height: 40px;
+  font-size: 14px;
+  color: #fff;
+  line-height: 40px;
 }
 
 .chat_header_left {
