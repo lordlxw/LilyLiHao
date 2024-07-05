@@ -52,12 +52,13 @@ export default {
         if (window.v1) {
             if (window.v1.isFocusedWindow) {
                 if (this.$route.path.includes("klinevertical")) {
-                    this.backgroundColor = "linear-gradient(135deg, #00ffcc, #ff0066)"
+                    this.backgroundColor = "linear-gradient(135deg, #ff0066, #00ffcc)"
+                    // #bb9113
                 }
             }
             window.v1.ipcRenderer().On("window-focused", () => {
                 if (this.$route.path.includes("klinevertical")) {
-                    this.backgroundColor = "linear-gradient(135deg, #00ffcc, #ff0066)"
+                    this.backgroundColor = "linear-gradient(135deg, #ff0066, #00ffcc)"
                 }
             })
             window.v1.ipcRenderer().On("window-blurred", () => {

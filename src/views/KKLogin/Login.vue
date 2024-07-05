@@ -102,10 +102,11 @@ export default {
                       userId: response.user.userId,
                       roleName: response.user.roles[0].roleName,
                       menutree: response.menutree,
-                      brokers: brokers
+                      brokers: brokers,
+                      ...response.user
                     })
                   }
-                  let $path = '/simulation/enquiry';
+                  let $path = '/simulation/main';
                   if (this.labelPosition === 'lily') {
                     $path = '/trade/bonds'
                   }

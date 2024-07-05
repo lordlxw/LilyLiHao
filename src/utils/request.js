@@ -29,8 +29,8 @@ service.interceptors.request.use(config => {
 
 service.interceptors.response.use(
   response => {
-    console.log(response.config.url);
-    console.log(response);
+    // console.log(response.config.url);
+    // console.log(response);
     // if (response.data === 'OK') {
     //   return true
     // }

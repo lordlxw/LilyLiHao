@@ -58,7 +58,7 @@ class MultiWindows {
   winOpts() {
     return {
       // 窗口图标
-      icon: join(process.env.ROOT, "/static/favicon.ico"),
+      icon: join(process.env.ROOT, "/static/lily_orange.ico"),
       backgroundColor: "#fff",
       show: false,
       // autoHideMenuBar: true,

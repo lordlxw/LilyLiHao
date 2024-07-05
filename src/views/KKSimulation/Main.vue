@@ -3,12 +3,16 @@
   <div style="height: 100%;">
     <title-bar>
       <div slot="left_bar">
-        <i slot="right_bar" class="el-icon-user-solid noDrag txt-white left_bar"></i>
+        <el-popover placement="bottom-end" width="500" trigger="hover">
+          <user-Info :userInfo="userInfo"></user-Info>
+          <i slot="reference" class="el-icon-user-solid noDrag txt-white left_bar"></i>
+        </el-popover>
+        <!-- <i class="el-icon-user-solid noDrag txt-white left_bar"></i> -->
         <!-- <span class="left_span">{{ userInfo.userName }}</span> -->
       </div>
       <i slot="right_bar" @click="drawerBrokers = true" class="el-icon-chat-dot-round noDrag txt-white right_bar"></i>
     </title-bar>
-    <div class="content">
+    <div class="content custom-scrollbar">
       <div class="do mb10">
         <el-row>
           <el-col :span="22">
@@ -30,10 +34,9 @@
       <div class="list" v-if="activeName == 0">
         <el-table v-swipe-copy="handleSwipeOrDblClick" v-loading="loading" ref="multipleTable" :data="tableData"
           tooltip-effect="dark" :height="'100%'" row-key="userTradeId" default-expand-all
-          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }" header-row-class-name="list-row"
-          header-cell-class-name="list-row" :row-class-name="tableRowClassName" :cell-class-name="tableColumnClassName"
-          :cell-style="cellStyle" :span-method="objectSpanMethod" @expand-change="handleExpandChange"
-          @sort-change="handleSortChange">
+          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }" header-cell-class-name="list-row"
+          :row-class-name="tableRowClassName" :cell-class-name="tableColumnClassName" :cell-style="cellStyle"
+          :span-method="objectSpanMethod" @expand-change="handleExpandChange" @sort-change="handleSortChange">
           <!-- :key="Math.random()" -->
           <el-table-column width="30"></el-table-column>
           <template v-for="itemHead in tableHead">
@@ -288,6 +291,12 @@
           </el-table-column>
         </el-table>
       </div>
+      <div class="list" v-if="activeName == 0">
+        <com-no-bonds :height="'100%'"></com-no-bonds>
+      </div>
+      <div class="list" style="margin-bottom: 20px;" v-if="activeName == 0">
+        <com-bonds :height="'100%'" :showLoginName="false"></com-bonds>
+      </div>
       <div class="list" v-if="activeName == 1">
         <el-scrollbar style="height: 100%;">
           <!-- {"TsCode":"230023.IB","Volume":717,"TradeTime":"16:46:42","Price":2.5315,"IssueRate":"3%","ChangeBP":0.1000,"HighPrice":2.5335,"LowPrice":2.5285} -->
@@ -461,6 +470,9 @@ import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
 import * as util from '@/utils/util'
 import { debounce } from '@/utils/debounce'
+import UserInfo from '@/components/UserInfo.vue'
+import ComNoBonds from './ComNoBonds.vue';
+import ComBonds from './ComBonds.vue';
 import moment from 'moment'
 let tableCurrentRelativeNum = ''
 let currentRelativeNum = ''
@@ -480,7 +492,10 @@ export default {
     EnquiryDifficult,
     RealEnquiryRoll,
     AccountRiskControl,
-    MainSocket
+    MainSocket,
+    ComNoBonds,
+    ComBonds,
+    UserInfo
   },
   data() {
     // 金额格式验证
@@ -600,7 +615,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      userInfo: "getUserInfo"
+      userInfo: "getUserInfo",
+      urlParams: "getUrlParams"
     }),
     ...mapState({
       enquiryInfo: (state) => state.enquiryInfo,
@@ -1486,6 +1502,7 @@ export default {
   padding: 10px;
   background-color: rgb(32, 32, 32);
   height: calc(100% - 40px);
+  overflow-y: scroll;
 
   .risk-control {
     border-radius: 3px;
@@ -1564,9 +1581,11 @@ export default {
   .list {
     border-radius: 3px;
     overflow: hidden;
-    height: calc(100% - 170px);
+    height: calc(100% - 180px);
+    // height: 500px;
     background-color: $box-black;
     color: $color-white;
+    margin-bottom: 10px;
 
     >>>.el-table {
       //background-color: $box-black;

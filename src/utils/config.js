@@ -151,8 +151,9 @@ export default {
     updateTime: { label: '修改时间', prop: 'updateTime', width: '146', align: 'left', show: true },
     tradeTime: { label: '成交时间', prop: 'tradeTime', width: '160', align: 'left', show: true },
     tradeDate: { label: '成交日期', prop: 'tradeDate', width: '146', align: 'left', show: true },
-    tradeTime2: { label: '成交时间', prop: 'tradeTime2', width: '146', align: 'left', show: true },
-    tradeuser: { label: '交易员', prop: 'tradeuser', width: '100', align: 'left', show: true, showOverflowTooltip: true }
+    tradeTime2: { label: '成交时间2', prop: 'tradeTime2', width: '146', align: 'left', show: true },
+    tradeuser: { label: '交易员', prop: 'tradeuser', width: '100', align: 'left', show: true, showOverflowTooltip: true },
+    brokerId: { label: '中介', prop: 'brokerId', width: '70', align: 'left', show: true },
     // 询价成交重要排序：成交价格  成交面额 成交交割日期  交易对手 联系方式
   },
   // 未平仓，已平表头
@@ -176,7 +177,7 @@ export default {
     yanjiuyuanName: { label: '研究员', prop: 'yanjiuyuanName', width: '100', align: 'left', show: true, showOverflowTooltip: true },
     createTime: { label: '成交时间', prop: 'createTime', width: '146', align: 'left', show: true },
     tradeDate: { label: '成交日期', prop: 'tradeDate', width: '146', align: 'left', show: true },
-    tradeTime: { label: '成交时间', prop: 'tradeTime', width: '146', align: 'left', show: true },
+    tradeTime: { label: '交易时间', prop: 'tradeTime', width: '146', align: 'left', show: true },
     counterParty: { label: '交易对手', prop: 'counterParty', width: '90', align: 'left', show: true },
     contactPerson: { label: '联系人', prop: 'contactPerson', width: '90', align: 'left', show: true },
     contactType: { label: '联系方式', prop: 'contactType', width: '100', align: 'left', show: true },

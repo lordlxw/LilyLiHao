@@ -6,7 +6,7 @@
                     <div class="chat-item">
                         <MChatBox :ref="'MChatBox' + brokerid" :boxHeight="boxHeight" :config="config"
                             :dialogChatBoxVisible="false" :userName="userInfo.userName" @handleClose="() => { }"
-                            :messages="chatMessages[brokerid] || []" :mine="mine">
+                            :mine="mine">
                         </MChatBox>
                     </div>
                 </el-main>
@@ -56,7 +56,7 @@ export default {
             console.log("::::::::::::", item)
             // eslint-disable-next-line eqeqeq
             if (this.brokerid == item.brokerId && this.$refs[`MChatBox${item.brokerId}`]) {
-                this.$refs[`MChatBox${item.brokerId}`].pushMsgs(item);
+                this.$refs[`MChatBox${item.brokerId}`].pushMsgs([item]);
             } else {
                 this.initChatMessages();
             }
@@ -115,6 +115,8 @@ export default {
                 const createTime = `${util.dateFormat(new Date(), "YYYY-MM-DD")} 00:00:00`;
                 const { value: msgs } = await apiTrade.getChatMessagesByCondition({ createTime, })
                 this.chatMessages = groupBy(msgs, item => item.brokerId) || {}
+                const messages = this.chatMessages[this.brokerid] || [];
+                this.$refs[`MChatBox${this.brokerid}`].pushMsgs(messages);
             })
         },
     },
@@ -158,6 +160,7 @@ const groupBy = (array, key) => {
 
 .chat-box {
     height: 100%;
+
     .chat-header {
         background-color: #474747;
         color: #333;

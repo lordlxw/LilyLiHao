@@ -124,12 +124,6 @@ export default {
             type: Number,
             default: 200
         },
-        messages: {
-            type: Array,
-            default() {
-                return []
-            }
-        },
         config: {
             type: Object,
             default() {
@@ -165,20 +159,9 @@ export default {
             value: '',
             dialogChatBoxVisible: false,
             msgShow: false,
-            describe: ""
+            describe: "",
+            messages: []
 
-        }
-    },
-    watch: {
-        messages(newVal, oldVal) {
-            // if (newVal && newVal.length > 0) {
-            //     this.describe = newVal
-            //         .filter(n => n.direction === 0) // 过滤掉小于3的数字
-            //         .sort((a, b) => new Date(b.createTime) - new Date(a.createTime))[0].chatMessage;
-            // }
-            this.$nextTick(() => {
-                this.scrollToBottom();
-            });
         }
     },
     computed: {
@@ -202,10 +185,18 @@ export default {
             const container = this.$refs.scrollContainer;
             return container ? (container.scrollTop = container.scrollHeight) : null;
         },
-        pushMsgs(item) {
-            console.log("::::::::::::", item)
-            this.messages.push(item)
-            this.msgShow = item.direction === 1 ? true : false;
+        pushMsgs(items) {
+            console.log("::::::::::::", items)
+            if (items.length === 1) {
+                this.msgShow = items[0].direction === 1 ? true : false;
+                this.messages.push(items[0])
+                if (this.msgShow) {
+                    this.describe = items[0].chatMessage
+                }
+            } else {
+                this.msgShow = false;
+                this.messages = this.messages.concat(items)
+            }
             this.$nextTick(() => {
                 this.scrollToBottom();
             });

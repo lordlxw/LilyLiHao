@@ -128,10 +128,10 @@
     "copyright": "Copyright © 2024",
     "mac": {
       "category": "public.app-category.utilities",
-      "icon": "static/favicon.ico"
+      "icon": "static/lily_orange.ico"
     },
     "win": {
-      "icon": "static/favicon.ico"
+      "icon": "static/lily_orange.ico"
     },
     "nsis": {
       "oneClick": false,

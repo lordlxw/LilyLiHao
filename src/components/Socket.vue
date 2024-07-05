@@ -21,7 +21,9 @@ import * as util from '@/utils/util'
 import api from "@/api/kk_trade";
 import moment from 'moment'
 
-let lockReconnect = false
+let lockReconnect = false;
+let pingcangTimer = null;
+let pingcangNotify = null;
 export default {
   mixins: [pageMixin],
   components: {
@@ -31,7 +33,8 @@ export default {
     return {
       dialogTableVisible: false,
       notifyRejection: {},
-      reconnectTimer: null
+      reconnectTimer: null,
+      pingcangSeconds: 0,
     }
   },
   created() {
@@ -44,16 +47,6 @@ export default {
   },
   methods: {
     ...mapMutations(["SET_SOCKET_MAIN", "SET_SOCKET_KLINE"]),
-    // 消息
-    // showMsg() {
-    //   Promise.all([
-    //     this.dialogTableVisible = true
-    //   ]).then(() => {
-    //     if (this.dialogTableVisible) {
-    //       this.$refs.tradeEnquiry.loadInitData()
-    //     }
-    //   })
-    // },
     // ************websocket start**************************
     // 初始化
     initSocket() {
@@ -214,6 +207,65 @@ export default {
                 case 'error':
                   if (msgJson.data.errorCode === '0001') {
                     Router.push({ path: '/login' })
+                  }
+                  break
+                case 'userStatusInfo':
+                  const { status } = msgJson.data
+                  const userInfo = { ...self.userInfo, status }
+                  self.$store.commit('SET_USER_INFO', userInfo)
+                  break
+                case 'qiangping_inform':
+                  if (window.location.href.includes("main")) {
+                    const { restSeconds, message, pingcangAction } = msgJson.data;
+                    if (pingcangNotify !== null) {
+                      pingcangNotify.close()
+                      pingcangNotify = null
+                      clearInterval(pingcangTimer)
+                      pingcangTimer = null;
+                    }
+                    if (pingcangAction === "warn") {
+                      pingcangNotify = self.$notify.error({
+                        title: '强平预警',
+                        dangerouslyUseHTMLString: true,
+                        message: `${message}. <i id="countDownNumber" style="color: #f00;font-weight:700;padding: 0 0.01rem">${self.pingcangSeconds}</i>`,
+                        showClose: false,
+                        duration: 0,
+                        offset: 30
+                      });
+                      if (restSeconds == null) {
+                        break
+                      }
+                      self.pingcangSeconds = restSeconds;
+
+                      pingcangTimer = setInterval(() => {
+                        if (self.pingcangSeconds > 0) {
+                          self.pingcangSeconds--;
+                          let dom = document.querySelector('#countDownNumber');
+                          dom.innerText = self.pingcangSeconds;
+                        } else {
+                          pingcangNotify.close()
+                          pingcangNotify = null;
+                          clearInterval(pingcangTimer)
+                          pingcangTimer = null;
+                        }
+                      }, 1000)
+                    } else if (pingcangAction === "execute") {
+                      pingcangNotify = self.$notify.error({
+                        title: '执行强平',
+                        message: `${message}`,
+                        showClose: true,
+                        duration: 0,
+                        offset: 30
+                      });
+                    } else if (pingcangAction === "cancel") {
+                      pingcangNotify = self.$notify.info({
+                        title: '强平撤销',
+                        message: `${message}`,
+                        showClose: true,
+                        duration: 0,
+                        offset: 30
+                      });
+                    }
                   }
                   break
                 case 'chat_message':

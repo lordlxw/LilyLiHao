@@ -62,18 +62,14 @@ const router = new Router({
           path: '/simulation/klinevertical',
           component: () => import('@/views/KKSimulation/KLineVertical.vue')
         },
-        {
-          path: '/simulation/fourScreen',
-          component: () => import('@/views/KKSimulation/FourScreen.vue')
-        },
          // 聊天
          {
           path: '/simulation/chat',
           component: () => import('@/views/KKSimulation/Chat.vue'),
         },
         {
-          path: '/simulation/enquiry',
-          component: () => import('@/views/KKSimulation/ComEnquiry.vue')
+          path: '/simulation/main',
+          component: () => import('@/views/KKSimulation/Main.vue')
         },
         {
           path: '/simulation/chatitem',

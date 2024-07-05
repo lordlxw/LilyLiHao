@@ -85,8 +85,9 @@ export default {
 
 .grid-content {
     text-align: center;
-    font-weight: bold;
+    font-weight: 600;
     font-family: fangsong;
+    font-size: 14px;
 }
 
 /* .colume2 {
