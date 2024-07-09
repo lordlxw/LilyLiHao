@@ -18,7 +18,7 @@
           <el-col :span="22">
             <el-radio-group v-model="activeName" class="ml10">
               <el-radio-button :label="0">我的交易</el-radio-button>
-              <el-radio-button :label="1">龙虎榜</el-radio-button>
+              <el-radio-button :label="1">成交统计</el-radio-button>
             </el-radio-group>
           </el-col>
           <el-col :span="2" class="text-right">
@@ -301,58 +301,76 @@
         <el-scrollbar style="height: 100%;">
           <!-- {"TsCode":"230023.IB","Volume":717,"TradeTime":"16:46:42","Price":2.5315,"IssueRate":"3%","ChangeBP":0.1000,"HighPrice":2.5335,"LowPrice":2.5285} -->
           <el-row class="hot-herder">
-            <el-col :span="3">
+            <el-col :span="2">
               <div class="grid-content bg-purple">券号</div>
             </el-col>
-            <el-col :span="3">
+            <el-col :span="2">
               <div class="grid-content bg-purple">交易量</div>
             </el-col>
             <el-col :span="3">
               <div class="grid-content bg-purple">最近交易时间</div>
             </el-col>
-            <el-col :span="3">
+            <el-col :span="2">
               <div class="grid-content bg-purple">交易价格</div>
             </el-col>
-            <el-col :span="3">
+            <el-col :span="2">
               <div class="grid-content bg-purple">票面利率</div>
             </el-col>
-            <el-col :span="3">
+            <el-col :span="2">
               <div class="grid-content bg-purple">涨跌BP</div>
             </el-col>
-            <el-col :span="3">
+            <el-col :span="2">
               <div class="grid-content bg-purple">今日最高</div>
             </el-col>
-            <el-col :span="3">
+            <el-col :span="2">
               <div class="grid-content bg-purple">今日最低</div>
+            </el-col>
+            <el-col :span="2">
+              <div class="grid-content bg-purple">类型</div>
+            </el-col>
+            <el-col :span="2">
+              <div class="grid-content bg-purple">年限</div>
+            </el-col>
+            <el-col :span="2">
+              <div class="grid-content bg-purple">PVBP</div>
             </el-col>
           </el-row>
           <div style="margin-top: 40px;" v-if="hotsList.length > 0">
             <el-row class="hot-item" v-for="item in hotsList" :key="item.TsCode"
               :style="{ backgroundColor: item.highlight ? '#f5776bcc' : '#ffffff00' }"
               @dblclick.native="openMoreThis('/simulation/klinevertical', item.TsCode)">
-              <el-col :span="3">
+              <el-col :span="2">
                 <div class="grid-content bg-purple">{{ item.TsCode }}</div>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="2">
                 <div class="grid-content txt-cyan">{{ item.Volume }}</div>
               </el-col>
               <el-col :span="3">
                 <div class="grid-content bg-purple">{{ item.TradeTime }}</div>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="2">
                 <div class="grid-content txt-red">{{ item.Price }}</div>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="2">
                 <div class="grid-content bg-purple">{{ item.IssueRate }}</div>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="2">
                 <div class="grid-content bg-purple">{{ item.ChangeBP }}</div>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="2">
                 <div class="grid-content bg-purple">{{ item.HighPrice }}</div>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="2">
                 <div class="grid-content bg-purple">{{ item.LowPrice }}</div>
+              </el-col>
+              <el-col :span="2">
+                <div class="grid-content bg-purple">无数据</div>
+              </el-col>
+              <el-col :span="2">
+                <div class="grid-content bg-purple">无数据</div>
+              </el-col>
+              <el-col :span="2">
+                <div class="grid-content bg-purple">无数据</div>
               </el-col>
             </el-row>
           </div>
@@ -1626,7 +1644,7 @@ export default {
       height: 40px;
       line-height: 40px;
       text-align: center;
-      font-size: 18px;
+      font-size: 16px;
       font-family: fangsong;
     }
   }

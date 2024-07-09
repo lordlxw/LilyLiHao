@@ -133,9 +133,16 @@ export default {
                       window.v1.close();
                     } else {
                       window.v1.getAllDisplays().then((response) => {
+                        const maxWidth = Math.max(...response.map(display => display.bounds.width));
+                        const minWidth = Math.ceil(maxWidth / 2 + 100);
+                        const minHeight = Math.ceil(minWidth * 0.63);
                         const args = {
+                          width: minWidth, // 窗口宽度
+                          height: minHeight, // 窗口高度
+                          minWidth: minWidth, // 窗口最小宽度
+                          maxWidth: minWidth,
                           isMainWin: true,
-                          resize: false, // 是否支持缩放
+                          resize: true, // 是否支持缩放
                           maximize: false, // 最大化窗口
                           isMultiWin: true, // 是否支持多开窗口
                           route: $path

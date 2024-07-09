@@ -55,13 +55,14 @@
         <el-button type="default" slot="reference" class="mr10" size="mini"
           @click="handleLoadCurrentRow(bondsIsSelection[0])">改违约</el-button>
       </el-popover>
-      <el-button v-if="setAuth('bonds:allexport')" type="primary" size="mini" @click="handleAllExport">全量导出</el-button>
-      <el-button v-if="setAuth('bonds:addexport')" type="primary" size="mini" class="mr10"
+      <el-button v-if="setAuth('bonds:allexport') && false" type="primary" size="mini"
+        @click="handleAllExport">全量导出</el-button>
+      <el-button v-if="setAuth('bonds:addexport') && false" type="primary" size="mini" class="mr10"
         @click="handleAddExport">增量导出</el-button>
       <el-tag :type="totalProfit.toString().indexOf('-') !== -1 ? 'danger' : 'success'
         " class="mr10" v-if="setAuth('reward:datatotal')">已平盈亏：<b>{{ totalProfit }}</b></el-tag>
-      <el-tag type="success" class="mr10">买：<b>{{ buyVolumn }}</b></el-tag>
-      <el-tag type="danger" class="mr10">卖：<b>{{ saleVolumn }}</b></el-tag>
+      <el-tag type="success" class="mr10">买：<b>{{ buyVolumn || 0 }}</b></el-tag>
+      <el-tag type="danger" class="mr10">卖：<b>{{ saleVolumn || 0 }}</b></el-tag>
       <div style="float: right; margin-left: 20px; line-height:30px;" v-if="showLoginName">
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">
@@ -110,7 +111,7 @@
           </el-table-column>
         </template>
         <el-table-column></el-table-column>
-        <el-table-column fixed="right" align="center" label="操作" width="150">
+        <el-table-column fixed="right" align="center" label="操作" width="150" v-if="false">
           <template slot-scope="scope">
             <el-button @click="handleBondsEditClick(scope.row)" type="text" size="small" v-if="
               setAuth('bonds:update') &&
@@ -211,19 +212,11 @@
             </el-popover>
           </template>
         </el-table-column>
-        <!-- <el-table-column
-                fixed="right"
-                align="center"
-                label="交割操作"
-                width="90"
-                v-if="setAuth('bonds:delivery')"
-              >
-                <template slot-scope="scope">
-                  <el-button type="text" @click="handleDeliveryClick(scope)"
-                    >交割</el-button
-                  >
-                </template>
-              </el-table-column> -->
+        <el-table-column fixed="right" align="center" label="交割操作" width="90" v-if="setAuth('bonds:delivery')">
+          <template slot-scope="scope">
+            <el-button type="text" @click="handleDeliveryClick(scope)">交割</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
 

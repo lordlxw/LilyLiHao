@@ -3,7 +3,7 @@
     <div class="do">
       <el-button v-if="['研究员', '交割员'].indexOf(userInfo.roleName) !== -1" size="mini" @click="handleDefaultExpandAll">{{
         defaultExpandAll ? "全收" : "全展" }}</el-button>
-      <el-button v-if="setAuth('nobonds:allexport')" type="primary" size="mini"
+      <el-button v-if="setAuth('nobonds:allexport') && false" type="primary" size="mini"
         @click="handleNobondsAllExport">全量导出</el-button>
       <el-popover v-if="setAuth('nobonds:break') && noBondsIsSelection.length > 0" placement="bottom-start"
         ref="popover-deliveryback">
@@ -62,8 +62,8 @@
       </el-popover>
       <el-tag :type="totalFloatProfit.toString().indexOf('-') !== -1 ? 'danger' : 'success'
         " class="ml10" v-if="setAuth('reward:datatotal')">浮动盈亏：<b>{{ totalFloatProfit }}</b></el-tag>
-      <el-tag type="success" class="ml10">买：<b>{{ noBondsBuyVolumn }}</b></el-tag>
-      <el-tag type="danger" class="ml10">卖：<b>{{ noBondsSaleVolumn }}</b></el-tag>
+      <el-tag type="success" class="ml10">买：<b>{{ noBondsBuyVolumn || 0 }}</b></el-tag>
+      <el-tag type="danger" class="ml10">卖：<b>{{ noBondsSaleVolumn || 0 }}</b></el-tag>
     </div>
     <div class="table mt10" ref="noBondsDo">
       <el-table v-if="isShow" ref="noBondsTable" v-swipe-copy="handleSwipeOrDblClick" v-loading="loading"
@@ -99,16 +99,16 @@
           </template>
         </template>
         <el-table-column></el-table-column>
-        <!-- <el-table-column fixed="right" align="center" label="操作" width="150">
+        <el-table-column fixed="right" align="center" label="操作" width="150">
           <template slot-scope="scope">
             <el-button type="text" v-if="setAuth('bonds:cover') && scope.row.realTradeId === null"
               @click="handleBondsCover(scope.row)">平仓</el-button>
-            <el-button type="text" v-if="
+            <!-- <el-button type="text" v-if="
               setAuth('nobonds:roll') &&
               scope.row.realTradeId === null &&
               scope.row.gunnable
             " @click="handleRoll(scope.row)">滚单</el-button>
-            <el-button @click="handleNoBondsEditClick(scope.row)" type="text" size="small" v-if="
+             <el-button @click="handleNoBondsEditClick(scope.row)" type="text" size="small" v-if="
               setAuth('nobonds:update') &&
               scope.row.realTradeId !== null &&
               scope.row.status === 11 &&
@@ -205,9 +205,9 @@
                 <el-button type="text" @click="handleNoBondsSayBreakRejectionClick(scope)">确认</el-button>
               </div>
               <el-button type="text" slot="reference" class="ml10">拒绝口违</el-button>
-            </el-popover>
+            </el-popover> -->
           </template>
-        </el-table-column> -->
+        </el-table-column>
       </el-table>
     </div>
     <el-dialog title="平仓" width="500px;" :visible.sync="dialogBondsCoverFormVisible" append-to-body

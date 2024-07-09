@@ -336,5 +336,12 @@ export default {
       method: "post",
       data
     });
+  },
+  messageConsumed(data) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/qpinform/messageconsumed`,
+      method: "post",
+      data
+    });
   }
 };

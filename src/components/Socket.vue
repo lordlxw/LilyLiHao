@@ -216,7 +216,7 @@ export default {
                   break
                 case 'qiangping_inform':
                   if (window.location.href.includes("main")) {
-                    const { restSeconds, message, pingcangAction } = msgJson.data;
+                    const { restSeconds, message, pingcangAction, messageId } = msgJson.data;
                     if (pingcangNotify !== null) {
                       pingcangNotify.close()
                       pingcangNotify = null
@@ -255,7 +255,10 @@ export default {
                         message: `${message}`,
                         showClose: true,
                         duration: 0,
-                        offset: 30
+                        offset: 30,
+                        onClose: async () => {
+                          await api.messageConsumed({ messageId })
+                        }
                       });
                     } else if (pingcangAction === "cancel") {
                       pingcangNotify = self.$notify.info({
@@ -263,7 +266,10 @@ export default {
                         message: `${message}`,
                         showClose: true,
                         duration: 0,
-                        offset: 30
+                        offset: 30,
+                        onClose: async () => {
+                          await api.messageConsumed({ messageId })
+                        }
                       });
                     }
                   }

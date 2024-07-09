@@ -9,23 +9,25 @@
         <span class="colume4">{{ source.tradetime }}</span>
     </li> -->
 
-    <el-row v-if="!source.unToday" :class="funcSelectColor(source.dealtype)" class="trans-body-item" style="height: 24px; line-height: 24px"
-        @dblclick.native="changeForm(source.tradeprice, source.brokerid)">
+    <el-row v-if="!source.unToday" :class="funcSelectColor(source.dealtype)" class="trans-body-item"
+        style="height: 24px; line-height: 24px" @dblclick.native="changeForm(source.tradeprice, source.brokerid)">
         <el-col :span="5">
-            <div class="grid-content colume1 ">
+            <div class="grid-content ">
                 <span>{{ source.dealtype }}</span>
             </div>
+        </el-col>
+        <el-col :span="8">
+            <div class="grid-content ">{{ source.tradetime }}</div>
         </el-col>
         <el-col :span="6">
             <div class="grid-content ">{{
                 source.tradeprice | moneyFormat(4)
-            }}</div>
+                }}</div>
         </el-col>
         <el-col :span="5">
-            <div class="grid-content ">{{ source.brokerName }}</div>
-        </el-col>
-        <el-col :span="8">
-            <div class="grid-content ">{{ source.tradetime }}</div>
+            <div class="grid-content colume1">
+                <span :style="{ background: spanBgColor(source.brokerid) }">{{ source.brokerName }}</span>
+            </div>
         </el-col>
     </el-row>
 </template>
@@ -61,13 +63,34 @@ export default {
                     return 'txt-orange'
             }
         },
+        spanBgColor(brokerid) {
+            switch (brokerid) {
+                case 1:
+                    return '#03a9f4'
+                case 2:
+                    return '#009688'
+                case 3:
+                    return '#ffc107'
+                case 4:
+                    return '#ff5722'
+                case 5:
+                    return '#9e9e9e'
+                case 6:
+                    return '#607d8b'
+                case 11:
+                    return '#e91e63'
+                case 12:
+                    return '#f44336'
+                default:
+                    return 'txt-orange'
+            }
+        }
     },
     mounted() { }
 }
 </script>
 <style>
-
-.trans-body-item:hover{
+.trans-body-item:hover {
     background-color: rgb(90, 90, 90);
 }
 
@@ -80,14 +103,18 @@ export default {
     height: 20px;
     line-height: 20px;
     color: white;
-
+    font-size: 14px
 }
 
 .grid-content {
     text-align: center;
     font-weight: 600;
     font-family: fangsong;
-    font-size: 14px;
+    font-size: 14px !important;
+}
+
+.grid-content span {
+    font-size: 14px
 }
 
 /* .colume2 {

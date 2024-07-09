@@ -26,7 +26,7 @@ const defaultConfig = {
   width: 1440, // 窗口宽度
   height: 900, // 窗口高度
   minWidth: 1440, // 窗口最小宽度
-  minHeight: 900, // 窗口最小高度
+  minHeight: 600, // 窗口最小高度
   maxWidth: 0,
   maxHeight: 0,
   x: "", // 窗口相对于屏幕左侧坐标
@@ -218,6 +218,10 @@ class MultiWindows {
         });
       }
     }
+
+    globalShortcut.register("CommandOrControl+Alt+O", () => {
+      this.focusAllWin();
+    });
     return "F" + count;
   }
 
@@ -239,6 +243,18 @@ class MultiWindows {
           this.getWin(i).close();
         } else {
           app.quit();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  focusAllWin() {
+    try {
+      for (let i in this.winLs) {
+        if (this.getWin(i) && !this.getWin(i).isFocused()) {       
+          this.getWin(i).focus();
         }
       }
     } catch (error) {

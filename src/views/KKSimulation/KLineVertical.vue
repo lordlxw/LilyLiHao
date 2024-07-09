@@ -252,39 +252,19 @@
             </div>
             <!-- 交易 -->
             <div class="r-trans" v-loading="leftChangeLoad" :style="{ height: recordHeight }">
-              <!-- <el-scrollbar v-if="transactionAllList.length > 0">
-                <ul class="mt20" style="margin-top: 25px">
-                  <li class="li-first" style="height: 25px; line-height: 25px">
-                    <span class="colume1">方向</span>
-                    <span class="colume2">价格</span>
-                    <span class="colume3">中介</span>
-                    <span class="colume4">交易时间</span>
-                  </li>
-                  <li v-for="(item, index) in transactionAllList" :key="index" class="trans_item" v-if="!item.unToday"
-                    :class="funcSelectColor(item.dealtype)" style="height: 20px; line-height: 20px"
-                    @dblclick="changeForm(item.tradeprice, item.brokerid)">
-                    <span class="colume1"><span>{{ item.dealtype }}</span></span>
-                    <span class="colume2">{{
-                      item.tradeprice | moneyFormat(4)
-                    }}</span>
-                    <span class="colume3">{{ item.brokerName }}</span>
-                    <span class="colume4">{{ item.tradetime }}</span>
-                  </li>
-                </ul>
-              </el-scrollbar> -->
               <div style="height: 100%">
                 <el-row :gutter="0" class="trans-header pr10">
                   <el-col :span="5">
                     <div class="grid-content txt-white">方向</div>
+                  </el-col>
+                  <el-col :span="8">
+                    <div class="grid-content txt-white">交易时间</div>
                   </el-col>
                   <el-col :span="6">
                     <div class="grid-content txt-white">价格</div>
                   </el-col>
                   <el-col :span="5">
                     <div class="grid-content txt-white">中介</div>
-                  </el-col>
-                  <el-col :span="8">
-                    <div class="grid-content txt-white">交易时间</div>
                   </el-col>
                 </el-row>
                 <virtual-list class="trans-body custom-scrollbar " :data-key="'tradeid'" :extra-props="{ changeForm }"
