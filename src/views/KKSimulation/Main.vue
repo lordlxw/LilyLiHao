@@ -13,7 +13,7 @@
       <i slot="right_bar" @click="drawerBrokers = true" class="el-icon-chat-dot-round noDrag txt-white right_bar"></i>
     </title-bar>
     <div class="content custom-scrollbar">
-      <div class="do mb10">
+      <div class="do mb10" v-if="false">
         <el-row>
           <el-col :span="22">
             <el-radio-group v-model="activeName" class="ml10">
@@ -31,7 +31,7 @@
       <div class="mb10 risk-control">
         <account-risk-control></account-risk-control>
       </div>
-      <div class="list" v-if="activeName == 0">
+      <div class="list mb10" :style="{ height: _itemStyle(0) + 'px' }" v-if="activeName == 0">
         <el-table v-swipe-copy="handleSwipeOrDblClick" v-loading="loading" ref="multipleTable" :data="tableData"
           tooltip-effect="dark" :height="'100%'" row-key="userTradeId" default-expand-all
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }" header-cell-class-name="list-row"
@@ -51,7 +51,7 @@
             </el-table-column>
           </template>
           <el-table-column fixed="right" :align="'center'" label="操作" width="220">
-            <template slot-scope="scope">
+            <template slot-scope="scope" v-if="!scope.row.qiangpingId">
               <el-button type="primary" v-if="
                 setAuth('inquiry:edit') &&
                 [0, 1, 4, 10].indexOf(scope.row.status) !== -1
@@ -291,13 +291,13 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="list" v-if="activeName == 0">
+      <div class="list mb10" :style="{ height: _itemStyle(1) + 'px' }" v-if="activeName == 0">
         <com-no-bonds :height="'100%'"></com-no-bonds>
       </div>
-      <div class="list" style="margin-bottom: 20px;" v-if="activeName == 0">
+      <div class="list mb10" :style="{ height: _itemStyle(2) + 'px' }" v-if="activeName == 0">
         <com-bonds :height="'100%'" :showLoginName="false"></com-bonds>
       </div>
-      <div class="list" v-if="activeName == 1">
+      <div class="list mb20" :style="{ height: _itemStyle(3) + 'px' }" v-if="activeName == 0">
         <el-scrollbar style="height: 100%;">
           <!-- {"TsCode":"230023.IB","Volume":717,"TradeTime":"16:46:42","Price":2.5315,"IssueRate":"3%","ChangeBP":0.1000,"HighPrice":2.5335,"LowPrice":2.5285} -->
           <el-row class="hot-herder">
@@ -349,7 +349,7 @@
                 <div class="grid-content bg-purple">{{ item.TradeTime }}</div>
               </el-col>
               <el-col :span="2">
-                <div class="grid-content txt-red">{{ item.Price }}</div>
+                <div class="grid-content txt-red">{{ item.Price | moneyFormat(4) }}</div>
               </el-col>
               <el-col :span="2">
                 <div class="grid-content bg-purple">{{ item.IssueRate }}</div>
@@ -358,19 +358,19 @@
                 <div class="grid-content bg-purple">{{ item.ChangeBP }}</div>
               </el-col>
               <el-col :span="2">
-                <div class="grid-content bg-purple">{{ item.HighPrice }}</div>
+                <div class="grid-content bg-purple">{{ item.HighPrice | moneyFormat(4) }}</div>
               </el-col>
               <el-col :span="2">
-                <div class="grid-content bg-purple">{{ item.LowPrice }}</div>
+                <div class="grid-content bg-purple">{{ item.LowPrice | moneyFormat(4) }}</div>
               </el-col>
               <el-col :span="2">
-                <div class="grid-content bg-purple">无数据</div>
+                <div class="grid-content bg-purple">{{ item.tstype || '无数据' }}</div>
               </el-col>
               <el-col :span="2">
-                <div class="grid-content bg-purple">无数据</div>
+                <div class="grid-content bg-purple">{{ item.maturity || '无数据' }}</div>
               </el-col>
               <el-col :span="2">
-                <div class="grid-content bg-purple">无数据</div>
+                <div class="grid-content bg-purple">{{ item.basicvalue || '无数据' }}</div>
               </el-col>
             </el-row>
           </div>
@@ -443,7 +443,7 @@
         <enquiry-difficult :row="currentDifficultRow" @change="handleDialogDifficultVisible"></enquiry-difficult>
       </el-dialog>
 
-      <main-socket></main-socket>
+      <main-socket @afterInitSocket="afterInitSocket"></main-socket>
     </div>
 
     <el-drawer direction="ltr" title="" :visible.sync="drawerBrokers" :with-header="false">
@@ -461,9 +461,7 @@
             </el-col>
             <el-col :span="20">
               <div class="item_name">{{ item.company }}</div>
-              <el-tooltip class="item" effect="dark" :content="'没有新消息...'" placement="top-start">
-                <div class="item_name item_content">{{ '没有新消息...' }}</div>
-              </el-tooltip>
+              <div class="item_name item_content">{{ '没有新消息...' }}</div>
             </el-col>
           </el-row>
         </el-card>
@@ -606,8 +604,7 @@ export default {
     activeName(newVal, oldVal) {
       if (newVal !== oldVal) {
         if (newVal === 1 && this.socketMain != null && this.hotsList.length <= 0) {
-          console.log("===========rank============")
-          this.socketMain.send(JSON.stringify({ "dataKey": "", "dataType": "rank" }))
+          // this.socketMain.send(JSON.stringify({ "dataKey": "", "dataType": "rank" }))
         }
       }
     },
@@ -634,16 +631,32 @@ export default {
   computed: {
     ...mapGetters({
       userInfo: "getUserInfo",
-      urlParams: "getUrlParams"
+      urlParams: "getUrlParams",
+      winInfo: "getWinInfo",
     }),
     ...mapState({
       enquiryInfo: (state) => state.enquiryInfo,
       hotsList: (state) => state.hotsList,
       socketMain: (state) => state.socketMain,
       chatMessage: (state) => state.chatMessage,
-    })
+    }),
+    _itemStyle() {
+      return (dom) => {
+        if (this.isElectron) {
+          const maxHeight = Math.max(...this.winInfo.displays.map(display => display.bounds.height));
+          const heightItem = dom === 0 ? maxHeight * 0.25 : dom === 1 ? maxHeight * 0.2 : dom === 2 ? maxHeight * 0.15 : dom === 3 ? maxHeight * 0.235 : 400;
+          return heightItem
+        } else {
+          return 400
+        }
+      }
+    },
   },
   methods: {
+    afterInitSocket() {
+      console.log("=============我正在订阅在龙虎榜")
+      this.socketMain.send(JSON.stringify({ "dataKey": "", "dataType": "rank" }))
+    },
     // 搜索事件
     handleSearch() {
       this.loadInitData()
@@ -1014,7 +1027,13 @@ export default {
     funcFormat(row, column) {
       switch (column.property) {
         case "status":
-          return config.funcKeyValue(row.status.toString(), "inquiryStatus");
+          if (row.qiangpingId && row.status === 1) {
+            return "强平中"
+          } else if (row.qiangpingId && row.status === 3) {
+            return "已强平"
+          } else {
+            return config.funcKeyValue(row.status.toString(), "inquiryStatus");
+          }
         case "direction":
           return config.funcKeyValue(row.direction, "directionMeta")
         case "deliveryTime":
@@ -1100,6 +1119,9 @@ export default {
     },
     // 滚单成交颜色框
     tableRowClassName({ row, rowIndex }) {
+      if (row.qiangpingId) {
+        return 'gd-red-row list-row';
+      }
       if (row.relativeNum && row.relativeNum.indexOf('GD_') !== -1) {
         if (rowIndex === 0) {
           tableCurrentRelativeNum = 'gd-odd-row'
@@ -1440,11 +1462,13 @@ export default {
       }
     }
   },
-  mounted() {
-    this.dispatchUserColumn()
+  created() {
     if (window.v1) {
       this.isElectron = window.v1.isElectron()
     }
+  },
+  mounted() {
+    this.dispatchUserColumn()
     // this.initFrameW('formLabelWidth', 120)
     // window.onresize = () => {
     //   this.initFrameW('formLabelWidth', 120)
@@ -1603,7 +1627,6 @@ export default {
     // height: 500px;
     background-color: $box-black;
     color: $color-white;
-    margin-bottom: 10px;
 
     >>>.el-table {
       //background-color: $box-black;
@@ -1619,7 +1642,7 @@ export default {
     }
 
     .hot-herder {
-      background-color: $box-black;
+      background-color: $header-black;
       position: absolute;
       width: 100%;
       z-index: 1;

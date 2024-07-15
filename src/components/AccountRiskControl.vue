@@ -27,9 +27,9 @@
       <el-col :span="4">
         <div class="grid-content ">
           日实盈：<span :style="calcToColor(riskControlData['solidProfit'])">{{
-          riskControlData["solidProfit"]
-        }}</span>
-        万
+            riskControlData["solidProfit"]
+          }}</span>
+          万
         </div>
       </el-col>
       <el-col :span="4">
@@ -51,9 +51,9 @@
       <el-col :span="4">
         <div class="grid-content">
           日回撤：<span :style="calcToColor(riskControlData['back'])">{{
-          riskControlData["back"]
-        }}</span>
-        万
+            riskControlData["back"]
+          }}</span>
+          万
         </div>
       </el-col>
       <el-col :span="4">
@@ -128,12 +128,13 @@ export default {
       userInfo: 'getUserInfo'
     }),
     ...mapState({
-      enquiryInfo: (state) => state.enquiryInfo
+      enquiryInfo: (state) => state.enquiryInfo,
+      riskInfo: (state) => state.riskInfo,
     })
   },
   watch: {
-    enquiryInfo() {
-      this.initRiskControlData()
+    riskInfo() {
+      this.riskControlData = this.riskInfo
     }
   },
   methods: {

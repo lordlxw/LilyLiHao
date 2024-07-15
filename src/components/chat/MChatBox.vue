@@ -186,7 +186,6 @@ export default {
             return container ? (container.scrollTop = container.scrollHeight) : null;
         },
         pushMsgs(items) {
-            console.log("::::::::::::", items)
             if (items.length === 1) {
                 this.msgShow = items[0].direction === 1 ? true : false;
                 this.messages.push(items[0])
@@ -195,6 +194,11 @@ export default {
                 }
             } else {
                 this.msgShow = false;
+                items = items.sort((a, b) => {
+                    const dateA = new Date(a.createTime);
+                    const dateB = new Date(b.createTime);
+                    return dateA - dateB;
+                })
                 this.messages = this.messages.concat(items)
             }
             this.$nextTick(() => {

@@ -1,6 +1,7 @@
 <template>
   <div style="height: 100%;">
     <div class="do">
+      <span class="txt-black mr20 font-bold">已平持仓 </span>
       <el-popover v-if="setAuth('bonds:break') && bondsIsSelection.length > 0" placement="bottom-start"
         ref="popover-deliveryback-bonds">
         <p>
@@ -60,9 +61,9 @@
       <el-button v-if="setAuth('bonds:addexport') && false" type="primary" size="mini" class="mr10"
         @click="handleAddExport">增量导出</el-button>
       <el-tag :type="totalProfit.toString().indexOf('-') !== -1 ? 'danger' : 'success'
-        " class="mr10" v-if="setAuth('reward:datatotal')">已平盈亏：<b>{{ totalProfit }}</b></el-tag>
-      <el-tag type="success" class="mr10">买：<b>{{ buyVolumn || 0 }}</b></el-tag>
-      <el-tag type="danger" class="mr10">卖：<b>{{ saleVolumn || 0 }}</b></el-tag>
+        " class="mr10" v-if="setAuth('reward:datatotal')" effect="dark">已平盈亏：<b>{{ totalProfit }}</b></el-tag>
+      <el-tag type="success" effect="dark" class="mr10">买：<b>{{ buyVolumn || 0 }}</b></el-tag>
+      <el-tag type="danger" effect="dark" class="mr10">卖：<b>{{ saleVolumn || 0 }}</b></el-tag>
       <div style="float: right; margin-left: 20px; line-height:30px;" v-if="showLoginName">
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">

@@ -3,6 +3,7 @@ $main-black: #202020;
 $hover-color: #2cad98;
 $hover-color2: #5270bd;
 $box-black: #2f3032;
+$header-black: #000000;
 $color-white: #FFFFFF;
 $color-black: #000000;
 $background-style: linear-gradient(to bottom, #2cad98 30%, #5270bd 100%);
@@ -458,9 +459,24 @@ a:hover {
   background: #e9dae9;
 }
 
+.el-table .gd-red-row {
+  background: #ff1100;
+  color: white !important;
+}
+
+.el-table .el-table__body tr.gd-red-row.hover-row>td {
+  background-color: transparent !important
+}
+
+
 .el-table .gd-even-row {
   background: rgb(243, 223, 223);
 }
+
+.el-table--enable-row-hover .el-table__body tr:hover>td {
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
 
 .el-table--small .el-table__cell {
   padding: 3px 0;
@@ -575,6 +591,39 @@ a:hover {
   padding: 0 10px;
 }
 
+/* 设置自定义动画类名 */
+.custom-dialog .el-dialog__wrapper {
+  -webkit-transition: none;
+  transition: none;
+}
+
+/* 触发动画 */
+.custom-dialog .el-dialog__wrapper:nth-child(1) {
+  -webkit-animation: dialog-fade-in 0.1s ease-in-out forwards;
+  animation: dialog-fade-in 0.1s ease-in-out forwards;
+}
+
+/* 定义动画 */
+@-webkit-keyframes dialog-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 
 .font-size-large {
   font-size: large;
@@ -615,7 +664,7 @@ a:hover {
 }
 
 .txt-green {
-  color: #00da3c !important;
+  color: #069c06 !important;
 }
 
 .txt-cyan {
@@ -627,6 +676,23 @@ a:hover {
   color: white !important;
 }
 
+.txt-black {
+  color: black !important;
+}
+
+.bg-red {
+  background-color: #ec0000 !important;
+  color: white;
+}
+
+.bg-green {
+  background-color: green !important;
+  color: white;
+}
+
+.font-bold {
+  font-weight: bold;
+}
 
 .noDrag {
   -webkit-app-region: no-drag;

@@ -27,6 +27,9 @@ const store = new Vuex.Store({
     // 询价单的一些默认设置默认设置
     defaultSet: {},
     userInfo: {},
+    riskInfo: {},
+    occupyInfo: [],
+    winInfo: {},
     enquiryInfo: "",
     hotsList: [],
     chatMessage: null,
@@ -134,6 +137,15 @@ const store = new Vuex.Store({
         };
       }
       return state.userInfo;
+    },
+    // 获取电脑基本信息
+    getWinInfo(state) {
+      if (localStorage.getItem(config.keys.winInfo)) {
+        state.winInfo = JSON.parse(localStorage.getItem(config.keys.winInfo));
+      } else {
+        state.winInfo = {};
+      }
+      return state.winInfo;
     }
   },
   actions: {},
@@ -157,6 +169,17 @@ const store = new Vuex.Store({
     SET_USER_INFO(state, userInfo) {
       state.userInfo = JSON.stringify(userInfo);
       localStorage.setItem(config.keys.userInfo, JSON.stringify(userInfo));
+    },
+    SET_RISK_INFO(state, riskInfo) {
+      state.riskInfo = riskInfo;
+    },
+    SET_OCCUPY_INFO(state, occupyInfo) {
+      state.occupyInfo = occupyInfo;
+    },
+    // 设置窗口信息
+    SET_WIN_INFO(state, winInfo) {
+      state.winInfo = JSON.stringify(winInfo);
+      localStorage.setItem(config.keys.winInfo, JSON.stringify(winInfo));
     },
     // 设置角色id
     SET_ROLEID(state, roleId) {

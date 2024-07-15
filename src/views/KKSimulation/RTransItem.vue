@@ -9,22 +9,26 @@
         <span class="colume4">{{ source.tradetime }}</span>
     </li> -->
 
-    <el-row v-if="!source.unToday" :class="funcSelectColor(source.dealtype)" class="trans-body-item"
-        style="height: 24px; line-height: 24px" @dblclick.native="changeForm(source.tradeprice, source.brokerid)">
-        <el-col :span="5">
+    <el-row v-if="(source.forwardcontact ? showForward : true)"
+        :class="funcSelectColor(source.dealtype)" class="trans-body-item" style="height: 24px; line-height: 24px"
+        @dblclick.native="changeForm(source.tradeprice, source.brokerid)">
+        <el-col :span="4">
             <div class="grid-content ">
                 <span>{{ source.dealtype }}</span>
             </div>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
             <div class="grid-content ">{{ source.tradetime }}</div>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="5">
             <div class="grid-content ">{{
                 source.tradeprice | moneyFormat(4)
                 }}</div>
         </el-col>
         <el-col :span="5">
+            <div class="grid-content ">{{ source.settleSpeed || '无' }}</div>
+        </el-col>
+        <el-col :span="4">
             <div class="grid-content colume1">
                 <span :style="{ background: spanBgColor(source.brokerid) }">{{ source.brokerName }}</span>
             </div>
@@ -46,6 +50,10 @@ export default {
         },
         changeForm: {
             type: Function,
+        },
+        showForward: {
+            default: false,
+            type: Boolean
         }
     },
     methods: {
@@ -108,7 +116,7 @@ export default {
 
 .grid-content {
     text-align: center;
-    font-weight: 600;
+    font-weight: bold;
     font-family: fangsong;
     font-size: 14px !important;
 }

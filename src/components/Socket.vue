@@ -77,6 +77,7 @@ export default {
             clearInterval(self.socketTimer)
             self.socketTimer = null
             self.socketHeart()
+            self.$emit('afterInitSocket')
           }
           // 浏览器端收消息，获得从服务端发送过来的文本消息
           self.socketMain.onmessage = function (msg) {
@@ -208,6 +209,14 @@ export default {
                   if (msgJson.data.errorCode === '0001') {
                     Router.push({ path: '/login' })
                   }
+                  break
+                case 'brokeroccupyinfo':
+                  const occupyInfo = msgJson.data
+                  self.$store.commit('SET_OCCUPY_INFO', occupyInfo)
+                  break
+                case 'userriskinfo':
+                  const riskinfo = msgJson.data
+                  self.$store.commit('SET_RISK_INFO', riskinfo)
                   break
                 case 'userStatusInfo':
                   const { status } = msgJson.data
@@ -1511,8 +1520,8 @@ export default {
             }
           }
           // 关闭事件
-          self.socketMain.onclose = function () {
-            console.log("websocket已关闭");
+          self.socketMain.onclose = function (code, reason) {
+            console.log("websocket已关闭", code, reason);
             self.reconnect()
           }
           // 发生了错误事件
@@ -1526,14 +1535,17 @@ export default {
     },
     // socket心跳
     socketHeart() {
+      const self = this
       this.socketTimer = setInterval(() => {
         if (self.socketMain) {
+          console.log("WebSocket Send Heartbeat : ", new Date())
           self.socketMain.send(JSON.stringify({ "dataKey": 'HELLO', "dataType": 'ping' }))
         }
       }, 30 * 1000)
     },
     // 重连
     reconnect() {
+      const self = this
       if (self.socketMain && self.socketMain.readyState === 1) {
         // 如果状态等于1代表websocket连接正常
         return
@@ -1544,7 +1556,7 @@ export default {
       // 让重连锁变为true,阻止进入下一个循环锁
       lockReconnect = true
       self.reconnectTimer = setTimeout(() => {
-        console.log("尝试重连")
+        console.log("尝试重连: ", new Date())
         Promise.all([
           lockReconnect = false
         ]).then(() => {

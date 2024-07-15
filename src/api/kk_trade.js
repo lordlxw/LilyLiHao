@@ -62,7 +62,7 @@ export default {
         // 债券编号
         tscode: params.tscode,
         // 成交量
-        volume: params.volume,
+        restVolume: params.restVolume,
         // 备注
         remark: params.remark,
         // 允许浮动
@@ -159,6 +159,38 @@ export default {
   inquiryQuery(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/listByCurrentUser`,
+      method: "get",
+      params: {
+        // 交割结束日期,示例值(2022-10-10)
+        deliveryDateEnd: params.deliveryDateEnd,
+        // 交割起始日期,示例值(2022-10-01)
+        deliveryDateStart: params.deliveryDateStart,
+        // 状态
+        status: params.status,
+        // 交易结束日期,示例值(2022-10-10)
+        tradeDateEnd: params.tradeDateEnd,
+        // 交易起始日期,示例值(2022-10-01)
+        tradeDateStart: params.tradeDateStart,
+        // 单号
+        tradeNum: params.tradeNum,
+        // 债券代码
+        tscode: params.tscode,
+        // 用户名称
+        userName: params.userName,
+        // 交易ID
+        userTradeId: params.userTradeId,
+        orderBy: params.orderBy,
+        isAsc: params.isAsc
+        // 当前页
+        // pageNum: params.pageNum,
+        // 显示条数
+        // pageSize: params.pageSize
+      }
+    });
+  },
+  kecheQuery(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/listKeche`,
       method: "get",
       params: {
         // 交割结束日期,示例值(2022-10-10)

@@ -1,6 +1,7 @@
 <template>
   <div style="height: 100%;">
     <div class="do">
+      <span class="txt-black mr20 font-bold">未平持仓 </span>
       <el-button v-if="['研究员', '交割员'].indexOf(userInfo.roleName) !== -1" size="mini" @click="handleDefaultExpandAll">{{
         defaultExpandAll ? "全收" : "全展" }}</el-button>
       <el-button v-if="setAuth('nobonds:allexport') && false" type="primary" size="mini"
@@ -60,10 +61,10 @@
         <el-button type="default" slot="reference" class="ml10" size="mini"
           @click="handleLoadCurrentRow(noBondsIsSelection[0])">改违约</el-button>
       </el-popover>
-      <el-tag :type="totalFloatProfit.toString().indexOf('-') !== -1 ? 'danger' : 'success'
-        " class="ml10" v-if="setAuth('reward:datatotal')">浮动盈亏：<b>{{ totalFloatProfit }}</b></el-tag>
-      <el-tag type="success" class="ml10">买：<b>{{ noBondsBuyVolumn || 0 }}</b></el-tag>
-      <el-tag type="danger" class="ml10">卖：<b>{{ noBondsSaleVolumn || 0 }}</b></el-tag>
+      <el-tag :type="riskInfo.toString().indexOf('-') !== -1 ? 'danger' : 'success'
+        " class="ml10" v-if="setAuth('reward:datatotal')" effect="dark">浮动盈亏：<b>{{ totalFloatProfit }}</b></el-tag>
+      <el-tag type="success" effect="dark" class="ml10" size="small" >买：<b>{{ noBondsBuyVolumn || 0 }}</b></el-tag>
+      <el-tag type="danger" effect="dark" class="ml10">卖：<b>{{ noBondsSaleVolumn || 0 }}</b></el-tag>
     </div>
     <div class="table mt10" ref="noBondsDo">
       <el-table v-if="isShow" ref="noBondsTable" v-swipe-copy="handleSwipeOrDblClick" v-loading="loading"
@@ -371,14 +372,18 @@ export default {
       this.$nextTick(() => {
         this.isShow = true;
       });
-    }
+    },
+    riskInfo() {
+      this.totalFloatProfit = this.riskInfo.floatProfit;
+    },
   },
   computed: {
     ...mapGetters({
       userInfo: "getUserInfo"
     }),
     ...mapState({
-      enquiryInfo: state => state.enquiryInfo
+      enquiryInfo: state => state.enquiryInfo,
+      riskInfo: (state) => state.riskInfo,
     })
   },
   methods: {

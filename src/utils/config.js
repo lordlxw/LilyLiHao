@@ -11,7 +11,8 @@ export default {
     'urlParams': 'urlParams',
     'currentTscode': 'currentTscode',
     'defaultSet': 'defaultSet',
-    'userInfo': 'userInfo'
+    'userInfo': 'userInfo',
+    'winInfo': 'winInfo'
   },
   // 菜单功能类型
   menuFunType: {
@@ -135,9 +136,9 @@ export default {
     realPrice: { label: '成交价', prop: 'realPrice', width: '66', align: 'left', show: true },
     volume: { label: '询量', prop: 'volume', width: '56', align: 'left', show: true },
     restVolume: { label: '剩余询量', prop: 'restVolume', width: '70', align: 'left', show: true },
-    realVolume: { label: '成交额', prop: 'realVolume', width: '60', align: 'left', show: true },
-    deliveryTime: { label: '询价交割', prop: 'deliveryTime', width: '90', align: 'left', show: true },
-    realDeliveryTime: { label: '成交交割', prop: 'realDeliveryTime', width: '90', align: 'left', show: true },
+    realVolume: { label: '成交量', prop: 'realVolume', width: '60', align: 'left', show: true },
+    deliveryTime: { label: '询清算速度', prop: 'deliveryTime', width: '90', align: 'left', show: true },
+    realDeliveryTime: { label: '成清算速度', prop: 'realDeliveryTime', width: '90', align: 'left', show: true },
     tscode: { label: '券码', prop: 'tscode', width: '70', align: 'left', show: true },
     direction: { label: '方向', prop: 'direction', width: '50', align: 'left', show: true },
     status: { label: '状态', prop: 'status', width: '70', align: 'left', show: true, sortable: true },

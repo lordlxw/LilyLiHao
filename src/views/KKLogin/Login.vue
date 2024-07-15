@@ -25,7 +25,7 @@
             </el-form-item>
             <el-form-item>
               <el-radio-group v-model="labelPosition" size="small">
-                <el-radio-button label="lily" disabled>管理</el-radio-button>
+                <el-radio-button label="lily" :disabled="isElectron" >管理</el-radio-button>
                 <el-radio-button label="Simulation">模拟</el-radio-button>
               </el-radio-group>
             </el-form-item>
@@ -120,6 +120,10 @@ export default {
                       })
                     }
 
+                    const displays = await window.v1.getAllDisplays();
+                    this.$store.commit('SET_WIN_INFO', {
+                      displays
+                    })
                     const klineWins = value && value.wins ? JSON.parse(value.wins) : [];
                     if (klineWins.length > 0 && this.labelPosition !== 'lily') {
                       klineWins.forEach((args, index) => {
@@ -132,29 +136,27 @@ export default {
                       });
                       window.v1.close();
                     } else {
-                      window.v1.getAllDisplays().then((response) => {
-                        const maxWidth = Math.max(...response.map(display => display.bounds.width));
-                        const minWidth = Math.ceil(maxWidth / 2 + 100);
-                        const minHeight = Math.ceil(minWidth * 0.63);
-                        const args = {
-                          width: minWidth, // 窗口宽度
-                          height: minHeight, // 窗口高度
-                          minWidth: minWidth, // 窗口最小宽度
-                          maxWidth: minWidth,
-                          isMainWin: true,
-                          resize: true, // 是否支持缩放
-                          maximize: false, // 最大化窗口
-                          isMultiWin: true, // 是否支持多开窗口
-                          route: $path
-                        }
+                      const maxWidth = Math.max(...displays.map(display => display.bounds.width));
+                      const minWidth = Math.ceil(maxWidth / 2 + 100);
+                      const minHeight = Math.ceil(minWidth * 0.63);
+                      const args = {
+                        width: minWidth, // 窗口宽度
+                        height: minHeight, // 窗口高度
+                        minWidth: minWidth, // 窗口最小宽度
+                        maxWidth: minWidth,
+                        isMainWin: true,
+                        resize: true, // 是否支持缩放
+                        maximize: false, // 最大化窗口
+                        isMultiWin: true, // 是否支持多开窗口
+                        route: $path
+                      }
 
-                        console.log(args)
-                        window.v1.createWin(args).then((response) => {
-                          window.v1.close();
-                        }).catch((error) => {
-                          // 处理错误
-                          console.error(error);
-                        });
+                      console.log(args)
+                      window.v1.createWin(args).then((response) => {
+                        window.v1.close();
+                      }).catch((error) => {
+                        // 处理错误
+                        console.error(error);
                       });
                     }
                   } else {

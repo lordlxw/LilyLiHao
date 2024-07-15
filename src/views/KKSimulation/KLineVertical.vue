@@ -7,12 +7,13 @@
             <li class="noDrag" v-for="item in loopmethodskey" :class="{ active: klineactive == item }" :key="item">
               <div v-if="item === 'Ticket图'" @click="klinemethods[item]">
                 <div class="el-dropdown-link">{{ item }}</div>
-                <el-dropdown @command="handleTicket" trigger="click">
+                <el-dropdown @command="handleTicket" :default-active="ticketDay" trigger="click">
                   <span class="el-dropdown-link">
                     <i class="el-icon-arrow-down "></i>
                   </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item v-for="key in 10" :key="key" :command="key">{{ key }}日</el-dropdown-item>
+                  <el-dropdown-menu slot="dropdown" :tabindex="ticketDay">
+                    <el-dropdown-item v-for="key in 10" :key="key" :command="key" :tabindex="key">{{ key
+                      }}日</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </div>
@@ -46,9 +47,11 @@
         <div class="center">
           <div ref="refKline" class="kline"></div>
           <!-- 交易框 -->
-          <div class="chatbox" v-loading="leftChangeLoad || loading">
+          <div class="chatbox" v-loading="leftChangeLoad || dialogVisible.show">
             <el-tabs type="border-card" style="border-radius: 3px;" v-model="activeName">
-              <el-tab-pane label="买（F1）" class="buy-form" name="buy">
+              <el-tab-pane
+                :label="'最大可买/卖：' + (riskControlData.limitBid || 0) + '/' + (riskControlData.limitOffer || 0)"
+                class="buy-form" name="buy">
                 <el-form :inline="true" label-width="65px" :model="buyForm" ref="buyForm" :rules="buyFormRules">
                   <el-form-item label="价格">
                     <el-input-number v-model="buyForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
@@ -59,11 +62,18 @@
                   </el-form-item>
                   <el-form-item label="债券号">
                     <el-select v-model="buyForm.tscode" filterable placeholder="请选择" class="slt-user"
-                      @change="handlerTscodeSelectWin">
+                      popper-class="slt-user" @change="handlerTscodeSelectWin">
                       <el-option v-for="item in tscodeList" :key="item.tscode" :label="item.tscode"
                         :value="item.tscode">
-                        <span style="float: left">{{ item.tscode }}</span>
-                        <span style="float: right;margin-left: 10px;">{{ item.bondname }}</span>
+                        <div>{{ item.tscode }} - {{ item.bondname }}</div>
+                        <!-- <el-row>
+                          <el-col :span="12">
+                            <div class="grid-content bg-purple">{{ item.tscode }}</div>
+                          </el-col>
+                          <el-col :span="12">
+                            <div class="grid-content bg-purple-light">{{ item.bondname }}</div>
+                          </el-col>
+                        </el-row> -->
                       </el-option>
                     </el-select>
                   </el-form-item>
@@ -74,10 +84,13 @@
                       @focus="keyDownReview" @blur="keyDown" step-strictly></el-input-number>
                   </el-form-item>
                   <el-form-item label="中介">
-                    <el-select v-model="buyForm.brokerid" clearable placeholder="系统选择" class="slt-user">
-                      <el-option v-for="item in intendComerOption" :key="item.id" :label="item.company"
-                        :value="item.brokerid">
-                        <div style="width: 50px; float: left">{{ item.company }}</div>
+                    <el-select v-model="buyForm.brokerid" clearable placeholder="系统选择" class="slt-user"
+                      popper-class="slt-user">
+                      <el-option v-for="item in intendComerOption" :disabled="item.disabled" :key="item.id"
+                        :label="item.company" :value="item.brokerid">
+                        <div style="width: 50px; float: left"><i class="el-icon-s-custom " :class="item.iconClass"></i>
+                          {{ item.company
+                          }}</div>
                         <div class="text-left" style="width: 50px;">{{ item.target }}</div>
                       </el-option>
                     </el-select>
@@ -95,21 +108,23 @@
                     <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
                   </el-form-item>
                   <el-form-item label=" ">
-                    <el-button type="primary" v-if="setAuth('inquiry:insert')"
-                      @click="submitForm('buyForm')">提交(enter)</el-button>
+                    <el-button type="primary" v-if="setAuth('inquiry:insert')" @click="submitForm('buyForm')">买
+                      (F1)</el-button>
+
+                    <el-button type="danger" v-if="setAuth('inquiry:insert')" @click="submitForm('saleForm')">卖
+                      (F2)</el-button>
+
                   </el-form-item>
 
                 </el-form>
 
               </el-tab-pane>
-              <el-tab-pane label="卖（F2）" class="sale-form" name="sale">
+              <!-- <el-tab-pane label="卖（F2）" class="sale-form" name="sale">
                 <el-form :inline="true" label-width="65px" :model="saleForm" ref="saleForm" :rules="saleFormRules">
                   <el-form-item label="价格">
                     <el-input-number v-model="saleForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
                       @blur="keyDown" @focus="keyDownReview(), handleMaxWait('saleForm')"
                       class="pricew"></el-input-number>
-                    <!-- <el-input-number v-model="buyForm.worstPrice" :step="0.05" class=" numbw"></el-input-number>
-                    <span class="txt-green"> BP</span> -->
                   </el-form-item>
                   <el-form-item label="债券号">
                     <el-select v-model="saleForm.tscode" filterable placeholder="请选择" class="slt-user"
@@ -122,7 +137,6 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="交易量">
-                    <!-- <el-input class="ipt-volume" v-model.number="saleForm.volume" placeholder="请输入交易量"></el-input> -->
                     <el-input-number class="ipt-volume" v-model="saleForm.volume" :step="1000" :min="2000"
                       @focus="keyDownReview" @blur="keyDown" step-strictly></el-input-number>
                   </el-form-item>
@@ -152,13 +166,21 @@
                       type="primary">提交(enter)</el-button>
                   </el-form-item>
                 </el-form>
-              </el-tab-pane>
+              </el-tab-pane> -->
             </el-tabs>
             <div class="shijia">
               <el-button
                 v-if="(activeName === 'buy' && buyForm.isMarketRoll === false) || (activeName === 'sale' && saleForm.isMarketRoll === false)"
                 type="default" size="mini" @click="handleGetPrice">市价</el-button>
             </div>
+            <div class="forward">
+              <el-tooltip :content="'是否包含远期: ' + (showForward ? '显示' : '隐藏')" placement="top">
+                <el-switch v-model="showForward" active-color="#008000" inactive-color="#ec0000" :active-value="true"
+                  :inactive-value="false">
+                </el-switch>
+              </el-tooltip>
+            </div>
+
             <el-popover width="425" placement="bottom-start" trigger="manual" ref="popover-set"
               v-model="popoverSetVisible">
               <div class="default-set-wrapper">
@@ -198,8 +220,7 @@
             <div class="r-out" style="height: 120px" v-loading="leftChangeLoad">
               <el-scrollbar v-if="businessOutList && businessOutList.length > 0">
                 <ul>
-                  <li v-for="(item, index) in businessOutList" :key="index"
-                    :title="item.volumecomment ? item.volumecomment : item.volume"
+                  <li v-for="(item, index) in businessOutList" :key="index" v-if="item.forward ? showForward : true"
                     style="height: 20px; line-height: 20px" @dblclick="changeForm(item.price, item.brokerid)">
                     <span>{{
                       item.brokerName
@@ -216,18 +237,12 @@
                   </li>
                 </ul>
               </el-scrollbar>
-              <!-- <el-skeleton v-else animated>
-            <template #template>
-              <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
-            </template>
-</el-skeleton> -->
             </div>
             <!-- 及期买入 -->
             <div class="r-in" style="height: 120px" v-loading="leftChangeLoad">
               <el-scrollbar v-if="businessInList && businessInList.length > 0">
                 <ul>
-                  <li v-for="(item, index) in businessInList" :key="index"
-                    :title="item.volumecomment ? item.volumecomment : item.volume"
+                  <li v-for="(item, index) in businessInList" :key="index" v-if="item.forward ? showForward : true"
                     style="height: 20px; line-height: 20px" @dblclick="changeForm(item.price, item.brokerid)">
                     <span>{{
                       item.brokerName
@@ -244,31 +259,30 @@
                   </li>
                 </ul>
               </el-scrollbar>
-              <!-- <el-skeleton v-else animated>
-            <template #template>
-              <el-skeleton-item v-for="item in 6" :key="item" class="custom-skeleton-item" />
-            </template>
-          </el-skeleton> -->
             </div>
             <!-- 交易 -->
             <div class="r-trans" v-loading="leftChangeLoad" :style="{ height: recordHeight }">
               <div style="height: 100%">
                 <el-row :gutter="0" class="trans-header pr10">
-                  <el-col :span="5">
-                    <div class="grid-content txt-white">方向</div>
-                  </el-col>
-                  <el-col :span="8">
-                    <div class="grid-content txt-white">交易时间</div>
+                  <el-col :span="4">
+                    <div class="grid-content txt-white">状态</div>
                   </el-col>
                   <el-col :span="6">
+                    <div class="grid-content txt-white">交易时间</div>
+                  </el-col>
+                  <el-col :span="5">
                     <div class="grid-content txt-white">价格</div>
                   </el-col>
                   <el-col :span="5">
+                    <div class="grid-content txt-white">清算速度</div>
+                  </el-col>
+                  <el-col :span="4">
                     <div class="grid-content txt-white">中介</div>
                   </el-col>
                 </el-row>
-                <virtual-list class="trans-body custom-scrollbar " :data-key="'tradeid'" :extra-props="{ changeForm }"
-                  :data-sources="transactionAllList" :data-component="itemComponent" :keeps="50">
+                <virtual-list class="trans-body custom-scrollbar " :data-key="'tradeid'"
+                  :extra-props="{ changeForm, showForward }" :data-sources="transactionDayList"
+                  :data-component="itemComponent" :keeps="40">
                 </virtual-list>
               </div>
             </div>
@@ -279,8 +293,8 @@
         <source src="@/assets/audio/1.wav" type="audio/wav" />
       </audio>
       <el-dialog :title="dialogVisible.title" :visible.sync="dialogVisible.show" width="300px"
-        :before-close="() => { dialogVisible.show = false, loading = false }">
-        <span>{{ dialogVisible.message }}</span>
+        custom-class="custom-dialog" :before-close="() => { dialogVisible.show = false, loading = false }">
+        <div v-html="dialogVisible.message"></div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible.show = false, loading = false">取 消</el-button>
           <el-button type="primary" @click="dialogVisible.fun()">确 定</el-button>
@@ -289,6 +303,11 @@
       <el-dialog title="新建询价单" :visible.sync="dialogEnquiryAddVisible" width="40%" append-to-body
         :destroy-on-close="true" :close-on-click-modal="false">
         <enquiry-edit :row="currentDifficultData" @change="handleDialogEnquiryAddVisible"></enquiry-edit>
+      </el-dialog>
+      <el-dialog :title="`询价修改`" width="90%" :visible.sync="dialogEnquiryEditVisible" append-to-body
+        :destroy-on-close="true" :close-on-click-modal="false">
+        <!-- <enquiry-edit :row="currentDifficultData" @change="handleDialogEnquiryAddVisible"></enquiry-edit> -->
+        <enquiry-edit :row="currentDifficultData" :action="2" @change="handleDialogEnquiryAddVisible"></enquiry-edit>
       </el-dialog>
       <el-dialog title="修改密码" :visible.sync="dialogUpdatePasswordVisible" width="30%" center append-to-body
         :destroy-on-close="true" :close-on-click-modal="false">
@@ -613,16 +632,20 @@ export default {
       socketTimer: null,
       // 难成撤单新建询价单
       dialogEnquiryAddVisible: false,
+      dialogEnquiryEditVisible: false,
       currentDifficultData: {},
       // 修改密码
       dialogUpdatePasswordVisible: false,
       leftChangeLoad: false,
       isElectron: false,
       dailyLine: false,
+      riskControlData: {},
+      ticketDay: 1,
+      showForward: false,
       dataZoom: {
         start: 0,
         end: 100,
-      }
+      },
     }
   },
   computed: {
@@ -633,20 +656,33 @@ export default {
     }),
     ...mapState({
       socketKLine: (state) => state.socketKLine,
+      enquiryInfo: (state) => state.enquiryInfo,
+      // occupyInfo: (state) => state.occupyInfo,
     }),
     recordHeight: function () {
       return (window.innerHeight - 870) + 'px';
+    },
+    transactionDayList() {
+      return this.transactionAllList.filter(item => {
+        return new Date(item.tradedate).toDateString() === new Date().toDateString()
+      })
     }
   },
   watch: {
     activeTscode(newVal, oldVal) {
       if (newVal !== oldVal) {
         if (newVal && this.socketKLine != null) {
-          // socket.send(JSON.stringify({ "dataKey": newVal, "dataType": "tscode" }))
-          // this.socketKLine.send(JSON.stringify({ "dataKey": "", "dataType": "rank" }))
           this.socketKLine.send(JSON.stringify({ "dataKey": newVal, "dataType": "sub_tscode" }))
           this.calcFavoriteIcon()
         }
+      }
+    },
+    enquiryInfo() {
+      this.initRiskControlData()
+    },
+    showForward() {
+      if (this.klineactive === 'Ticket图') {
+        this.klinemethods[this.klineactive]()
       }
     }
   },
@@ -683,13 +719,24 @@ export default {
   },
   methods: {
     ...mapMutations(["SET_SOCKET_MAIN", "SET_SOCKET_KLINE"]),
+    initRiskControlData() {
+      apiTrade.accountRiskControl({ userId: this.userInfo.userId }).then(res => {
+        if (res && res.code === '00000' && res.value) {
+          this.riskControlData = res.value
+        }
+      })
+    },
     // 获取所有债券号相关信息
     getAllBondPool() {
       api.getAll({}).then(res => {
         if (res.code === '00000') {
           localStorage.setItem("tscodeAll", JSON.stringify(res.value))
           Promise.all([
-            this.tscodeList = res.value
+            this.tscodeList = [...res.value].sort((a, b) => {
+              const dateA = new Date(a.firsttradedate);
+              const dateB = new Date(b.firsttradedate);
+              return dateB - dateA;
+            })
           ]).then(async () => {
             if (this.isElectron && this.activeTscode === '') {
               const response = await window.v1.getWinThis();
@@ -723,7 +770,6 @@ export default {
 
       })
     },
-    // 一分钟线
     async getKLine(klinekey) {
       console.log(klinekey)
       clearInterval(this.klineTimer);
@@ -898,7 +944,7 @@ export default {
         if (this.transactionAllList && this.transactionAllList.length > 0) {
           result = {
             code: '00000',
-            value: [...this.transactionAllList].reverse()
+            value: [...this.transactionAllList].filter(n => n.forwardcontact ? this.showForward : true).reverse()
           }
         }
       } else if (klinekey === '日线') {
@@ -956,7 +1002,7 @@ export default {
             const therolineMarker = `<span style="display:inline-block;margin-right:4px;width:10px;height:3px;line-height:3px;vertical-align:middle;background-color:rgba(0,128,0,1);"></span>`
             return `${params.name}<br>
                ${therolineMarker} ${klinekey}线<br>
-              方向：${currentItemData[4]}<br>
+              状态：${currentItemData[4]}<br>
               价格：${currentItemData[1]}<br>
               中介：${currentItemData[5]} <br>
               债券：${currentItemData[3]}<br>`
@@ -1245,7 +1291,7 @@ export default {
     // 键盘监听
     keyDown() {
       const self = this
-      // 监听键盘按钮
+      // 监听键盘按钮 快捷键
       document.onkeydown = function (event) {
         var e = event || window.event
         var keyCode = e.keyCode || e.which
@@ -1253,10 +1299,10 @@ export default {
 
         const setPrice = setp => {
           if (self.activeName === 'buy') {
-            self.buyForm.price = (self.buyForm.price * 1000 + setp) / 1000;
+            self.buyForm.price = (self.buyForm.price * 10000 + setp) / 10000;
           }
           if (self.activeName === 'sale') {
-            self.saleForm.price = (self.saleForm.price * 1000 + setp) / 1000;
+            self.saleForm.price = (self.saleForm.price * 10000 + setp) / 10000;
           }
         }
         const volumeKeys = {
@@ -1270,30 +1316,72 @@ export default {
           103: 7000,
           104: 8000,
           105: 9000,
-          38: () => { return setPrice(1) },
-          40: () => { return setPrice(-1) },
+          37: () => { return setPrice(-25) },
+          39: () => { return setPrice(25) },
+          38: () => { return setPrice(5) },
+          40: () => { return setPrice(-5) },
           13: () => {
-            if (self.activeName === 'buy') {
-              self.submitForm('buyForm')
-            }
-            if (self.activeName === 'sale') {
-              self.submitForm('saleForm')
+            if (self.dialogVisible.show) {
+              self.dialogVisible.fun();
+              self.dialogVisible.show = false;
             }
           },
           112: () => {
-            self.activeName = 'buy'
-            if (e && e.preventDefault) {
-              e.preventDefault()
-            } else {
-              window.event.returnValue = false
-            }
+            self.submitForm('buyForm')
           },
           113: () => {
-            self.activeName = 'sale'
-            if (e && e.preventDefault) {
-              e.preventDefault()
+            self.submitForm('saleForm')
+          },
+          71: async () => {
+            if (self.dialogVisible.show) {
+              return;
+            }
+            if (self.dialogEnquiryEditVisible) {
+              self.dialogEnquiryEditVisible = false;
             } else {
-              window.event.returnValue = false
+              const { code, rows } = await apiTrade.kecheQuery({
+                orderBy: 'create_time',
+                isAsc: false,
+                tscode: self.activeTscode,
+                status: 1
+              });
+              if (code === 200 && rows.length > 0) {
+                self.currentDifficultData = rows[0]
+                self.currentDifficultData.lockDirection = true
+                self.dialogEnquiryEditVisible = true;
+              } else {
+                self.dialogVisible.title = "错误"
+                self.dialogVisible.message = "未找到需要改变的询价单！"
+                self.dialogVisible.fun = () => { self.dialogVisible.show = false; }
+                self.dialogVisible.show = true;
+              }
+            }
+          },
+          27: async () => {
+            if (self.dialogEnquiryEditVisible) {
+              return;
+            }
+            if (self.dialogVisible.show) {
+              self.dialogVisible.show = false;
+            } else {
+              const { code, rows } = await apiTrade.kecheQuery({
+                orderBy: 'create_time',
+                isAsc: false,
+                tscode: self.activeTscode,
+                status: 1
+              });
+              self.dialogVisible.show = true;
+              if (code === 200 && rows.length > 0) {
+                self.dialogVisible.title = "提醒"
+                self.dialogVisible.message = `<div class='${rows[0].direction === 'bond_0' ? 'txt-green' : 'txt-red'}'> ${rows[0].tscode + " | " + (rows[0].direction === 'bond_0' ? '买入' : '卖出') + " | " + rows[0].price + " | " + rows[0].volume + " | " + util.dateFormat(rows[0].deliveryTime, "YYYY-MM-DD")}</div> <br/>是否立即撤销!`
+                self.dialogVisible.fun = () => { self.handleInquiryCancelClick(rows[0]) }
+                // self.dialogVisible.show = true;
+              } else {
+                self.dialogVisible.title = "错误"
+                self.dialogVisible.message = "未找到需要撤销的询价单！"
+                self.dialogVisible.fun = () => { self.dialogVisible.show = false; }
+                // self.dialogVisible.show = true;
+              }
             }
           }
         }
@@ -1307,6 +1395,34 @@ export default {
         }
       }
     },
+    // 提交撤单申请
+    handleInquiryCancelClick: debounce(function ({ userTradeId }) {
+      apiTrade.inquiryCancelRequest({ usertradeId: userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: `${response.message}`,
+            type: 'success'
+          })
+
+          const { brokerId, channelId, userTradeId, message } = response.value;
+          const data = {
+            chatId: this.userInfo.userId,
+            message: message,
+            brokerId: brokerId,
+            channelId: channelId,
+            direction: 0,
+            tradeId: userTradeId
+          }
+          apiTrade.sendChatMessages(data, 'sim')
+        } else {
+          this.$message({
+            message: `${response.message}`,
+            type: 'error'
+          })
+        }
+        this.dialogVisible.show = false;
+      })
+    }),
     keyDownReview() {
       document.onkeydown = function (event) {
         var e = event || window.event
@@ -1423,21 +1539,23 @@ export default {
     // 右侧
     // 实时成交数据
     initRightTransactionList() {
-      api.transactionList({
-        tscode: this.activeTscode
-      }).then(res => {
-        if (res.code === '00000') {
-          this.transactionAllList = res.value
-          this.initCommonData()
+      // api.transactionList({
+      //   tscode: this.activeTscode
+      // }).then(res => {
+      //   if (res.code === '00000') {
+      //     this.transactionAllList = res.value
+      //     this.initCommonData()
 
-          if (this.klineactive === 'Ticket图') {
-            this.klinemethods[this.klineactive]()
-          }
-        }
-      })
+      //     if (this.klineactive === 'Ticket图') {
+      //       this.klinemethods[this.klineactive]()
+      //     }
+      //   }
+      // })
+      this.handleTicket(this.ticketDay);
     },
     handleTicket(command) {
       this.leftChangeLoad = true;
+      this.ticketDay = command;
       Promise.all([
         this.transactionAllList = []
       ]).then(async () => {
@@ -1445,6 +1563,7 @@ export default {
           const res = await api.transactionList({ tscode: this.activeTscode })
           if (res.code === '00000') {
             this.transactionAllList = res.value
+
             if (this.klineactive === 'Ticket图') {
               this.klinemethods[this.klineactive]()
             }
@@ -1508,12 +1627,16 @@ export default {
       }
     },
     changeForm(price, brokerid) {
-      if (this.activeName === 'buy') {
+      console.log(this.intendComerOption)
+      const borderItems = this.intendComerOption.filter(n => n.brokerid === brokerid)
+      if (borderItems.length > 0) {
         this.buyForm.price = price
-        this.buyForm.brokerid = brokerid
-      } else if (this.activeName === 'sale') {
         this.saleForm.price = price
-        this.saleForm.brokerid = brokerid
+
+        if (!borderItems[0].disabled) {
+          this.buyForm.brokerid = brokerid
+          this.saleForm.brokerid = brokerid
+        }
       }
     },
     // 买卖最优值(type:min最小，type:max最大;arr:初始数组;flag:true参与最近一笔交易进行计算)
@@ -1587,7 +1710,9 @@ export default {
     },
     // 快速提交
     quickSubmit(formName, dostandard = true) {
-      this.$refs[formName].validate((valid) => {
+      // this.$refs[formName].validate((valid) => {
+      const formKey = "buyForm";
+      this.$refs[formKey].validate((valid) => {
         if (valid) {
           if (dostandard) {
             const transPrice = this.transactionAllList.length > 0 ? util.moneyFormat(this.transactionAllList[0].tradeprice, 4) : 0;
@@ -1597,7 +1722,7 @@ export default {
               const inPrice = this.businessInList.length > 0 ? (this.businessInList.length > 1 ? (this.businessInList[0].volume.includes("+") ? util.moneyFormat(this.businessInList[0].price, 4) : util.moneyFormat(this.businessInList[1].price, 4)) : util.moneyFormat(this.businessInList[0].price, 4)) : 0;
               standard = inPrice < transPrice ? inPrice : transPrice
 
-              if (standard - util.moneyFormat(this[formName].price, 4) > 0.0025) {
+              if (standard - util.moneyFormat(this[formKey].price, 4) > 0.0025) {
                 this.dialogVisible.title = "警告"
                 this.dialogVisible.message = "当前下单价格与市价偏离超过0.25BP!是否继续？"
                 this.dialogVisible.fun = () => { this.quickSubmit("buyForm", false) }
@@ -1608,7 +1733,7 @@ export default {
               const outPrice = this.businessOutList.length > 0 ? (this.businessOutList.length > 1 ? (this.businessOutList[0].volume.includes("+") ? util.moneyFormat(this.businessOutList[0].price, 4) : util.moneyFormat(this.businessOutList[1].price, 4)) : util.moneyFormat(this.businessOutList[0].price, 4)) : 0;
               standard = outPrice > transPrice ? outPrice : transPrice
 
-              if (util.moneyFormat(this[formName].price, 4) - standard > 0.0025) {
+              if (util.moneyFormat(this[formKey].price, 4) - standard > 0.0025) {
                 this.dialogVisible.title = "警告"
                 this.dialogVisible.message = "当前卖出价格与市价偏离超过0.25BP!是否继续？"
                 this.dialogVisible.fun = () => { this.quickSubmit("saleForm", false) }
@@ -1617,28 +1742,28 @@ export default {
               }
             }
           }
-
+          const direction = formName === 'buyForm' ? 'bond_0' : 'bond_1';
           apiTrade.inquirySheetAdd({
             // 交割速度
-            deliverySpeed: this[formName].deliverySpeed,
+            deliverySpeed: this[formKey].deliverySpeed,
             // 交割日期
-            deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD"),
+            deliveryTime: util.dateFormat(this[formKey].deliveryTime, "YYYY-MM-DD"),
             // 买还是卖
-            direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
+            direction: direction,
             // 成交价格
-            price: util.moneyFormat(this[formName].price, 4),
+            price: util.moneyFormat(this[formKey].price, 4),
             // 交易员
-            tradeuserId: this[formName].tradeuserId,
+            tradeuserId: this[formKey].tradeuserId,
             // 债券编号
-            tscode: this[formName].tscode,
+            tscode: this[formKey].tscode,
             // 成交量
-            volume: this[formName].volume,
+            volume: this[formKey].volume,
             // 备注
-            remark: this[formName].remark,
+            // remark: this[formKey].remark,
             // 允许浮动
-            worstPrice: this[formName].worstPrice,
+            worstPrice: this[formKey].worstPrice,
 
-            brokerId: this[formName].brokerid
+            brokerId: this[formKey].brokerid
 
           }).then(res => {
             const { code, value, message } = res;
@@ -1727,12 +1852,15 @@ export default {
           })
           this.loading = false
           break
-        case 'buyForm':
         case 'saleForm':
+        case 'buyForm':
           if (this.setForm.isKlineSubmit) {
             this.quickSubmit(formName)
           } else {
-            this.dialogVisible.message = "请确认需要提交询价单？"
+            const formKey = "buyForm";
+            const direction = formName === 'buyForm' ? '买入' : '卖出';
+            // <div class='${rows[0].direction === 'bond_0' ? 'txt-green' : 'txt-red'}'> ${rows[0].tscode + " | " + (rows[0].direction === 'bond_0' ? '买入' : '卖出') + " | " + rows[0].price + " | " + rows[0].volume + " | " + util.dateFormat(rows[0].deliveryTime, "YYYY-MM-DD")}</div>
+            this.dialogVisible.message = `<div class='${direction === '买入' ? 'txt-green' : 'txt-red'}'>${this[formKey].tscode + " | " + direction + " | " + this[formKey].price + " | " + this[formKey].volume + " | " + util.dateFormat(this[formKey].deliveryTime, "YYYY-MM-DD")}</div><br/>请确认需要提交询价单?`;
             this.dialogVisible.title = "提示"
             this.dialogVisible.fun = () => { this.quickSubmit(formName, true) }
             this.dialogVisible.show = true
@@ -1775,7 +1903,7 @@ export default {
         // 浏览器端收消息，获得从服务端发送过来的文本消息
         self.socketKLine.onmessage = function (msg) {
           const timestamp = moment().valueOf()
-          console.log("收到数据====" + msg.data);
+          // console.log("收到数据====" + msg.data);
           let msgJson = JSON.parse(msg.data)
           const h = self.$createElement;
           let notify = null
@@ -1830,11 +1958,16 @@ export default {
             self.calcuDiffPrice(2)
           } else {
             switch (msgJson.dataType) {
+              case 'brokeroccupyinfo':
+                const occupyInfo = msgJson.data
+                self.getIntendComerList(occupyInfo)
+                break
               case 'accept_bond_0':
               case 'accept_bond_1':
                 if (msgJson.actionType === 'refresh') {
                   break
                 }
+                self.initRiskControlData()
                 // self.$notify({
                 //   title: `${msgJson.data.tradeuser} 已接收`,
                 //   dangerouslyUseHTMLString: true,
@@ -1878,6 +2011,7 @@ export default {
                 break
               case 'deal_bond_0':
               case 'deal_bond_1':
+                self.initRiskControlData()
                 // self.$notify({
                 //   title: `${msgJson.data.tradeuser} 已成交`,
                 //   dangerouslyUseHTMLString: true,
@@ -1916,6 +2050,7 @@ export default {
                 break
               case 'deny_bond_0':
               case 'deny_bond_1':
+                self.initRiskControlData()
                 self.$notify({
                   title: `${msgJson.data.tradeuser} 已拒收`,
                   dangerouslyUseHTMLString: true,
@@ -1990,6 +2125,7 @@ export default {
                 break
               case 'confirm_cancel_bond_0':
               case 'confirm_cancel_bond_1':
+                self.initRiskControlData()
                 // self.$notify({
                 //   title: `${msgJson.data.tradeuser} 已接受撤单`,
                 //   dangerouslyUseHTMLString: true,
@@ -2024,6 +2160,7 @@ export default {
                 break
               case 'tradecompare_bond_0':
               case 'tradecompare_bond_1':
+                self.initRiskControlData()
                 // notify = self.$notify({
                 //   title: `${msgJson.data.ut.tradeuser} 等待确认成交`,
                 //   dangerouslyUseHTMLString: true,
@@ -2094,6 +2231,7 @@ export default {
                 break
               case 'weipingchangerequest_bond_0':
               case 'weipingchangerequest_bond_1':
+                self.initRiskControlData()
                 // notify = self.$notify({
                 //   title: `${msgJson.data.changer} 等待未平仓修改审核`,
                 //   dangerouslyUseHTMLString: true,
@@ -2200,6 +2338,7 @@ export default {
                 break
               case 'yipingchangerequest_bond_0':
               case 'yipingchangerequest_bond_1':
+                self.initRiskControlData()
                 // notify = self.$notify({
                 //   title: `${msgJson.data.changer} 等待已平仓修改审核`,
                 //   dangerouslyUseHTMLString: true,
@@ -2560,125 +2699,127 @@ export default {
                 break
               case 'xiugaichangedeny_bond_0':
               case 'xiugaichangedeny_bond_1':
-                notify = self.$notify({
-                  title: `${msgJson.data.tradeuser} 已拒绝修改询价单`,
-                  dangerouslyUseHTMLString: true,
-                  position: 'bottom-left',
-                  customClass: 'notify-yellow',
-                  message: h(
-                    "div",
-                    { class: "notify" },
-                    [
-                      h("dl", null, [
-                        h("dt", null, "单据号"),
-                        h("dd", null, `${msgJson.data.ut.tradeNum}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "债券码"),
-                        h("dd", null, `${msgJson.data.ut.tscode.replace(/.IB/, '')}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "方向"),
-                        h("dd", null, `${msgJson.data.ut.direction === 'bond_0' ? '买入' : msgJson.data.ut.direction === 'bond_1' ? '卖出' : ' '}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "成交价"),
-                        h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
-                          h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
-                        ])
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "允许浮动"),
-                        h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? util.moneyFormat(msgJson.data.ut.worstPrice, 4) + ' ' : ''),
-                          h("span", msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.worstPrice, 4))
-                        ])
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "成交量"),
-                        h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.ut.volume + ' ' : ''),
-                          h("span", msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
-                        ])
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "交割日期"),
-                        h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.toString().substr(0, 10) + ' ' : ''),
-                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
-                        ])
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "备注"),
-                        h("dd", null, `${msgJson.data.ut.remark}`)
-                      ]),
-                    ],
-                  ),
-                  duration: 0
-                });
-                self.notifyRejection[timestamp] = notify
+                self.initRiskControlData()
+                // notify = self.$notify({
+                //   title: `${msgJson.data.tradeuser} 已拒绝修改询价单`,
+                //   dangerouslyUseHTMLString: true,
+                //   position: 'bottom-left',
+                //   customClass: 'notify-yellow',
+                //   message: h(
+                //     "div",
+                //     { class: "notify" },
+                //     [
+                //       h("dl", null, [
+                //         h("dt", null, "单据号"),
+                //         h("dd", null, `${msgJson.data.ut.tradeNum}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "债券码"),
+                //         h("dd", null, `${msgJson.data.ut.tscode.replace(/.IB/, '')}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "方向"),
+                //         h("dd", null, `${msgJson.data.ut.direction === 'bond_0' ? '买入' : msgJson.data.ut.direction === 'bond_1' ? '卖出' : ' '}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "成交价"),
+                //         h("dd", null, [
+                //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
+                //           h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
+                //         ])
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "允许浮动"),
+                //         h("dd", null, [
+                //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? util.moneyFormat(msgJson.data.ut.worstPrice, 4) + ' ' : ''),
+                //           h("span", msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.worstPrice, 4))
+                //         ])
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "成交量"),
+                //         h("dd", null, [
+                //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.ut.volume + ' ' : ''),
+                //           h("span", msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
+                //         ])
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "交割日期"),
+                //         h("dd", null, [
+                //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.toString().substr(0, 10) + ' ' : ''),
+                //           h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
+                //         ])
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "备注"),
+                //         h("dd", null, `${msgJson.data.ut.remark}`)
+                //       ]),
+                //     ],
+                //   ),
+                //   duration: 0
+                // });
+                // self.notifyRejection[timestamp] = notify
                 self.tryPlay()
                 break
               case 'xiugaichangeconfirm_bond_0':
               case 'xiugaichangeconfirm_bond_1':
-                notify = self.$notify({
-                  title: `${msgJson.data.tradeuser} 已同意修改询价单`,
-                  dangerouslyUseHTMLString: true,
-                  position: 'bottom-left',
-                  message: h(
-                    "div",
-                    { class: "notify" },
-                    [
-                      h("dl", null, [
-                        h("dt", null, "单据号"),
-                        h("dd", null, `${msgJson.data.ut.tradeNum}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "债券码"),
-                        h("dd", null, `${msgJson.data.ut.tscode.replace(/.IB/, '')}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "方向"),
-                        h("dd", null, `${msgJson.data.ut.direction === 'bond_0' ? '买入' : msgJson.data.ut.direction === 'bond_1' ? '卖出' : ' '}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "成交价"),
-                        h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
-                          h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
-                        ])
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "允许浮动"),
-                        h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? util.moneyFormat(msgJson.data.ut.worstPrice, 4) + ' ' : ''),
-                          h("span", msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.worstPrice, 4))
-                        ])
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "成交量"),
-                        h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.ut.volume + ' ' : ''),
-                          h("span", msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
-                        ])
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "交割日期"),
-                        h("dd", null, [
-                          h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.toString().substr(0, 10) + ' ' : ''),
-                          h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
-                        ])
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "备注"),
-                        h("dd", null, `${msgJson.data.ut.remark}`)
-                      ]),
-                    ],
-                  ),
-                  duration: 5000
-                });
-                self.notifyRejection[timestamp] = notify
+                self.initRiskControlData()
+                // notify = self.$notify({
+                //   title: `${msgJson.data.tradeuser} 已同意修改询价单`,
+                //   dangerouslyUseHTMLString: true,
+                //   position: 'bottom-left',
+                //   message: h(
+                //     "div",
+                //     { class: "notify" },
+                //     [
+                //       h("dl", null, [
+                //         h("dt", null, "单据号"),
+                //         h("dd", null, `${msgJson.data.ut.tradeNum}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "债券码"),
+                //         h("dd", null, `${msgJson.data.ut.tscode.replace(/.IB/, '')}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "方向"),
+                //         h("dd", null, `${msgJson.data.ut.direction === 'bond_0' ? '买入' : msgJson.data.ut.direction === 'bond_1' ? '卖出' : ' '}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "成交价"),
+                //         h("dd", null, [
+                //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
+                //           h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
+                //         ])
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "允许浮动"),
+                //         h("dd", null, [
+                //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? util.moneyFormat(msgJson.data.ut.worstPrice, 4) + ' ' : ''),
+                //           h("span", msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.worstPrice, 4))
+                //         ])
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "成交量"),
+                //         h("dd", null, [
+                //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.ut.volume + ' ' : ''),
+                //           h("span", msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
+                //         ])
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "交割日期"),
+                //         h("dd", null, [
+                //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.toString().substr(0, 10) + ' ' : ''),
+                //           h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
+                //         ])
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "备注"),
+                //         h("dd", null, `${msgJson.data.ut.remark}`)
+                //       ]),
+                //     ],
+                //   ),
+                //   duration: 5000
+                // });
+                // self.notifyRejection[timestamp] = notify
                 self.tryPlay()
                 break
               case 'jiaogeweiyueNotice_bond_0':
@@ -2755,6 +2896,7 @@ export default {
     },
     // socket心跳
     socketHeart() {
+      const self = this
       this.socketTimer = setInterval(() => {
         if (self.socketKLine) {
           self.socketKLine.send(JSON.stringify({ "dataKey": 'HELLO', "dataType": 'ping' }))
@@ -3101,12 +3243,37 @@ export default {
       })
     },
     // 获取意向列表
-    getIntendComerList() {
-      apiAdmin.chatReceiverList().then(response => {
-        if (response && response.code === '00000' && response.value) {
-          this.intendComerOption = [...response.value]
-        }
-      })
+    getIntendComerList(occupyInfo) {
+      let self = this;
+      if (self.intendComerOption.length > 0 && occupyInfo) {
+        const bol = occupyInfo.some(n => n.occupyier === self.userInfo.userId);
+        self.intendComerOption = self.intendComerOption.map(item => {
+          const occupyItem = occupyInfo.filter(n => n.brokerid === item.brokerid && n.channelId === item.channelId)
+          if (occupyItem.length > 0) {
+            return {
+              ...item,
+              disabled: bol ? occupyItem[0].occupyier !== self.userInfo.userId : occupyItem[0].occupy,
+              iconClass: occupyItem[0].occupy ? 'txt-red' : 'txt-green'
+            };
+          } else {
+            return item
+          }
+        });
+      } else {
+        apiAdmin.chatReceiverList().then(response => {
+          if (response && response.code === '00000' && response.value) {
+            const brokers = [...response.value].filter(n => n.brokerid !== 11 && n.brokerid !== 12)
+            this.intendComerOption = [...brokers].map(item => {
+              return {
+                ...item,
+                disabled: false,
+                iconClass: 'txt-green'
+              };
+            });
+            return occupyInfo ? self.getIntendComerList(occupyInfo) : null
+          }
+        })
+      }
     },
     // 买单交割日期变化
     handleBuyDeliveryCanlendar(obj) {
@@ -3128,6 +3295,7 @@ export default {
     },
     // 难成撤单询价弹出框
     handleDialogEnquiryAddVisible(obj) {
+      this.dialogEnquiryEditVisible = obj.dialogVisible;
       this.dialogEnquiryAddVisible = obj.dialogVisible
     },
     /* 下拉指令 */
@@ -3239,13 +3407,12 @@ export default {
     this.getByCodeBondPool()
     this.favoriteList()
     this.getTradeUserList()
-    this.getIntendComerList()
     // 初始化默认设置和询价单表格默认设置
     // this.buyForm.volume = parseInt(this.setForm.defVolume)
     // this.saleForm.volume = parseInt(this.setForm.defVolume)
     // this.buyForm.quickSubmit = this.setForm.isKlineSubmit
     // this.saleForm.quickSubmit = this.setForm.isKlineSubmit
-
+    this.initRiskControlData()
     this.initPriceWait()
     window.onresize = () => {
       this.initFrameW('leftWith', 200)
@@ -3371,6 +3538,14 @@ export default {
 
 .slt-user {
   width: 140px;
+
+  .el-select-dropdown__item {
+    padding: 0 10px;
+  }
+
+  .el-select-dropdown__item.selected {
+    color: black;
+  }
 }
 
 .kline {
@@ -3543,6 +3718,16 @@ export default {
       background-color: #2f3032;
       border-radius: 3px;
 
+      .el-button {
+        border: 0px;
+        width: 63px;
+      }
+
+      .el-button--danger {
+        color: #fff;
+        background-color: #ec0000;
+      }
+
       .chat-set {
         line-height: 40px;
         width: 40px;
@@ -3553,11 +3738,19 @@ export default {
 
         i {
           color: #000;
-          font-size: 16px;
+          font-size: 18px;
+          line-height: 40px;
         }
       }
 
       .shijia {
+        position: absolute;
+        top: 0;
+        right: 100px;
+        line-height: 40px;
+      }
+
+      .forward {
         position: absolute;
         top: 0;
         right: 50px;
@@ -3858,10 +4051,6 @@ export default {
   color: #ec0000 !important;
 }
 
-.txt-green {
-  color: #00da3c !important;
-}
-
 .txt-yellow {
   color: yellow !important;
 }
@@ -3984,7 +4173,7 @@ export default {
     .el-form-item__label {
       font-size: 12px;
       font-weight: normal;
-      color: #008000 !important;
+      // color: #008000 !important;
     }
   }
 
@@ -3999,7 +4188,9 @@ export default {
   }
 
   #tab-buy.el-tabs__item.is-active {
-    color: #008000;
+    // color: #008000;
+    color: #000;
+    font-weight: normal;
   }
 
   #tab-sale.el-tabs__item.is-active {
@@ -4016,7 +4207,7 @@ export default {
   }
 
   .el-tabs__nav-scroll {
-    padding: 0 10px;
+    padding: 0 0px;
   }
 
   .el-tabs__content {
