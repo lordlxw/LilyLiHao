@@ -11,7 +11,7 @@
 
     <el-row v-if="(source.forwardcontact ? showForward : true)"
         :class="funcSelectColor(source.dealtype)" class="trans-body-item" style="height: 24px; line-height: 24px"
-        @dblclick.native="changeForm(source.tradeprice, source.brokerid)">
+        @click.native="changeForm(source.tradeprice, source.brokerid)">
         <el-col :span="4">
             <div class="grid-content ">
                 <span>{{ source.dealtype }}</span>

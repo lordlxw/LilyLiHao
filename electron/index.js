@@ -245,6 +245,10 @@ class MultiWindows {
           app.quit();
         }
       }
+      // 主窗口
+      this.mainWin = null;
+      // 窗口组
+      this.winLs = {};
     } catch (error) {
       console.log(error);
     }
@@ -253,7 +257,7 @@ class MultiWindows {
   focusAllWin() {
     try {
       for (let i in this.winLs) {
-        if (this.getWin(i) && !this.getWin(i).isFocused()) {       
+        if (this.getWin(i) && !this.getWin(i).isFocused()) {
           this.getWin(i).focus();
         }
       }
@@ -298,6 +302,7 @@ class MultiWindows {
     pattern = pattern.replace(/\\/g, "/");
     // 将反斜杠替换为正斜杠
     const files = glob.sync(pattern);
+    console.log(files);
     files.forEach(file => {
       require(file);
     });
@@ -369,6 +374,15 @@ class MultiWindows {
 
     ipcMain.handle("quit", e => {
       this.closeAllWin();
+    });
+
+    ipcMain.handle("restart", () => {
+      this.mainWin = null;
+      this.winLs = {};
+      setTimeout(() => {
+        app.relaunch();
+        app.exit();
+      }, 300); // 给予操作系统一些时间来处理退出信号
     });
 
     ipcMain.handle("getAllDisplays", e => {

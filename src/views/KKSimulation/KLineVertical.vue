@@ -221,7 +221,7 @@
               <el-scrollbar v-if="businessOutList && businessOutList.length > 0">
                 <ul>
                   <li v-for="(item, index) in businessOutList" :key="index" v-if="item.forward ? showForward : true"
-                    style="height: 20px; line-height: 20px" @dblclick="changeForm(item.price, item.brokerid)">
+                    style="height: 20px; line-height: 20px" @click="changeForm(item.price, item.brokerid)">
                     <span>{{
                       item.brokerName
                     }}</span>
@@ -243,7 +243,7 @@
               <el-scrollbar v-if="businessInList && businessInList.length > 0">
                 <ul>
                   <li v-for="(item, index) in businessInList" :key="index" v-if="item.forward ? showForward : true"
-                    style="height: 20px; line-height: 20px" @dblclick="changeForm(item.price, item.brokerid)">
+                    style="height: 20px; line-height: 20px" @click="changeForm(item.price, item.brokerid)">
                     <span>{{
                       item.brokerName
                     }}</span>
@@ -1877,7 +1877,11 @@ export default {
       } else {
         console.log("您的浏览器支持WebSocket");
         if (localStorage.getItem(configUtil.keys.tokenKey) === null || localStorage.getItem(configUtil.keys.tokenKey) === '') {
-          Router.push({ path: '/login' })
+          if (window.v1 && window.v1.isElectron()) {
+            window.v1.restart();
+          } else {
+            Router.push({ path: "/login" });
+          }
           return;
         }
         let socketUrl =
@@ -1903,7 +1907,7 @@ export default {
         // 浏览器端收消息，获得从服务端发送过来的文本消息
         self.socketKLine.onmessage = function (msg) {
           const timestamp = moment().valueOf()
-          // console.log("收到数据====" + msg.data);
+          console.log("收到数据====" + msg.data);
           let msgJson = JSON.parse(msg.data)
           const h = self.$createElement;
           let notify = null
@@ -1936,7 +1940,11 @@ export default {
                 break
               case 'error':
                 if (msgJson.data.errorCode === '0001') {
-                  Router.push({ path: '/login' })
+                  if (window.v1 && window.v1.isElectron()) {
+                    window.v1.restart();
+                  } else {
+                    Router.push({ path: "/login" });
+                  }
                 }
                 break
             }
@@ -2006,7 +2014,11 @@ export default {
                 break;
               case 'error':
                 if (msgJson.data.errorCode === '0001') {
-                  Router.push({ path: '/login' })
+                  if (window.v1 && window.v1.isElectron()) {
+                    window.v1.restart();
+                  } else {
+                    Router.push({ path: "/login" });
+                  }
                 }
                 break
               case 'deal_bond_0':

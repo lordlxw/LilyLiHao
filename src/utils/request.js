@@ -12,7 +12,7 @@ const service = axios.create({
 
 service.interceptors.request.use(config => {
   try {
-    console.log("get:" + localStorage.getItem(configUtil.keys.tokenKey));
+    // console.log("get:" + localStorage.getItem(configUtil.keys.tokenKey));
     if (
       localStorage.getItem(configUtil.keys.tokenKey) &&
       !["/login", "/verifyToken"].includes(
@@ -29,11 +29,6 @@ service.interceptors.request.use(config => {
 
 service.interceptors.response.use(
   response => {
-    // console.log(response.config.url);
-    // console.log(response);
-    // if (response.data === 'OK') {
-    //   return true
-    // }
     const resp = response.data;
     // console.log(JSON.stringify(resp))
     switch (resp.code) {
@@ -46,25 +41,24 @@ service.interceptors.response.use(
         //   type: 'warning',
         //   durations: 3 * 1000
         // })
-        Router.push({ path: "/login" });
+        if (window.v1 && window.v1.isElectron()) {
+          window.v1.restart();
+        } else {
+          Router.push({ path: "/login" });
+        }
         break;
       default:
         // if (response.request && response.request.responseType === 'arraybuffer') {
         //   return resp
         // }
         return resp;
-      // Message({
-      //   message: `${resp.message}`,
-      //   type: 'warning',
-      //   durations: 3 * 1000
-      // })
-      // break
     }
   },
   error => {
     console.log(error);
     if (error.toString().indexOf("401") !== -1) {
-      if (window.v1) {
+      if (window.v1 && window.v1.isElectron()) {
+        window.v1.restart();
       } else {
         Router.push({ path: "/login" });
       }

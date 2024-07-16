@@ -72,6 +72,47 @@ function addContextItems(items, position) {
     })
   );
 
+  // menu.append(
+  //   new MenuItem({
+  //     role: "appMenu",
+  //     submenu: [
+  //       {
+  //         label: "relaunch(); exit()",
+  //         click() {
+  //           app.relaunch();
+  //           app.exit();
+  //         }
+  //       },
+
+  //       {
+  //         label: "relaunch(); quit()",
+  //         click() {
+  //           app.relaunch();
+  //           app.quit();
+  //         }
+  //       },
+
+  //       { type: "separator" },
+
+  //       {
+  //         label: "exit(); relaunch()",
+  //         click() {
+  //           app.exit();
+  //           app.relaunch();
+  //         }
+  //       },
+
+  //       {
+  //         label: "quit(); relaunch()",
+  //         click() {
+  //           app.quit();
+  //           app.relaunch();
+  //         }
+  //       }
+  //     ]
+  //   })
+  // );
+
   app.on("browser-window-created", (event, win) => {
     win.webContents.on("context-menu", (e, params) => {
       menu.popup(win, params.x, params.y);

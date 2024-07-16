@@ -10,6 +10,7 @@
         <!-- <i class="el-icon-user-solid noDrag txt-white left_bar"></i> -->
         <!-- <span class="left_span">{{ userInfo.userName }}</span> -->
       </div>
+      <i slot="right_bar" @click="() => { }" class="el-icon-setting noDrag txt-white right_bar"></i>
       <i slot="right_bar" @click="drawerBrokers = true" class="el-icon-chat-dot-round noDrag txt-white right_bar"></i>
     </title-bar>
     <div class="content custom-scrollbar">

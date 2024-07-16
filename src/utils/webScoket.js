@@ -1,9 +1,9 @@
 import * as util from "@/utils/util";
-import Router from '@/router'
+import Router from "@/router";
 
 const self = this;
-const h = self.$createElement
-let notify = null
+const h = self.$createElement;
+let notify = null;
 
 // 使用策略模式优化
 const strategy = {
@@ -117,7 +117,11 @@ const strategy = {
   },
   error: function(msgJson, state) {
     if (msgJson.data.errorCode === "0001") {
-      Router.push({ path: "/login" });
+      if (window.v1 && window.v1.isElectron()) {
+        window.v1.restart();
+      } else {
+        Router.push({ path: "/login" });
+      }
     }
   },
   deal_bond: function(msgJson, state) {

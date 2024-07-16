@@ -32,6 +32,7 @@ contextBridge.exposeInMainWorld("v1", {
   isFocusedWindow: remote.getCurrentWindow().isFocused(),
   isAlwaysOnTop: remote.getCurrentWindow().isAlwaysOnTop(),
   quit: () => ipcRenderer.invoke("quit"),
+  restart: () => ipcRenderer.invoke("restart"),
   setArgs: args => ipcRenderer.invoke("setArgs", args),
   createWin: args => ipcRenderer.invoke("createWin", args),
   getAllDisplays: () => ipcRenderer.invoke("getAllDisplays"),

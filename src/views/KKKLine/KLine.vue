@@ -2061,7 +2061,11 @@ export default {
       } else {
         console.log("您的浏览器支持WebSocket");
         if (localStorage.getItem(configUtil.keys.tokenKey) === null || localStorage.getItem(configUtil.keys.tokenKey) === '') {
-          Router.push({ path: '/login' })
+          if (window.v1 && window.v1.isElectron()) {
+            window.v1.restart();
+          } else {
+            Router.push({ path: "/login" });
+          }
           return;
         }
         let socketUrl =
@@ -2116,7 +2120,11 @@ export default {
                 break
               case 'error':
                 if (msgJson.data.errorCode === '0001') {
-                  Router.push({ path: '/login' })
+                  if (window.v1 && window.v1.isElectron()) {
+                    window.v1.restart();
+                  } else {
+                    Router.push({ path: "/login" });
+                  }
                 }
                 break
             }
@@ -2205,7 +2213,11 @@ export default {
                 break;
               case 'error':
                 if (msgJson.data.errorCode === '0001') {
-                  Router.push({ path: '/login' })
+                  if (window.v1 && window.v1.isElectron()) {
+                    window.v1.restart();
+                  } else {
+                    Router.push({ path: "/login" });
+                  }
                 }
                 break
               case 'deal_bond_0':

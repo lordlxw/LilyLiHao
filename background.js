@@ -28,8 +28,8 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
-app.on('will-quit', () => {
-  // 注销所有快捷键
-  globalShortcut.unregisterAll()
-})
+// app.on('will-quit', () => {
+//   // 注销所有快捷键
+//   globalShortcut.unregisterAll()
+// })
 
