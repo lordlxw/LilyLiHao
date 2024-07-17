@@ -40,7 +40,7 @@ import apiAdmin from '@/api/kk_power_admin'
 import apiTrade from '@/api/kk_trade'
 import apiLogin from '@/api/kk_login'
 import MChatBox from '@/components/chat/MChatBox';
-import MainSocket from '@/components/Socket.vue'
+import MainSocket from '@/components/SocketElectron.vue'
 import * as util from '@/utils/util'
 export default {
     mixins: [commMixin],

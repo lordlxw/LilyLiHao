@@ -302,7 +302,7 @@
         <el-scrollbar style="height: 100%;">
           <!-- {"TsCode":"230023.IB","Volume":717,"TradeTime":"16:46:42","Price":2.5315,"IssueRate":"3%","ChangeBP":0.1000,"HighPrice":2.5335,"LowPrice":2.5285} -->
           <el-row class="hot-herder">
-            <el-col :span="2">
+            <el-col :span="3">
               <div class="grid-content bg-purple">券号</div>
             </el-col>
             <el-col :span="2">
@@ -338,9 +338,8 @@
           </el-row>
           <div style="margin-top: 40px;" v-if="hotsList.length > 0">
             <el-row class="hot-item" v-for="item in hotsList" :key="item.TsCode"
-              :style="{ backgroundColor: item.highlight ? '#f5776bcc' : '#ffffff00' }"
               @dblclick.native="openMoreThis('/simulation/klinevertical', item.TsCode)">
-              <el-col :span="2">
+              <el-col :span="3">
                 <div class="grid-content bg-purple">{{ item.TsCode }}</div>
               </el-col>
               <el-col :span="2">
@@ -476,7 +475,7 @@ import { mapState, mapGetters } from 'vuex'
 import api from "@/api/kk_trade";
 import apiAdmin from '@/api/kk_power_admin'
 import apiBreak from '@/api/kk_break'
-import MainSocket from '@/components/Socket.vue'
+import MainSocket from '@/components/SocketElectron.vue'
 import DeliveryCanlendarUpdate from '@/components/DeliveryCanlendarUpdate.vue'
 import RealEnquiryRoll from '@/components/RealEnquiryRoll.vue';
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
@@ -1120,7 +1119,7 @@ export default {
     },
     // 滚单成交颜色框
     tableRowClassName({ row, rowIndex }) {
-      if (row.qiangpingId) {
+      if (row.qiangpingId && row.status === 1) {
         return 'gd-red-row list-row';
       }
       if (row.relativeNum && row.relativeNum.indexOf('GD_') !== -1) {
@@ -1140,9 +1139,9 @@ export default {
         tableCurrentRelativeNum = ''
       }
 
-      if (row.status === 3) {
-        tableCurrentRelativeNum += ' success-row'
-      }
+      // if (row.status === 3) {
+      //   tableCurrentRelativeNum += ' success-row'
+      // }
       return tableCurrentRelativeNum + ' list-row'
     },
     tableColumnClassName({ row, column, columnIndex }) {
@@ -1626,8 +1625,8 @@ export default {
     overflow: hidden;
     height: calc(100% - 180px);
     // height: 500px;
-    background-color: $box-black;
-    color: $color-white;
+    background-color: $body-main-box;
+    color: $body-main-txt;
 
     >>>.el-table {
       //background-color: $box-black;
@@ -1636,14 +1635,15 @@ export default {
     }
 
     >>>.list-row {
-      height: 45px;
-      line-height: 45px;
-      color: $color-black;
+      height: 40px;
+      line-height: 40px;
+      color: $body-main-txt;
       // background-color: $box-black;
     }
 
     .hot-herder {
-      background-color: $header-black;
+      background-color: $header-main-box !important;
+      color: $body-main-txt;
       position: absolute;
       width: 100%;
       z-index: 1;
@@ -1655,13 +1655,15 @@ export default {
     }
 
     .hot-item:hover {
-      background-color: #7a7a7a !important;
+      background-color: $body-main-hover !important;
     }
 
     .hot-item {
       cursor: pointer;
       border-radius: 2px;
       overflow: hidden;
+      background-color: $body-main-box;
+      color: $body-main-txt;
     }
 
     .grid-content {
@@ -1669,7 +1671,7 @@ export default {
       line-height: 40px;
       text-align: center;
       font-size: 16px;
-      font-family: fangsong;
+      // font-family: fangsong;
     }
   }
 

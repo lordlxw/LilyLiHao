@@ -21,13 +21,13 @@
       <el-form-item label="价格" prop="price">
         <el-input v-model="coverForm.price" placeholder="请输入价格"></el-input>
       </el-form-item>
-      <el-form-item label="允许浮动" prop="worstPrice">
+      <!-- <el-form-item label="允许浮动" prop="worstPrice">
         <el-input-number
           v-model="coverForm.worstPrice"
           step="0.05"
         ></el-input-number>
         BP
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="交易量(万)" prop="volume">
         <el-input
           v-model="coverForm.volume"
@@ -49,22 +49,8 @@
           ref="deliveryCanlendarUpdate"
           @change="handleDeliveryCanlendarUpdate"
         ></delivery-canlendar-update>
-        <!-- <el-button-group>
-          <el-button
-            icon="el-icon-plus"
-            :class="funcDeliverySpeed(0)"
-            @click="handleDelivertySpeed(0)"
-            >0</el-button
-          >
-          <el-button
-                      icon="el-icon-plus"
-                      :class="funcDeliverySpeed('coverForm', 1)"
-                      @click="handleDelivertySpeed('coverForm', 1)"
-                      >1</el-button
-                    >
-        </el-button-group> -->
       </el-form-item>
-      <el-form-item label="交易员" prop="tradeuserId">
+      <!-- <el-form-item label="交易员" prop="tradeuserId">
         <el-select v-model="coverForm.tradeuserId" placeholder="请选择交易员">
           <el-option
             v-for="item in tradeUsersOption"
@@ -74,8 +60,8 @@
           >
           </el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="备注">
+      </el-form-item> -->
+      <!-- <el-form-item label="备注">
         <el-input
           type="textarea"
           v-model="coverForm.remark"
@@ -83,7 +69,7 @@
           resize="none"
           rows="2"
         ></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button class="btn-green" @click="submitForm('coverForm')"
           >确认平仓</el-button

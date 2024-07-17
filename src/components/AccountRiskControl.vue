@@ -163,8 +163,8 @@ export default {
 
 <style lang="scss" scoped>
 .el-row {
-  line-height: 40px;
-  height: 40px;
+  line-height: 35px;
+  height: 35px;
 
   .grid-content {
     padding: 0 10px;

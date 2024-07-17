@@ -81,7 +81,7 @@
         isShowDeliveryBtn
       " type="primary" size="mini" @click="handleDeliveryClick">交割</el-button>
     </div>
-    <div class="table mt10">
+    <div class="table">
       <el-table ref="bondsTable" v-swipe-copy="handleSwipeOrDblClick" v-loading="loading" :data="tableDataFinish"
         tooltip-effect="dark" style="width: 100%" :height="height" row-key="rowId" header-cell-class-name="list-row"
         :row-class-name="tableRowFinishClassName" :cell-class-name="tableCellBondsClassName"
@@ -1082,7 +1082,7 @@ export default {
     padding: 0 15px;
 
     .table {
-      height: calc(100% - 60px);
+      height: calc(100% - 50px);
     }
 
     .do {
