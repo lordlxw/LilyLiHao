@@ -56,7 +56,7 @@ const router = new Router({
       children: [
         {
           path: '/simulation/kline',
-          component: () => import('@/views/KKSimulation/Kline.vue')
+          component: () => import('@/views/KKSimulation/KLine.vue')
         },
         {
           path: '/simulation/klinevertical',
