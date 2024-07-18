@@ -142,7 +142,7 @@ export default {
                           h("dd", null, `${msgJson.data.volume}`)
                         ]),
                         h("dl", null, [
-                          h("dt", null, "交割日期"),
+                          h("dt", null, "清算速度"),
                           h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}`)
                         ]),
                         // h("dl", { style: "margin-top:20px;" }, [
@@ -297,7 +297,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                   </div>
@@ -336,7 +336,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                   </div>
@@ -390,7 +390,7 @@ export default {
                           ])
                         ]),
                         h("dl", null, [
-                          h("dt", null, "交割日期"),
+                          h("dt", null, "清算速度"),
                           h("dd", null, [
                             h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.substr(0, 10) + ' ' : ''),
                             h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
@@ -447,7 +447,7 @@ export default {
                           h("dd", null, `${msgJson.data.restVolume}`)
                         ]),
                         h("dl", null, [
-                          h("dt", null, "交割日期"),
+                          h("dt", null, "清算速度"),
                           h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}`)
                         ]),
                         // h("dl", { style: "margin-top:20px;" }, [
@@ -519,7 +519,7 @@ export default {
                           ])
                         ]),
                         h("dl", null, [
-                          h("dt", null, "交割日期"),
+                          h("dt", null, "清算速度"),
                           h("dd", null, [
                             h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.substr(0, 10) + ' ' : ''),
                             h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
@@ -572,7 +572,7 @@ export default {
                           ])
                         ]),
                         h("dl", null, [
-                          h("dt", null, "交割日期"),
+                          h("dt", null, "清算速度"),
                           h("dd", null, [
                             h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
                             h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
@@ -649,7 +649,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                     <dl>
@@ -695,7 +695,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                     <dl>
@@ -742,7 +742,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                     <dl>
@@ -789,7 +789,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                     <dl>
@@ -831,7 +831,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                     <dl>
@@ -875,7 +875,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                     <dl>
@@ -919,7 +919,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                     <dl>
@@ -990,7 +990,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                   </div>
@@ -1028,7 +1028,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                   </div>
@@ -1079,7 +1079,7 @@ export default {
                           ])
                         ]),
                         h("dl", null, [
-                          h("dt", null, "交割日期"),
+                          h("dt", null, "清算速度"),
                           h("dd", null, [
                             h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.toString().substr(0, 10) + ' ' : ''),
                             h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
@@ -1128,7 +1128,7 @@ export default {
                             h("dd", null, `${msgJson.data.first.volume}`)
                           ]),
                           h("dl", null, [
-                            h("dt", null, "交割日期"),
+                            h("dt", null, "清算速度"),
                             h("dd", null, `${msgJson.data.first.deliveryTime.substr(0, 10)}`)
                           ])
                         ]),
@@ -1146,7 +1146,7 @@ export default {
                             h("dd", null, `${msgJson.data.second.volume}`)
                           ]),
                           h("dl", null, [
-                            h("dt", null, "交割日期"),
+                            h("dt", null, "清算速度"),
                             h("dd", null, `${msgJson.data.second.deliveryTime.substr(0, 10)}`)
                           ])
                         ]),
@@ -1217,7 +1217,7 @@ export default {
                           h("dd", null, `${msgJson.data.volume}`)
                         ]),
                         h("dl", null, [
-                          h("dt", null, "交割日期"),
+                          h("dt", null, "清算速度"),
                           h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}`)
                         ]),
                         // h("dl", { style: "margin-top:20px;" }, [
@@ -1297,7 +1297,7 @@ export default {
                           ])
                         ]),
                         h("dl", null, [
-                          h("dt", null, "交割日期"),
+                          h("dt", null, "清算速度"),
                           h("dd", null, [
                             h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.toString().substr(0, 10) + ' ' : ''),
                             h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
@@ -1358,7 +1358,7 @@ export default {
                           ])
                         ]),
                         h("dl", null, [
-                          h("dt", null, "交割日期"),
+                          h("dt", null, "清算速度"),
                           h("dd", null, [
                             h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.toString().substr(0, 10) + ' ' : ''),
                             h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
@@ -1435,7 +1435,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                     <dl>

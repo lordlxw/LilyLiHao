@@ -6,7 +6,7 @@
           <ul class="k-nav">
             <li class="noDrag" v-for="item in loopmethodskey" :class="{ active: klineactive == item }" :key="item">
               <div v-if="item === 'Ticket图'" @click="klinemethods[item]">
-                <div class="el-dropdown-link">{{ item }}</div>
+                <div class="el-dropdown-link">{{ item }}{{ ticketDay + '日' }}</div>
                 <el-dropdown @command="handleTicket" :default-active="ticketDay" trigger="click">
                   <span class="el-dropdown-link">
                     <i class="el-icon-arrow-down "></i>
@@ -50,7 +50,7 @@
           <div class="chatbox" v-loading="leftChangeLoad || dialogVisible.show">
             <el-tabs type="border-card" style="border-radius: 3px;" v-model="activeName">
               <el-tab-pane
-                :label="'最大可买/卖：' + (riskControlData.limitBid || 0) + '/' + (riskControlData.limitOffer || 0)"
+                :label="'最大可买/卖：' + (riskControlData[0] || 0) + '/' + (riskControlData[1] || 0)"
                 class="buy-form" name="buy">
                 <el-form :inline="true" label-width="65px" :model="buyForm" ref="buyForm" :rules="buyFormRules">
                   <el-form-item label="价格">
@@ -80,7 +80,7 @@
                   <el-form-item label="交易量">
                     <!-- <el-input class="ipt-volume"  v-model.number="buyForm.volume" placeholder="请输入交易量"></el-input> -->
 
-                    <el-input-number class="ipt-volume" v-model="buyForm.volume" :step="1000" :min="2000" :max="100000"
+                    <el-input-number class="ipt-volume" v-model="buyForm.volume" :step="1000" :min="riskControlData[0]" :max="riskControlData[1]" :disabled="riskControlData[0] < 2000"
                       @focus="keyDownReview" @blur="keyDown" step-strictly></el-input-number>
                   </el-form-item>
                   <el-form-item label="中介">
@@ -108,10 +108,12 @@
                     <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
                   </el-form-item>
                   <el-form-item label=" ">
-                    <el-button type="primary" v-if="setAuth('inquiry:insert')" @click="submitForm('buyForm')">买
+                    <el-button type="primary" :disabled="userInfo.status == 2" v-if="setAuth('inquiry:insert')"
+                      @click="submitForm('buyForm')">买
                       (F1)</el-button>
 
-                    <el-button type="danger" v-if="setAuth('inquiry:insert')" @click="submitForm('saleForm')">卖
+                    <el-button type="danger" :disabled="userInfo.status == 2" v-if="setAuth('inquiry:insert')"
+                      @click="submitForm('saleForm')">卖
                       (F2)</el-button>
 
                   </el-form-item>
@@ -292,7 +294,7 @@
       <audio controls ref="playAudio" style="display: none">
         <source src="@/assets/audio/1.wav" type="audio/wav" />
       </audio>
-      <el-dialog :title="dialogVisible.title" :visible.sync="dialogVisible.show" width="300px"
+      <el-dialog :title="dialogVisible.title" :visible.sync="dialogVisible.show" width="300px" top="30vh"
         custom-class="custom-dialog" :before-close="() => { dialogVisible.show = false, loading = false }">
         <div v-html="dialogVisible.message"></div>
         <span slot="footer" class="dialog-footer">
@@ -313,6 +315,9 @@
         :destroy-on-close="true" :close-on-click-modal="false">
         <update-password @change="handleDialogUpdatePasswordVisible"></update-password>
       </el-dialog>
+      <el-alert v-if="userInfo.status == 2" title="您的账户已被锁定！" type="error" effect="dark" :closable="false"
+        style="position: fixed;top: 40px;width: 100%;">
+      </el-alert>
     </div>
   </div>
 </template>
@@ -678,7 +683,8 @@ export default {
       }
     },
     enquiryInfo() {
-      this.initRiskControlData()
+      // this.initRiskControlData()
+      // this.getMaxBidBy();
     },
     showForward() {
       if (this.klineactive === 'Ticket图') {
@@ -719,6 +725,13 @@ export default {
   },
   methods: {
     ...mapMutations(["SET_SOCKET_MAIN", "SET_SOCKET_KLINE"]),
+    getMaxBidBy() {
+      apiTrade.getMaxBidBy(this.tscode).then(res => {
+        if (res && res.code === '00000' && res.value) {
+          this.riskControlData = res.value
+        }
+      })
+    },
     initRiskControlData() {
       apiTrade.accountRiskControl({ userId: this.userInfo.userId }).then(res => {
         if (res && res.code === '00000' && res.value) {
@@ -752,6 +765,7 @@ export default {
             this.klinemethods[this.klineactive]()
             // 初始化实时交易数据
             this.initRightTransactionList()
+            this.getMaxBidBy()
           })
         }
       })
@@ -1221,6 +1235,7 @@ export default {
         this.calcFavoriteIcon()
         this.initRightTransactionList()
         this.klinemethods[this.klineactive]()
+        this.getMaxBidBy()
         // this.scrollToTscode(this.activeTscode)
         setTimeout(() => {
           this.leftChangeLoad = false;
@@ -1323,7 +1338,7 @@ export default {
           13: () => {
             if (self.dialogVisible.show) {
               self.dialogVisible.fun();
-              self.dialogVisible.show = false;
+              // self.dialogVisible.show = false;
             }
           },
           112: () => {
@@ -1333,6 +1348,9 @@ export default {
             self.submitForm('saleForm')
           },
           71: async () => {
+            if (self.userInfo.status === 2) {
+              return;
+            }
             if (self.dialogVisible.show) {
               return;
             }
@@ -1358,6 +1376,9 @@ export default {
             }
           },
           27: async () => {
+            if (self.userInfo.status === 2) {
+              return;
+            }
             if (self.dialogEnquiryEditVisible) {
               return;
             }
@@ -1373,7 +1394,19 @@ export default {
               self.dialogVisible.show = true;
               if (code === 200 && rows.length > 0) {
                 self.dialogVisible.title = "提醒"
-                self.dialogVisible.message = `<div class='${rows[0].direction === 'bond_0' ? 'txt-green' : 'txt-red'}'> ${rows[0].tscode + " | " + (rows[0].direction === 'bond_0' ? '买入' : '卖出') + " | " + rows[0].price + " | " + rows[0].volume + " | " + util.dateFormat(rows[0].deliveryTime, "YYYY-MM-DD")}</div> <br/>是否立即撤销!`
+                // self.dialogVisible.message = `<div class='${rows[0].direction === 'bond_0' ? 'txt-green' : 'txt-red'}'> ${rows[0].tscode + " | " + (rows[0].direction === 'bond_0' ? '买入' : '卖出') + " | " + rows[0].price + " | " + rows[0].volume + " | " + util.dateFormat(rows[0].deliveryTime, "YYYY-MM-DD")}</div> <br/>是否立即撤销!`
+                const brokerName = rows[0].brokerId ? self.intendComerOption.filter(n => rows[0].brokerId === n.brokerid)[0].company : '系统智能分配';
+                self.dialogVisible.message = `<div class='el-row'>
+                <div class='el-col el-col-12' ><div class='dialog-text'>${brokerName}</div></div>
+                <div class='el-col el-col-12'><div class='text-right dialog-text'>${rows[0].price}</div></div>
+              </div>
+              <div class='el-row'>
+                <div class='el-col el-col-4' ><div class="${rows[0].direction === 'bond_0' ? 'txt-green' : 'txt-red'} dialog-text" >${rows[0].direction === 'bond_0' ? '买入' : '卖出'}</div></div>
+                <div class='el-col el-col-7' ><div class='dialog-text'>${rows[0].tscode}</div></div>
+                <div class='el-col el-col-5' ><div class='dialog-text'>${rows[0].volume}</div></div>
+                <div class='el-col el-col-8' ><div class='dialog-text text-right'>${util.dateFormat(rows[0].deliveryTime, "YYYY-MM-DD")}</div></div>
+              </div><br/>是否立即撤销!`;
+
                 self.dialogVisible.fun = () => { self.handleInquiryCancelClick(rows[0]) }
                 // self.dialogVisible.show = true;
               } else {
@@ -1578,6 +1611,7 @@ export default {
             tscode: this.activeTscode,
             dtStart,
             dtEnd,
+            days: this.ticketDay,
             noForward: false
           })
 
@@ -1825,6 +1859,9 @@ export default {
       }
     }),
     submitForm: debounce(function (formName) {
+      if (this.userInfo.status === 2) {
+        return;
+      }
       this.loading = true;
       switch (formName) {
         case 'setForm':
@@ -1860,7 +1897,19 @@ export default {
             const formKey = "buyForm";
             const direction = formName === 'buyForm' ? '买入' : '卖出';
             // <div class='${rows[0].direction === 'bond_0' ? 'txt-green' : 'txt-red'}'> ${rows[0].tscode + " | " + (rows[0].direction === 'bond_0' ? '买入' : '卖出') + " | " + rows[0].price + " | " + rows[0].volume + " | " + util.dateFormat(rows[0].deliveryTime, "YYYY-MM-DD")}</div>
-            this.dialogVisible.message = `<div class='${direction === '买入' ? 'txt-green' : 'txt-red'}'>${this[formKey].tscode + " | " + direction + " | " + this[formKey].price + " | " + this[formKey].volume + " | " + util.dateFormat(this[formKey].deliveryTime, "YYYY-MM-DD")}</div><br/>请确认需要提交询价单?`;
+            // this.dialogVisible.message = `<div class='${direction === '买入' ? 'txt-green' : 'txt-red'}'>${this[formKey].tscode + " | " + direction + " | " + this[formKey].price + " | " + this[formKey].volume + " | " + util.dateFormat(this[formKey].deliveryTime, "YYYY-MM-DD")}</div><br/>请确认需要提交询价单?`;
+            const brokerName = this[formKey].brokerid ? this.intendComerOption.filter(n => this[formKey].brokerid === n.brokerid)[0].company : '系统智能分配';
+            this.dialogVisible.message = `<div class='el-row'>
+                <div class='el-col el-col-12' ><div class='dialog-text'>${brokerName}</div></div>
+                <div class='el-col el-col-12'><div class='text-right dialog-text'>${this[formKey].price}</div></div>
+              </div>` +
+              `<div class='el-row'>
+                <div class='el-col el-col-4' ><div class="${direction === '买入' ? 'txt-green' : 'txt-red'} dialog-text" >${direction}</div></div>
+                <div class='el-col el-col-7' ><div class='dialog-text'>${this[formKey].tscode}</div></div>
+                <div class='el-col el-col-5' ><div class='dialog-text'>${this[formKey].volume}</div></div>
+                <div class='el-col el-col-8' ><div class='dialog-text text-right'>${util.dateFormat(this[formKey].deliveryTime, "YYYY-MM-DD")}</div></div>
+              </div><br/>请确认需要提交询价单?`;
+
             this.dialogVisible.title = "提示"
             this.dialogVisible.fun = () => { this.quickSubmit(formName, true) }
             this.dialogVisible.show = true
@@ -1975,7 +2024,6 @@ export default {
                 if (msgJson.actionType === 'refresh') {
                   break
                 }
-                self.initRiskControlData()
                 // self.$notify({
                 //   title: `${msgJson.data.tradeuser} 已接收`,
                 //   dangerouslyUseHTMLString: true,
@@ -2023,7 +2071,6 @@ export default {
                 break
               case 'deal_bond_0':
               case 'deal_bond_1':
-                self.initRiskControlData()
                 // self.$notify({
                 //   title: `${msgJson.data.tradeuser} 已成交`,
                 //   dangerouslyUseHTMLString: true,
@@ -2062,7 +2109,6 @@ export default {
                 break
               case 'deny_bond_0':
               case 'deny_bond_1':
-                self.initRiskControlData()
                 self.$notify({
                   title: `${msgJson.data.tradeuser} 已拒收`,
                   dangerouslyUseHTMLString: true,
@@ -2137,7 +2183,6 @@ export default {
                 break
               case 'confirm_cancel_bond_0':
               case 'confirm_cancel_bond_1':
-                self.initRiskControlData()
                 // self.$notify({
                 //   title: `${msgJson.data.tradeuser} 已接受撤单`,
                 //   dangerouslyUseHTMLString: true,
@@ -2172,7 +2217,6 @@ export default {
                 break
               case 'tradecompare_bond_0':
               case 'tradecompare_bond_1':
-                self.initRiskControlData()
                 // notify = self.$notify({
                 //   title: `${msgJson.data.ut.tradeuser} 等待确认成交`,
                 //   dangerouslyUseHTMLString: true,
@@ -2243,7 +2287,6 @@ export default {
                 break
               case 'weipingchangerequest_bond_0':
               case 'weipingchangerequest_bond_1':
-                self.initRiskControlData()
                 // notify = self.$notify({
                 //   title: `${msgJson.data.changer} 等待未平仓修改审核`,
                 //   dangerouslyUseHTMLString: true,
@@ -2350,7 +2393,6 @@ export default {
                 break
               case 'yipingchangerequest_bond_0':
               case 'yipingchangerequest_bond_1':
-                self.initRiskControlData()
                 // notify = self.$notify({
                 //   title: `${msgJson.data.changer} 等待已平仓修改审核`,
                 //   dangerouslyUseHTMLString: true,
@@ -2711,7 +2753,6 @@ export default {
                 break
               case 'xiugaichangedeny_bond_0':
               case 'xiugaichangedeny_bond_1':
-                self.initRiskControlData()
                 // notify = self.$notify({
                 //   title: `${msgJson.data.tradeuser} 已拒绝修改询价单`,
                 //   dangerouslyUseHTMLString: true,
@@ -2774,7 +2815,6 @@ export default {
                 break
               case 'xiugaichangeconfirm_bond_0':
               case 'xiugaichangeconfirm_bond_1':
-                self.initRiskControlData()
                 // notify = self.$notify({
                 //   title: `${msgJson.data.tradeuser} 已同意修改询价单`,
                 //   dangerouslyUseHTMLString: true,
@@ -3424,7 +3464,6 @@ export default {
     // this.saleForm.volume = parseInt(this.setForm.defVolume)
     // this.buyForm.quickSubmit = this.setForm.isKlineSubmit
     // this.saleForm.quickSubmit = this.setForm.isKlineSubmit
-    this.initRiskControlData()
     this.initPriceWait()
     window.onresize = () => {
       this.initFrameW('leftWith', 200)
@@ -3570,6 +3609,11 @@ export default {
 
 .ipt-remark {
   width: 100%;
+}
+
+.el-alert--error.is-dark {
+  color: #fff;
+  background-color: #ec0000;
 }
 
 .container {
@@ -4230,5 +4274,12 @@ export default {
   .el-form-item--small.el-form-item {
     margin-bottom: 14px;
   }
+}
+
+.dialog-text {
+  height: 35px;
+  line-height: 35px;
+  font-size: 14px;
+  font-weight: bold;
 }
 </style>

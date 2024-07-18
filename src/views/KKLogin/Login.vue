@@ -24,8 +24,8 @@
               </el-input>
             </el-form-item>
             <el-form-item>
-              <el-radio-group v-model="labelPosition" size="small">
-                <el-radio-button label="lily" :disabled="isElectron" >管理</el-radio-button>
+              <el-radio-group v-model="labelPosition" size="small" v-if="isElectron">
+                <el-radio-button label="lily" :disabled="isElectron">管理</el-radio-button>
                 <el-radio-button label="Simulation">模拟</el-radio-button>
               </el-radio-group>
             </el-form-item>
@@ -74,8 +74,9 @@ export default {
   },
   created() {
     if (window.v1) {
-      this.isElectron = window.v1.isElectron()
+      this.isElectron = window.v1.isElectron();
     }
+    this.labelPosition = this.isElectron ? 'Simulation' : 'lily';
   },
   methods: {
     ...mapMutations(["SET_SOCKET_MAIN", "SET_SOCKET_KLINE"]),
@@ -281,7 +282,7 @@ export default {
     box-shadow: 0 0 10px #333;
 
     .tit {
-      color: $hover-color;
+      color: $body-btn-hover;
       text-align: center;
       font-size: 18px;
       line-height: 60px;

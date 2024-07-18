@@ -154,7 +154,7 @@ export default {
 
   i:hover {
     cursor: pointer;
-    color: $hover-color;
+    color: $body-main-hover;
   }
 
   .navigator {

@@ -28,7 +28,7 @@
       <el-form-item label="剩余询量" prop="restVolume" v-if="action === 2">
         <el-input v-model="enquiryForm.restVolume" placeholder="请输入剩余询量"></el-input>
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <el-button-group>
           <el-button type="primary" @click="funcVolumeAdd(0)">清零</el-button>
           <el-button type="primary" @click="funcVolumeAdd(1000)">1</el-button>
@@ -37,7 +37,7 @@
           <el-button type="primary" @click="funcVolumeAdd(5000)">5</el-button>
           <el-button type="primary" @click="funcVolumeAdd(10000)">10</el-button>
         </el-button-group>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="交割日期" prop="deliveryTime">
         <delivery-canlendar ref="buyDeliveryCanlendar" :init="action === 2 ? true : false"
           @change="handleBuyDeliveryCanlendar" :disabled="action === 2 ? true : false"></delivery-canlendar>

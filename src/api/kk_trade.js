@@ -375,5 +375,11 @@ export default {
       method: "post",
       data
     });
+  },
+  getMaxBidBy(tscode) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/tradeamountlimit/getMaxBidByTscode?tscode=${tscode}`,
+      method: "get"
+    });
   }
 };

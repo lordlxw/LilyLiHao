@@ -1,17 +1,12 @@
-$main-color: #3f5ca8;
-$main-black: #202020;
-$hover-color: #2cad98;
-$hover-color2: #5270bd;
-$box-black: #2f3032;
-$header-black: #000000;
-$color-white: #FFFFFF;
-$color-black: #000000;
+
 $background-style: linear-gradient(to bottom, #2cad98 30%, #5270bd 100%);
 
+$main-color: #3f5ca8;
 $header-main-box: #FFFFFF;
 $body-main-box: #f5f7fa;
 $body-main-txt: #000000;
 $body-main-hover: #e6e6e6;
+$body-btn-hover: #2cad98;
 // $body-main-hover: #7a7a7a;
 
 html {
@@ -120,7 +115,7 @@ body {
   }
 
   .el-menu-item.is-active {
-    color: $hover-color !important;
+    color: $body-btn-hover !important;
   }
 
   .color-main {
@@ -289,7 +284,7 @@ a {
 
 a:hover {
   text-decoration: none;
-  color: $hover-color2;
+  color: $body-btn-hover;
 }
 
 .mt10 {
@@ -516,7 +511,7 @@ a:hover {
 
 .el-form-item .el-form-item__label {
 
-  color: $color-black;
+  color: $body-main-txt;
 }
 
 .el-table--border,
@@ -538,6 +533,10 @@ a:hover {
 }
 
 /* 自定义滚动条的宽度 */
+.custom-scrollbar{
+  overflow: scroll;
+}
+
 .custom-scrollbar::-webkit-scrollbar,
 .el-dialog__wrapper::-webkit-scrollbar,
 .el-scrollbar__wrap::-webkit-scrollbar,
