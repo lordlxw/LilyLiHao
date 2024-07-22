@@ -106,7 +106,7 @@ export default {
                 case 'delegate_bond_0':
                 case 'delegate_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   notify = self.$notify({
@@ -268,10 +268,7 @@ export default {
                 case 'deal_bond_0':
                 case 'deal_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
-                    break
-                  }
-                  if (window.location.href.includes("chatitem")) {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   self.$notify({
@@ -309,7 +306,7 @@ export default {
                 case 'deny_bond_0':
                 case 'deny_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   self.$notify({
@@ -356,7 +353,7 @@ export default {
                 case 'confirmdeal_bond_0':
                 case 'confirmdeal_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   notify = self.$notify({
@@ -406,7 +403,7 @@ export default {
                 case 'request_cancel_bond_0':
                 case 'request_cancel_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   notify = self.$notify({
@@ -484,7 +481,7 @@ export default {
                 case 'deny_deal_bond_0':
                 case 'deny_deal_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   notify = self.$notify({
@@ -534,7 +531,7 @@ export default {
                 case 'weipingchangeconfirm_bond_0':
                 case 'weipingchangeconfirm_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   notify = self.$notify({
@@ -622,7 +619,7 @@ export default {
                 case 'weipingchangedeny_bond_0':
                 case 'weipingchangedeny_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   self.$notify({
@@ -669,7 +666,7 @@ export default {
                 case 'yipingchangeconfirm_bond_0':
                 case 'yipingchangeconfirm_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   self.$notify({
@@ -715,7 +712,7 @@ export default {
                 case 'yipingchangedeny_bond_0':
                 case 'yipingchangedeny_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   self.$notify({
@@ -762,7 +759,7 @@ export default {
                 case 'nancheng_cancel_bond_0':
                 case 'nancheng_cancel_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   self.$notify({
@@ -808,6 +805,9 @@ export default {
                   break
                 case 'nancheng_baoliu_bond_0':
                 case 'nancheng_baoliu_bond_1':
+                  if (self.openPopUp()) {
+                    break;
+                  }
                   self.$notify({
                     title: `${msgJson.data.createuser} 难成已保留`,
                     dangerouslyUseHTMLString: true,
@@ -851,6 +851,9 @@ export default {
                   break
                 case 'koutouweiyueconfirm_bond_0':
                 case 'koutouweiyueconfirm_bond_1':
+                if (self.openPopUp()) {
+                    break;
+                  }
                   self.$notify({
                     title: `${msgJson.data.yanjiuyuanName} 已确认口头违约`,
                     dangerouslyUseHTMLString: true,
@@ -895,6 +898,9 @@ export default {
                   break
                 case 'koutouweiyuedeny_bond_0':
                 case 'koutouweiyuedeny_bond_1':
+                if (self.openPopUp()) {
+                    break;
+                  }
                   self.$notify({
                     title: `${msgJson.data.yanjiuyuanName} 已拒绝口头违约`,
                     dangerouslyUseHTMLString: true,
@@ -964,7 +970,7 @@ export default {
                 case 'xuzuo_confirmdeal_bond_0':
                 case 'xuzuo_confirmdeal_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   self.$notify({
@@ -1002,7 +1008,7 @@ export default {
                 case 'xuzuo_deal_bond_0':
                 case 'xuzuo_deal_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   self.$notify({
@@ -1040,7 +1046,7 @@ export default {
                 case 'xuzuo_deny_deal_bond_0':
                 case 'xuzuo_deny_deal_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   notify = self.$notify({
@@ -1094,7 +1100,7 @@ export default {
                 case 'gundan_bond_1':
                 case 'gundan_bond_0':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   notify = self.$notify({
@@ -1181,7 +1187,7 @@ export default {
                 case 'budan_bond_0':
                 case 'budan_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   notify = self.$notify({
@@ -1251,7 +1257,7 @@ export default {
                 case 'xunjiachangefinish_bond_0':
                 case 'xunjiachangefinish_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   notify = self.$notify({
@@ -1312,7 +1318,7 @@ export default {
                 case 'xunjiachangerequest_bond_0':
                 case 'xunjiachangerequest_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   notify = self.$notify({
@@ -1404,7 +1410,7 @@ export default {
                 case 'jiaogeweiyueNotice_bond_0':
                 case 'jiaogeweiyueNotice_bond_1':
                   self.$store.commit('SET_ENQUIRY_INFO', new Date().getTime() + '-' + Math.random(100000))
-                  if (msgJson.actionType === 'refresh') {
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
                   self.$notify({
@@ -1486,7 +1492,7 @@ export default {
           console.log("WebSocket Send Heartbeat : ", new Date())
           self.socketMain.send(JSON.stringify({ "dataKey": 'HELLO', "dataType": 'ping' }))
         }
-      }, 30 * 1000)
+      }, 60 * 1000)
     },
     // 重连
     reconnect() {
@@ -1508,6 +1514,13 @@ export default {
           this.initSocket()
         })
       }, 5000)
+    },
+    openPopUp() {
+      const wins = ["chatitem"]
+      const unOpen = wins.filter(n => {
+        return window.location.href.includes(n)
+      })
+      return unOpen.length > 0;
     },
     // 接收询价滚单
     handleAcceptEnquiryRollClick(obj, timestamp) {

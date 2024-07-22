@@ -515,6 +515,7 @@ let currentRelativeNum = ''
 let relativeNum = ''
 let relativeNumRoll = ''
 // let relativeNumSameCount = 0
+let hotsListTimer = null;
 export default {
   mixins: [pageMixin, commMixin],
   props: {
@@ -623,7 +624,7 @@ export default {
     activeName(newVal, oldVal) {
       if (newVal !== oldVal) {
         if (newVal === 1 && this.socketMain != null && this.hotsList.length <= 0) {
-          // this.socketMain.send(JSON.stringify({ "dataKey": "", "dataType": "rank" }))
+          this.socketMain.send(JSON.stringify({ "dataKey": "", "dataType": "rank" }))
         }
       }
     },
@@ -673,8 +674,15 @@ export default {
   },
   methods: {
     afterInitSocket() {
-      console.log("=============我正在订阅在龙虎榜")
+      if (hotsListTimer != null) {
+        clearInterval(hotsListTimer);
+        hotsListTimer = null;
+      }
       this.socketMain.send(JSON.stringify({ "dataKey": "", "dataType": "rank" }))
+      hotsListTimer = setInterval(() => {
+        console.log("=============我正在订阅在龙虎榜")
+        this.socketMain.send(JSON.stringify({ "dataKey": "", "dataType": "rank" }))
+      }, 60 * 1000 * 5)
     },
     // 搜索事件
     handleSearch() {
@@ -1707,7 +1715,7 @@ export default {
       height: 40px;
       line-height: 40px;
       text-align: center;
-      font-size: 16px;
+      font-size: 14px;
       // font-family: fangsong;
     }
   }

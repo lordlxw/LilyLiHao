@@ -1,6 +1,6 @@
 // 持仓单
-import Vue from 'vue'
-import request from '@/utils/request'
+import Vue from "vue";
+import request from "@/utils/request";
 export default {
   /**
    * 未平仓列表
@@ -9,7 +9,7 @@ export default {
   get(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/listByCurrentUser?orderBy=${params.orderBy}&isAsc=${params.isAsc}`,
-      method: 'get',
+      method: "get",
       params: {
         deliveryDateEnd: params.deliveryDateEnd,
         deliveryDateStart: params.deliveryDateStart,
@@ -19,7 +19,7 @@ export default {
         userName: params.userName,
         userTradeId: params.userTradeId
       }
-    })
+    });
   },
   /**
    * 已平仓列表
@@ -28,7 +28,7 @@ export default {
   getFinish(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/listFinishTrade?orderBy=${params.orderBy}&isAsc=${params.isAsc}`,
-      method: 'get',
+      method: "get",
       params: {
         deliveryDateEnd: params.deliveryDateEnd,
         deliveryDateStart: params.deliveryDateStart,
@@ -38,13 +38,13 @@ export default {
         userName: params.userName,
         userTradeId: params.userTradeId
       }
-    })
+    });
   },
   // 违约查询列表
   getBreak(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/listweiyueTrade`,
-      method: 'get',
+      method: "get",
       params: {
         deliveryDateEnd: params.deliveryDateEnd,
         deliveryDateStart: params.deliveryDateStart,
@@ -54,7 +54,7 @@ export default {
         userName: params.userName,
         userTradeId: params.userTradeId
       }
-    })
+    });
   },
   /**
    * 平仓
@@ -63,7 +63,7 @@ export default {
   bondsCover(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/pingcang`,
-      method: 'post',
+      method: "post",
       data: {
         // 交割速度
         deliverySpeed: params.deliverySpeed,
@@ -88,9 +88,10 @@ export default {
         // 允许浮动
         worstPrice: params.worstPrice,
         // 相关单号
-        relativeNum: params.relativeNum
+        relativeNum: params.relativeNum,
+        brokerId: params.brokerid
       }
-    })
+    });
   },
   /**
    * 交易员列表查询
@@ -99,12 +100,12 @@ export default {
   dealPersionList(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/listTrader`,
-      method: 'post',
+      method: "post",
       data: {
         // 交易单号ID
         realTradeIdList: params.realTradeIdList
       }
-    })
+    });
   },
   /**
    * 滚单
@@ -113,7 +114,7 @@ export default {
   dealRoll(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/gundan`,
-      method: 'post',
+      method: "post",
       data: {
         first: {
           deliverySpeed: params.deliverySpeed,
@@ -140,13 +141,13 @@ export default {
         relativeNum: params.relativeNum,
         deliveryTime2: params.deliveryTime3
       }
-    })
+    });
   },
   // 已平仓交割
   dealDelivery(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/jiaoge`,
-      method: 'post',
+      method: "post",
       data: {
         // 恶意违约id数组列表
         // eyiweiyueIdlist: params.eyiweiyueIdlist,
@@ -159,13 +160,13 @@ export default {
         finishCodeList: params.finishCodeList,
         wyList: params.wyList
       }
-    })
+    });
   },
   // 未平仓修改申请
   dealNoBondsEdit(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/weipingchangerequest`,
-      method: 'post',
+      method: "post",
       data: {
         // 联系人
         contactPerson: params.contactPerson,
@@ -186,13 +187,13 @@ export default {
         // 成交量
         volume: params.volume
       }
-    })
+    });
   },
   // 已平仓修改申请
   dealBondsEdit(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/yipingchangerequest`,
-      method: 'post',
+      method: "post",
       data: {
         // 联系人
         contactPerson: params.contactPerson,
@@ -213,147 +214,147 @@ export default {
         // 成交量
         volume: params.volume
       }
-    })
+    });
   },
   // 未平仓修改申请确认审核通过
   dealNoBondsEditComfirm(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/weipingchangeconfirm`,
-      method: 'post',
+      method: "post",
       data: {
         realTradeId: params.realTradeId
       }
-    })
+    });
   },
   // 已平仓修改申请确认审核通过
   dealBondsEditComfirm(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/yipingchangeconfirm`,
-      method: 'post',
+      method: "post",
       data: {
         realTradeId: params.realTradeId
       }
-    })
+    });
   },
   // 未平仓修改申请拒绝通过
   dealNoBondsEditRejection(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/weipingchangedeny`,
-      method: 'post',
+      method: "post",
       data: {
         realTradeId: params.realTradeId
       }
-    })
+    });
   },
   // 已平仓修改申请拒绝通过
   dealBondsEditRejection(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/yipingchangedeny`,
-      method: 'post',
+      method: "post",
       data: {
         realTradeId: params.realTradeId
       }
-    })
+    });
   },
   // 交易违约
   dealBreak(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/weiyue`,
-      method: 'post',
+      method: "post",
       data: {
         realTradeId: params.realTradeId
       }
-    })
+    });
   },
   // 违约撤回
   dealBreakReturn(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/weiyuereturn`,
-      method: 'post',
+      method: "post",
       data: {
         realTradeId: params.realTradeId
       }
-    })
+    });
   },
   // 未平全量导出
   nobondsAllExport() {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/weipingexport`,
-      method: 'get',
-      responseType: 'arraybuffer'
-    })
+      method: "get",
+      responseType: "arraybuffer"
+    });
   },
   // 已平全量导出
   bondsAllExport() {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/export`,
-      method: 'get',
-      responseType: 'arraybuffer'
-    })
+      method: "get",
+      responseType: "arraybuffer"
+    });
   },
   // 已平增量导出
   bondsAddExport() {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/export`,
-      method: 'get',
-      responseType: 'arraybuffer'
-    })
+      method: "get",
+      responseType: "arraybuffer"
+    });
   },
   // 口头违约申请
   bondsSayBreakApply(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/koutouweiyueRequest`,
-      method: 'post',
+      method: "post",
       data: {
         realTradeId: params.realTradeId
       }
-    })
+    });
   },
   // 口头违约确认
   bondsSayBreakConfirm(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/koutouweiyueConfirm`,
-      method: 'post',
+      method: "post",
       data: {
         realTradeId: params.realTradeId
       }
-    })
+    });
   },
   // 口头违约拒绝
   bondsSayBreakRejection(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/koutouweiyuedeny`,
-      method: 'post',
+      method: "post",
       data: {
         realTradeId: params.realTradeId
       }
-    })
+    });
   },
   // 未平持仓修改内容查看
   nobondsUpdateContent(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/weipingchangecheck`,
-      method: 'post',
+      method: "post",
       data: {
         realTradeId: params.realTradeId
       }
-    })
+    });
   },
   // 已平持仓修改内容查看
   bondsUpdateContent(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/yipingchangecheck`,
-      method: 'post',
+      method: "post",
       data: {
         realTradeId: params.realTradeId
       }
-    })
+    });
   },
   // 是否显示交割按钮
   deliveryBtnIsShow() {
     return request({
       url: `${Vue.prototype.$apiUrl}/realtrade/jiaogeButtonHidden`,
-      method: 'get'
-    })
+      method: "get"
+    });
   }
-}
+};

@@ -24,7 +24,7 @@
               </el-input>
             </el-form-item>
             <el-form-item>
-              <el-radio-group v-model="labelPosition" size="small" v-if="isElectron">
+              <el-radio-group v-model="labelPosition" size="small" >
                 <el-radio-button label="lily" :disabled="isElectron">管理</el-radio-button>
                 <el-radio-button label="Simulation">模拟</el-radio-button>
               </el-radio-group>

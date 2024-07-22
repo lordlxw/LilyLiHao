@@ -102,7 +102,7 @@
         <el-table-column></el-table-column>
         <el-table-column fixed="right" align="center" label="操作" width="150">
           <template slot-scope="scope">
-            <el-button type="text" v-if="setAuth('bonds:cover') && scope.row.realTradeId === null"
+            <el-button type="primary" v-if="setAuth('bonds:cover') && scope.row.realTradeId === null && scope.row.restVolume > 0"
               @click="handleBondsCover(scope.row)">平仓</el-button>
           </template>
         </el-table-column>
@@ -110,7 +110,7 @@
     </div>
     <el-dialog title="平仓" width="400px;" :visible.sync="dialogBondsCoverFormVisible" append-to-body
       :destroy-on-close="true" :close-on-click-modal="false">
-      <bonds-cover :row="currentRow" @change="handleBondsCoverDialogVisible"></bonds-cover>
+      <bonds-cover :row="currentRow"  @change="handleBondsCoverDialogVisible"></bonds-cover>
     </el-dialog>
     <el-dialog title="未平仓修改申请" width="400px;" :visible.sync="dialogNoBondsFormVisible" append-to-body
       :destroy-on-close="true" :close-on-click-modal="false">

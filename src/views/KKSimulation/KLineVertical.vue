@@ -49,8 +49,7 @@
           <!-- 交易框 -->
           <div class="chatbox" v-loading="leftChangeLoad || dialogVisible.show">
             <el-tabs type="border-card" style="border-radius: 3px;" v-model="activeName">
-              <el-tab-pane
-                :label="'最大可买/卖：' + (riskControlData[0] || 0) + '/' + (riskControlData[1] || 0)"
+              <el-tab-pane :label="'最大可买/卖：' + (riskControlData[0] || 0) + '/' + (riskControlData[1] || 0)"
                 class="buy-form" name="buy">
                 <el-form :inline="true" label-width="65px" :model="buyForm" ref="buyForm" :rules="buyFormRules">
                   <el-form-item label="价格">
@@ -66,21 +65,14 @@
                       <el-option v-for="item in tscodeList" :key="item.tscode" :label="item.tscode"
                         :value="item.tscode">
                         <div>{{ item.tscode }} - {{ item.bondname }}</div>
-                        <!-- <el-row>
-                          <el-col :span="12">
-                            <div class="grid-content bg-purple">{{ item.tscode }}</div>
-                          </el-col>
-                          <el-col :span="12">
-                            <div class="grid-content bg-purple-light">{{ item.bondname }}</div>
-                          </el-col>
-                        </el-row> -->
                       </el-option>
                     </el-select>
                   </el-form-item>
                   <el-form-item label="交易量">
                     <!-- <el-input class="ipt-volume"  v-model.number="buyForm.volume" placeholder="请输入交易量"></el-input> -->
 
-                    <el-input-number class="ipt-volume" v-model="buyForm.volume" :step="1000" :min="riskControlData[0]" :max="riskControlData[1]" :disabled="riskControlData[0] < 2000"
+                    <el-input-number class="ipt-volume" v-model="buyForm.volume" :step="1000" :min="2000"
+                      :max="riskControlData[0] > riskControlData[1] ? riskControlData[0] : riskControlData[1]"
                       @focus="keyDownReview" @blur="keyDown" step-strictly></el-input-number>
                   </el-form-item>
                   <el-form-item label="中介">
@@ -726,11 +718,13 @@ export default {
   methods: {
     ...mapMutations(["SET_SOCKET_MAIN", "SET_SOCKET_KLINE"]),
     getMaxBidBy() {
-      apiTrade.getMaxBidBy(this.tscode).then(res => {
-        if (res && res.code === '00000' && res.value) {
-          this.riskControlData = res.value
-        }
-      })
+      if (this.tscode) {
+        apiTrade.getMaxBidBy(this.tscode).then(res => {
+          if (res && res.code === '00000' && res.value) {
+            this.riskControlData = res.value
+          }
+        })
+      }
     },
     initRiskControlData() {
       apiTrade.accountRiskControl({ userId: this.userInfo.userId }).then(res => {
@@ -766,6 +760,7 @@ export default {
             // 初始化实时交易数据
             this.initRightTransactionList()
             this.getMaxBidBy()
+            this.buyForm.volume = 2000;
           })
         }
       })
@@ -2015,6 +2010,9 @@ export default {
             self.calcuDiffPrice(2)
           } else {
             switch (msgJson.dataType) {
+              case 'tradeamountlimit':
+                self.getMaxBidBy()
+                break
               case 'brokeroccupyinfo':
                 const occupyInfo = msgJson.data
                 self.getIntendComerList(occupyInfo)
@@ -2499,73 +2497,73 @@ export default {
                 break
               case 'koutouweiyuerequest_bond_0':
               case 'koutouweiyuerequest_bond_1':
-                notify = self.$notify({
-                  title: `${msgJson.data.tradeuser} 发起口头违约`,
-                  dangerouslyUseHTMLString: true,
-                  position: 'top-left',
-                  customClass: 'notify-red',
-                  message: h(
-                    "div",
-                    { class: "notify notify-dd-red" },
-                    [
-                      h("dl", null, [
-                        h("dt", null, "创建时间"),
-                        h("dd", null, `${msgJson.data.createTime}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "债券码"),
-                        h("dd", null, `${msgJson.data.tscode.replace(/.IB/, '')}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "方向"),
-                        h("dd", null, `${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "成交价"),
-                        h("dd", null, `${util.moneyFormat(msgJson.data.price, 4)}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "成交量"),
-                        h("dd", null, `${msgJson.data.volume}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "交割日期"),
-                        h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "交易对手"),
-                        h("dd", null, `${msgJson.data.counterParty}`)
-                      ]),
-                      h("dl", null, [
-                        h("dt", null, "备注"),
-                        h("dd", null, `${msgJson.data.remark}`)]),
-                      h("dl", { style: "margin-top:20px;" }, [
-                        // h("dt", null, ""),
-                        h("dd", null, [
-                          h("button", {
-                            class: "notigy-agree",
-                            on: {
-                              click: function () {
-                                self.handleSayBreakConfirmClick(msgJson.data.realTradeId, timestamp)
-                              }
-                            }
-                          }, "同意"),
-                          h("button", {
-                            class: "notigy-cancel",
-                            on: {
-                              click: function () {
-                                self.handleSayBreakRejectionClick(msgJson.data.realTradeId, timestamp)
-                              }
-                            }
-                          }, "拒绝")
-                        ])
-                      ]),
-                    ],
-                  ),
-                  duration: 0
-                });
-                self.notifyRejection[timestamp] = notify
-                self.tryPlay()
+                // notify = self.$notify({
+                //   title: `${msgJson.data.tradeuser} 发起口头违约`,
+                //   dangerouslyUseHTMLString: true,
+                //   position: 'top-left',
+                //   customClass: 'notify-red',
+                //   message: h(
+                //     "div",
+                //     { class: "notify notify-dd-red" },
+                //     [
+                //       h("dl", null, [
+                //         h("dt", null, "创建时间"),
+                //         h("dd", null, `${msgJson.data.createTime}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "债券码"),
+                //         h("dd", null, `${msgJson.data.tscode.replace(/.IB/, '')}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "方向"),
+                //         h("dd", null, `${msgJson.data.direction === 'bond_0' ? '买入' : msgJson.data.direction === 'bond_1' ? '卖出' : ''}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "成交价"),
+                //         h("dd", null, `${util.moneyFormat(msgJson.data.price, 4)}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "成交量"),
+                //         h("dd", null, `${msgJson.data.volume}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "交割日期"),
+                //         h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "交易对手"),
+                //         h("dd", null, `${msgJson.data.counterParty}`)
+                //       ]),
+                //       h("dl", null, [
+                //         h("dt", null, "备注"),
+                //         h("dd", null, `${msgJson.data.remark}`)]),
+                //       h("dl", { style: "margin-top:20px;" }, [
+                //         // h("dt", null, ""),
+                //         h("dd", null, [
+                //           h("button", {
+                //             class: "notigy-agree",
+                //             on: {
+                //               click: function () {
+                //                 self.handleSayBreakConfirmClick(msgJson.data.realTradeId, timestamp)
+                //               }
+                //             }
+                //           }, "同意"),
+                //           h("button", {
+                //             class: "notigy-cancel",
+                //             on: {
+                //               click: function () {
+                //                 self.handleSayBreakRejectionClick(msgJson.data.realTradeId, timestamp)
+                //               }
+                //             }
+                //           }, "拒绝")
+                //         ])
+                //       ]),
+                //     ],
+                //   ),
+                //   duration: 0
+                // });
+                // self.notifyRejection[timestamp] = notify
+                // self.tryPlay()
                 break
               case 'nancheng_bond_0':
               case 'nancheng_bond_1':
@@ -4069,7 +4067,7 @@ export default {
       }
 
       .trans-body {
-        height: calc(100% - 35px);
+        height: calc(100% - 25px);
         overflow-y: auto;
       }
 

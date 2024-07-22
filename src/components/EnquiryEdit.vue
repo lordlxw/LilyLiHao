@@ -66,7 +66,7 @@
         <el-input type="textarea" v-model="enquiryForm.remark" placeholder="请输入内容" resize="none" rows="2"></el-input>
       </el-form-item> -->
       <el-form-item>
-        <el-button class="btn-green" @click="submitForm('enquiryForm')">保存</el-button>
+        <el-button type="primary" class="btn-green" @click="submitForm('enquiryForm')">保存</el-button>
       </el-form-item>
     </el-form>
   </div>

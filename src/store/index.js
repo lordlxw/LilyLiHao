@@ -251,7 +251,7 @@ const store = new Vuex.Store({
       state.chatMessage = chatMessage;
     },
     SET_HOTS_LIST(state, hotsList) {
-      if (state.hotsList && state.hotsList.length > 0) {
+      if (state.hotsList.length > 0 && hotsList.length < 30) {
         const updatedArr = state.hotsList.map(obj => {
           const item = hotsList.find(n => n.TsCode === obj.TsCode);
           if (item) {

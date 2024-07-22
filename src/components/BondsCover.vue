@@ -1,25 +1,21 @@
 <template>
   <div>
-    <el-form
-      ref="coverForm"
-      :model="coverForm"
-      :rules="coverFormRules"
-      label-width="100px"
-    >
+    <el-form :inline="true" ref="coverForm" :model="coverForm" :rules="coverFormRules" label-width="100px">
       <el-form-item label="方向" prop="direction">
         {{
           coverForm.direction === "bond_0"
             ? "买入"
             : coverForm.direction === "bond_1"
-            ? "卖出"
-            : "不明确"
+              ? "卖出"
+              : "不明确"
         }}
       </el-form-item>
       <el-form-item label="券码" prop="tscode">
         {{ coverForm.tscode }}
       </el-form-item>
       <el-form-item label="价格" prop="price">
-        <el-input v-model="coverForm.price" placeholder="请输入价格"></el-input>
+        <el-input-number v-model="coverForm.price" :precision="4" :step="0.001" placeholder="请输入价格"
+          class="slt-user"></el-input-number>
       </el-form-item>
       <!-- <el-form-item label="允许浮动" prop="worstPrice">
         <el-input-number
@@ -29,12 +25,10 @@
         BP
       </el-form-item> -->
       <el-form-item label="交易量(万)" prop="volume">
-        <el-input
-          v-model="coverForm.volume"
-          placeholder="请输入交易量"
-        ></el-input>
+        <el-input-number class="slt-user" v-model="coverForm.volume" :step="1000" :min="1000" :max="100000"
+          step-strictly></el-input-number>
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <el-button-group>
           <el-button type="primary" @click="funcVolumeAdd(0)">清零</el-button>
           <el-button type="primary" @click="funcVolumeAdd(1000)">1</el-button>
@@ -43,12 +37,21 @@
           <el-button type="primary" @click="funcVolumeAdd(5000)">5</el-button>
           <el-button type="primary" @click="funcVolumeAdd(10000)">10</el-button>
         </el-button-group>
+      </el-form-item> -->
+      <el-form-item label="中介" prop="brokerid">
+        <el-select v-model="coverForm.brokerid" clearable placeholder="系统选择" class="slt-user" popper-class="slt-user">
+          <el-option v-for="item in intendComerOption" :disabled="item.disabled" :key="item.id" :label="item.company"
+            :value="item.brokerid">
+            <div style="width: 50px; float: left"><i class="el-icon-s-custom " :class="item.iconClass"></i>
+              {{ item.company
+              }}</div>
+            <div class="text-left" style="width: 50px;">{{ item.target }}</div>
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="交割日期" prop="deliveryTime">
-        <delivery-canlendar-update
-          ref="deliveryCanlendarUpdate"
-          @change="handleDeliveryCanlendarUpdate"
-        ></delivery-canlendar-update>
+        <delivery-canlendar-update ref="deliveryCanlendarUpdate" :w="`200px`"
+          @change="handleDeliveryCanlendarUpdate"></delivery-canlendar-update>
       </el-form-item>
       <!-- <el-form-item label="交易员" prop="tradeuserId">
         <el-select v-model="coverForm.tradeuserId" placeholder="请选择交易员">
@@ -70,18 +73,18 @@
           rows="2"
         ></el-input>
       </el-form-item> -->
-      <el-form-item>
-        <el-button class="btn-green" @click="submitForm('coverForm')"
-          >确认平仓</el-button
-        >
+      <el-form-item label=" ">
+        <el-button type="primary" class="btn-green" @click="submitForm('coverForm')">确认平仓</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
 import api from '@/api/kk_bonds'
 import apiCanlendar from '@/api/kk_canlendar'
+import apiTrade from "@/api/kk_trade";
 import apiAdmin from '@/api/kk_power_admin'
 import * as util from '@/utils/util'
 import config from '@/utils/config'
@@ -121,6 +124,7 @@ export default {
     }
     return {
       tradeUsersOption: [],
+      intendComerOption: [],
       coverForm: {
         // 交易类型
         direction: '买入',
@@ -145,7 +149,8 @@ export default {
         // 快速交易
         quickSubmit: false,
         realTradeIdList: [],
-        relativeNum: ''
+        relativeNum: '',
+        brokerid: ''
       },
       coverFormRules: {
         direction: [
@@ -175,9 +180,20 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters({
+      userInfo: 'getUserInfo'
+    }),
+    ...mapState({
+      occupyInfo: (state) => state.occupyInfo,
+    }),
+  },
   watch: {
     row: function () {
       this.loadInitData()
+    },
+    occupyInfo() {
+      this.getIntendComerList(this.occupyInfo)
     }
   },
   methods: {
@@ -234,6 +250,7 @@ export default {
             worstPrice: this[formName].worstPrice,
             //
             realTradeIdList: this[formName].realTradeIdList,
+            brokerid: this[formName].brokerid,
             relativeNum: this[formName].relativeNum
           }).then(res => {
             if (res && res.code === '00000' && res.value) {
@@ -244,6 +261,20 @@ export default {
               this.$emit('change', {
                 dialogVisible: false
               })
+
+              const { brokerId, channelId, userTradeId, message } = res.value;
+              // const md = new Date(deliveryTime);
+              // const chatMessage = `ref (${direction === 'bond_0' ? 'bid' : 'ofr'} ${tscode.split('.')[0]} ${price} ${md.getMonth() + 1}月${md.getDate()} 日 + 0 ${volume} )`
+              // console.log(chatMessage)
+              const data = {
+                chatId: this.userInfo.userId,
+                message: message,
+                brokerId: brokerId,
+                channelId: channelId,
+                direction: 0,
+                tradeId: userTradeId
+              }
+              apiTrade.sendChatMessages(data, 'sim')
             } else {
               this.$message({
                 message: `${res.message}`,
@@ -262,6 +293,38 @@ export default {
           this.coverForm.tradeuserId = response.value[0].userId
         }
       })
+    },
+    // 获取意向列表
+    getIntendComerList(occupyInfo) {
+      if (this.intendComerOption.length > 0 && occupyInfo) {
+        const bol = occupyInfo.some(n => n.occupyier === this.userInfo.userId);
+        this.intendComerOption = this.intendComerOption.map(item => {
+          const occupyItem = occupyInfo.filter(n => n.brokerid === item.brokerid && n.channelId === item.channelId)
+          if (occupyItem.length > 0) {
+            return {
+              ...item,
+              disabled: bol ? occupyItem[0].occupyier !== this.userInfo.userId : occupyItem[0].occupy,
+              iconClass: occupyItem[0].occupy ? 'txt-red' : 'txt-green'
+            };
+          } else {
+            return item
+          }
+        });
+      } else {
+        apiAdmin.chatReceiverList().then(response => {
+          if (response && response.code === '00000' && response.value) {
+            const brokers = [...response.value].filter(n => n.brokerid !== 11 && n.brokerid !== 12)
+            this.intendComerOption = [...brokers].map(item => {
+              return {
+                ...item,
+                disabled: false,
+                iconClass: 'txt-green'
+              };
+            });
+            return occupyInfo ? this.getIntendComerList(occupyInfo) : null
+          }
+        })
+      }
     },
     // 加载初始值
     loadInitData() {
@@ -283,6 +346,7 @@ export default {
       this.coverForm.realTradeIdList = this.row.realTradeIdList
       this.coverForm.relativeNum = this.row.relativeNum
       this.getTradeUserList(this.row.realTradeIdList)
+      this.getIntendComerList(this.occupyInfo)
     },
     // 获取下个交易日
     getNextDealDay() {
@@ -305,5 +369,21 @@ export default {
   background: #409eff !important;
   color: white;
   border: 1px solid #409eff;
+}
+
+.slt-user {
+  width: 140px;
+
+  .el-select-dropdown__item {
+    padding: 0 10px;
+  }
+
+  .el-select-dropdown__item.selected {
+    color: black;
+  }
+}
+
+.el-form-item--small.el-form-item {
+  width: 250px;
 }
 </style>
