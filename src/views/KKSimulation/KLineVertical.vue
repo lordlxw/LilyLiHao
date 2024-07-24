@@ -94,7 +94,7 @@
                       </el-option>
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="交割日期">
+                  <el-form-item label="清算速度">
                     <delivery-canlendar :w="`${canlendarW}px`" ref="buyDeliveryCanlendar"
                       @change="handleBuyDeliveryCanlendar"></delivery-canlendar>
                     <span class="txt-green">{{ buyForm.deliveryTimeMsg }}</span>
@@ -150,7 +150,7 @@
                       </el-option>
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="交割日期">
+                  <el-form-item label="清算速度">
                     <delivery-canlendar :w="`${canlendarW}px`" ref="buyDeliveryCanlendar"
                       @change="handleSaleDeliveryCanlendar"></delivery-canlendar>
                     <span class="txt-green">{{ saleForm.deliveryTimeMsg }}</span>
@@ -497,7 +497,7 @@ export default {
         tscode: '',
         // 交割速度
         deliverySpeed: 0,
-        // 交割日期
+        // 清算速度
         deliveryTime: '',
         // 交易员
         tradeuserId: '18',
@@ -505,7 +505,7 @@ export default {
         remark: '',
         // 快速交易
         quickSubmit: false,
-        // 交割日期消息
+        // 清算速度消息
         deliveryTimeMsg: '',
         // 允许浮动
         worstPrice: 0.1,
@@ -529,7 +529,7 @@ export default {
           { validator: plusAmountTest, trigger: 'blur' }
         ],
         deliveryTime: [
-          { required: true, message: '交割日期必选', trigger: 'blur' }
+          { required: true, message: '清算速度必选', trigger: 'blur' }
         ],
         tradeuserId: [
           { required: true, message: '交易员必选', trigger: 'change' }
@@ -551,7 +551,7 @@ export default {
         tscode: '',
         // 交割速度
         deliverySpeed: 0,
-        // 交割日期
+        // 清算速度
         deliveryTime: '',
         // 交易员
         tradeuserId: '18',
@@ -559,7 +559,7 @@ export default {
         remark: '',
         // 快速交易
         quickSubmit: false,
-        // 交割日期消息
+        // 清算速度消息
         deliveryTimeMsg: '',
         // 允许浮动
         worstPrice: 0.1,
@@ -582,7 +582,7 @@ export default {
           { validator: plusAmountTest, trigger: 'blur' }
         ],
         deliveryTime: [
-          { required: true, message: '交割日期必选', trigger: 'blur' }
+          { required: true, message: '清算速度必选', trigger: 'blur' }
         ],
         tradeuserId: [
           { required: true, message: '交易员必选', trigger: 'change' }
@@ -621,7 +621,7 @@ export default {
       intendComerOption: [],
       // 消息通知
       notifyRejection: {},
-      // 交割日期选择
+      // 清算速度选择
       pickerOptions: {},
       // 价格变动定时器
       timer: null,
@@ -1775,7 +1775,7 @@ export default {
           apiTrade.inquirySheetAdd({
             // 交割速度
             deliverySpeed: this[formKey].deliverySpeed,
-            // 交割日期
+            // 清算速度
             deliveryTime: util.dateFormat(this[formKey].deliveryTime, "YYYY-MM-DD"),
             // 买还是卖
             direction: direction,
@@ -1893,10 +1893,11 @@ export default {
             const direction = formName === 'buyForm' ? '买入' : '卖出';
             // <div class='${rows[0].direction === 'bond_0' ? 'txt-green' : 'txt-red'}'> ${rows[0].tscode + " | " + (rows[0].direction === 'bond_0' ? '买入' : '卖出') + " | " + rows[0].price + " | " + rows[0].volume + " | " + util.dateFormat(rows[0].deliveryTime, "YYYY-MM-DD")}</div>
             // this.dialogVisible.message = `<div class='${direction === '买入' ? 'txt-green' : 'txt-red'}'>${this[formKey].tscode + " | " + direction + " | " + this[formKey].price + " | " + this[formKey].volume + " | " + util.dateFormat(this[formKey].deliveryTime, "YYYY-MM-DD")}</div><br/>请确认需要提交询价单?`;
-            const brokerName = this[formKey].brokerid ? this.intendComerOption.filter(n => this[formKey].brokerid === n.brokerid)[0].company : '系统智能分配';
+            const brokerItems = this.intendComerOption.filter(n => this[formKey].brokerid === n.brokerid);
+            const brokerName = this[formKey].brokerid ? brokerItems[0].company + '-' + brokerItems[0].target : '系统智能分配';
             this.dialogVisible.message = `<div class='el-row'>
                 <div class='el-col el-col-12' ><div class='dialog-text'>${brokerName}</div></div>
-                <div class='el-col el-col-12'><div class='text-right dialog-text'>${this[formKey].price}</div></div>
+                <div class='el-col el-col-12'><div class='text-right dialog-text'>${util.moneyFormat(this[formKey].price, 4)}</div></div>
               </div>` +
               `<div class='el-row'>
                 <div class='el-col el-col-4' ><div class="${direction === '买入' ? 'txt-green' : 'txt-red'} dialog-text" >${direction}</div></div>
@@ -2049,7 +2050,7 @@ export default {
                 //       <dd>${msgJson.data.volume}</dd>
                 //     </dl>
                 //     <dl>
-                //       <dt>交割日期</dt>
+                //       <dt>清算速度</dt>
                 //       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                 //     </dl>
                 //   </div>
@@ -2096,7 +2097,7 @@ export default {
                 //       <dd>${msgJson.data.volume}</dd>
                 //     </dl>
                 //     <dl>
-                //       <dt>交割日期</dt>
+                //       <dt>清算速度</dt>
                 //       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                 //     </dl>
                 //   </div>
@@ -2135,7 +2136,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                   </div>
@@ -2170,7 +2171,7 @@ export default {
                 //       <dd>${msgJson.data.volume}</dd>
                 //     </dl>
                 //     <dl>
-                //       <dt>交割日期</dt>
+                //       <dt>清算速度</dt>
                 //       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                 //     </dl>
                 //   </div>
@@ -2204,7 +2205,7 @@ export default {
                 //       <dd>${msgJson.data.volume}</dd>
                 //     </dl>
                 //     <dl>
-                //       <dt>交割日期</dt>
+                //       <dt>清算速度</dt>
                 //       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                 //     </dl>
                 //   </div>
@@ -2250,7 +2251,7 @@ export default {
                 //         ])
                 //       ]),
                 //       h("dl", null, [
-                //         h("dt", null, "交割日期"),
+                //         h("dt", null, "清算速度"),
                 //         h("dd", null, [
                 //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.substr(0, 10) + ' ' : ''),
                 //           h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
@@ -2320,7 +2321,7 @@ export default {
                 //         ])
                 //       ]),
                 //       h("dl", null, [
-                //         h("dt", null, "交割日期"),
+                //         h("dt", null, "清算速度"),
                 //         h("dd", null, [
                 //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
                 //           h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
@@ -2426,7 +2427,7 @@ export default {
                 //         ])
                 //       ]),
                 //       h("dl", null, [
-                //         h("dt", null, "交割日期"),
+                //         h("dt", null, "清算速度"),
                 //         h("dd", null, [
                 //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
                 //           h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
@@ -2527,7 +2528,7 @@ export default {
                 //         h("dd", null, `${msgJson.data.volume}`)
                 //       ]),
                 //       h("dl", null, [
-                //         h("dt", null, "交割日期"),
+                //         h("dt", null, "清算速度"),
                 //         h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}`)
                 //       ]),
                 //       h("dl", null, [
@@ -2597,7 +2598,7 @@ export default {
                         h("dd", null, `${msgJson.data.restVolume}`)
                       ]),
                       h("dl", null, [
-                        h("dt", null, "交割日期"),
+                        h("dt", null, "清算速度"),
                         h("dd", null, `${msgJson.data.deliveryTime.substr(0, 10)}`)
                       ]),
                       h("dl", null, [
@@ -2682,7 +2683,7 @@ export default {
                         ])
                       ]),
                       h("dl", null, [
-                        h("dt", null, "交割日期"),
+                        h("dt", null, "清算速度"),
                         h("dd", null, [
                           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.rt.deliveryTime.substr(0, 10) + ' ' : ''),
                           h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.substr(0, 10))
@@ -2740,7 +2741,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                   </div>
@@ -2794,7 +2795,7 @@ export default {
                 //         ])
                 //       ]),
                 //       h("dl", null, [
-                //         h("dt", null, "交割日期"),
+                //         h("dt", null, "清算速度"),
                 //         h("dd", null, [
                 //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.toString().substr(0, 10) + ' ' : ''),
                 //           h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
@@ -2855,7 +2856,7 @@ export default {
                 //         ])
                 //       ]),
                 //       h("dl", null, [
-                //         h("dt", null, "交割日期"),
+                //         h("dt", null, "清算速度"),
                 //         h("dd", null, [
                 //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.toString().substr(0, 10) + ' ' : ''),
                 //           h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
@@ -2902,7 +2903,7 @@ export default {
                       <dd>${msgJson.data.volume}</dd>
                     </dl>
                     <dl>
-                      <dt>交割日期</dt>
+                      <dt>清算速度</dt>
                       <dd>${msgJson.data.deliveryTime.substr(0, 10)}</dd>
                     </dl>
                     <dl>
@@ -3325,7 +3326,7 @@ export default {
         })
       }
     },
-    // 买单交割日期变化
+    // 买单清算速度变化
     handleBuyDeliveryCanlendar(obj) {
       this.buyForm.deliveryTime = obj.value
       if (moment(obj.value).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isAfter(moment(new Date()).format('YYYY-MM-DD 11:00:00'))) {
@@ -3334,7 +3335,7 @@ export default {
         this.buyForm.deliveryTimeMsg = ''
       }
     },
-    // 卖单交割日期变化
+    // 卖单清算速度变化
     handleSaleDeliveryCanlendar(obj) {
       this.saleForm.deliveryTime = obj.value
       if (moment(obj.value).format('YYYY-MM-DD') === moment(new Date()).format('YYYY-MM-DD') && moment(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')).isAfter(moment(new Date()).format('YYYY-MM-DD 11:00:00'))) {

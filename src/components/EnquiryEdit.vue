@@ -1,8 +1,8 @@
 <template>
   <div class="el-dialog__body">
-    <el-form ref="enquiryForm" :model="enquiryForm" :rules="enquiryFormRules" label-width="100px">
+    <el-form ref="enquiryForm" :inline="true" :model="enquiryForm" :rules="enquiryFormRules" label-width="100px">
       <el-form-item label="方向" prop="direction">
-        <el-button-group v-if="!this.enquiryForm.lockDirection">
+        <el-button-group v-if="!this.enquiryForm.lockDirection" >
           <el-button @click="handleDirection('买')" :class="funcDirection('买')">买</el-button>
           <el-button @click="handleDirection('卖')" :class="funcDirection('卖')">卖</el-button>
         </el-button-group>
@@ -13,20 +13,25 @@
         </template>
       </el-form-item>
       <el-form-item label="券码" prop="tscode">
-        <el-input v-model="enquiryForm.tscode" :disabled="action === 2" placeholder="请输入券码"></el-input>
+        <el-input v-model="enquiryForm.tscode" :disabled="action === 2" placeholder="请输入券码" class="slt-user" ></el-input>
       </el-form-item>
       <el-form-item label="价格" prop="price">
-        <el-input v-model="enquiryForm.price" :step="0.001" placeholder="请输入价格"></el-input>
+        <el-input-number v-model="enquiryForm.price" :precision="4" :step="0.001" placeholder="请输入价格" class="pricew slt-user"></el-input-number>
+        <!-- <el-input v-model="enquiryForm.price" :step="0.001" placeholder="请输入价格"></el-input> -->
       </el-form-item>
       <!-- <el-form-item label="允许浮动" prop="worstPrice">
         <el-input-number v-model="enquiryForm.worstPrice" :step="0.05"></el-input-number>
         BP
       </el-form-item> -->
       <el-form-item label="询量" prop="volume">
-        <el-input v-model="enquiryForm.volume" placeholder="请输入询量" :disabled="action === 2"></el-input>
+        <!-- <el-input v-model="enquiryForm.volume" placeholder="请输入询量" :disabled="action === 2"></el-input> -->
+        <el-input-number class="ipt-volume slt-user" v-model="enquiryForm.volume" :step="1000" :min="2000" step-strictly
+          :disabled="action === 2"></el-input-number>
       </el-form-item>
       <el-form-item label="剩余询量" prop="restVolume" v-if="action === 2">
-        <el-input v-model="enquiryForm.restVolume" placeholder="请输入剩余询量"></el-input>
+        <el-input-number class="ipt-volume slt-user" v-model="enquiryForm.restVolume" :step="1000" :min="2000"
+          step-strictly></el-input-number>
+        <!-- <el-input v-model="enquiryForm.restVolume" placeholder="请输入剩余询量"></el-input> -->
       </el-form-item>
       <!-- <el-form-item>
         <el-button-group>
@@ -38,7 +43,7 @@
           <el-button type="primary" @click="funcVolumeAdd(10000)">10</el-button>
         </el-button-group>
       </el-form-item> -->
-      <el-form-item label="交割日期" prop="deliveryTime">
+      <el-form-item label="清算速度" prop="deliveryTime">
         <delivery-canlendar ref="buyDeliveryCanlendar" :init="action === 2 ? true : false"
           @change="handleBuyDeliveryCanlendar" :disabled="action === 2 ? true : false"></delivery-canlendar>
         <!-- <el-button-group>
@@ -65,7 +70,7 @@
       <!-- <el-form-item label="备注">
         <el-input type="textarea" v-model="enquiryForm.remark" placeholder="请输入内容" resize="none" rows="2"></el-input>
       </el-form-item> -->
-      <el-form-item>
+      <el-form-item label=" ">
         <el-button type="primary" class="btn-green" @click="submitForm('enquiryForm')">保存</el-button>
       </el-form-item>
     </el-form>
@@ -82,7 +87,7 @@ import { debounce } from '@/utils/debounce'
 import DeliveryCanlendar from '@/components/DeliveryCanlendar.vue'
 export default {
   // action=1 添加，action=2 询价单编辑
-  props: ['row', 'action'],
+  props: ['row', 'action', 'riskControlData'],
   components: {
     DeliveryCanlendar
   },
@@ -189,7 +194,7 @@ export default {
           { required: true, message: '允许浮动必填', trigger: 'blur' },
           { validator: floatTest, trigger: 'blur' }
         ]
-      }
+      },
     }
   },
   methods: {
@@ -215,7 +220,7 @@ export default {
       }
       return ''
     },
-    // 买单交割日期变化
+    // 买单清算速度变化
     handleBuyDeliveryCanlendar(obj) {
       this.enquiryForm.deliveryTime = obj.value
     },
@@ -236,7 +241,7 @@ export default {
               userTradeId: this[formName].userTradeId,
               // 交割速度
               deliverySpeed: this[formName].deliverySpeed,
-              // 交割日期
+              // 清算速度
               deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD hh:mm:ss"),
               // 买还是卖
               direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
@@ -286,7 +291,7 @@ export default {
             api.inquirySheetAdd({
               // 交割速度
               deliverySpeed: this[formName].deliverySpeed,
-              // 交割日期
+              // 清算速度
               deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD"),
               // 买还是卖
               direction: this[formName].direction === '买' ? 'bond_0' : 'bond_1',
@@ -376,5 +381,13 @@ export default {
 .el-dialog__body {
   padding: 0;
   padding-right: 30px;
+}
+
+.slt-user{
+  width: 140px;
+}
+
+.el-form-item--small.el-form-item{
+  width: 250px;
 }
 </style>

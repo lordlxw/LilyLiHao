@@ -380,6 +380,37 @@ export default {
 @import "@/assets/css/style.scss";
 
 .content {
+  height: 100%;
+  background-color: #d7d7d7;
+
+  .list {
+    padding: 10px;
+
+    .el-table {
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .do {
+      height: 50px;
+      line-height: 50px;
+      background-color: #fff;
+      border-radius: 3px;
+      padding: 0 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+
+    .table{
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+
+    .list-row {
+      height: 40px;
+      line-height: 40px;
+      color: #000;
+    }
+  }
+
   .navigator {
     position: relative;
     background-color: #f8f8f8;

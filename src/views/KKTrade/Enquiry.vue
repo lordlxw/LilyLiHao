@@ -1,5 +1,5 @@
 <template>
-  <div class="mt20" style="padding:0 15px;">
+  <div class="height100" >
     <com-enquiry :height="enquiryH"></com-enquiry>
   </div>
 </template>
@@ -17,7 +17,7 @@ export default {
     if (this.userInfo.roleName && ['研究员'].indexOf(this.userInfo.roleName) !== -1) {
       this.initFrameH('enquiryH', 300)
     } else {
-      this.initFrameH('enquiryH', 200)
+      this.initFrameH('enquiryH', 120)
     }
   },
   data() {

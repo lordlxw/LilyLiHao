@@ -30,5 +30,6 @@ export default {
 <style lang="scss" scoped>
 .content {
   padding: 0;
+  height: 100%;
 }
 </style>

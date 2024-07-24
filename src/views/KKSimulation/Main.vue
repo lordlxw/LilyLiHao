@@ -400,7 +400,7 @@
       </div>
       <el-dialog title="成交信息" :width="returnFrameW(600) + 'px'" :visible.sync="dialogDealFormVisible" append-to-body
         :destroy-on-close="true" :close-on-click-modal="false">
-        <el-form :model="dealForm" :rules="rulesDealForm" ref="dealForm" :label-width="formLabelWidth + 'px'"
+        <el-form :model="dealForm" :rules="rulesDealForm" ref="dealForm" :label-width=" '100px'"
           :close-on-click-modal="false">
           <el-form-item label="债券代码" prop="tscode">
             {{ dealRows.tscode }}
@@ -420,7 +420,7 @@
           <el-form-item label="成交量" prop="volume">
             <el-input v-model="dealForm.volume" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="交割日期" prop="deliveryTime">
+          <el-form-item label="清算速度" prop="deliveryTime">
             <delivery-canlendar-update ref="deliveryCanlendar"
               @change="handleDeliveryCanlendar"></delivery-canlendar-update>
           </el-form-item>
@@ -567,7 +567,7 @@ export default {
         volume: '',
         // 备注
         remark: '',
-        // 交割日期
+        // 清算速度
         deliveryTime: '',
         // 交易对手
         counterParty: '',
@@ -586,7 +586,7 @@ export default {
           { validator: plusAmountTest, trigger: 'blur' }
         ],
         deliveryTime: [
-          { required: true, message: '交割日期必选', trigger: 'blur' }
+          { required: true, message: '清算速度必选', trigger: 'blur' }
         ],
         // counterParty: [
         //   { required: true, message: '交易对手必填', trigger: 'blur' }
@@ -1047,7 +1047,7 @@ export default {
         }
       })
     }),
-    // 交割日期
+    // 清算速度
     handleDeliveryCanlendar(obj) {
       this.dealForm.deliveryTime = obj.value
     },

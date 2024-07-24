@@ -1,4 +1,3 @@
-
 $background-style: linear-gradient(to bottom, #2cad98 30%, #5270bd 100%);
 
 $main-color: #3f5ca8;
@@ -533,7 +532,7 @@ a:hover {
 }
 
 /* 自定义滚动条的宽度 */
-.custom-scrollbar{
+.custom-scrollbar {
   overflow: scroll;
 }
 
@@ -701,6 +700,11 @@ a:hover {
 
 .noDrag {
   -webkit-app-region: no-drag;
+}
+
+
+.height100 {
+  height: 100%;
 }
 
 // .btn-green,

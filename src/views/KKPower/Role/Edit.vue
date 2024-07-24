@@ -1,50 +1,32 @@
 <!--角色管理-编辑-->
 <template>
   <div class="content">
-    <el-form
-      :model="ruleForm"
-      :rules="rules"
-      ref="ruleForm"
-      label-width="200px"
-      class="my-ruleForm"
-    >
-      <el-form-item label="角色名" prop="roleName">
-        <el-input v-model="ruleForm.roleName" class="w200"></el-input>
-      </el-form-item>
-      <el-form-item label="角色关键字" prop="roleKey">
-        <el-input v-model="ruleForm.roleKey" class="w200"></el-input>
-      </el-form-item>
-      <el-form-item label="菜单功能权限" prop="menuIds">
-        <el-tree
-          :data="menus"
-          show-checkbox
-          default-expand-all
-          node-key="id"
-          ref="tree"
-          highlight-current
-          :props="defaultProps"
-        >
-        </el-tree>
-      </el-form-item>
-      <el-form-item label="数据权限" prop="dataScope">
-        <el-select v-model="ruleForm.dataScope" placeholder="请选择数据权限">
-          <el-option
-            v-for="(value, key) in config.dataScopeType"
-            :key="key"
-            :label="value"
-            :value="key"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="排序" prop="roleSort">
-        <el-input v-model="ruleForm.roleSort" class="w200"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')"
-          >保 存</el-button
-        >
-      </el-form-item>
-    </el-form>
+    <div class="list">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px" class="my-ruleForm custom-scrollbar">
+        <el-form-item label="角色名" prop="roleName">
+          <el-input v-model="ruleForm.roleName" class="w200"></el-input>
+        </el-form-item>
+        <el-form-item label="角色关键字" prop="roleKey">
+          <el-input v-model="ruleForm.roleKey" class="w200"></el-input>
+        </el-form-item>
+        <el-form-item label="菜单功能权限" prop="menuIds">
+          <el-tree :data="menus" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current
+            :props="defaultProps">
+          </el-tree>
+        </el-form-item>
+        <el-form-item label="数据权限" prop="dataScope">
+          <el-select v-model="ruleForm.dataScope" placeholder="请选择数据权限">
+            <el-option v-for="(value, key) in config.dataScopeType" :key="key" :label="value" :value="key"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="排序" prop="roleSort">
+          <el-input v-model="ruleForm.roleSort" class="w200"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')">保 存</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
@@ -175,23 +157,42 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "@/assets/css/style.scss";
+
 .content {
+  height: 100%;
+  background-color: $body-main-box;
+
+  .list {
+    padding: 10px;
+    height: calc(100% - 40px);
+    overflow: hidden;
+    border-radius: 3px;
+
+    .my-ruleForm {
+      background-color: #fff;
+      border-radius: 3px;
+      padding: 20px 10px;
+      overflow-y: scroll;
+      height: 100%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+  }
   .navigator {
     position: relative;
     background-color: #f8f8f8;
     padding: 0 15px;
+
     .el-breadcrumb {
       height: 50px;
       line-height: 50px;
     }
+
     .el-button {
       position: absolute;
       right: 10px;
       top: 10px;
     }
   }
-  .my-ruleForm {
-    margin: 30px 15px 30px;
-  }
+
 }
 </style>

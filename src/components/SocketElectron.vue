@@ -1321,81 +1321,81 @@ export default {
                   if (msgJson.actionType === 'refresh' || self.openPopUp()) {
                     break
                   }
-                  notify = self.$notify({
-                    title: `询价修改待确认`,
-                    dangerouslyUseHTMLString: true,
-                    position: 'bottom-left',
-                    customClass: 'notify-yellow',
-                    message: h(
-                      "div",
-                      { class: "notify" },
-                      [
-                        h("dl", null, [
-                          h("dt", null, "单据号"),
-                          h("dd", null, `${msgJson.data.ut.tradeNum}`)
-                        ]),
-                        h("dl", null, [
-                          h("dt", null, "债券码"),
-                          h("dd", null, `${msgJson.data.ut.tscode.replace(/.IB/, '')}`)
-                        ]),
-                        h("dl", null, [
-                          h("dt", null, "方向"),
-                          h("dd", null, `${msgJson.data.ut.direction === 'bond_0' ? '买入' : msgJson.data.ut.direction === 'bond_1' ? '卖出' : ' '}`)
-                        ]),
-                        h("dl", null, [
-                          h("dt", null, "成交价"),
-                          h("dd", null, [
-                            h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
-                            h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
-                          ])
-                        ]),
-                        h("dl", null, [
-                          h("dt", null, "允许浮动"),
-                          h("dd", null, [
-                            h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? util.moneyFormat(msgJson.data.ut.worstPrice, 4) + ' ' : ''),
-                            h("span", msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.worstPrice, 4))
-                          ])
-                        ]),
-                        h("dl", null, [
-                          h("dt", null, "成交量"),
-                          h("dd", null, [
-                            h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.ut.volume + ' ' : ''),
-                            h("span", msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
-                          ])
-                        ]),
-                        h("dl", null, [
-                          h("dt", null, "清算速度"),
-                          h("dd", null, [
-                            h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.toString().substr(0, 10) + ' ' : ''),
-                            h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
-                          ])
-                        ]),
-                        // h("dl", { style: "margin-top:20px;" }, [
-                        //   // h("dt", null, ""),
-                        //   h("dd", null, [
-                        //     h("button", {
-                        //       class: "notigy-agree",
-                        //       on: {
-                        //         click: function () {
-                        //           self.handleInquiryEditConfirmClick(msgJson.data.dto.userTradeId, timestamp)
-                        //         }
-                        //       }
-                        //     }, "同意"),
-                        //     h("button", {
-                        //       class: "notigy-cancel",
-                        //       on: {
-                        //         click: function () {
-                        //           self.handleInquiryEditRejectionClick(msgJson.data.dto.userTradeId, timestamp)
-                        //         }
-                        //       }
-                        //     }, "拒绝")
-                        //   ])
-                        // ]),
-                      ],
-                    ),
-                    duration: 0
-                  });
-                  self.notifyRejection[timestamp] = notify
+                  // notify = self.$notify({
+                  //   title: `询价修改待确认`,
+                  //   dangerouslyUseHTMLString: true,
+                  //   position: 'bottom-left',
+                  //   customClass: 'notify-yellow',
+                  //   message: h(
+                  //     "div",
+                  //     { class: "notify" },
+                  //     [
+                  //       h("dl", null, [
+                  //         h("dt", null, "单据号"),
+                  //         h("dd", null, `${msgJson.data.ut.tradeNum}`)
+                  //       ]),
+                  //       h("dl", null, [
+                  //         h("dt", null, "债券码"),
+                  //         h("dd", null, `${msgJson.data.ut.tscode.replace(/.IB/, '')}`)
+                  //       ]),
+                  //       h("dl", null, [
+                  //         h("dt", null, "方向"),
+                  //         h("dd", null, `${msgJson.data.ut.direction === 'bond_0' ? '买入' : msgJson.data.ut.direction === 'bond_1' ? '卖出' : ' '}`)
+                  //       ]),
+                  //       h("dl", null, [
+                  //         h("dt", null, "成交价"),
+                  //         h("dd", null, [
+                  //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? util.moneyFormat(msgJson.data.ut.price, 4) + ' ' : ''),
+                  //           h("span", msgJson.data.compareResult.fieldlist.indexOf('price') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.price, 4))
+                  //         ])
+                  //       ]),
+                  //       h("dl", null, [
+                  //         h("dt", null, "允许浮动"),
+                  //         h("dd", null, [
+                  //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? util.moneyFormat(msgJson.data.ut.worstPrice, 4) + ' ' : ''),
+                  //           h("span", msgJson.data.compareResult.fieldlist.indexOf('worstPrice') !== -1 ? { style: "color:#ec0000" } : null, util.moneyFormat(msgJson.data.dto.worstPrice, 4))
+                  //         ])
+                  //       ]),
+                  //       h("dl", null, [
+                  //         h("dt", null, "成交量"),
+                  //         h("dd", null, [
+                  //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? msgJson.data.ut.volume + ' ' : ''),
+                  //           h("span", msgJson.data.compareResult.fieldlist.indexOf('volume') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.volume)
+                  //         ])
+                  //       ]),
+                  //       h("dl", null, [
+                  //         h("dt", null, "清算速度"),
+                  //         h("dd", null, [
+                  //           h("span", { style: "text-decoration: line-through #ec0000; padding-right:5px;" }, msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? msgJson.data.ut.deliveryTime.toString().substr(0, 10) + ' ' : ''),
+                  //           h("span", msgJson.data.compareResult.fieldlist.indexOf('deliveryTime') !== -1 ? { style: "color:#ec0000" } : null, msgJson.data.dto.deliveryTime.toString().substr(0, 10))
+                  //         ])
+                  //       ]),
+                  //       // h("dl", { style: "margin-top:20px;" }, [
+                  //       //   // h("dt", null, ""),
+                  //       //   h("dd", null, [
+                  //       //     h("button", {
+                  //       //       class: "notigy-agree",
+                  //       //       on: {
+                  //       //         click: function () {
+                  //       //           self.handleInquiryEditConfirmClick(msgJson.data.dto.userTradeId, timestamp)
+                  //       //         }
+                  //       //       }
+                  //       //     }, "同意"),
+                  //       //     h("button", {
+                  //       //       class: "notigy-cancel",
+                  //       //       on: {
+                  //       //         click: function () {
+                  //       //           self.handleInquiryEditRejectionClick(msgJson.data.dto.userTradeId, timestamp)
+                  //       //         }
+                  //       //       }
+                  //       //     }, "拒绝")
+                  //       //   ])
+                  //       // ]),
+                  //     ],
+                  //   ),
+                  //   duration: 0
+                  // });
+                  // self.notifyRejection[timestamp] = notify
                   self.tryPlay()
                   break
                 case 'xiugaichangedeny_bond_0':

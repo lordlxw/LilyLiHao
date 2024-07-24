@@ -78,7 +78,7 @@ export default {
         // 交易单号ID 数组
         realTradeIdList: params.realTradeIdList,
         // 备注
-        remark: params.remark,
+        // remark: params.remark,
         // 债券编号
         tscode: params.tscode,
         // 交易员ID
@@ -183,7 +183,7 @@ export default {
         // 交易单ID
         realTradeId: params.realTradeId,
         // 备注
-        remark: params.remark,
+        // remark: params.remark,
         // 成交量
         volume: params.volume
       }
@@ -210,7 +210,7 @@ export default {
         // 交易单ID
         realTradeId: params.realTradeId,
         // 备注
-        remark: params.remark,
+        // remark: params.remark,
         // 成交量
         volume: params.volume
       }

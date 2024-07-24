@@ -4,207 +4,106 @@
     <!-- <div class="filter-condition"></div> -->
     <div class="list">
       <div class="do mb10">
-        <el-tag type="success" class="mr20"
-          >交割（买）：<b>{{ rewardBuyVolume }}</b></el-tag
-        >
-        <el-tag type="danger" class="mr20"
-          >交割（卖）：<b>{{ rewardSaleVolume }}</b></el-tag
-        >
-        <el-tag
-          :type="
-            rewardFloatProfit.toString().indexOf('-') !== -1
-              ? 'danger'
-              : 'success'
-          "
-          class="mr20"
-          v-if="setAuth('reward:datatotal')"
-          >交割盈亏：<b>{{ rewardFloatProfit }}</b></el-tag
-        >
+        <el-tag type="success" class="mr20">交割（买）：<b>{{ rewardBuyVolume }}</b></el-tag>
+        <el-tag type="danger" class="mr20">交割（卖）：<b>{{ rewardSaleVolume }}</b></el-tag>
+        <el-tag :type="rewardFloatProfit.toString().indexOf('-') !== -1
+          ? 'danger'
+          : 'success'
+          " class="mr20" v-if="setAuth('reward:datatotal')">交割盈亏：<b>{{ rewardFloatProfit }}</b></el-tag>
       </div>
-      <el-table
-        v-loading="loading"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        :height="height"
-        :header-row-style="{ height: '30px', lineHeight: '30px' }"
-        :header-cell-style="{ background: '#f8f8f8' }"
-        :key="Math.random()"
-        highlight-current-row
-        :cell-style="cellStyleUpdate"
-        :row-class-name="tableRowFinishClassName"
-      >
+      <el-table v-swipe-copy v-loading="loading" :data="tableData" tooltip-effect="dark" style="width: 100%" :height="height"
+        :header-row-style="{ height: '30px', lineHeight: '30px' }" :header-cell-style="{ background: '#f8f8f8' }"
+        :key="Math.random()" highlight-current-row :cell-style="cellStyleUpdate"
+        :row-class-name="tableRowFinishClassName">
         <template v-for="itemHead in tableHead">
-          <template
-            v-if="['createTime'].indexOf(itemHead.prop) !== -1 && itemHead.show"
-          >
-            <el-table-column
-              :key="itemHead.label"
-              :align="itemHead.align"
-              :prop="itemHead.prop"
-              :label="
-                ['createTime'].indexOf(itemHead.prop) !== -1 ? '成交日期' : ''
-              "
-              :width="itemHead.width ? parseInt(itemHead.width * (3 / 5)) : ''"
-              :formatter="
-                (row, column, cellValue, index) => {
-                  return funcFormatDateTime(cellValue, 'YYYY-MM-DD');
-                }
-              "
-            >
+          <template v-if="['createTime'].indexOf(itemHead.prop) !== -1 && itemHead.show">
+            <el-table-column :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop" :label="['createTime'].indexOf(itemHead.prop) !== -1 ? '成交日期' : ''
+              " :width="itemHead.width ? parseInt(itemHead.width * (3 / 5)) : ''" :formatter="(row, column, cellValue, index) => {
+                return funcFormatDateTime(cellValue, 'YYYY-MM-DD');
+              }
+                ">
             </el-table-column>
-            <el-table-column
-              :key="itemHead.label + 1"
-              :align="itemHead.align"
-              :prop="itemHead.prop"
-              :label="
-                ['createTime'].indexOf(itemHead.prop) !== -1 ? '成交时间' : ''
-              "
-              :width="itemHead.width ? parseInt(itemHead.width * (2 / 3)) : ''"
-              :formatter="
-                (row, column, cellValue, index) => {
-                  return funcFormatDateTime(cellValue, 'HH:mm:ss');
-                }
-              "
-            >
+            <el-table-column :key="itemHead.label + 1" :align="itemHead.align" :prop="itemHead.prop" :label="['createTime'].indexOf(itemHead.prop) !== -1 ? '成交时间' : ''
+              " :width="itemHead.width ? parseInt(itemHead.width * (2 / 3)) : ''" :formatter="(row, column, cellValue, index) => {
+                return funcFormatDateTime(cellValue, 'HH:mm:ss');
+              }
+                ">
             </el-table-column>
           </template>
-          <el-table-column
-            v-else-if="itemHead.show"
-            :key="itemHead.label"
-            :align="itemHead.align"
-            :prop="itemHead.prop"
-            :formatter="
-              itemHead.formatter
-                ? itemHead.formatter
-                : (row, column, cellValue, index) => {
-                    return cellValue;
-                  }
-            "
-            :label="itemHead.label"
-            :width="itemHead.width ? itemHead.width : ''"
-            :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false"
-          >
+          <el-table-column v-else-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
+            :formatter="itemHead.formatter
+              ? itemHead.formatter
+              : (row, column, cellValue, index) => {
+                return cellValue;
+              }
+              " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''"
+            :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false">
           </el-table-column>
         </template>
         <el-table-column></el-table-column>
         <el-table-column fixed="right" align="center" label="操作" width="80px">
           <template slot-scope="scope">
-            <el-popover
-              v-if="setAuth('reward:back') && funcIsBreak(scope)"
-              placement="bottom-end"
-              :ref="`popover-deliveryback-${scope.$index}`"
-            >
+            <el-popover v-if="setAuth('reward:back') && funcIsBreak(scope)" placement="bottom-end"
+              :ref="`popover-deliveryback-${scope.$index}`">
               <p>
                 确认要<span class="color-red"> 改违约 </span> "{{
                   scope.row.tscode
                 }}"？
               </p>
-              <el-table  :data="breakTableData">
+              <el-table :data="breakTableData">
                 <template v-for="itemHead in breakTableHead">
-                  <el-table-column
-                    v-if="itemHead.show"
-                    :key="itemHead.label"
-                    :align="itemHead.align"
-                    :prop="itemHead.prop"
-                    :formatter="
-                      itemHead.formatter
-                        ? itemHead.formatter
-                        : (row, column, cellValue, index) => {
-                            return cellValue;
-                          }
-                    "
-                    :label="itemHead.label"
-                    :width="itemHead.width ? itemHead.width : ''"
-                  >
+                  <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align"
+                    :prop="itemHead.prop" :formatter="itemHead.formatter
+                      ? itemHead.formatter
+                      : (row, column, cellValue, index) => {
+                        return cellValue;
+                      }
+                      " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
                   </el-table-column>
                 </template>
-                <el-table-column
-                  v-if="doListOption && doListOption.length > 0"
-                  label="选择"
-                  width="300px"
-                >
+                <el-table-column v-if="doListOption && doListOption.length > 0" label="选择" width="300px">
                   <template slot-scope="scope">
-                    <el-checkbox-group
-                      v-model="scope.row.mySelected"
-                      @input="handleDoCheck"
-                    >
-                      <el-checkbox
-                        v-for="item in doListOption"
-                        :label="item.value"
-                        :key="item.value"
-                        >{{ item.label }}</el-checkbox
-                      >
+                    <el-checkbox-group v-model="scope.row.mySelected" @input="handleDoCheck">
+                      <el-checkbox v-for="item in doListOption" :label="item.value" :key="item.value">{{ item.label
+                        }}</el-checkbox>
                     </el-checkbox-group>
                   </template>
                 </el-table-column>
                 <el-table-column label="违约方" width="150px">
                   <template slot-scope="scope">
-                    <el-select
-                      v-model="scope.row.weiyuePerson"
-                      v-if="
-                        scope.row.mySelected && scope.row.mySelected.length > 0
-                      "
-                      placeholder="请选择"
-                    >
-                      <el-option
-                        v-for="(value, key) in config.breakTypeOptions"
-                        :key="key"
-                        :label="value"
-                        :value="key"
-                      ></el-option>
+                    <el-select v-model="scope.row.weiyuePerson" v-if="
+                      scope.row.mySelected && scope.row.mySelected.length > 0
+                    " placeholder="请选择">
+                      <el-option v-for="(value, key) in config.breakTypeOptions" :key="key" :label="value"
+                        :value="key"></el-option>
                     </el-select>
                   </template>
                 </el-table-column>
                 <el-table-column label="违约量" width="150px">
                   <template slot-scope="scope">
-                    <el-input
-                      size="mini"
-                      v-model="scope.row.weiyueAmount"
-                      v-if="
-                        scope.row.mySelected && scope.row.mySelected.length > 0
-                      "
-                      width="90"
-                    ></el-input>
+                    <el-input size="mini" v-model="scope.row.weiyueAmount" v-if="
+                      scope.row.mySelected && scope.row.mySelected.length > 0
+                    " width="90"></el-input>
                   </template>
                 </el-table-column>
                 <el-table-column label="做市商" width="150px">
                   <template slot-scope="scope">
-                    <el-input
-                      size="mini"
-                      v-model="scope.row.marketMakerName"
-                      v-if="
-                        scope.row.mySelected && scope.row.mySelected.length > 0
-                      "
-                      width="90"
-                    ></el-input>
+                    <el-input size="mini" v-model="scope.row.marketMakerName" v-if="
+                      scope.row.mySelected && scope.row.mySelected.length > 0
+                    " width="90"></el-input>
                   </template>
                 </el-table-column>
               </el-table>
               <div style="text-align: right" class="mt20">
-                <el-button
-                  type="primary"
-                  @click="
-                    handlePopoverClose(
-                      scope,
-                      `popover-deliveryback-${scope.$index}`
-                    )
-                  "
-                  >取消</el-button
-                >
-                <el-button
-                  type="primary"
-                  @click="handleDeliveryBackClick(scope)"
-                  >确认</el-button
-                >
+                <el-button type="primary" @click="
+                  handlePopoverClose(
+                    scope,
+                    `popover-deliveryback-${scope.$index}`
+                  )
+                  ">取消</el-button>
+                <el-button type="primary" @click="handleDeliveryBackClick(scope)">确认</el-button>
               </div>
-              <el-button
-                type="text"
-                slot="reference"
-                class="ml10"
-                @click="handleLoadCurrentRow(scope)"
-                >改违约</el-button
-              >
+              <el-button type="text" slot="reference" class="ml10" @click="handleLoadCurrentRow(scope)">改违约</el-button>
             </el-popover>
           </template>
         </el-table-column>
@@ -312,7 +211,7 @@ export default {
       });
     },
     // 导出
-    handleExport() {},
+    handleExport() { },
     handleLoadCurrentRow(scope) {
       scope.row.mySelected = [];
       scope.row.weiyuePerson = "";
@@ -341,7 +240,7 @@ export default {
         });
     },
     // 改违约
-    handleDeliveryBackClick: debounce(function(scope) {
+    handleDeliveryBackClick: debounce(function (scope) {
       // const finishCodeList = [...new Set(this.breakTableData.map(item => item.finishCode))]
       const wyList = [];
       const len = this.breakTableData.length;
@@ -513,6 +412,38 @@ export default {
 @import "@/assets/css/style.scss";
 
 .content {
+  height: 100%;
+  background-color: $body-main-box;
+
+  .list {
+    padding: 10px;
+
+    .el-table {
+      border-radius: 3px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+
+    .do {
+      height: 50px;
+      line-height: 50px;
+      background-color: #fff;
+      border-radius: 3px;
+      padding: 0 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+
+    .table {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+
+    .list-row {
+      height: 40px;
+      line-height: 40px;
+      color: #000;
+    }
+  }
+
   .navigator {
     position: relative;
     background-color: #f8f8f8;

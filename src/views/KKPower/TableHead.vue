@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="list pd10">
     <el-tabs type="border-card">
       <el-tab-pane
         v-for="item in cardList"

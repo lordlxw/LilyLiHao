@@ -49,7 +49,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="交割日期" prop="deliveryTime">
+      <el-form-item label="清算速度" prop="deliveryTime">
         <delivery-canlendar-update ref="deliveryCanlendarUpdate" :w="`200px`"
           @change="handleDeliveryCanlendarUpdate"></delivery-canlendar-update>
       </el-form-item>
@@ -138,9 +138,9 @@ export default {
         tscode: '',
         // 交割速度
         deliverySpeed: 0,
-        // 交割日期
+        // 清算速度
         deliveryTime: '',
-        // 原交割日期
+        // 原清算速度
         deliveryTime2: '',
         // 交易员
         tradeuserId: '',
@@ -168,7 +168,7 @@ export default {
           { validator: plusAmountTest, trigger: 'blur' }
         ],
         deliveryTime: [
-          { required: true, message: '交割日期必选', trigger: 'blur' }
+          { required: true, message: '清算速度必选', trigger: 'blur' }
         ],
         tradeuserId: [
           { required: true, message: '交易员必选', trigger: 'change' }
@@ -212,11 +212,11 @@ export default {
       }
       return ''
     },
-    // 买单交割日期变化
+    // 买单清算速度变化
     handleDeliveryCanlendarUpdate(obj) {
       this.coverForm.deliveryTime = obj.value
     },
-    // 点击交割日期
+    // 点击清算速度
     handleDelivertySpeed(val) {
       this.coverForm.deliverySpeed = val
     },
@@ -230,9 +230,9 @@ export default {
           api.bondsCover({
             // 交割速度
             deliverySpeed: this[formName].deliverySpeed,
-            // 交割日期
+            // 清算速度
             deliveryTime: util.dateFormat(this[formName].deliveryTime, "YYYY-MM-DD 00:00:00"),
-            // 原交割日期
+            // 原清算速度
             deliveryTime2: util.dateFormat(this[formName].deliveryTime2, "YYYY-MM-DD 00:00:00"),
             // 买还是卖
             direction: this[formName].direction,
@@ -245,7 +245,7 @@ export default {
             // 成交量
             volume: this[formName].volume,
             // 备注
-            remark: this[formName].remark,
+            // remark: this[formName].remark,
             // 允许浮动
             worstPrice: this[formName].worstPrice,
             //

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div >
     <div class="do">
       <el-button
         v-if="['研究员', '交割员'].indexOf(userInfo.roleName) !== -1"

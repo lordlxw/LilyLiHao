@@ -1,5 +1,5 @@
 <template>
-  <div class="mt20" style="padding:0 15px;">
+  <div class="content height100">
     <com-reward :height="rewardH"></com-reward>
   </div>
 </template>
@@ -13,7 +13,7 @@ export default {
     ComReward
   },
   created() {
-    this.initFrameH('rewardH', 200)
+    this.initFrameH('rewardH', 120)
   },
   data() {
     return {
@@ -23,4 +23,11 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+@import "@/assets/css/style.scss";
+
+.content {
+  height: 100%;
+  background-color: $body-main-box;
+}
+</style>

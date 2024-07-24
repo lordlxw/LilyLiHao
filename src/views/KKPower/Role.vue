@@ -13,6 +13,7 @@
           ref="multipleTable"
           :data="tableData"
           tooltip-effect="dark"
+          :height="tableHeight"
           style="width: 100%"
           highlight-current-row
         >
@@ -101,9 +102,10 @@
 import api from "@/api/kk_power_role";
 import { pageMixin } from "@/utils/pageMixin";
 import { authMixin } from "@/utils/authMixin";
+import { commMixin } from '@/utils/commMixin'
 import { debounce } from '@/utils/debounce'
 export default {
-  mixins: [pageMixin, authMixin],
+  mixins: [pageMixin, authMixin, commMixin],
   data() {
     return {
       // 角色名
@@ -117,7 +119,11 @@ export default {
       ],
       tableData: [],
       loading: true,
+      tableHeight: 0
     };
+  },
+  created() {
+    this.initFrameH('tableHeight', 120)
   },
   methods: {
     // 删除
@@ -157,6 +163,34 @@ export default {
 <style lang="scss" scoped>
 @import "@/assets/css/style.scss";
 .content {
+  height: 100%;
+  background-color: $body-main-box;
+
+  .list {
+    padding: 10px;
+    height: calc(100% - 50px);
+
+    .el-table {
+      border-radius: 3px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+
+    .do {
+      height: 50px;
+      line-height: 50px;
+      background-color: #fff;
+      border-radius: 3px;
+      padding: 0 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+
+    .list-row {
+      height: 40px;
+      line-height: 40px;
+      color: #000;
+    }
+  }
   .navigator {
     position: relative;
     background-color: #f8f8f8;
@@ -191,7 +225,6 @@ export default {
     }
   }
   .list {
-    padding: 0 15px;
     .do {
       .el-button {
         margin-top: 10px;

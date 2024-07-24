@@ -1,59 +1,37 @@
 <!--用户管理-添加-->
 <template>
   <div class="content">
-    <el-form
-      :model="ruleForm"
-      :rules="rules"
-      ref="ruleForm"
-      label-width="200px"
-      class="my-ruleForm"
-    >
-      <el-form-item label="用户名" prop="userName">
-        <el-input v-model="ruleForm.userName" class="w200"></el-input>
-      </el-form-item>
-      <el-form-item label="密码" prop="password">
-        <el-input
-          type="password"
-          v-model="ruleForm.password"
-          autocomplete="off"
-          class="w200"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="确认密码" prop="checkPassword">
-        <el-input
-          type="password"
-          v-model="ruleForm.checkPassword"
-          autocomplete="off"
-          class="w200"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="昵称" prop="nickName">
-        <el-input v-model="ruleForm.nickName" class="w200"></el-input>
-      </el-form-item>
-      <el-form-item label="手机号" prop="phonenumber">
-        <el-input v-model="ruleForm.phonenumber" class="w200"></el-input>
-      </el-form-item>
-      <el-form-item label="角色" prop="roleIds">
-        <role-select @change="handleSelectRole"></role-select>
-      </el-form-item>
-      <el-form-item label="默认券号" prop="tscode">
-        <el-input v-model="ruleForm.tscode" class="w200"></el-input>
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          type="textarea"
-          :row="2"
-          resize="none"
-          v-model="ruleForm.remark"
-          class="w500"
-        ></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')"
-          >保 存</el-button
-        >
-      </el-form-item>
-    </el-form>
+    <div class="list">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px" class="my-ruleForm">
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="ruleForm.userName" class="w200"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input type="password" v-model="ruleForm.password" autocomplete="off" class="w200"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="checkPassword">
+          <el-input type="password" v-model="ruleForm.checkPassword" autocomplete="off" class="w200"></el-input>
+        </el-form-item>
+        <el-form-item label="昵称" prop="nickName">
+          <el-input v-model="ruleForm.nickName" class="w200"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop="phonenumber">
+          <el-input v-model="ruleForm.phonenumber" class="w200"></el-input>
+        </el-form-item>
+        <el-form-item label="角色" prop="roleIds">
+          <role-select @change="handleSelectRole"></role-select>
+        </el-form-item>
+        <el-form-item label="默认券号" prop="tscode">
+          <el-input v-model="ruleForm.tscode" class="w200"></el-input>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input type="textarea" :row="2" resize="none" v-model="ruleForm.remark" class="w500"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')">保 存</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
@@ -157,23 +135,38 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "@/assets/css/style.scss";
+
 .content {
+  height: 100%;
+  background-color: $body-main-box;
+
+  .list {
+    padding: 10px;
+
+    .my-ruleForm {
+      background-color: #fff;
+      border-radius: 3px;
+      padding: 20px 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+  }
+
   .navigator {
     position: relative;
     background-color: #f8f8f8;
     padding: 0 15px;
+
     .el-breadcrumb {
       height: 50px;
       line-height: 50px;
     }
+
     .el-button {
       position: absolute;
       right: 10px;
       top: 10px;
     }
   }
-  .my-ruleForm {
-    margin: 30px 15px 30px;
-  }
+
 }
 </style>

@@ -27,7 +27,7 @@ export default {
         // 成交量
         volume: params.volume,
         // 备注
-        remark: params.remark,
+        // remark: params.remark,
         // 允许浮动
         worstPrice: params.worstPrice,
         // 相关单号
@@ -64,7 +64,7 @@ export default {
         // 成交量
         restVolume: params.restVolume,
         // 备注
-        remark: params.remark,
+        // remark: params.remark,
         // 允许浮动
         worstPrice: params.worstPrice
       }
@@ -111,7 +111,7 @@ export default {
         // 交割时间
         deliveryTime: params.deliveryTime,
         // 备注
-        remark: params.remark,
+        // remark: params.remark,
         // 交易对手
         counterParty: params.counterParty,
         // 联系人

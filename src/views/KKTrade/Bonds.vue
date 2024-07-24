@@ -2,14 +2,18 @@
 <template>
   <div class="content">
     <div class="list">
-      <el-tabs ref="eltabs" type="card" @tab-click="handleTabsClick" class="mt20">
+      <el-tabs ref="eltabs" type="border-card" @tab-click="handleTabsClick" class="">
         <!-- 未平仓 -->
         <el-tab-pane :label="tablist[0]" v-if="setAuth('nobonds:view')">
-          <com-no-bonds v-if="currentTab === tablist[0]" :height="nobondsH"></com-no-bonds>
+          <div :style="{ height: (nobondsH + 65) + 'px' }">
+            <com-no-bonds v-if="currentTab === tablist[0]" :height="nobondsH"></com-no-bonds>
+          </div>
         </el-tab-pane>
         <!-- 已平仓 -->
         <el-tab-pane :label="tablist[1]" v-if="setAuth('bonds:view')">
-          <com-bonds v-if="currentTab === tablist[1]" :height="bondsH"></com-bonds>
+          <div :style="{ height: (nobondsH + 65) + 'px' }">
+            <com-bonds v-if="currentTab === tablist[1]" :height="bondsH"></com-bonds>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -69,6 +73,9 @@ export default {
 @import "@/assets/css/style.scss";
 
 .content {
+  height: 100%;
+  background-color: $body-main-box;
+
   .navigator {
     position: relative;
     background-color: #f8f8f8;
@@ -111,9 +118,19 @@ export default {
   }
 
   .list {
-    padding: 0 15px;
+    padding: 10px;
+    border-radius: 3px;
+    overflow: hidden;
 
-    .mt20 >>>.el-tabs__item {
+    .el-tabs--border-card {
+      border-radius: 3px;
+    }
+
+    >>>.el-tabs__content {
+      min-height: calc(100% - 100px);
+    }
+
+    .mt20>>>.el-tabs__item {
       font-size: 12px !important;
     }
 

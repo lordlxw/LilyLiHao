@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import apiLogin from '@/api/kk_login'
 export default {
     name: 'CustomTitleBar',
     props: {
@@ -40,7 +41,25 @@ export default {
             window.v1.minimize()
         },
         close() {
-            window.v1.close()
+            if (window.v1 && window.v1.isElectron()) {
+                window.v1.close()
+            } else {
+                apiLogin.logout().then(response => {
+                    if (response && response.code === 200) {
+                        Promise.all([
+                            this.$store.commit('SET_TOKEN', null),
+                            this.$store.commit('SET_USER_INFO', null)
+                        ]).then(() => {
+                            this.$router.push({ path: '/' })
+                        })
+                    } else {
+                        this.$message({
+                            message: '退出失败',
+                            type: 'error'
+                        })
+                    }
+                })
+            }
         },
         onPageShow(isfocus) {
             // 在这里编写你的逻辑

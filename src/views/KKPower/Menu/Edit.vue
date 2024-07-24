@@ -1,48 +1,34 @@
 <!--菜单管理-修改-->
 <template>
   <div class="content">
-    <navigator></navigator>
-    <el-form
-      :model="ruleForm"
-      :rules="rules"
-      ref="ruleForm"
-      label-width="200px"
-      class="my-ruleForm"
-    >
-      <el-form-item label="类型" prop="menuType">
-        <el-radio v-model="ruleForm.menuType" label="M">菜单</el-radio>
-        <el-radio v-model="ruleForm.menuType" label="C">叶节点</el-radio>
-        <el-radio v-model="ruleForm.menuType" label="F">功能</el-radio>
-      </el-form-item>
-      <el-form-item label="名称" prop="menuName">
-        <el-input v-model="ruleForm.menuName" class="w200"></el-input>
-      </el-form-item>
-      <el-form-item
-        label="链接地址"
-        prop="component"
-        v-if="['M', 'C'].indexOf(ruleForm.menuType) !== -1"
-      >
-        <el-input v-model="ruleForm.component" class="w300"></el-input>
-      </el-form-item>
-      <el-form-item label="图标class" prop="icon">
-        <el-input
-          v-model="ruleForm.icon"
-          class="w300"
-          :suffix-icon="ruleForm.icon"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="功能码" prop="perms">
-        <el-input v-model="ruleForm.perms" class="w200"></el-input>
-      </el-form-item>
-      <el-form-item label="排序" prop="orderNum">
-        <el-input v-model="ruleForm.orderNum" class="w100"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')"
-          >保 存</el-button
-        >
-      </el-form-item>
-    </el-form>
+    <div class="list">
+      <navigator></navigator>
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px" class="my-ruleForm">
+        <el-form-item label="类型" prop="menuType">
+          <el-radio v-model="ruleForm.menuType" label="M">菜单</el-radio>
+          <el-radio v-model="ruleForm.menuType" label="C">叶节点</el-radio>
+          <el-radio v-model="ruleForm.menuType" label="F">功能</el-radio>
+        </el-form-item>
+        <el-form-item label="名称" prop="menuName">
+          <el-input v-model="ruleForm.menuName" class="w200"></el-input>
+        </el-form-item>
+        <el-form-item label="链接地址" prop="component" v-if="['M', 'C'].indexOf(ruleForm.menuType) !== -1">
+          <el-input v-model="ruleForm.component" class="w300"></el-input>
+        </el-form-item>
+        <el-form-item label="图标class" prop="icon">
+          <el-input v-model="ruleForm.icon" class="w300" :suffix-icon="ruleForm.icon"></el-input>
+        </el-form-item>
+        <el-form-item label="功能码" prop="perms">
+          <el-input v-model="ruleForm.perms" class="w200"></el-input>
+        </el-form-item>
+        <el-form-item label="排序" prop="orderNum">
+          <el-input v-model="ruleForm.orderNum" class="w100"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')">保 存</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
@@ -133,23 +119,38 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "@/assets/css/style.scss";
+
 .content {
+  height: 100%;
+  background-color: $body-main-box;
+
+  .list {
+    padding: 10px;
+
+    .my-ruleForm {
+      background-color: #fff;
+      border-radius: 3px;
+      padding: 20px 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+  }
+
   .navigator {
     position: relative;
     background-color: #f8f8f8;
     padding: 0 15px;
+
     .el-breadcrumb {
       height: 50px;
       line-height: 50px;
     }
+
     .el-button {
       position: absolute;
       right: 10px;
       top: 10px;
     }
   }
-  .my-ruleForm {
-    margin: 30px 15px 30px;
-  }
+
 }
 </style>

@@ -7,134 +7,66 @@
           <el-button type="default">添加</el-button>
         </router-link>
         <div class="pagination mt10">
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="pageNum"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size="pageSize"
-            layout="prev, next"
-            :total="totalCount"
-            background
-          >
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum"
+            :page-sizes="[15, 20, 50, 100]" :page-size="pageSize" layout="prev, next" :total="totalCount" background>
           </el-pagination>
         </div>
       </div>
       <div class="table mt10">
-        <el-table
-          v-loading="loading"
-          ref="multipleTable"
-          :data="tableData"
-          tooltip-effect="dark"
-          style="width: 100%"
-          highlight-current-row
-        >
-          <el-table-column
-            fixed
-            type="index"
-            label="序号"
-            align="center"
-            width="50"
-          ></el-table-column>
+        <el-table v-loading="loading" ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
+          highlight-current-row>
+          <el-table-column fixed type="index" label="序号" align="center" width="50"></el-table-column>
           <template v-for="itemHead in tableHead">
-            <el-table-column
-              v-if="itemHead.show"
-              :key="itemHead.label"
-              :align="itemHead.align"
-              :prop="itemHead.prop"
-              :formatter="
-                itemHead.formatter
+            <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
+              :formatter="itemHead.formatter
                   ? itemHead.formatter
                   : (row, column, cellValue, index) => {
-                      return cellValue;
-                    }
-              "
-              :label="itemHead.label"
-              :width="itemHead.width ? itemHead.width : ''"
-            >
+                    return cellValue;
+                  }
+                " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
             </el-table-column>
           </template>
-          <el-table-column
-            fixed="right"
-            align="center"
-            label="操作"
-            width="230"
-          >
+          <el-table-column fixed="right" align="center" label="操作" width="230">
             <template slot-scope="scope">
-              <el-button
-                v-if="setAuth('system:user:edit')"
-                type="text"
-                @click="handleEdit(scope.row, '/power/tablehead')"
-                >设置表头</el-button
-              >
-              <el-popover
-                v-if="setAuth('user:disable')"
-                placement="bottom-end"
-                :ref="`popover-disabled-${scope.$index}`"
-              >
+              <el-button v-if="setAuth('system:user:edit')" type="text"
+                @click="handleEdit(scope.row, '/power/tablehead')">设置表头</el-button>
+              <el-popover v-if="setAuth('user:disable')" placement="bottom-end"
+                :ref="`popover-disabled-${scope.$index}`">
                 <p>
                   确认<span class="color-red">{{
                     scope.row.disabled ? "启用" : "禁用"
-                  }}</span
-                  >“<span class="color-main">{{ scope.row.userName }}</span
-                  >”？
+                  }}</span>“<span class="color-main">{{ scope.row.userName }}</span>”？
                 </p>
                 <div style="text-align: right">
-                  <el-button
-                    type="text"
-                    @click="
-                      handlePopoverClose(
-                        scope,
-                        `popover-disabled-${scope.$index}`
-                      )
-                    "
-                    >取消</el-button
-                  >
-                  <el-button type="text" @click="handleDisabling(scope)"
-                    >确认</el-button
-                  >
+                  <el-button type="text" @click="
+                    handlePopoverClose(
+                      scope,
+                      `popover-disabled-${scope.$index}`
+                    )
+                    ">取消</el-button>
+                  <el-button type="text" @click="handleDisabling(scope)">确认</el-button>
                 </div>
                 <el-button type="text" slot="reference">{{
                   scope.row.status === "1" ? "启用" : "禁用"
                 }}</el-button>
               </el-popover>
-              <el-button
-                v-if="setAuth('system:user:resetpass')"
-                type="text"
-                @click="handleResetPasswordDialog(scope)"
-                >重置密码</el-button
-              >
-              <el-button
-                v-if="setAuth('system:user:edit')"
-                type="text"
-                @click="handleEdit(scope.row, '/power/admin/edit')"
-                >修改</el-button
-              >
-              <el-popover
-                v-if="setAuth('system:user:remove')"
-                placement="bottom-end"
-                :ref="`popover-delete-${scope.$index}`"
-              >
+              <el-button v-if="setAuth('system:user:resetpass')" type="text"
+                @click="handleResetPasswordDialog(scope)">重置密码</el-button>
+              <el-button v-if="setAuth('system:user:edit')" type="text"
+                @click="handleEdit(scope.row, '/power/admin/edit')">修改</el-button>
+              <el-popover v-if="setAuth('system:user:remove')" placement="bottom-end"
+                :ref="`popover-delete-${scope.$index}`">
                 <p>
-                  确认要<span class="color-red">删除</span>“<span
-                    class="color-main"
-                    >{{ scope.row.userName }}</span
-                  >”？
+                  确认要<span class="color-red">删除</span>“<span class="color-main">{{ scope.row.userName }}</span>”？
                 </p>
                 <div style="text-align: right">
-                  <el-button
-                    type="text"
-                    @click="
-                      handlePopoverClose(
-                        scope,
-                        `popover-delete-${scope.$index}`
-                      )
-                    "
-                    >取消</el-button
-                  >
-                  <el-button type="text" @click="handleDelete(scope)"
-                    >确认</el-button
-                  >
+                  <el-button type="text" @click="
+                    handlePopoverClose(
+                      scope,
+                      `popover-delete-${scope.$index}`
+                    )
+                    ">取消</el-button>
+                  <el-button type="text" @click="handleDelete(scope)">确认</el-button>
                 </div>
                 <el-button type="text" slot="reference">删除</el-button>
               </el-popover>
@@ -143,33 +75,16 @@
         </el-table>
       </div>
       <div class="pagination mt10">
-        <el-pagination
-          background
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="page"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalCount"
-        >
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          :current-page="page" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
         </el-pagination>
       </div>
     </div>
-    <el-dialog
-      title="重置密码"
-      :visible.sync="centerDialogResetPasswordVisible"
-      width="30%"
-      center
-      :close-on-click-modal="false"
-    >
-      <el-form
-        :model="resetPassForm"
-        status-icon
-        :rules="resetPassRules"
-        ref="resetPassForm"
-        :label-width="`${resetPassFormLabelWidth}px`"
-      >
+    <el-dialog title="重置密码" :visible.sync="centerDialogResetPasswordVisible" width="30%" center
+      :close-on-click-modal="false">
+      <el-form :model="resetPassForm" status-icon :rules="resetPassRules" ref="resetPassForm"
+        :label-width="`${resetPassFormLabelWidth}px`">
         <el-form-item label="用户名">
           {{ resetPassForm.userName }}
         </el-form-item>
@@ -177,18 +92,10 @@
           {{ resetPassForm.nickName }}
         </el-form-item>
         <el-form-item label="密码" prop="pass">
-          <el-input
-            type="password"
-            v-model="resetPassForm.pass"
-            autocomplete="off"
-          ></el-input>
+          <el-input type="password" v-model="resetPassForm.pass" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="确认密码" prop="checkPass">
-          <el-input
-            type="password"
-            v-model="resetPassForm.checkPass"
-            autocomplete="off"
-          ></el-input>
+          <el-input type="password" v-model="resetPassForm.checkPass" autocomplete="off"></el-input>
         </el-form-item>
         <!-- <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')"
@@ -198,12 +105,8 @@
         </el-form-item> -->
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="centerDialogResetPasswordVisible = false"
-          >取 消</el-button
-        >
-        <el-button type="primary" @click="submitForm('resetPassForm')"
-          >确 定</el-button
-        >
+        <el-button @click="centerDialogResetPasswordVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('resetPassForm')">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -272,8 +175,12 @@ export default {
       },
       // 重置密码表单label宽度
       resetPassFormLabelWidth: 100,
-      page: 1
+      page: 1,
+      tableHeight: 0
     };
+  },
+  created() {
+    // this.initFrameH('tableHeight', 200)
   },
   methods: {
     // 禁用与启用
@@ -374,47 +281,88 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "@/assets/css/style.scss";
+
 .content {
+  height: 100%;
+  background-color: $body-main-box;
+
+  .list {
+    padding: 10px;
+    height: calc(100% - 50px);
+
+    .el-table {
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .do {
+      height: 50px;
+      line-height: 50px;
+      background-color: #fff;
+      border-radius: 3px;
+      padding: 0 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+
+    .table {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+
+    .list-row {
+      height: 40px;
+      line-height: 40px;
+      color: #000;
+    }
+  }
+
   .navigator {
     position: relative;
     background-color: #f8f8f8;
     padding: 0 15px;
+
     .el-breadcrumb {
       height: 50px;
       line-height: 50px;
     }
+
     .el-button {
       position: absolute;
       right: 10px;
       top: 10px;
     }
   }
+
   .filter-condition {
     margin: 20px 15px 10px;
     background-color: #f8f8f8;
     padding: 10px 15px;
+
     .item {
       display: inline-block;
       padding: 5px 0;
     }
+
     label {
       font-size: 12px;
       color: #999999;
     }
+
     .btn-box {
       float: right;
     }
+
     .clearboth {
       clear: both;
     }
   }
+
   .list {
-    padding: 0 15px;
     .do {
       .el-button {
         margin-top: 10px;
       }
     }
+
     .pagination {
       float: right;
     }

@@ -1,7 +1,7 @@
 <!--菜单管理-->
 <template>
   <div class="content">
-    <div class="list mt20 mb20">
+    <div class="list">
       <div class="do">
         <el-button
           v-if="setAuth('system:menu:add')"
@@ -16,7 +16,7 @@
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
-          max-height="600"
+          :height="menuHeight"
           row-key="menuId"
           @selection-change="handleSelectionChange"
           default-expand-all
@@ -115,9 +115,10 @@ import config from "@/utils/config";
 import api from "@/api/kk_power_menu";
 import { pageMixin } from "@/utils/pageMixin";
 import { authMixin } from "@/utils/authMixin";
+import { commMixin } from '@/utils/commMixin'
 import { debounce } from '@/utils/debounce'
 export default {
-  mixins: [pageMixin, authMixin],
+  mixins: [pageMixin, authMixin, commMixin],
   data() {
     /* 条件筛选 */
     /* 弹窗 */
@@ -140,7 +141,11 @@ export default {
       ],
       tableData: [],
       loading: true,
+      menuHeight: 0
     };
+  },
+  created() {
+    this.initFrameH('menuHeight', 120)
   },
   methods: {
     // 初始化数据
@@ -192,6 +197,34 @@ export default {
 <style lang="scss" scoped>
 @import "@/assets/css/style.scss";
 .content {
+  height: 100%;
+  background-color: $body-main-box;
+
+  .list {
+    padding: 10px;
+    height: calc(100% - 50px);
+
+    .do {
+      height: 50px;
+      line-height: 50px;
+      background-color: #fff;
+      border-radius: 3px;
+      padding: 0 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+
+    .table {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .list-row {
+      height: 40px;
+      line-height: 40px;
+      color: #000;
+    }
+  }
   .navigator {
     position: relative;
     background-color: #f8f8f8;
@@ -207,7 +240,6 @@ export default {
     }
   }
   .list {
-    padding: 0 15px;
     .do {
       .el-button {
         margin-top: 10px;

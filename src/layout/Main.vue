@@ -1,29 +1,32 @@
 <template>
-  <el-container class="form-container height100percent">
-    <el-container class="height100percent">
-      <el-aside :width="asideLeftWidth" class="height100percent">
-        <div class="aside-left" ref="animateAsideLeft">
-          <el-scrollbar class="scrollbar-aside">
-            <sidebar></sidebar>
-          </el-scrollbar>
-        </div>
-      </el-aside>
-      <el-main>
-        <div
-          class="main-content"
-          ref="animateContent"
-          :style="'padding-left:' + asideLeftWidth + ';'"
-        >
-          <topbar></topbar>
-          <el-scrollbar class="scrollbar-content height100percent">
-            <main-content>
-              <slot></slot>
-            </main-content>
-          </el-scrollbar>
-        </div>
-      </el-main>
-    </el-container>
-  </el-container>
+  <div class="form-container height100percent">
+    <div >
+      <title-bar>
+      </title-bar>
+    </div>
+    <div style="height: calc(100% - 40px)">
+      <el-container class="height100percent">
+        <el-aside :width="asideLeftWidth" class="height100percent">
+          <div class="aside-left" ref="animateAsideLeft">
+            <el-scrollbar class="scrollbar-aside">
+              <sidebar></sidebar>
+            </el-scrollbar>
+          </div>
+        </el-aside>
+        <el-main>
+          <div class="main-content" ref="animateContent" :style="'padding-left:' + asideLeftWidth + ';'">
+            <topbar v-if="false"></topbar>
+            <el-scrollbar class="scrollbar-content height100percent">
+              <main-content>
+                <slot></slot>
+              </main-content>
+            </el-scrollbar>
+          </div>
+        </el-main>
+      </el-container>
+    </div>
+
+  </div>
 </template>
 <script>
 import Topbar from './Topbar'
@@ -42,6 +45,16 @@ export default {
       asideLeftWidth: state => state.asideLeftWidth,
       isCollapse: state => state.isCollapse,
     })
+  },
+  data() {
+    return {
+      isElectron: false
+    }
+  },
+  created() {
+    if (window.v1) {
+      this.isElectron = window.v1.isElectron();
+    }
   },
   methods: {
     ...mapMutations(["SET_IS_COLLAPSE"]),
@@ -68,32 +81,40 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "@/assets/css/style.scss";
+
 .height100percent {
   height: 100%;
-  animation: 0.3s;
+  // animation: 0.3s;
 }
+
 .form-container {
   .el-aside {
     position: fixed;
     z-index: 100;
     overflow: hidden;
   }
+
   .aside-left {
     height: 100%;
     background-color: $body-main-txt;
     box-sizing: border-box;
+
     .scrollbar-aside {
       height: 100%;
       padding-bottom: 10px;
     }
   }
+
   .main-content {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
     position: relative;
+
     .scrollbar-content {
-      height: calc(100% - 40px);
+      >>>.el-scrollbar__view {
+        height: 100%;
+      }
     }
   }
 }
