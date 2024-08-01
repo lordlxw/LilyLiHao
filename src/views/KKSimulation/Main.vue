@@ -56,7 +56,7 @@
             <template slot-scope="scope" v-if="!scope.row.qiangpingId">
               <el-button :disabled="userInfo.status == 2" type="primary" v-if="
                 setAuth('inquiry:edit') &&
-                [0, 1, 4, 10].indexOf(scope.row.status) !== -1
+                [0, 1, 4, 10, 23].indexOf(scope.row.status) !== -1
               " @click="handleEditEnqury(scope.row)">修改</el-button>
               <el-button :disabled="userInfo.status == 2" type="primary"
                 v-if="setAuth('inquiry:accept') && scope.row.status === 0" @click="handleAcceptClick(scope)">{{
@@ -101,7 +101,7 @@
                 [5, 19].indexOf(scope.row.status) !== -1
               " @click="handleDifficultNewEnqury(scope.row)">新建</el-button> -->
               <el-popover v-if="
-                setAuth('inquiry:difficultcanncel') && scope.row.status === 19
+                setAuth('inquiry:difficultcanncel') && [19, 23].indexOf(scope.row.status) !== -1
               " placement="bottom-end" :ref="`popover-difficultcanncel-${scope.$index}`">
                 <p>
                   确认要<span class="color-red">难成撤单</span>“<span class="color-main">{{ scope.row.tradeNum }}</span>”？
@@ -149,7 +149,7 @@
                       : "复制"
                 }}</el-button>
               <el-popover v-if="
-                ['0', '1', '4'].indexOf(scope.row.status.toString()) !== -1 &&
+                ['0', '1', '4', 23].indexOf(scope.row.status.toString()) !== -1 &&
                 setAuth('inquiry:cancel')
               " placement="bottom-end" :ref="`popover-cancel-${scope.$index}`">
                 <p>
@@ -400,7 +400,7 @@
       </div>
       <el-dialog title="成交信息" :width="returnFrameW(600) + 'px'" :visible.sync="dialogDealFormVisible" append-to-body
         :destroy-on-close="true" :close-on-click-modal="false">
-        <el-form :model="dealForm" :rules="rulesDealForm" ref="dealForm" :label-width=" '100px'"
+        <el-form :model="dealForm" :rules="rulesDealForm" ref="dealForm" :label-width="'100px'"
           :close-on-click-modal="false">
           <el-form-item label="债券代码" prop="tscode">
             {{ dealRows.tscode }}

@@ -215,7 +215,9 @@
               <el-scrollbar v-if="businessOutList && businessOutList.length > 0">
                 <ul>
                   <li v-for="(item, index) in businessOutList" :key="index" v-if="item.forward ? showForward : true"
-                    style="height: 20px; line-height: 20px" @click="changeForm(item.price, item.brokerid)">
+                    style="height: 20px; line-height: 20px"
+                    :style="{ color: buyForm.brokerid == item.brokerid ? '#ffeb3b' : '#ffffff' }"
+                    @click="changeForm(item.price, item.brokerid)">
                     <span>{{
                       item.brokerName
                     }}</span>
@@ -237,7 +239,9 @@
               <el-scrollbar v-if="businessInList && businessInList.length > 0">
                 <ul>
                   <li v-for="(item, index) in businessInList" :key="index" v-if="item.forward ? showForward : true"
-                    style="height: 20px; line-height: 20px" @click="changeForm(item.price, item.brokerid)">
+                    style="height: 20px; line-height: 20px"
+                    :style="{ color: buyForm.brokerid == item.brokerid ? '#ffeb3b' : '#ffffff' }"
+                    @click="changeForm(item.price, item.brokerid)">
                     <span>{{
                       item.brokerName
                     }}</span>
@@ -290,8 +294,10 @@
         custom-class="custom-dialog" :before-close="() => { dialogVisible.show = false, loading = false }">
         <div v-html="dialogVisible.message"></div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible.show = false, loading = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible.fun()">确 定</el-button>
+          <el-button :class="dialogVisible.submitNum == 0 ? 'bg-green' : ''"
+            @click="dialogVisible.show = false, loading = false">取 消</el-button>
+          <el-button :class="dialogVisible.submitNum == 1 ? 'bg-green' : ''" @click="dialogVisible.fun()">确
+            定</el-button>
         </span>
       </el-dialog>
       <el-dialog title="新建询价单" :visible.sync="dialogEnquiryAddVisible" width="40%" append-to-body
@@ -386,6 +392,7 @@ export default {
         title: "提示",
         show: false,
         message: "请确认需要提交询价单？",
+        submitNum: 1,
         fun: () => { }
       },
       // k线栏目
@@ -1326,23 +1333,26 @@ export default {
           103: 7000,
           104: 8000,
           105: 9000,
-          37: () => { return setPrice(-25) },
-          39: () => { return setPrice(25) },
-          38: () => { return setPrice(5) },
-          40: () => { return setPrice(-5) },
+          37: () => {
+            self.dialogVisible.show ? self.dialogVisible.submitNum = 0 : setPrice(-25)
+          },
+          39: () => {
+            self.dialogVisible.show ? self.dialogVisible.submitNum = 1 : setPrice(25)
+          },
+          38: () => { return self.dialogVisible.show ? '' : setPrice(5) },
+          40: () => { return self.dialogVisible.show ? '' : setPrice(-5) },
           13: () => {
             if (self.dialogVisible.show) {
-              self.dialogVisible.fun();
-              // self.dialogVisible.show = false;
+              self.dialogVisible.submitNum === 1 ? self.dialogVisible.fun() : self.dialogVisible.show = false;
             }
           },
           112: () => {
-            self.submitForm('buyForm')
+            return self.dialogVisible.show ? '' : self.submitForm('buyForm')
           },
           113: () => {
-            self.submitForm('saleForm')
+            return self.dialogVisible.show ? '' : self.submitForm('saleForm')
           },
-          71: async () => {
+          192: async () => {
             if (self.userInfo.status === 2) {
               return;
             }
@@ -1390,7 +1400,8 @@ export default {
               if (code === 200 && rows.length > 0) {
                 self.dialogVisible.title = "提醒"
                 // self.dialogVisible.message = `<div class='${rows[0].direction === 'bond_0' ? 'txt-green' : 'txt-red'}'> ${rows[0].tscode + " | " + (rows[0].direction === 'bond_0' ? '买入' : '卖出') + " | " + rows[0].price + " | " + rows[0].volume + " | " + util.dateFormat(rows[0].deliveryTime, "YYYY-MM-DD")}</div> <br/>是否立即撤销!`
-                const brokerName = rows[0].brokerId ? self.intendComerOption.filter(n => rows[0].brokerId === n.brokerid)[0].company : '系统智能分配';
+                const brokerItems = self.intendComerOption.filter(n => rows[0].brokerid === n.brokerid);
+                const brokerName = rows[0].brokerid ? brokerItems[0].company + '-' + brokerItems[0].target : '系统智能分配';
                 self.dialogVisible.message = `<div class='el-row'>
                 <div class='el-col el-col-12' ><div class='dialog-text'>${brokerName}</div></div>
                 <div class='el-col el-col-12'><div class='text-right dialog-text'>${rows[0].price}</div></div>
@@ -1415,7 +1426,7 @@ export default {
         }
 
         // const key = Object.keys(volumeKeys).filter(key => key === keyCode).find(num => true);
-        if (keyCode >= 96 && keyCode <= 105) {
+        if (keyCode >= 96 && keyCode <= 105 && !self.dialogVisible.show) {
           self.saleForm.volume = volumeKeys[keyCode]
           self.buyForm.volume = volumeKeys[keyCode]
         } else if (volumeKeys[keyCode] instanceof Function) {
@@ -1902,7 +1913,7 @@ export default {
               `<div class='el-row'>
                 <div class='el-col el-col-4' ><div class="${direction === '买入' ? 'txt-green' : 'txt-red'} dialog-text" >${direction}</div></div>
                 <div class='el-col el-col-7' ><div class='dialog-text'>${this[formKey].tscode}</div></div>
-                <div class='el-col el-col-5' ><div class='dialog-text'>${this[formKey].volume}</div></div>
+                <div class='el-col el-col-5' ><div class='dialog-text text-center'>${this[formKey].volume}</div></div>
                 <div class='el-col el-col-8' ><div class='dialog-text text-right'>${util.dateFormat(this[formKey].deliveryTime, "YYYY-MM-DD")}</div></div>
               </div><br/>请确认需要提交询价单?`;
 
@@ -3301,6 +3312,10 @@ export default {
         self.intendComerOption = self.intendComerOption.map(item => {
           const occupyItem = occupyInfo.filter(n => n.brokerid === item.brokerid && n.channelId === item.channelId)
           if (occupyItem.length > 0) {
+            if (occupyItem[0].occupyier === self.userInfo.userId) {
+              // const formKey = "buyForm";
+              this.buyForm.brokerid = occupyItem[0].brokerid
+            }
             return {
               ...item,
               disabled: bol ? occupyItem[0].occupyier !== self.userInfo.userId : occupyItem[0].occupy,

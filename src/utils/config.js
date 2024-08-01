@@ -145,6 +145,7 @@ export default {
     remark: { label: '备注', prop: 'remark', width: '200', align: 'left', show: false, showOverflowTooltip: true },
     tradeNum: { label: '单据号', prop: 'tradeNum', width: '166', align: 'left', show: true },
     deliverySpeed: { label: '询清算速度', prop: 'deliverySpeed', width: '140', align: 'left', show: true },
+    realDeliverySpeed: { label: '成清算速度', prop: 'realDeliverySpeed', width: '140', align: 'left', show: true },
     createuser: { label: '研究员', prop: 'createuser', width: '100', align: 'left', show: true, showOverflowTooltip: true },
     forward: { label: '是否远期', prop: 'forward', width: '140', align: 'left', show: false },
     parentId: { label: '相关单号', prop: 'parentId', width: '160', align: 'left', show: false },

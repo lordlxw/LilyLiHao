@@ -109,7 +109,7 @@ export default {
                   }
                   let $path = '/simulation/main';
                   if (this.labelPosition === 'lily') {
-                    $path = '/trade/bonds'
+                    $path = '/dashboard'
                   }
 
                   if (this.isElectron) {
@@ -121,7 +121,7 @@ export default {
                       const args = {
                         isMainWin: true,
                         resize: true, // 是否支持缩放
-                        maximize: false, // 最大化窗口
+                        maximize: true, // 最大化窗口
                         isMultiWin: true, // 是否支持多开窗口
                         route: $path
                       }

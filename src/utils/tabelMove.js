@@ -103,7 +103,7 @@ Vue.directive("swipe-copy", {
 // 拦截 Element.Notification 的方法
 Vue.prototype.$notify = (function(notify) {
   return function(options) {
-    console.log("拦截 Element.Notification 的方法", window.location.href)
+    console.log("拦截 Element.Notification 的方法", window.location.href);
     if (window.location.href.includes("chatitem")) {
       return;
     }
@@ -111,3 +111,9 @@ Vue.prototype.$notify = (function(notify) {
     return notify.apply(this, arguments);
   };
 })(Vue.prototype.$notify);
+
+Vue.prototype.$echartsResize = function(ref) {
+  window.addEventListener("resize", function() {
+    ref.resize();
+  });
+};
