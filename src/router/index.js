@@ -171,6 +171,10 @@ const router = new Router({
           path: '/trade/break',
           component: () => import('@/views/KKTrade/Break.vue')
         },
+        {
+          path: '/trade/risk',
+          component: () => import('@/views/KKTrade/Risk.vue')
+        },
       ]
     }
   ],

@@ -88,7 +88,7 @@ export default {
             password: this.ruleForm.password,
             uuid: this.uuid,
             code: this.ruleForm.code
-          }, this.labelPosition === 'Simulation' ? 'BondHelper' : '').then(response => {
+          }, this.labelPosition === 'Simulation' ? 'BondHelper' : '', this.labelPosition === 'Simulation' ? 'sim' : 'admin').then(response => {
             if (response && response.code === 200) {
               // 保存token信息
               Promise.all([
@@ -118,10 +118,15 @@ export default {
                       displays
                     })
                     if (this.labelPosition === 'lily') {
+                      const maxWidth = Math.max(...displays.map(display => display.bounds.width));
+                      const minWidth = Math.ceil(maxWidth * 0.7);
+                      const minHeight = Math.ceil(minWidth * 0.6);
                       const args = {
+                        width: minWidth, // 窗口宽度
+                        height: minHeight, // 窗口高度
                         isMainWin: true,
                         resize: true, // 是否支持缩放
-                        maximize: true, // 最大化窗口
+                        maximize: false, // 最大化窗口
                         isMultiWin: true, // 是否支持多开窗口
                         route: $path
                       }

@@ -87,7 +87,7 @@
         :row-class-name="tableRowFinishClassName" :cell-class-name="tableCellBondsClassName"
         :cell-style="finishCellStyle" :span-method="objectSpanMethod"
         :header-row-style="{ height: '30px', lineHeight: '30px' }" :header-cell-style="{ background: '#f8f8f8' }"
-        highlight-current-row @selection-change="handleBondsSelectionChange" @sort-change="handleSortChangeBonds">
+        @selection-change="handleBondsSelectionChange" @sort-change="handleSortChangeBonds">
         <el-table-column v-if="setAuth('bonds:break')" type="selection" align="center" width="40"></el-table-column>
         <el-table-column v-else width="30"></el-table-column>
         <template v-for="itemHead in tableHeadFinish">
@@ -265,7 +265,11 @@ let currentFinishCode = ''
 let finishCode = ''
 let finishCodeSameCount = 0
 export default {
-  props: ['height', 'showLoginName'],
+  props: {
+    height: 0,
+    userId: null,
+    showLoginName: false
+  },
   mixins: [commMixin, pageMixin],
   components: {
     BondsCover,
@@ -343,6 +347,18 @@ export default {
     enquiryInfo() {
       this.loadInitDataFinish()
     },
+    userId() {
+      let tableData = this.tableDataFinish;
+      tableData.forEach(n => {
+        if (this.userId && n.yanjiuyuanId !== this.userId) {
+          n.hidenRow = true;
+        } else {
+          n.hidenRow = false;
+        }
+      });
+      this.tableDataFinish = [];
+      this.tableDataFinish = tableData;
+    }
   },
   computed: {
     ...mapGetters({
@@ -704,6 +720,9 @@ export default {
     },
     // 已平仓行样式
     tableRowFinishClassName({ row, rowIndex }) {
+      if (row.hidenRow) {
+        return 'hiden-row list-row';
+      }
       if (rowIndex === 0) {
         tableFinishClassName = 'odd-row'
         currentFinishCode = row.finishCode

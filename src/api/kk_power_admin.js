@@ -159,5 +159,19 @@ export default {
         userId: params.userId
       }
     })
+  },
+  getUserSummarys(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/sys/summary`,
+      method: 'post',
+      data: params
+    })
+  },
+  getTransHistory(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/sys/getFinishTrades`,
+      method: 'post',
+      data: params
+    })
   }
 }

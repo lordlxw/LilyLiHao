@@ -63,7 +63,7 @@
       </el-popover>
       <el-tag :type="riskInfo.toString().indexOf('-') !== -1 ? 'danger' : 'success'
         " class="ml10" v-if="setAuth('reward:datatotal')" effect="dark">浮动盈亏：<b>{{ totalFloatProfit }}</b></el-tag>
-      <el-tag type="success" effect="dark" class="ml10" size="small" >买：<b>{{ noBondsBuyVolumn || 0 }}</b></el-tag>
+      <el-tag type="success" effect="dark" class="ml10" size="small">买：<b>{{ noBondsBuyVolumn || 0 }}</b></el-tag>
       <el-tag type="danger" effect="dark" class="ml10">卖：<b>{{ noBondsSaleVolumn || 0 }}</b></el-tag>
     </div>
     <div class="table" ref="noBondsDo">
@@ -102,7 +102,8 @@
         <el-table-column></el-table-column>
         <el-table-column fixed="right" align="center" label="操作" width="150">
           <template slot-scope="scope">
-            <el-button type="primary" v-if="setAuth('bonds:cover') && scope.row.realTradeId === null && scope.row.restVolume > 0"
+            <el-button type="primary"
+              v-if="setAuth('bonds:cover') && scope.row.realTradeId === null && scope.row.restVolume > 0"
               @click="handleBondsCover(scope.row)">平仓</el-button>
           </template>
         </el-table-column>
@@ -110,7 +111,7 @@
     </div>
     <el-dialog title="平仓" width="400px;" :visible.sync="dialogBondsCoverFormVisible" append-to-body
       :destroy-on-close="true" :close-on-click-modal="false">
-      <bonds-cover :row="currentRow"  @change="handleBondsCoverDialogVisible"></bonds-cover>
+      <bonds-cover :row="currentRow" @change="handleBondsCoverDialogVisible"></bonds-cover>
     </el-dialog>
     <el-dialog title="未平仓修改申请" width="400px;" :visible.sync="dialogNoBondsFormVisible" append-to-body
       :destroy-on-close="true" :close-on-click-modal="false">
@@ -141,7 +142,10 @@ import * as util from "@/utils/util";
 import { debounce } from "@/utils/debounce";
 import moment from "moment";
 export default {
-  props: ["height"],
+  props: {
+    height: 0,
+    userId: null
+  },
   mixins: [commMixin, pageMixin],
   components: {
     BondsCover,
@@ -273,6 +277,22 @@ export default {
     riskInfo() {
       this.totalFloatProfit = this.riskInfo.floatProfit;
     },
+    userId() {
+      let tableDatas = this.tableData
+      tableDatas.forEach(n => {
+        n.children.forEach(c => {
+          console.log((this.userId && c.yanjiuyuanId === this.userId), c.yanjiuyuanId, this.userId)
+          if (this.userId && c.yanjiuyuanId !== this.userId) {
+            n.hidenRow = true;
+            c.hidenRow = true;
+          } else {
+            n.hidenRow = false;
+            c.hidenRow = false;
+          }
+        })
+      });
+      this.tableData = [...tableDatas];
+    }
   },
   computed: {
     ...mapGetters({
@@ -675,6 +695,9 @@ export default {
     },
     // 行样式
     tableRowClassName({ row, rowIndex }) {
+      if (row.hidenRow) {
+        return 'hiden-row list-row';
+      }
       let tableCurrentRelativeNum = "list-row "
       if (row.children) {
         if (

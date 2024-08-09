@@ -1,11 +1,11 @@
-import moment from 'moment'
+import moment from "moment";
 /**
  * 日期格式化
  * @param {*} date
  * @param {*} fmt
  */
 export const dateFormat = (date, fmt) => {
-  return moment(date).format(fmt)
+  return moment(date).format(fmt);
   // if (date) {
   //   if (!(date instanceof Date)) {
   //     date = new Date(date)
@@ -30,14 +30,14 @@ export const dateFormat = (date, fmt) => {
   //   fmt = ''
   // }
   // return fmt
-}
+};
 // function padLeftZero(str) {
 //   return ('00' + str).substr(str.length)
 // }
 
 export const timeFormat = (timesamp, format) => {
-  return moment.unix(timesamp).format(format)
-}
+  return moment.unix(timesamp).format(format);
+};
 
 /**
  * 在当前日期追加天数
@@ -45,11 +45,11 @@ export const timeFormat = (timesamp, format) => {
  * @param {*} days
  */
 export const addDaysToDate = (date, days) => {
-  let dateTime = new Date(date)
-  dateTime = dateTime.setDate(dateTime.getDate() + days)
-  dateTime = new Date(dateTime)
-  return dateTime
-}
+  let dateTime = new Date(date);
+  dateTime = dateTime.setDate(dateTime.getDate() + days);
+  dateTime = new Date(dateTime);
+  return dateTime;
+};
 
 /**
  * 金额格式化
@@ -60,43 +60,55 @@ export const addDaysToDate = (date, days) => {
  * thousandsSep：千分位符号
  * roundtag:舍入参数，默认 "ceil" 向上取,"floor"向下取,"round" 四舍五入
  */
-export const moneyFormat = (number, decimals, decPoint, thousandsSep, roundtag) => {
-  number = (number + '').replace(/[^0-9+-Ee.]/g, '')
-  roundtag = roundtag || 'ceil' // "ceil","floor","round"
-  const n = !isFinite(+number) ? 0 : +number
-  const prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
-  const sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep
-  const dec = (typeof decPoint === 'undefined') ? '.' : decPoint
-  const toFixedFix = function (n, prec) {
-    const k = Math.pow(10, prec)
-    return '' + parseFloat(Math[roundtag](parseFloat((n * k).toFixed(prec * 2))).toFixed(prec * 2)) / k
-  }
-  let s = ''
-  s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.')
-  const re = /(-?\d+)(\d{3})/
+export const moneyFormat = (
+  number,
+  decimals,
+  decPoint,
+  thousandsSep,
+  roundtag
+) => {
+  number = (number + "").replace(/[^0-9+-Ee.]/g, "");
+  roundtag = roundtag || "ceil"; // "ceil","floor","round"
+  const n = !isFinite(+number) ? 0 : +number;
+  const prec = !isFinite(+decimals) ? 0 : Math.abs(decimals);
+  const sep = typeof thousandsSep === "undefined" ? "," : thousandsSep;
+  const dec = typeof decPoint === "undefined" ? "." : decPoint;
+  const toFixedFix = function(n, prec) {
+    const k = Math.pow(10, prec);
+    return (
+      "" +
+      parseFloat(
+        Math[roundtag](parseFloat((n * k).toFixed(prec * 2))).toFixed(prec * 2)
+      ) /
+        k
+    );
+  };
+  let s = "";
+  s = (prec ? toFixedFix(n, prec) : "" + Math.round(n)).split(".");
+  const re = /(-?\d+)(\d{3})/;
   while (re.test(s[0])) {
-    s[0] = s[0].replace(re, '$1' + sep + '$2')
+    s[0] = s[0].replace(re, "$1" + sep + "$2");
   }
 
-  if ((s[1] || '').length < prec) {
-    s[1] = s[1] || ''
-    s[1] += new Array(prec - s[1].length + 1).join('0')
+  if ((s[1] || "").length < prec) {
+    s[1] = s[1] || "";
+    s[1] += new Array(prec - s[1].length + 1).join("0");
   }
-  return s.join(dec)
-}
+  return s.join(dec);
+};
 // 对菜单递归
 function recuisionMenus(array, navigatorId, code, index) {
   return array.some(element => {
     if (parseInt(navigatorId[index]) === parseInt(element.id)) {
       if (element.children && element.children.length > 0) {
-        index += 1
+        index += 1;
         return recuisionMenus(element.children, navigatorId, code, index);
       } else {
         return false;
       }
     } else {
       if (element.permissionCodes === code) {
-        return true
+        return true;
       } else if (element.children && element.children.length > 0) {
         return element.children.some(element2 => {
           if (element2.permissionCodes === code) {
@@ -106,38 +118,38 @@ function recuisionMenus(array, navigatorId, code, index) {
           } else {
             return false;
           }
-        })
+        });
       } else {
         return false;
       }
     }
-  })
+  });
 }
 // 验证功能权限
 export const authValid = (code, menus, navigatorId) => {
-  menus = menus || []
-  navigatorId = navigatorId || []
+  menus = menus || [];
+  navigatorId = navigatorId || [];
   if (!Array.isArray(menus)) {
-    menus = JSON.parse(menus)
+    menus = JSON.parse(menus);
   }
   if (!Array.isArray(navigatorId)) {
-    navigatorId = JSON.parse(menus)
+    navigatorId = JSON.parse(menus);
   }
   if (menus.length > 0) {
-    return recuisionMenus(menus, navigatorId, code, 0)
+    return recuisionMenus(menus, navigatorId, code, 0);
   } else {
-    return false
+    return false;
   }
-}
+};
 
 // 去掉前后空格
-export const trim = (str) => {
+export const trim = str => {
   return str.replace(/(^\s*)|(\s*$)/g, "");
-}
+};
 
-export const timesampToDate = (timesamp) => {
-  return moment.unix(timesamp).format('YYYY-MM-DD HH:mm:ss')
-}
+export const timesampToDate = timesamp => {
+  return moment.unix(timesamp).format("YYYY-MM-DD HH:mm:ss");
+};
 
 export const mergeArray = (arr1, arr2) => {
   for (let i = 0; i < arr1.length; i++) {
@@ -151,4 +163,18 @@ export const mergeArray = (arr1, arr2) => {
     arr1.push(arr2[i]);
   }
   return arr1;
-}
+};
+
+export const groupArrayToMap = (arr, keyFn, valueFn = item => item) => {
+  const map = new Map();
+  arr.forEach(item => {
+    const key = keyFn(item);
+    const value = valueFn(item);
+    if (map.has(key)) {
+      map.get(key).push(value);
+    } else {
+      map.set(key, [value]);
+    }
+  });
+  return map;
+};

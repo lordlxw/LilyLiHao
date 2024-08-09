@@ -86,7 +86,7 @@ export default {
           // 浏览器端收消息，获得从服务端发送过来的文本消息
           self.socketMain.onmessage = function (msg) {
             const timestamp = moment().valueOf()
-            console.log("收到数据====" + msg.data);
+            // console.log("收到数据====" + msg.data);
             let msgJson = JSON.parse(msg.data)
             console.log(msgJson.dataType)
             const h = self.$createElement

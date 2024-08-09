@@ -1,7 +1,7 @@
 <!-- 询价单 -->
 <template>
   <div style="height: 100%;">
-    <title-bar>
+    <title-bar v-if="!child">
       <div slot="left_bar">
         <el-popover placement="bottom-end" width="500" trigger="hover">
           <user-Info :userInfo="userInfo"></user-Info>
@@ -14,7 +14,7 @@
         class="el-icon-setting noDrag txt-white right_bar"></i>
       <i slot="right_bar" @click="drawerBrokers = true" class="el-icon-chat-dot-round noDrag txt-white right_bar"></i>
     </title-bar>
-    <div class="content custom-scrollbar">
+    <div class="content custom-scrollbar" :style="`height: calc(100% - ${child ? 10 : 40}px);`">
       <div class="do mb10" v-if="false">
         <el-row>
           <el-col :span="22">
@@ -31,7 +31,7 @@
         </el-row>
       </div>
       <div class="mb10 risk-control">
-        <account-risk-control></account-risk-control>
+        <account-risk-control :userId="currentUserId"></account-risk-control>
       </div>
       <div class="list mb10" :style="{ height: _itemStyle(0) + 'px' }" v-if="activeName == 0">
         <el-table v-swipe-copy="handleSwipeOrDblClick" v-loading="loading" ref="multipleTable" :data="tableData"
@@ -312,12 +312,12 @@
         </el-table>
       </div>
       <div class="list mb10" :style="{ height: _itemStyle(1) + 'px' }" v-if="activeName == 0">
-        <com-no-bonds :height="'100%'"></com-no-bonds>
+        <com-no-bonds :height="'100%'" :userId="currentUserId"></com-no-bonds>
       </div>
       <div class="list mb10" :style="{ height: _itemStyle(2) + 'px' }" v-if="activeName == 0">
-        <com-bonds :height="'100%'" :showLoginName="false"></com-bonds>
+        <com-bonds :height="'100%'" :showLoginName="false" :userId="currentUserId"></com-bonds>
       </div>
-      <div class="list mb20" :style="{ height: _itemStyle(3) + 'px' }" v-if="activeName == 0">
+      <div class="list mb20" :style="{ height: _itemStyle(3) + 'px' }" v-if="activeName == 0 && !child">
         <el-scrollbar style="height: 100%;">
           <!-- {"TsCode":"230023.IB","Volume":717,"TradeTime":"16:46:42","Price":2.5315,"IssueRate":"3%","ChangeBP":0.1000,"HighPrice":2.5335,"LowPrice":2.5285} -->
           <el-row class="hot-herder">
@@ -520,7 +520,9 @@ export default {
   mixins: [pageMixin, commMixin],
   props: {
     status: '',
-    height: '100%'
+    height: '100%',
+    child: false,
+    searchParam: {},
   },
   components: {
     DeliveryCanlendarUpdate,
@@ -552,6 +554,7 @@ export default {
     }
     return {
       config,
+      currentUserId: null,
       drawerBrokers: false,
       loading: false,
       // 表头
@@ -618,6 +621,21 @@ export default {
     }
   },
   watch: {
+    'searchParam.userIds': {
+      immediate: true, // 将立即以表达式的当前值触发回调
+      handler: function (val, oldVal) {
+        // this.loadInitData(this.searchParam)
+        this.currentUserId = this.searchParam.userIds[0];
+        this.tableData.forEach(n => {
+          if (this.currentUserId && n.createBy !== this.currentUserId) {
+            n.hidenRow = true;
+          } else {
+            n.hidenRow = false;
+          }
+        });
+      },
+      deep: true,
+    },
     enquiryInfo() {
       this.loadInitData()
     },
@@ -662,7 +680,7 @@ export default {
     }),
     _itemStyle() {
       return (dom) => {
-        if (this.isElectron) {
+        if (this.isElectron && !this.child) {
           const maxHeight = Math.max(...this.winInfo.displays.map(display => display.bounds.height));
           const heightItem = dom === 0 ? maxHeight * 0.25 : dom === 1 ? maxHeight * 0.2 : dom === 2 ? maxHeight * 0.15 : dom === 3 ? maxHeight * 0.235 : 400;
           return heightItem
@@ -1147,6 +1165,10 @@ export default {
     },
     // 滚单成交颜色框
     tableRowClassName({ row, rowIndex }) {
+      if (row.hidenRow) {
+        return 'hiden-row list-row';
+      }
+
       if (row.qiangpingId && row.status === 1) {
         return 'gd-red-row list-row';
       }
@@ -1582,7 +1604,7 @@ export default {
 }
 
 .content {
-  padding: 10px;
+  padding: 10px 10px 0 10px;
   background-color: rgb(32, 32, 32);
   height: calc(100% - 40px);
   overflow-y: scroll;

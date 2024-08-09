@@ -103,6 +103,9 @@
 import { mapGetters, mapState } from 'vuex';
 import api from "@/api/kk_trade";
 export default {
+  props: {
+    userId: null
+  },
   data() {
     return {
       riskControlData: {},
@@ -135,11 +138,14 @@ export default {
   watch: {
     riskInfo() {
       this.riskControlData = this.riskInfo
+    },
+    userId() {
+      this.initRiskControlData()
     }
   },
   methods: {
     initRiskControlData() {
-      api.accountRiskControl({ userId: this.userInfo.userId }).then(res => {
+      api.accountRiskControl({ userId: this.userId || this.userInfo.userId }).then(res => {
         if (res && res.code === '00000' && res.value) {
           this.riskControlData = res.value
         }

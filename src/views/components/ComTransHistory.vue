@@ -3,22 +3,18 @@
   <div class="content">
     <!-- <div class="filter-condition"></div> -->
     <div class="list">
-      <div class="do mb10" v-if="showDo">
+      <!-- <div class="do mb10">
         <el-tag type="success" class="mr20">总买入：<b>{{ rewardBuyVolume }}</b></el-tag>
         <el-tag type="danger" class="mr20">总卖入：<b>{{ rewardSaleVolume }}</b></el-tag>
         <el-tag :type="rewardFloatProfit.toString().indexOf('-') !== -1
           ? 'danger'
           : 'success'
-          " class="mr20" v-if="setAuth('reward:datatotal')">总盈亏：<b>{{ rewardFloatProfit | moneyFormat(4)
-            }}</b></el-tag>
-      </div>
+          " class="mr20" v-if="setAuth('reward:datatotal')">总盈亏：<b>{{ rewardFloatProfit }}</b></el-tag>
+      </div> -->
       <el-table v-swipe-copy v-loading="loading" :data="tableData" tooltip-effect="dark" style="width: 100%"
-        @selection-change="handleSelectionChange" :height="height" ref="multipleTable"
-        :header-row-style="{ height: '30px', lineHeight: '30px' }" header-cell-class-name="list-row"
-        :header-cell-style="{ background: '#f8f8f8' }" :key="Math.random()" :cell-style="cellStyleUpdate"
-        :row-class-name="tableRowFinishClassName">
-        <el-table-column type="selection" width="55">
-        </el-table-column>
+        show-summary :height="height" :header-row-style="{ height: '30px', lineHeight: '30px' }"
+        header-cell-class-name="list-row" :header-cell-style="{ background: '#f8f8f8' }" :key="Math.random()"
+        highlight-current-row :cell-style="cellStyleUpdate" :row-class-name="tableRowFinishClassName">
         <template v-for="itemHead in tableHead">
           <el-table-column v-if="itemHead.show" :sortable="itemHead.sortable" :key="itemHead.label"
             :align="itemHead.align" :prop="itemHead.prop" :formatter="itemHead.formatter
@@ -30,9 +26,6 @@
             :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false">
           </el-table-column>
         </template>
-        <el-table-column></el-table-column>
-        <el-table-column fixed="right" label="操作" width="80px">
-        </el-table-column>
       </el-table>
     </div>
   </div>
@@ -49,9 +42,7 @@ let tableFinishClassName = "";
 export default {
   props: {
     height: Number,
-    searchParam: Object,
-    showDo: true,
-    tableSelection: 0
+    searchParam: Object
   },
   mixins: [pageMixin, commMixin],
   data() {
@@ -64,8 +55,7 @@ export default {
       errorMsg: "",
       rewardBuyVolume: "",
       rewardSaleVolume: "",
-      rewardFloatProfit: "",
-      multipleSelection: []
+      rewardFloatProfit: ""
     };
   },
   watch: {
@@ -76,34 +66,19 @@ export default {
       },
       deep: true,
     },
+    'searchParam.userIds': {
+      immediate: true, // 将立即以表达式的当前值触发回调
+      handler: function (val, oldVal) {
+        this.loadInitData(this.searchParam)
+      },
+      deep: true,
+    },
   },
   methods: {
-    handleSelectionChange(val) {
-      // 默认多选
-      if (this.tableSelection === 0) {
-        this.multipleSelection = val;
-      } else {
-        // 单选
-        if (val.length === 1) {
-          this.multipleSelection = val;
-        }
-        // 单选选中多条时，需要清空所选数据
-        if (val.length > 1) {
-          this.$refs.multipleTable.clearSelection(); // 清空选项
-          this.$refs.multipleTable.toggleRowSelection(val.pop()); // 选中最后点击的数据
-        }
-        // 取消选中
-        if (val.length === 0) {
-          this.multipleSelection = [];
-        }
-      }
-
-      this.$emit("handleSelectionChange", this.multipleSelection)
-    },
     // 已平仓行样式
     tableRowFinishClassName({ row, rowIndex }) {
-      if (row.solidProfit < 0) {
-        tableFinishClassName = "gd-red-row";
+      if (row.solidProfit > 0) {
+        tableFinishClassName = "gd-green-row";
       } else {
         tableFinishClassName = "even-row";
       }
@@ -113,8 +88,8 @@ export default {
     handleExport() { },
     // 获取用户模版id下设置的column
     dispatchUserColumn() {
-      console.log("dispatchUserColumn ", config.userSummaryHead)
-      const headContent = config.userSummaryHead;
+      console.log("dispatchUserColumn ", config.transHistory)
+      const headContent = config.transHistory;
       Object.entries(headContent).forEach(([key, value]) => {
         value.formatter = this.funcFormat;
         this.tableHead.push(value);
@@ -127,29 +102,60 @@ export default {
         return
       }
       this.loading = true;
-      apiAdmin.getUserSummarys({
-        dateStart: this.searchParam.date[0],
-        dateEnd: this.searchParam.date[1],
-        roles: [3]
+      apiAdmin.getTransHistory({
+        deliveryDateStart: this.searchParam.date[0],
+        deliveryDateEnd: this.searchParam.date[1],
+        userIds: this.searchParam.userIds
       }).then(response => {
         const { code, value } = response;
         if (code === "00000" && value) {
-          this.tableData = response.value.map(n => {
-            return { ...n, solidProfit: util.moneyFormat(n.solidProfit, 4) }
-          });
-          this.rewardFloatProfit = this.tableData.reduce((sum, item) => {
-            return sum + parseFloat(item.solidProfit) * 10000
-          }, 0) / 10000
+          // this.tableData = response.value.map(n => {
+          //   return { ...n }
+          // });
+          const groupByFinishCode = util.groupArrayToMap(response.value, item => item.finishCode, item => item)
+          this.tableData = [];
+          Array.from(groupByFinishCode.entries()).forEach(([key, value]) => {
+            value.sort(function (a, b) {
+              return a.createTime < b.createTime ? -1 : 1
+            })
+            const itemStart = value[0];
+            const itemEnd = value[value.length - 1];
+            const res = {
+              finishCode: key,
+              dateStart: itemStart.createTime,
+              dateEnd: itemEnd.createTime,
+              tscode: itemStart.tscode,
+              volume: value.reduce((sum, item) => {
+                return sum + parseInt(item.volume || 0)
+              }, 0),
+              direction: itemStart.direction,
+              priceStart: util.moneyFormat(itemStart.price, 4),
+              priceEnd: util.moneyFormat(itemEnd.price, 4),
+              solidProfit: util.moneyFormat(value.reduce((sum, item) => {
+                return sum + parseFloat(item.profit || 0) * 10000
+              }, 0) / 10000, 4),
+              fee: value.reduce((sum, item) => {
+                return sum + parseFloat(item.fee || 0) * 10000
+              }, 0) / 10000,
+              yanjiuyuanName: itemStart.yanjiuyuanName,
+              transNum: value.length,
+            }
 
-          this.rewardBuyVolume = this.tableData.reduce((sum, item) => {
-            return sum + item.limitBid
-          }, 0)
+            this.tableData.push(res)
+          })
+          // this.rewardFloatProfit = this.tableData.reduce((sum, item) => {
+          //   return sum + parseFloat(item.solidProfit) * 10000
+          // }, 0) / 10000
 
-          this.rewardSaleVolume = this.tableData.reduce((sum, item) => {
-            return sum + item.limitOffer
-          }, 0)
+          // this.rewardBuyVolume = this.tableData.reduce((sum, item) => {
+          //   return sum + item.limitBid
+          // }, 0)
 
-          this.$emit("init", this.tableData)
+          // this.rewardSaleVolume = this.tableData.reduce((sum, item) => {
+          //   return sum + item.limitOffer
+          // }, 0)
+
+          this.$emit("init", value)
         } else {
           this.tableData = [];
           this.$message({

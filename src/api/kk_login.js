@@ -3,7 +3,7 @@ import request from "@/utils/request";
 
 export default {
   // 登录
-  login(params, agent) {
+  login(params, agent, client) {
     return request({
       url: `${Vue.prototype.$apiUrl}/login`,
       method: "post",
@@ -14,7 +14,8 @@ export default {
         code: params.code
       },
       headers: {
-        Agent: agent
+        Agent: agent,
+        Client: client,
       }
     });
   },

@@ -75,7 +75,9 @@ Vue.directive("swipe-copy", {
 
     odiv.addEventListener("dblclick", function(e) {
       // e.preventDefault(); // 防止默认双击选中文本的行为
-      vnode.context[binding.expression].apply(null, [e]); // 调用方法
+      if (binding.expression) {
+        vnode.context[binding.expression].apply(null, [e]); // 调用方法
+      }
     });
     // 是否选中文字
     odiv.onselectstart = () => {
@@ -112,8 +114,6 @@ Vue.prototype.$notify = (function(notify) {
   };
 })(Vue.prototype.$notify);
 
-Vue.prototype.$echartsResize = function(ref) {
-  window.addEventListener("resize", function() {
-    ref.resize();
-  });
+Vue.prototype.$winResize = function(fun) {
+  window.addEventListener("resize", fun);
 };

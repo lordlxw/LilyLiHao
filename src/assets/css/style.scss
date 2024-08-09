@@ -290,6 +290,10 @@ a:hover {
   margin-top: 10px;
 }
 
+.pt10 {
+  padding-top: 10px;
+}
+
 .mr10 {
   margin-right: 10px;
 }
@@ -464,10 +468,26 @@ a:hover {
   color: white !important;
 }
 
+.el-table .gd-green-row {
+  background: #009688;
+  color: white !important;
+}
+
+.el-table .hiden-row {
+  display: none;
+}
+
 .el-table .el-table__body tr.gd-red-row.hover-row>td {
   background-color: transparent !important
 }
 
+/* 合计行整体样式修改开始 */
+.el-table>>>.el-table__footer-wrapper tbody td {
+  color: black;
+  font-weight: bolder;
+  height: 40px;
+  line-height: 40px;
+}
 
 .el-table .gd-even-row {
   background: rgb(243, 223, 223);
@@ -533,7 +553,8 @@ a:hover {
 
 /* 自定义滚动条的宽度 */
 .custom-scrollbar {
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: auto;
 }
 
 .custom-scrollbar::-webkit-scrollbar,

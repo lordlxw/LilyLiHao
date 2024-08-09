@@ -80,7 +80,10 @@ export default {
   // 用户状态
   userStatus: {
     '0': '正常',
-    '1': '已禁用'
+    '1': '预警',
+    '2': '锁定',
+    '3': '冻结',
+    '4': '删除'
   },
   // 违约类型
   breakTypeOptions: {
@@ -234,5 +237,43 @@ export default {
     traderName: { label: '交易员', prop: 'traderName', width: '100', align: 'left', show: true, showOverflowTooltip: true },
     yanjiuyuanName: { label: '研究员', prop: 'yanjiuyuanName', width: '100', align: 'left', show: true, showOverflowTooltip: true },
     userTradeNum: { label: '询价单据号', prop: 'userTradeNum', width: '170', align: 'left', show: true },
-  }
+  },
+  // 用户汇总
+  userSummaryHead: {
+    userId: { label: '用户ID', prop: 'userId', width: '70', align: 'left', show: false },
+    userName: { label: '用户名', prop: 'userName', width: '100', align: 'left', show: true },
+    nickName: { label: '昵称', prop: 'nickName', width: '100', align: 'left', show: true },
+    maxVolume: { label: '最大可买', prop: 'maxVolume', width: '100', align: 'left', show: true },
+    minProfitAlltime: { label: '总允亏', prop: 'minProfitAlltime', width: '100', align: 'left', show: true, sortable: true },
+    minProfitDaily: { label: '日允亏', prop: 'minProfitDaily', width: '100', align: 'left', show: true },
+    solidProfit: { label: '总盈亏', prop: 'solidProfit', width: '100', align: 'left', show: true, sortable: true },
+    limitBid: { label: '买入笔数', prop: 'limitBid', width: '100', align: 'left', show: true },
+    limitOffer: { label: '卖出笔数', prop: 'limitOffer', width: '100', align: 'left', show: true },
+    limitDeal: { label: '成交笔数', prop: 'limitDeal', width: '100', align: 'left', show: true, sortable: true },
+    limitCancel: { label: '撤单笔数', prop: 'limitCancel', width: '100', align: 'left', show: true },
+    level: { label: '用户等级', prop: 'level', width: '100', align: 'left', show: true },
+    phonenumber: { label: '电话', prop: 'phonenumber', width: '100', align: 'left', show: true },
+    email: { label: '邮箱', prop: 'email', width: '100', align: 'left', show: false },
+    sex: { label: '性别', prop: 'sex', width: '60', align: 'left', show: false },
+    avatar: { label: '头像', prop: 'avatar', width: '90', align: 'left', show: false },
+    status: { label: '用户状态', prop: 'status', width: '100', align: 'left', formatter: this.funcFormat, show: true },
+    delFlag: { label: '是否删除', prop: 'delFlag', width: '100', align: 'left', show: true },
+    loginIp: { label: '登录IP', prop: 'loginIp', width: '100', align: 'left', show: true },
+    loginDate: { label: '登录时间', prop: 'loginDate', width: '160', align: 'left', show: true },
+  },
+ // 交易汇总
+  transHistory: {
+   dateStart: { label: '开仓日期', prop: 'dateStart', width: '150', align: 'left', show: true, sortable: true },
+   dateEnd: { label: '平仓日期', prop: 'dateEnd', width: '150', align: 'left', show: true },
+   tscode: { label: '券号', prop: 'tscode', width: '100', align: 'left', show: true },
+   transNum: { label: '笔数', prop: 'transNum', width: '50', align: 'left', show: true },
+   volume: { label: '交易量', prop: 'volume', width: '70', align: 'left', show: true },
+   direction: { label: '方向', prop: 'direction', width: '60', align: 'left', show: true },
+   priceStart: { label: '开仓价格', prop: 'priceStart', width: '100', align: 'left', show: true },
+   priceEnd: { label: '平仓价格', prop: 'priceEnd', width: '90', align: 'left', show: true },
+   solidProfit: { label: '盈亏', prop: 'solidProfit', width: '90', align: 'left', show: true, sortable: true },
+   fee: { label: '手续费', prop: 'fee', width: '90', align: 'left', show: true },
+   yanjiuyuanName: { label: '研究员', prop: 'yanjiuyuanName', width: '100', align: 'left', show: false },
+   finishCode: { label: '交易号', prop: 'finishCode', width: '170', align: 'left', show: true, sortable: true },
+ }
 }
