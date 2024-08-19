@@ -40,6 +40,10 @@ contextBridge.exposeInMainWorld("v1", {
   hasWins: args => {
     return ipcRenderer.invoke("hasWins", args);
   },
+  hasWinsById: args => {
+    const id = remote.getGlobal("sharedObject").independentWindow.get(args);
+    return ipcRenderer.invoke("hasWinsById", id);
+  },
   getWinThis: () => {
     const win = remote.getCurrentWindow();
     return ipcRenderer.invoke("getWinThis", win.id);
@@ -50,6 +54,20 @@ contextBridge.exposeInMainWorld("v1", {
         ipcRenderer.on(arg, fun);
       }
     };
+  },
+  getNetwork: () => {
+    var os = require("os");
+    if (os.networkInterfaces().WLAN) {
+      sessionStorage.mac = os.networkInterfaces().WLAN[0].mac;
+    } else {
+      sessionStorage.mac = os.networkInterfaces()["以太网"][0].mac;
+    }
+    sessionStorage.name = os.hostname();
+    return { mac: sessionStorage.getItem("mac"), name: os.hostname() };
+  },
+  sendWinMsg: args => {
+    const id = remote.getGlobal("sharedObject").independentWindow.get(args.id);
+    ipcRenderer.sendTo(id, args.fun, args.data);
   }
 });
 

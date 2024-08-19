@@ -126,7 +126,14 @@ class MultiWindows {
     }
     // 创建窗口对象
     // Menu.setApplicationMenu(null);
-    let win = new BrowserWindow(opt);
+    const win = new BrowserWindow({
+      ...opt
+    });
+    global.sharedObject.independentWindow.set(
+      options.id || args.route,
+      win.id
+    );
+    console.log(global.sharedObject.independentWindow);
     // 是否最大化
     if (args.maximize && args.resize && args.maximizable) {
       win.maximize();
@@ -141,10 +148,11 @@ class MultiWindows {
     this.winLs[win.id] = {
       route: args.route,
       isMultiWin: args.isMultiWin,
+      win: win,
       ...options
     };
     // args.id = win.id;
-    console.log("current win ", this.winLs[win.id]);
+    // console.log("current win ", this.winLs[options.id || win.id]);
     if (args.isMainWin) {
       win.on("close", e => {
         this.winLs = {};
@@ -153,15 +161,23 @@ class MultiWindows {
         e.defaultPrevented = false;
         win.destroy();
         globalShortcut.unregisterAll();
+        global.sharedObject.independentWindow = new Map();
         app.quit();
       });
     } else {
       win.on("close", () => {
+        global.sharedObject.independentWindow.delete(options.id || win.id);
         delete this.winLs[win.id];
         console.log("BrowserWindow win close ", win.id);
         globalShortcut.unregisterAll();
         this.registerShortcut();
         win.setOpacity(0);
+
+        setTimeout(() => {
+          if (!win.isDestroyed() && win) {
+            win.destroy();
+          }
+        }, 100);
       });
     }
     win.webContents.on("did-finish-load", () => {
@@ -227,6 +243,7 @@ class MultiWindows {
 
   // 获取窗口
   getWin(id) {
+    // return this.winLs[id].win;
     return BrowserWindow.fromId(Number(id));
   }
 
@@ -390,7 +407,8 @@ class MultiWindows {
     });
 
     ipcMain.handle("getWinThis", (event, id) => {
-      return this.winLs[id];
+      const { data } = this.winLs[id];
+      return { data };
     });
 
     ipcMain.handle("getProfile", (event, id) => {
@@ -420,6 +438,16 @@ class MultiWindows {
         }
       }
       return false;
+    });
+
+    ipcMain.handle("hasWinsById", (event, id) => {
+      // 判断窗口是否存在
+      console.log(this.winLs, id);
+      return id && this.getWin(id) ? true : false;
+    });
+
+    ipcMain.handle("sendWinMsg", (event, args) => {
+      this.getWin(args.id).send(args.fun, args.data);
     });
   }
 }

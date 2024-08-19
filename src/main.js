@@ -27,6 +27,7 @@ Vue.component(Layout.name, Layout);
 
 Vue.prototype.$apiUrl = process.env.BASE_API;
 Vue.prototype.$wsUrl = process.env.WS_URL;
+Vue.prototype.$appType = process.env.PROJECT_NAME;
 /* eslint-disable no-new */
 new Vue({
   el: "#app",

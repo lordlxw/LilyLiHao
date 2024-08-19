@@ -55,6 +55,10 @@ const router = new Router({
       redirect: '/simulation',
       children: [
         {
+          path: '/simulation/dashboard',
+          component: () => import('@/views/Dashboard/Dashboard.vue')
+        },
+        {
           path: '/simulation/kline',
           component: () => import('@/views/KKSimulation/KLine.vue')
         },
@@ -174,6 +178,10 @@ const router = new Router({
         {
           path: '/trade/risk',
           component: () => import('@/views/KKTrade/Risk.vue')
+        },
+        {
+          path: '/order/main',
+          component: () => import('@/views/KKChatOrder/OrderMain.vue')
         },
       ]
     }

@@ -85,6 +85,13 @@ export default {
     '3': '冻结',
     '4': '删除'
   },
+  // 工单状态
+  orderStatus: {
+    '0': '未处理',
+    '1': '已接收',
+    '2': '已处理',
+    '3': '拒收',
+  },
   // 违约类型
   breakTypeOptions: {
     '1': '对手方违约',
@@ -275,5 +282,39 @@ export default {
    fee: { label: '手续费', prop: 'fee', width: '90', align: 'left', show: true },
    yanjiuyuanName: { label: '研究员', prop: 'yanjiuyuanName', width: '100', align: 'left', show: false },
    finishCode: { label: '交易号', prop: 'finishCode', width: '170', align: 'left', show: true, sortable: true },
- }
+ },
+  // 工单列表
+  workOrder: {
+    status: { label: '状态', prop: 'status', width: '70', align: 'left', show: true },
+    messageId: { label: '消息', prop: 'messageId', width: '100', align: 'left', show: true, showOverflowTooltip: true },
+    remarks: { label: '描述', prop: 'remarks', width: '200', align: 'left', show: true, showOverflowTooltip: true },
+    createBy: { label: '发起人', prop: 'createBy', width: '100', align: 'left', show: true },
+    reviewedBy: { label: '操作员', prop: 'reviewedBy', width: '100', align: 'left', show: true },
+    type: { label: '类型', prop: 'type', width: '70', align: 'left', show: true },
+    tradeIds: { label: '相关订单', prop: 'tradeIds', width: '100', align: 'left', show: true, showOverflowTooltip: true },
+    weight: { label: '优先级', prop: 'weight', width: '70', align: 'left', show: true },
+    createTime: { label: '创建时间', prop: 'createTime', width: '200', align: 'left', show: true, sortable: true },
+    updateTime: { label: '更新时间', prop: 'updateTime', width: '200', align: 'left', show: true, sortable: true },
+  },
+  // 工单询价单查询
+  enquiryOrderHead: {
+    // 询价排列显示： 债券代码 交易方向 询价 询面额 交割日期 其他排后
+    tradeNum: { label: '单据号', prop: 'tradeNum', width: '166', align: 'left', show: true },
+    tscode: { label: '券码', prop: 'tscode', width: '70', align: 'left', show: true },
+    direction: { label: '方向', prop: 'direction', width: '50', align: 'left', show: true },
+    price: { label: '询价', prop: 'price', width: '66', align: 'left', show: true },
+    volume: { label: '询量', prop: 'volume', width: '56', align: 'left', show: true },
+    deliverySpeed: { label: '询清算速度', prop: 'deliverySpeed', width: '140', align: 'left', show: true },
+    status: { label: '状态', prop: 'status', width: '70', align: 'left', show: true, sortable: true },
+    target: { label: '中介', prop: 'target', width: '140', align: 'left', show: true },
+    realPrice: { label: '成交价', prop: 'realPrice', width: '66', align: 'left', show: true },
+    realVolume: { label: '成交量', prop: 'realVolume', width: '60', align: 'left', show: true },
+    restVolume: { label: '剩余询量', prop: 'restVolume', width: '70', align: 'left', show: true },
+    realDeliverySpeed: { label: '成清算速度', prop: 'realDeliverySpeed', width: '140', align: 'left', show: true },
+    xunjiaTime: { label: '询价时间', prop: 'xunjiaTime', width: '146', align: 'left', show: true },
+    tradeTime2: { label: '成交时间2', prop: 'tradeTime2', width: '146', align: 'left', show: true },
+    updateTime: { label: '修改时间', prop: 'updateTime', width: '146', align: 'left', show: true },
+    xunjiaDate: { label: '询价日期', prop: 'xunjiaDate', width: '146', align: 'left', show: true },
+
+  },
 }

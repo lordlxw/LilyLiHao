@@ -1,10 +1,13 @@
 import Vue from "vue";
+import md5 from "js-md5";
+
+Vue.prototype.$md5 = md5;
 // tabel左右拖动效果
 Vue.directive("swipe-copy", {
   // 指令的定义
   bind: function(el, binding, vnode) {
     var odiv = el; // 获取当前表格元素
-    // el.style.cursor = 'pointer'
+    el.style.cursor = 'pointer'
 
     el.querySelector(".el-table .el-table__body-wrapper").style.cursor =
       "pointer";
@@ -61,6 +64,8 @@ Vue.directive("swipe-copy", {
       if (mouseFlag && divData) {
         // 设置水平方向的元素的位置
         divData.scrollLeft -= -mouseOffset + (mouseOffset = e.clientX);
+      } else {
+        odiv.scrollLeft -= -mouseOffset + (mouseOffset = e.clientX);
       }
     };
     // 解决有些时候,在鼠标松开的时候,元素仍然可以拖动;

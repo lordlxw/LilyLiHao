@@ -9,7 +9,7 @@
         :src="require('@/assets/images/logo.png')"
       ></el-image> -->
       <div class="login-body">
-        <div class="login-title">Lily系统</div>
+        <div class="login-title">Lily{{ labelPosition == 'lily' ? '管理' : '模拟' }}系统</div>
         <transition appear @before-enter="handleFormBeforeEnter" @enter="handleFormEnter">
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="login-form" size="medium">
             <div class="tit">登录</div>
@@ -76,18 +76,24 @@ export default {
     if (window.v1) {
       this.isElectron = window.v1.isElectron();
     }
-    this.labelPosition = this.isElectron ? 'Simulation' : 'lily';
+    this.labelPosition = this.$appType === 'cli' ? 'Simulation' : 'lily';
   },
   methods: {
     ...mapMutations(["SET_SOCKET_MAIN", "SET_SOCKET_KLINE"]),
     submitForm: debounce(function (formName) {
+      const { mac } = this.isElectron ? window.v1.getNetwork() : { mac: 'cc:5e:f8:f0:5f:85' }
+      console.log("mac:", mac);
+      const hwinfo = this.$md5(mac.replace(/:/g, ""))
+      console.log("mac info:", hwinfo);
+      console.log("mac + username info:", this.$md5(hwinfo + this.ruleForm.username));
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.login({
             username: this.ruleForm.username,
             password: this.ruleForm.password,
             uuid: this.uuid,
-            code: this.ruleForm.code
+            code: this.ruleForm.code,
+            hwinfo: hwinfo
           }, this.labelPosition === 'Simulation' ? 'BondHelper' : '', this.labelPosition === 'Simulation' ? 'sim' : 'admin').then(response => {
             if (response && response.code === 200) {
               // 保存token信息
@@ -161,6 +167,10 @@ export default {
                         const maxWidth = Math.max(...displays.map(display => display.bounds.width));
                         const minWidth = Math.ceil(maxWidth / 2 + 100);
                         const minHeight = Math.ceil(minWidth * 0.63);
+
+                        // const maxWidth = Math.max(...displays.map(display => display.bounds.width));
+                        // const minWidth = Math.ceil(maxWidth * 0.7);
+                        // const minHeight = Math.ceil(minWidth * 0.6);
                         const args = {
                           width: minWidth, // 窗口宽度
                           height: minHeight, // 窗口高度

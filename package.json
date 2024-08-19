@@ -1,18 +1,20 @@
 {
   "name": "vue-kuanke",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "description": "Lily管理系统",
-  "author": "xxx",
+  "author": "lihao",
   "private": true,
   "main": "background.js",
   "scripts": {
     "sim": "cross-env NODE_ENV=simulation webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "ele": "wait-on tcp:8080 && cross-env NODE_ENV=development electron . --platform=win32",
-    "build:win": "electron-builder --win",
+    "build:win": "cross-env PROJECT_NAME=simulation electron-builder --win",
     "build": "cross-env NODE_ENV=production node build/build.js",
-    "build:dev": "cross-env NODE_ENV=development node build/build.js",
-    "build:sim": "cross-env NODE_ENV=simulation node build/build.js",
+    "build:dev:cli": "cross-env NODE_ENV=development PROJECT_NAME=cli node build/build.js",
+    "build:dev:ser": "cross-env NODE_ENV=development PROJECT_NAME=ser node build/build.js",
+    "build:sim:cli": "cross-env NODE_ENV=simulation PROJECT_NAME=cli node build/build.js",
+    "build:sim:ser": "cross-env NODE_ENV=simulation PROJECT_NAME=ser node build/build.js",
     "start": "npm run dev",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
@@ -123,7 +125,7 @@
     "not ie <= 8"
   ],
   "build": {
-    "appId": "com.test",
+    "appId": "com.sim",
     "productName": "Lily系统_TEST",
     "copyright": "Copyright © 2024",
     "mac": {

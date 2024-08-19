@@ -1,33 +1,17 @@
 <template>
     <div style="height: 100%;">
-        <title-bar>
-            <i slot="right_bar" @click="drawer = true" class="el-icon-s-tools noDrag txt-white right_bar"></i>
-        </title-bar>
-        <div style="background-color: rgb(32, 32, 32);    height: calc(100% - 40px)">
+        <div style="background-color: rgb(32, 32, 32);    height: 100%">
             <el-container class="chat-box">
                 <el-main class="chat-main">
-                    <div v-for="item in checkedChats" :key="item.brokerid" class="chat-item">
-                        <MChatBox :ref="'MChatBox' + JSON.parse(item).brokerid" :boxHeight="boxHeight" :config="config"
-                            :dialogChatBoxVisible="false" :userName="userInfo.userName"
-                            @handleClose="handleChatClose(JSON.parse(item))"
-                            :messages="chatMessages[JSON.parse(item).brokerid] || []" :mine="JSON.parse(item)">
+                    <div class="chat-item">
+                        <MChatBox :ref="'MChatBox'" :boxHeight="boxHeight" :config="config" :asideShow="true"
+                            @dateChange="dateChange" :asideItems="asideItems" :dialogChatBoxVisible="false"
+                            :userName="userInfo.userName" @changAsideItem="changAsideItem" @handleClose="() => { }"
+                            :mine="asideItem">
                         </MChatBox>
                     </div>
                 </el-main>
             </el-container>
-
-            <el-drawer direction="ltr" title="" :visible.sync="drawer" :with-header="false" :before-close="handleClose">
-                <div>
-                    <div class="mt10 mb10 ml10 mr10"><el-alert :closable="false" title="最多只能打开6个消息看板" type="warning">
-                        </el-alert></div>
-                    <el-checkbox-group v-model="checkedChats" @change="handleCheckedChatsChange" :max="6">
-                        <el-card shadow="hover" class="mt10 mb10 ml10 mr10" v-for="item in chats" :key="item.brokerid">
-                            <el-checkbox :label="JSON.stringify(item)">{{ item.company }}
-                            </el-checkbox>
-                        </el-card>
-                    </el-checkbox-group>
-                </div>
-            </el-drawer>
             <main-socket></main-socket>
         </div>
     </div>
@@ -60,13 +44,20 @@ export default {
         ...mapState({
             chatMessage: (state) => state.chatMessage,
             socketMain: (state) => state.socketMain,
-        })
+        }),
+        brokerid() {
+            return this.$route.query.brokerid;
+        },
+        channelId() {
+            return this.$route.query.channelId;
+        },
     },
     watch: {
         chatMessage(item) {
             console.log("::::::::::::", item)
-            if (this.$refs[`MChatBox${item.brokerId}`]) {
-                this.$refs[`MChatBox${item.brokerId}`][0].pushMsgs(item);
+            // eslint-disable-next-line eqeqeq
+            if (this.brokerid == item.brokerId && this.$refs[`MChatBox`]) {
+                this.$refs[`MChatBox`].pushMsgs([item]);
             } else {
                 this.initChatMessages();
             }
@@ -91,67 +82,71 @@ export default {
                 fixed: true,
             },
             // 会话
-            chats: [],
-            checkedChats: [],
+            asideItem: {
+                company: ''
+            },
             boxHeight: 400,
             isElectron: false,
-            drawer: false,
             profile: {},
             chatMessages: {},
+            asideItems: [],
+            userInfos: [],
+            chatDate: ""
         }
     },
     methods: {
-        // 获取意向列表
+        dateChange(e) {
+            this.chatDate = e
+            this.initChatMessages(e);
+        },
+        changAsideItem(asideItem, chatDate) {
+            this.asideItem = asideItem;
+            this.chatDate = chatDate;
+            this.initChatMessages(this.chatDate);
+        },
         getIntendComerList() {
             Promise.all([
 
             ]).then(async () => {
                 apiAdmin.chatReceiverList().then(async ({ code, value }) => {
-                    this.chats = code === '00000' ? value : []
+                    if (code === '00000' && value) {
+                        // eslint-disable-next-line eqeqeq
+                        this.asideItems = value;
+                        this.asideItem = this.brokerid ? value.filter(n => (n.brokerid === this.brokerid))[0] : value[0];
+                        this.initChatMessages();
+                    }
                 })
                 const { value } = await apiLogin.getProfile(this.userInfo.userId)
                 this.profile = value ? value : {};
-                this.checkedChats = (value && value.chats) ? JSON.parse(value.chats) : [];
-                console.log(this.checkedChats)
-                this.drawer = this.checkedChats.length <= 0;
-                this.initChatMessages();
             })
         },
-        initChatMessages() {
+        initChatMessages(date) {
             Promise.all([
 
             ]).then(async () => {
-                const createTime = `${util.dateFormat(new Date(), "YYYY-MM-DD")} 00:00:00`;
-                const { value: msgs } = await apiTrade.getChatMessagesByCondition({ createTime })
-                this.chatMessages = groupBy(msgs, item => item.brokerId) || {}
+                const createTime = `${util.dateFormat(date || new Date(), "YYYY-MM-DD")} 00:00:00`;
+                const { value: msgs } = await apiTrade.getSysChatMessagesByCondition({ createTime, brokerId: this.asideItem.brokerid })
+                const messages = msgs.map(n => {
+                    const user = this.userInfos.find(element => element.userId === n.chatId);
+                    return { ...n, nickName: user ? user.nickName : '未知' }
+                })
+                this.$refs[`MChatBox`].pushMsgs(messages, true);
             })
         },
-        handleCheckedChatsChange(value) {
-            console.log(this.checkedChats)
-        },
-        handleClose() {
-            Promise.all([
-                this.drawer = false
-            ]).then(async () => {
-                const userId = this.userInfo.userId;
-                const chats = JSON.stringify(this.checkedChats);
-                const { value } = await apiLogin.getProfile(this.userInfo.userId)
-                await apiLogin.saveProfile({ id: value ? value.id : 0, userId, chats })
-            })
-        },
-        handleChatClose(e) {
-            Promise.all([
-                this.checkedChats = this.checkedChats.filter(item => JSON.parse(item).brokerid !== e.brokerid)
-            ]).then(async () => {
-                const userId = this.userInfo.userId;
-                const chats = JSON.stringify(this.checkedChats);
-                const { value } = await apiLogin.getProfile(this.userInfo.userId)
-                await apiLogin.saveProfile({ id: value ? value.id : 0, userId, chats })
+        getUserSummarys() {
+            apiAdmin.getUserSummarys({
+                roles: [3]
+            }).then(async ({ code, value }) => {
+                if (code === '00000') {
+                    this.userInfos = value;
+                    this.getIntendComerList()
+                }
             })
         }
+
     },
     mounted() {
-        this.getIntendComerList()
+        this.getUserSummarys()
         if (window.v1 && this.isElectron) {
             window.v1.getAllDisplays().then((response) => {
                 const maxHeight = Math.max(...response.map(display => display.bounds.height));
@@ -164,17 +159,6 @@ export default {
 
 }
 
-const groupBy = (array, key) => {
-    return array.reduce((result, currentItem) => {
-        // 使用 key 函数提取分组依据，如果不存在则创建对象数组
-        const group = key(currentItem);
-        if (!result[group]) {
-            result[group] = [];
-        }
-        result[group].push(currentItem);
-        return result;
-    }, {});
-};
 </script>
 
 <style lang="scss" scoped>
@@ -189,6 +173,8 @@ const groupBy = (array, key) => {
 }
 
 .chat-box {
+    height: 100%;
+
     .chat-header {
         background-color: #474747;
         color: #333;
@@ -201,10 +187,13 @@ const groupBy = (array, key) => {
 
     .chat-main {
         // margin-top: 40px;
+        height: 100%;
+        overflow: hidden;
 
         .chat-item {
+            height: 100%;
+            width: 100%;
             display: inline-block;
-            width: calc(50% - 0px);
         }
     }
 

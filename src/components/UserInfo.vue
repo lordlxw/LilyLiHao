@@ -42,9 +42,12 @@
                             </el-col>
                         </el-row>
                         <el-row :gutter="10">
-                            <el-col :span="12" class="detail-item">
+                            <el-col :span="18" class="detail-item">
                                 <span>创建：</span>
                                 <span>{{ userInfo.createTime }}</span>
+                            </el-col>
+                            <el-col :span="6" class="detail-item">
+                                <el-link type="info" @click="openMoreThis(`/simulation/dashboard`)">查看更多信息</el-link>
                             </el-col>
                         </el-row>
                     </div>
@@ -72,6 +75,64 @@ export default {
         getStatusStr(status) {
             status = parseInt(status)
             return status === 0 ? '正常' : status === 2 ? '锁定' : status === 3 ? '冻结' : status === 1 ? '预警' : '无数据';
+        },
+        openMoreThis($path, tscode) {
+            console.log(tscode)
+            // let $path = '/simulation/klinevertical';
+            if (window.v1) {
+                window.v1.getAllDisplays().then((response) => {
+                    console.log(response)
+                    const maxWidth = Math.max(...response.map(display => display.bounds.width));
+                    const maxHeight = Math.max(...response.map(display => display.bounds.height));
+
+                    if ($path.includes('/simulation/dashboard')) {
+                        // const maxWidth = Math.max(...displays.map(display => display.bounds.width));
+                        const minWidth = Math.ceil(maxWidth / 2 + 100);
+                        const minHeight = Math.ceil(minWidth * 0.63);
+                        const args = {
+                            width: minWidth, // 窗口宽度
+                            height: minHeight, // 窗口高度
+                            isMainWin: false,
+                            resize: true, // 是否支持缩放
+                            maximize: false, // 最大化窗口
+                            isMultiWin: false, // 是否支持多开窗口
+                            route: $path,
+                            data: {
+                                child: true,
+                            }
+                        }
+
+                        console.log(args)
+                        window.v1.createWin(args);
+                    } else {
+                        const minWidth = maxWidth / 5.5 <= 480 ? 480 : maxWidth / 5.5;
+                        const args = {
+                            width: minWidth, // 窗口宽度
+                            height: maxHeight - 50, // 窗口高度
+                            minWidth: minWidth, // 窗口最小宽度
+                            maxWidth: minWidth,
+                            isMainWin: false,
+                            resize: true, // 是否支持缩放
+                            maximizable: false, // 最大化窗口
+                            isMultiWin: true, // 是否支持多开窗口
+                            route: $path,
+                            data: {
+                                child: true,
+                            }
+                        }
+                        window.v1.createWin(args).then((response) => {
+                        }).catch((error) => {
+                            // 处理错误
+                            console.error(error);
+                        });
+                    }
+                });
+            } else {
+                const href = this.$router.resolve({
+                    path: $path
+                }).href;
+                window.open(href, "_blank");
+            }
         }
     }
 }

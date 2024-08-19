@@ -294,6 +294,10 @@ a:hover {
   padding-top: 10px;
 }
 
+.pb10 {
+  padding-bottom: 10px;
+}
+
 .mr10 {
   margin-right: 10px;
 }
@@ -480,6 +484,13 @@ a:hover {
 .el-table .el-table__body tr.gd-red-row.hover-row>td {
   background-color: transparent !important
 }
+
+
+
+.el-table__body .el-table__row.hover-row td {
+  background-color: unset !important
+}
+
 
 /* 合计行整体样式修改开始 */
 .el-table>>>.el-table__footer-wrapper tbody td {
@@ -708,6 +719,10 @@ a:hover {
 .bg-red {
   background-color: #ec0000 !important;
   color: white;
+}
+
+.bg-black {
+  background-color: #000000;
 }
 
 .bg-green {

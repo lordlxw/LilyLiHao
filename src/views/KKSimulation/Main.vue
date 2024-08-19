@@ -35,7 +35,7 @@
       </div>
       <div class="list mb10" :style="{ height: _itemStyle(0) + 'px' }" v-if="activeName == 0">
         <el-table v-swipe-copy="handleSwipeOrDblClick" v-loading="loading" ref="multipleTable" :data="tableData"
-          tooltip-effect="dark" :height="'100%'" row-key="userTradeId" default-expand-all
+          tooltip-effect="dark" :height="'100%'" row-key="userTradeId" default-expand-all @cell-click="cellClick"
           :tree-props="{ children: 'children', hasChildren: 'hasChildren' }" header-cell-class-name="list-row"
           :row-class-name="tableRowClassName" :cell-class-name="tableColumnClassName" :cell-style="cellStyle"
           :span-method="objectSpanMethod" @expand-change="handleExpandChange" @sort-change="handleSortChange">
@@ -57,16 +57,17 @@
               <el-button :disabled="userInfo.status == 2" type="primary" v-if="
                 setAuth('inquiry:edit') &&
                 [0, 1, 4, 10, 23].indexOf(scope.row.status) !== -1
-              " @click="handleEditEnqury(scope.row)">修改</el-button>
+              " @click.native.stop="handleEditEnqury(scope.row)">修改</el-button>
               <el-button :disabled="userInfo.status == 2" type="primary"
-                v-if="setAuth('inquiry:accept') && scope.row.status === 0" @click="handleAcceptClick(scope)">{{
+                v-if="setAuth('inquiry:accept') && scope.row.status === 0"
+                @click.native.stop="handleAcceptClick(scope)">{{
                   scope.row.youxianLevel === 2
                     ? "接收优先复制"
                     : scope.row.youxianLevel === 1
                       ? "接收优先复制"
                       : "接收并复制"
                 }}</el-button>
-              <el-button :disabled="userInfo.status == 2" @click="handleDealClick(scope.row)" type="primary"
+              <el-button :disabled="userInfo.status == 2" @click.native.stop="handleDealClick(scope.row)" type="primary"
                 size="small" v-if="
                   ['1', '4', '8', '10'].indexOf(scope.row.status.toString()) !==
                   -1 &&
@@ -80,19 +81,19 @@
                   确认要<span class="color-red">拒收</span>“<span class="color-main">{{ scope.row.tradeNum }}</span>”？
                 </p>
                 <div style="text-align: right">
-                  <el-button :disabled="userInfo.status == 2" type="text" @click="
+                  <el-button :disabled="userInfo.status == 2" type="text" @click.native.stop="
                     handlePopoverClose(
                       scope,
                       `popover-notaccept-${scope.$index}`
                     )
                     ">取消</el-button>
                   <el-button :disabled="userInfo.status == 2" type="text"
-                    @click="handleNotAcceptClick(scope)">确认</el-button>
+                    @click.native.stop="handleNotAcceptClick(scope)">确认</el-button>
                 </div>
                 <el-button :disabled="userInfo.status == 2" type="primary" slot="reference" class="ml10">拒收</el-button>
               </el-popover>
-              <el-button :disabled="userInfo.status == 2" @click="handleEnquiryDifficultClick(scope.row)" type="primary"
-                size="small" v-if="
+              <el-button :disabled="userInfo.status == 2" @click.native.stop="handleEnquiryDifficultClick(scope.row)"
+                type="primary" size="small" v-if="
                   [1, 4, 8].indexOf(scope.row.status) !== -1 &&
                   setAuth('inquiry:difficult')
                 " class="ml10">难成</el-button>
@@ -107,14 +108,14 @@
                   确认要<span class="color-red">难成撤单</span>“<span class="color-main">{{ scope.row.tradeNum }}</span>”？
                 </p>
                 <div style="text-align: right">
-                  <el-button :disabled="userInfo.status == 2" type="text" @click="
+                  <el-button :disabled="userInfo.status == 2" type="text" @click.native.stop="
                     handlePopoverClose(
                       scope,
                       `popover-difficultcanncel-${scope.$index}`
                     )
                     ">取消</el-button>
                   <el-button :disabled="userInfo.status == 2" type="text"
-                    @click="handleEnquiryDifficultCanncelClick(scope)">确认</el-button>
+                    @click.native.stop="handleEnquiryDifficultCanncelClick(scope)">确认</el-button>
                 </div>
                 <el-button :disabled="userInfo.status == 2" type="primary" slot="reference" class="ml10">撤单</el-button>
               </el-popover>
@@ -124,21 +125,21 @@
                   确认要<span class="color-red">难成保留</span>“<span class="color-main">{{ scope.row.tradeNum }}</span>”？
                 </p>
                 <div style="text-align: right">
-                  <el-button :disabled="userInfo.status == 2" type="text" @click="
+                  <el-button :disabled="userInfo.status == 2" type="text" @click.native.stop="
                     handlePopoverClose(
                       scope,
                       `popover-notmove-${scope.$index}`
                     )
                     ">取消</el-button>
                   <el-button :disabled="userInfo.status == 2" type="text"
-                    @click="handleEnquiryDifficultDotMoveClick(scope)">确认</el-button>
+                    @click.native.stop="handleEnquiryDifficultDotMoveClick(scope)">确认</el-button>
                 </div>
                 <el-button :disabled="userInfo.status == 2" type="primary" slot="reference" class="ml10">保留</el-button>
               </el-popover>
               <el-button :disabled="userInfo.status == 2" type="primary" v-if="
                 setAuth('inquiry:accept') &&
                 [1, 4, 7, 8, 9].indexOf(scope.row.status) !== -1
-              " @click="copy(scope, true)" :style="scope.row.youxianLevel === 2
+              " @click.native.stop="copy(scope, true)" :style="scope.row.youxianLevel === 2
                 ? { fontWeight: 'bold', color: '#ec0000' }
                 : ''
                 ">{{
@@ -157,14 +158,14 @@
                     scope.row.tscode }}？
                 </p>
                 <div style="text-align: right">
-                  <el-button :disabled="userInfo.status == 2" type="text" @click="
+                  <el-button :disabled="userInfo.status == 2" type="text" @click.native.stop="
                     handlePopoverClose(
                       scope,
                       `popover-cancel-${scope.$index}`
                     )
                     ">取消</el-button>
                   <el-button :disabled="userInfo.status == 2" type="text"
-                    @click="handleInquiryCancelClick(scope)">确认</el-button>
+                    @click.native.stop="handleInquiryCancelClick(scope)">确认</el-button>
                 </div>
                 <el-button :disabled="userInfo.status == 2" type="primary" slot="reference" class="ml10">撤单</el-button>
               </el-popover>
@@ -177,14 +178,14 @@
                     scope.row.tscode }}？
                 </p>
                 <div style="text-align: right">
-                  <el-button :disabled="userInfo.status == 2" type="text" @click="
+                  <el-button :disabled="userInfo.status == 2" type="text" @click.native.stop="
                     handlePopoverClose(
                       scope,
                       `popover-agreecancel-${scope.$index}`
                     )
                     ">取消</el-button>
                   <el-button :disabled="userInfo.status == 2" type="text"
-                    @click="handleInquiryCancelConfirmClick(scope)">确认</el-button>
+                    @click.native.stop="handleInquiryCancelConfirmClick(scope)">确认</el-button>
                 </div>
                 <el-button :disabled="userInfo.status == 2" type="primary" slot="reference"
                   class="ml10">同意撤单</el-button>
@@ -198,14 +199,14 @@
                     scope.row.tscode }}？
                 </p>
                 <div style="text-align: right">
-                  <el-button :disabled="userInfo.status == 2" type="text" @click="
+                  <el-button :disabled="userInfo.status == 2" type="text" @click.native.stop="
                     handlePopoverClose(
                       scope,
                       `popover-rejectioncancel-${scope.$index}`
                     )
                     ">取消</el-button>
                   <el-button :disabled="userInfo.status == 2" type="text"
-                    @click="handleInquiryCancelRejectionClick(scope)">确认</el-button>
+                    @click.native.stop="handleInquiryCancelRejectionClick(scope)">确认</el-button>
                 </div>
                 <el-button :disabled="userInfo.status == 2" type="primary" slot="reference"
                   class="ml10">拒绝撤单</el-button>
@@ -219,14 +220,14 @@
                     scope.row.tscode }}？
                 </p>
                 <div style="text-align: right">
-                  <el-button :disabled="userInfo.status == 2" type="text" @click="
+                  <el-button :disabled="userInfo.status == 2" type="text" @click.native.stop="
                     handlePopoverClose(
                       scope,
                       `popover-agreedeal-${scope.$index}`
                     )
                     ">取消</el-button>
                   <el-button :disabled="userInfo.status == 2" type="text"
-                    @click="handleInquiryDealConfirmClick(scope)">确认</el-button>
+                    @click.native.stop="handleInquiryDealConfirmClick(scope)">确认</el-button>
                 </div>
                 <el-button :disabled="userInfo.status == 2" type="primary" slot="reference"
                   class="ml10">同意成交</el-button>
@@ -240,14 +241,14 @@
                     scope.row.tscode }}？
                 </p>
                 <div style="text-align: right">
-                  <el-button :disabled="userInfo.status == 2" type="text" @click="
+                  <el-button :disabled="userInfo.status == 2" type="text" @click.native.stop="
                     handlePopoverClose(
                       scope,
                       `popover-rejectiondeal-${scope.$index}`
                     )
                     ">取消</el-button>
                   <el-button :disabled="userInfo.status == 2" type="text"
-                    @click="handleInquiryDealRejectionClick(scope)">确认</el-button>
+                    @click.native.stop="handleInquiryDealRejectionClick(scope)">确认</el-button>
                 </div>
                 <el-button :disabled="userInfo.status == 2" type="primary" slot="reference"
                   class="ml10">拒绝成交</el-button>
@@ -273,12 +274,12 @@
                 </el-table>
                 <div style="text-align: center" class="mt20">
                   <el-button :disabled="userInfo.status == 2" type="primary"
-                    @click="handleAgreeBreakContinueClick(scope)">同意</el-button>
+                    @click.native.stop="handleAgreeBreakContinueClick(scope)">同意</el-button>
                   <el-button :disabled="userInfo.status == 2" type="default"
-                    @click="handleRejectBreakContinueClick(scope)">拒绝</el-button>
+                    @click.native.stop="handleRejectBreakContinueClick(scope)">拒绝</el-button>
                 </div>
                 <el-button :disabled="userInfo.status == 2" type="primary" slot="reference" class="ml10"
-                  @click="handlViewBreakContinueContent(scope)">违约续作审核</el-button>
+                  @click.native.stop="handlViewBreakContinueContent(scope)">违约续作审核</el-button>
               </el-popover>
               <el-popover v-if="setAuth('inquiry:agreeedit') && scope.row.status === 23" placement="bottom-end"
                 :ref="`popover-agreeedit-${scope.$index}`">
@@ -300,12 +301,12 @@
                 </el-table>
                 <div style="text-align: center" class="mt20">
                   <el-button :disabled="userInfo.status == 2" type="primary"
-                    @click="handleAgreeEditClick(scope)">同意</el-button>
+                    @click.native.stop="handleAgreeEditClick(scope)">同意</el-button>
                   <el-button :disabled="userInfo.status == 2" type="default"
-                    @click="handleRejectEditClick(scope)">拒绝</el-button>
+                    @click.native.stop="handleRejectEditClick(scope)">拒绝</el-button>
                 </div>
                 <el-button :disabled="userInfo.status == 2" type="primary" slot="reference" class="ml10"
-                  @click="handlViewEditContent(scope)">修改审核</el-button>
+                  @click.native.stop="handlViewEditContent(scope)">修改审核</el-button>
               </el-popover>
             </template>
           </el-table-column>
@@ -462,6 +463,11 @@
         <enquiry-difficult :row="currentDifficultRow" @change="handleDialogDifficultVisible"></enquiry-difficult>
       </el-dialog>
 
+      <el-dialog title="订单异常处理" width="60%" :visible.sync="dialogOrderEdit.visible" append-to-body
+        :destroy-on-close="true" :close-on-click-modal="false">
+        <order-edit :currentRow="dialogOrderEdit.currentRow"></order-edit>
+      </el-dialog>
+
       <main-socket @afterInitSocket="afterInitSocket"></main-socket>
     </div>
 
@@ -500,6 +506,7 @@ import RealEnquiryRoll from '@/components/RealEnquiryRoll.vue';
 import EnquiryEdit from '@/components/EnquiryEdit.vue'
 import EnquiryDifficult from '@/components/EnquiryDifficult.vue'
 import AccountRiskControl from '../../components/AccountRiskControl.vue';
+import OrderEdit from '@/components/OrderEdit.vue'
 import { pageMixin } from '@/utils/pageMixin'
 import { commMixin } from '@/utils/commMixin'
 import config from '@/utils/config'
@@ -533,7 +540,8 @@ export default {
     MainSocket,
     ComNoBonds,
     ComBonds,
-    UserInfo
+    UserInfo,
+    OrderEdit
   },
   data() {
     // 金额格式验证
@@ -618,6 +626,10 @@ export default {
       action: 1,
       isElectron: false,
       activeName: 0,
+      dialogOrderEdit: {
+        visible: false,
+        currentRow: {}
+      }
     }
   },
   watch: {
@@ -755,6 +767,12 @@ export default {
         this.calcRollSheetCanSee()
         this.loading = false;
       });
+    },
+    cellClick(row, column, cell, event) {
+      if (column.label === '方向') {
+        this.dialogOrderEdit.visible = true;
+        this.dialogOrderEdit.currentRow = row;
+      }
     },
     // 添加
     handleAddInquiry() {

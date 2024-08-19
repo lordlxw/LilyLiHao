@@ -11,7 +11,8 @@ export default {
         username: params.username,
         password: params.password,
         uuid: params.uuid,
-        code: params.code
+        code: params.code,
+        hwinfo: params.hwinfo
       },
       headers: {
         Agent: agent,

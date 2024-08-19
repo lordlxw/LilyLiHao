@@ -1,69 +1,72 @@
 <template>
-  <div class="content custom-scrollbar">
-    <el-row class="board-header">
-      <el-col :span="24">
-        <div class="do">
-
-          <el-row>
-            <el-col :span="12">
-              <el-radio-group v-model="productGroups" size="small">
-                <el-radio-button v-for="product in products" :label="product.id" :key="product.id"
-                  :disabled="product.id === 2">{{ product.name
-                  }}</el-radio-button>
-              </el-radio-group>
-            </el-col>
-            <el-col :span="12" class="text-right">
-              <el-date-picker v-model="searchParam.date" type="daterange" align="right" unlink-panels :clearable="false"
-                range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd"
-                :picker-options="pickerOptions">
-              </el-date-picker>
-            </el-col>
-          </el-row>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row class="board-echats" v-if="setAuth('system:alltrans:query')">
-      <el-col :span="8">
-        <div class="board-echats-box">
-          <div ref="chartA" class="chart"></div>
-          <div class="chartA-btn">
-            <el-radio-group v-model="eChartRadioA" size="mini" @change="initChartA(initChartDataA)">
-              <el-radio-button :label="0">交易量</el-radio-button>
-              <el-radio-button :label="1">交易笔数</el-radio-button>
-            </el-radio-group>
+  <div class="content">
+    <title-bar v-if="child">
+    </title-bar>
+    <div class="content custom-scrollbar">
+      <el-row class="board-header">
+        <el-col :span="24">
+          <div class="do">
+            <el-row>
+              <el-col :span="12">
+                <el-radio-group v-model="productGroups" size="small" v-if="setAuth('system:alltrans:query')">
+                  <el-radio-button v-for="product in products" :label="product.id" :key="product.id"
+                    :disabled="product.id === 2">{{ product.name
+                    }}</el-radio-button>
+                </el-radio-group>
+              </el-col>
+              <el-col :span="setAuth('system:alltrans:query') ? 12 : 24" class="text-right">
+                <el-date-picker v-model="searchParam.date" type="daterange" align="right" unlink-panels
+                  :clearable="false" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
+                  value-format="yyyy-MM-dd" :picker-options="pickerOptions">
+                </el-date-picker>
+              </el-col>
+            </el-row>
           </div>
-        </div>
-      </el-col>
-      <el-col :span="8">
-        <div class="board-echats-box">
-          <div ref="chartB" class="chart"></div>
-        </div>
-      </el-col>
-      <el-col :span="8">
-        <div class="board-echats-box">
-          <div ref="chartC" class="chart"></div>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row class="board-user" v-if="setAuth('system:alltrans:query')">
-      <el-col :span="24">
-        <com-user-summary :height="userSummaryH" :searchParam="searchParam" @init="initChartB" :showDo="true"
-          @handleSelectionChange="userSummaryChange" :tableSelection="0"></com-user-summary>
-      </el-col>
-    </el-row>
-    <el-row class="board-trans" v-if="setAuth('system:userfinish:query')">
-      <el-col :span="12">
-        <com-trans-history :height="710" :searchParam="searchParam" @init="initChartD"></com-trans-history>
-      </el-col>
-      <el-col :span="12">
-        <div class="board-echats-box">
-          <div ref="chartD" class="chart"></div>
-        </div>
-        <div class="board-echats-box">
-          <div ref="chartE" class="chart"></div>
-        </div>
-      </el-col>
-    </el-row>
+        </el-col>
+      </el-row>
+      <el-row class="board-echats">
+        <el-col :span="8">
+          <div class="board-echats-box">
+            <div ref="chartA" class="chart"></div>
+            <div class="chartA-btn">
+              <el-radio-group v-model="eChartRadioA" size="mini" @change="initChartA(initChartDataA)">
+                <el-radio-button :label="0">交易量</el-radio-button>
+                <el-radio-button :label="1">交易笔数</el-radio-button>
+              </el-radio-group>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="8">
+          <div class="board-echats-box" v-if="setAuth('system:alltrans:query')">
+            <div ref="chartB" class="chart"></div>
+          </div>
+        </el-col>
+        <el-col :span="8">
+          <div class="board-echats-box" v-if="setAuth('system:alltrans:query')">
+            <div ref="chartC" class="chart"></div>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row class="board-user">
+        <el-col :span="24">
+          <com-user-summary :height="userSummaryH" :searchParam="searchParam" @init="initChartB" :showDo="true"
+            @handleSelectionChange="userSummaryChange" :tableSelection="0"></com-user-summary>
+        </el-col>
+      </el-row>
+      <el-row class="board-trans">
+        <el-col :span="12">
+          <com-trans-history :height="710" :searchParam="searchParam" @init="initChartD"></com-trans-history>
+        </el-col>
+        <el-col :span="12">
+          <div class="board-echats-box">
+            <div ref="chartD" class="chart"></div>
+          </div>
+          <div class="board-echats-box">
+            <div ref="chartE" class="chart"></div>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -133,6 +136,7 @@ export default {
         name: '权益二号'
       }],
       productGroups: 1,
+      child: false
 
     }
   },
@@ -224,8 +228,10 @@ export default {
       })
       option.series[0].data = seriesData
       const chartDom = this.$refs.chartA
-      this.eChartA = echarts.init(chartDom, null, { width: 'auto' })
-      option && this.eChartA.setOption(option, true)
+      if (chartDom) {
+        this.eChartA = echarts.init(chartDom, null, { width: 'auto' })
+        option && this.eChartA.setOption(option, true)
+      }
     },
     initChartB(data) {
       this.userSummarys = data;
@@ -327,8 +333,10 @@ export default {
       //   return { xAxis: i, y: 350, name: n.nickName, symbolSize: 20 }
       // }) : []
       const chartDom = this.$refs.chartB
-      this.eChartB = echarts.init(chartDom, null, { width: 'auto' })
-      option && this.eChartB.setOption(option, true)
+      if (chartDom) {
+        this.eChartB = echarts.init(chartDom, null, { width: 'auto' })
+        option && this.eChartB.setOption(option, true)
+      }
     },
     initChartC() {
       const option = {
@@ -398,8 +406,10 @@ export default {
         ]
       };
       const chartDom = this.$refs.chartC
-      this.eChartC = echarts.init(chartDom, null, { width: 'auto' })
-      this.eChartC.setOption(option, true)
+      if (chartDom) {
+        this.eChartC = echarts.init(chartDom, null, { width: 'auto' })
+        this.eChartC.setOption(option, true)
+      }
     },
     initChartD(data) {
       const option = {
@@ -444,14 +454,15 @@ export default {
       let xAxisData = [];
       let seriesData = [];
 
-      if (this.searchParam.userIds.length > 0 && this.searchParam.userIds.length <= 5) {
+      if (this.searchParam.userIds.length > 0 && this.searchParam.userIds.length <= 6) {
         data.forEach(n => {
           n.date = util.dateFormat(n.createTime, "YYYY-MM-DD")
         })
-        xAxisData = [...new Set(data.map(n => n.date))];
-        xAxisData.sort(function (a, b) {
-          return a < b ? -1 : 1
-        })
+        xAxisData = util.getDatesInRange(this.searchParam.date[0], this.searchParam.date[1], "YYYY-MM-DD");
+        // xAxisData = [...new Set(data.map(n => n.date))];
+        // xAxisData.sort(function (a, b) {
+        //   return a < b ? -1 : 1
+        // })
         const groupByUser = util.groupArrayToMap(data, item => item.yanjiuyuanId, item => item)
         Array.from(groupByUser.entries()).forEach(([key, value]) => {
           let seriesData1 = [];
@@ -463,7 +474,6 @@ export default {
               const sum = util.moneyFormat(val.reduce((sum, item) => {
                 return sum + parseFloat(item || 0) * 10000
               }, 0) / 10000, 4)
-              console.log(seriesData1[seriesData1.length - 1], sum)
               seriesData1.push(util.moneyFormat(parseFloat(seriesData1.length > 0 ? seriesData1[seriesData1.length - 1] : 0) + parseFloat(sum || 0), 4))
             } else {
               seriesData1.push(util.moneyFormat(parseFloat(seriesData1.length > 0 ? seriesData1[seriesData1.length - 1] : 0) + parseFloat(0), 4))
@@ -477,14 +487,15 @@ export default {
           let series = {
             name: user[0].nickName + ': 截至盈亏',
             type: 'line',
-            stack: '总量',
+            // stack: '总量',
+            yAxisIndex: 0,
             symbol: 'none',
             smooth: true,
             data: seriesData1
           }
 
           option.series.push(series)
-          console.log(key, series)
+          // console.log(key, series)
         })
       } else {
         data.sort(function (a, b) {
@@ -498,7 +509,8 @@ export default {
         option.series.push({
           name: '今日盈亏',
           type: 'line',
-          stack: '总量',
+          // stack: '总量',
+          yAxisIndex: 0,
           symbol: 'none',
           smooth: true,
           data: seriesData
@@ -507,8 +519,10 @@ export default {
 
       option.xAxis[0].data = xAxisData
       const chartDomD = this.$refs.chartD
-      this.eChartD = echarts.init(chartDomD, null, { width: 'auto' })
-      this.eChartD.setOption(option, true)
+      if (chartDomD) {
+        this.eChartD = echarts.init(chartDomD, null, { width: 'auto' })
+        this.eChartD.setOption(option, true)
+      }
 
       //
       let optionSec = {
@@ -571,15 +585,23 @@ export default {
       optionSec.xAxis[0].data = xAxisData
       optionSec.series[0].data = seriesData
       const chartDomE = this.$refs.chartE
-      this.eChartE = echarts.init(chartDomE, null, { width: 'auto' })
-      this.eChartE.setOption(optionSec, true);
-
-      if (this.setAuth('system:alltrans:query')) {
-        this.initChartA(data)
+      if (chartDomE) {
+        this.eChartE = echarts.init(chartDomE, null, { width: 'auto' })
+        this.eChartE.setOption(optionSec, true);
       }
+      this.initChartA(data)
+      // if (this.setAuth('system:alltrans:query')) {
+      //   this.initChartA(data)
+      // }
     },
   },
   mounted() {
+    if (window.v1) {
+      Promise.all([]).then(async () => {
+        const response = await window.v1.getWinThis();
+        this.child = response.data.child
+      })
+    }
     setTimeout(() => {
       this.initChartC()
       // this.initChartD()
@@ -610,8 +632,8 @@ export default {
 
   .board-header {
     .do {
-      margin: 0 10px;
-      margin-top: 10px;
+      margin: 10px;
+      // margin-top: 10px;
       height: 50px;
       line-height: 50px;
       background-color: #fff;
@@ -627,7 +649,7 @@ export default {
       background: white;
       border-radius: 3px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
-      margin: 10px;
+      margin: 0px 10px;
       position: relative;
 
       .chartA-btn {
@@ -652,7 +674,7 @@ export default {
   }
 
   .board-trans {
-    padding: 10px 0;
+    padding: 0px 0;
 
     .board-echats-box {
       height: 350px;

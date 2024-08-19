@@ -4,7 +4,7 @@
             <el-container class="chat-box">
                 <el-main class="chat-main">
                     <div class="chat-item">
-                        <MChatBox :ref="'MChatBox' + brokerid" :boxHeight="boxHeight" :config="config"
+                        <MChatBox :ref="'MChatBox'" :boxHeight="boxHeight" :config="config"
                             :dialogChatBoxVisible="false" :userName="userInfo.userName" @handleClose="() => { }"
                             :mine="mine">
                         </MChatBox>
@@ -55,8 +55,8 @@ export default {
         chatMessage(item) {
             console.log("::::::::::::", item)
             // eslint-disable-next-line eqeqeq
-            if (this.brokerid == item.brokerId && this.$refs[`MChatBox${item.brokerId}`]) {
-                this.$refs[`MChatBox${item.brokerId}`].pushMsgs([item]);
+            if (this.brokerid == item.brokerId && this.$refs[`MChatBox`]) {
+                this.$refs[`MChatBox`].pushMsgs([item]);
             } else {
                 this.initChatMessages();
             }
@@ -113,10 +113,10 @@ export default {
 
             ]).then(async () => {
                 const createTime = `${util.dateFormat(new Date(), "YYYY-MM-DD")} 00:00:00`;
-                const { value: msgs } = await apiTrade.getChatMessagesByCondition({ createTime, })
-                this.chatMessages = groupBy(msgs, item => item.brokerId) || {}
-                const messages = this.chatMessages[this.brokerid] || [];
-                this.$refs[`MChatBox${this.brokerid}`].pushMsgs(messages);
+                const { value: msgs } = await apiTrade.getChatMessagesByCondition({ createTime, brokerId: this.mine.brokerid })
+                // this.chatMessages = groupBy(msgs, item => item.brokerId) || {}
+                // const messages = this.chatMessages[this.brokerid] || [];
+                this.$refs[`MChatBox`].pushMsgs(msgs);
             })
         },
     },
@@ -134,17 +134,6 @@ export default {
 
 }
 
-const groupBy = (array, key) => {
-    return array.reduce((result, currentItem) => {
-        // 使用 key 函数提取分组依据，如果不存在则创建对象数组
-        const group = key(currentItem);
-        if (!result[group]) {
-            result[group] = [];
-        }
-        result[group].push(currentItem);
-        return result;
-    }, {});
-};
 </script>
 
 <style lang="scss" scoped>

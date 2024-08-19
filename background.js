@@ -10,11 +10,15 @@ process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
 
 const createWindow = () => {
   let window = new MultiWindows();
+  // background.js
+  // 多窗口数据存储
+  global.sharedObject = {
+    independentWindow: new Map()
+  };
 
   window.loadProcess();
   window.makeSingleInstance();
   window.ipcMainListen();
-  
 };
 
 app.whenReady().then(() => {
@@ -32,4 +36,3 @@ app.on("window-all-closed", () => {
 //   // 注销所有快捷键
 //   globalShortcut.unregisterAll()
 // })
-

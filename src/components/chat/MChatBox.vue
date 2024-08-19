@@ -1,21 +1,24 @@
 <template>
     <div class="chat_box" @click="() => { msgShow = false }" :class="msgShow ? 'message show' : ''">
         <el-container>
-            <el-aside width="200px" v-if="asideShow">
-                <div class="aside_top"></div>
+            <el-aside width="210px" v-if="asideShow">
+                <div class="aside_top">
+
+                </div>
                 <div v-infinite-scroll="load">
-                    <div v-for="i in count" class="chat_item" :key="i">
+                    <div v-for="(item) in asideItems" class="chat_item" :key="item.brokerid"
+                        @click="changAsideItem(item)">
                         <el-row>
                             <el-col :span="8">
                                 <div class="demo-basic--circle">
-                                    <div class="block"><el-avatar :size="46" :src="circleUrl"></el-avatar></div>
+                                    <div class="block"><el-avatar :size="50">{{ item.company.substr(0, 1)
+                                            }}</el-avatar>
+                                    </div>
                                 </div>
                             </el-col>
                             <el-col :span="16">
-                                <div class="item_name">{{ mine.company }}</div>
-                                <el-tooltip class="item" effect="dark" :content="describe" placement="top-start">
-                                    <div class="item_name item_content">{{ describe }}</div>
-                                </el-tooltip>
+                                <div class="item_name">{{ item.company }}</div>
+                                <div class="item_name item_content">{{ item.describe || '没有新消息...' }}</div>
                             </el-col>
                         </el-row>
 
@@ -53,9 +56,11 @@
                     <el-divider></el-divider>
                 </el-header>
                 <div class="el-main" ref="scrollContainer">
-                    <div v-for="item in messages" class="main_item" :key="item.id">
+                    <div v-for="(item, i) in messages" class="main_item"
+                        :class="item.tradeId == highlight ? 'main_item_highlight' : ''" :key="i"
+                        v-if="item.brokerId == mine.brokerid && item.channelId == mine.channelId">
                         <el-row>
-                            <el-col :span="3" v-if="item.direction === 1">
+                            <el-col :span="asideShow ? 2 : 3" v-if="item.direction === 1">
                                 <div class="demo-basic--circle">
                                     <div class="block"><el-avatar :size="40">{{ mine.company.substr(0, 1) }}</el-avatar>
                                     </div>
@@ -64,7 +69,7 @@
                             <el-col :span="21" :class="item.direction === 1 ? 'main_left' : 'main_right'">
                                 <div class="main_name" v-if="item.direction === 0">
                                     <span class="main-time mr10">{{ dateFormat(item.createTime) }}</span>
-                                    <span>{{ userName }}</span>
+                                    <span>{{ item.nickName || userName }}</span>
                                 </div>
                                 <div class="main_name" v-else>
                                     <span>{{ mine.company }}</span>
@@ -74,9 +79,10 @@
                                     {{ item.chatMessage }}
                                 </div>
                             </el-col>
-                            <el-col :span="3" v-if="item.direction === 0">
+                            <el-col :span="asideShow ? 2 : 3" v-if="item.direction === 0">
                                 <div class="demo-basic--circle">
-                                    <div class="block"><el-avatar :size="40">{{ userName.substr(0, 1) }}</el-avatar>
+                                    <div class="block"><el-avatar :size="40">{{ item.nickName ? item.nickName.substr(0,
+                                        1) : userName.substr(0, 1) }}</el-avatar>
                                     </div>
                                 </div>
                             </el-col>
@@ -86,6 +92,10 @@
                 </div>
                 <el-footer>
                     <div class="footer_send">
+                        <el-date-picker v-model="chatDate" align="right" type="date" placeholder="选择日期" v-if="asideShow"
+                            @change="dateChange" :picker-options="pickerOptions">
+                        </el-date-picker>
+
                         <el-select v-model="value" placeholder="请选择">
                             <el-option v-for="item in options" :key="item.value" :label="item.label"
                                 :value="item.value">
@@ -102,17 +112,21 @@
 </template>
 
 <script>
-
+import { pageMixin } from "@/utils/pageMixin";
+import moment from 'moment'
+import * as util from '@/utils/util'
 export default {
     name: "M-ChatBox",
     created() {
     },
+    mixins: [pageMixin],
     props: {
         userName: '',
         asideShow: {
             type: Boolean,
             default: false
         },
+        asideItems: [],
         tipsHeight: {
             type: String
         },
@@ -160,8 +174,34 @@ export default {
             dialogChatBoxVisible: false,
             msgShow: false,
             describe: "",
-            messages: []
-
+            messages: [],
+            chatDate: new Date(),
+            pickerOptions: {
+                disabledDate(time) {
+                    return time.getTime() > Date.now();
+                },
+                shortcuts: [{
+                    text: '今天',
+                    onClick(picker) {
+                        picker.$emit('pick', new Date());
+                    }
+                }, {
+                    text: '昨天',
+                    onClick(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24);
+                        picker.$emit('pick', date);
+                    }
+                }, {
+                    text: '一周前',
+                    onClick(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', date);
+                    }
+                }]
+            },
+            highlight: ''
         }
     },
     computed: {
@@ -173,6 +213,12 @@ export default {
         load() {
             // this.count += 2
         },
+        dateChange() {
+            this.$emit('changAsideItem', this.mine, this.chatDate)
+        },
+        changAsideItem(e) {
+            this.$emit('changAsideItem', e, this.chatDate)
+        },
         handleClose(e) {
             // this.dialogChatBoxVisible = false;
             this.$emit('handleClose', e)
@@ -181,11 +227,15 @@ export default {
         minimize() {
             window.v1.minimize()
         },
-        scrollToBottom() {
+        scrollToBottom(height) {
             const container = this.$refs.scrollContainer;
-            return container ? (container.scrollTop = container.scrollHeight) : null;
+            return container ? (container.scrollTop = height < 0 ? container.scrollHeight : height) : null;
         },
-        pushMsgs(items) {
+        pushMsgs(items, refresh) {
+            if (refresh) {
+                this.messages = []
+            }
+
             if (items.length === 1) {
                 this.msgShow = items[0].direction === 1 ? true : false;
                 this.messages.push(items[0])
@@ -202,23 +252,39 @@ export default {
                 this.messages = this.messages.concat(items)
             }
             this.$nextTick(() => {
-                this.scrollToBottom();
+                if (this.highlight) {
+                    let index = this.messages.filter(item => item.brokerId === this.mine.brokerid && item.channelId === this.mine.channelId).findIndex(item => item.tradeId === this.highlight);
+                    this.scrollToBottom(79 * index);
+                } else {
+                    this.scrollToBottom(-1);
+                }
             });
-            window.v1.focus()
+            window.v1 && window.v1.focus()
         },
         dateFormat(date) {
             const padWithZero = (number) => {
                 return number < 10 ? '0' + number : number.toString();
             }
             if (date instanceof Object) {
-                return `${padWithZero(date.hour)}:${padWithZero(date.minute)}:${padWithZero(date.second)}`
+                return `${this.asideShow ? moment(date).format('YYYY-MM-DD') : ''} ${padWithZero(date.hour)}:${padWithZero(date.minute)}:${padWithZero(date.second)}`
             } else {
                 const time = new Date(date)
-                return `${padWithZero(time.getHours())}:${padWithZero(time.getMinutes())}:${padWithZero(time.getSeconds())}`
+                return `${this.asideShow ? moment(time).format('YYYY-MM-DD') : ''} ${padWithZero(time.getHours())}:${padWithZero(time.getMinutes())}:${padWithZero(time.getSeconds())}`
             }
         }
     },
     mounted() {
+        if (window.v1) {
+            console.log("111111111111111111")
+            window.v1.ipcRenderer().On("window-send", (event, data) => {
+                console.log(data)
+                this.highlight = data.userTradeId;
+                window.v1.focus()
+                const asideItem = this.asideItems.find(element => (element.brokerid === data.brokerId && element.channelId === data.channelId));
+                this.chatDate = `${util.dateFormat(data.createTime || new Date(), "YYYY-MM-DD")} 00:00:00`;
+                this.$emit('changAsideItem', asideItem, this.chatDate)
+            })
+        }
     }
 }
 
@@ -334,11 +400,10 @@ export default {
         text-align: center;
         background-color: #EFEFEF;
 
-        // .aside_top{
-        //     height: 80px;
-        //     margin: auto;
-        //     background-color: #fff;
-        // }
+        .aside_top {
+            height: 20px;
+            margin: auto;
+        }
 
         .chat_item {
             max-height: 60px;
@@ -456,11 +521,16 @@ export default {
         color: #333;
         text-align: center;
 
+        .main_item_highlight {
+            background-color: antiquewhite;
+        }
+
         .main_item {
-            margin: 5px;
+            margin: 5px 10px;
             cursor: pointer;
             border-radius: 3px;
-            padding: 5px 0;
+            padding: 5px 0 10px;
+            // background-color: antiquewhite;
 
             .el-avatar {
                 vertical-align: middle;

@@ -1,7 +1,9 @@
 <template>
   <div class="form-container height100percent">
-    <div >
+    <div>
       <title-bar>
+        <i slot="right_bar" @click="openMoreThis(`/simulation/chat`)"
+          class="el-icon-chat-dot-round noDrag txt-white right_bar"></i>
       </title-bar>
     </div>
     <div style="height: calc(100% - 40px)">
@@ -63,6 +65,62 @@ export default {
       const width = 1920
       const clientWith = document.body.clientWidth
       return Math.floor(clientWith / width * val)
+    },
+    openMoreThis($path, tscode) {
+      console.log(tscode)
+      // let $path = '/simulation/klinevertical';
+      if (this.isElectron) {
+        window.v1.getAllDisplays().then((response) => {
+          console.log(response)
+          const maxWidth = Math.max(...response.map(display => display.bounds.width));
+          const maxHeight = Math.max(...response.map(display => display.bounds.height));
+
+          if ($path.includes('/simulation/chat')) {
+            const minWidth = (maxWidth / 2) - 10 <= 500 ? 500 : (maxWidth / 2) - 300;
+            const minHeight = maxHeight / 3 + 300;
+            const args = {
+              id: 'chat',
+              width: minWidth, // 窗口宽度
+              height: minHeight, // 窗口高度
+              minWidth: minWidth, // 窗口最小宽度
+              minHeight: minHeight, // 窗口最小高度
+              isMainWin: false,
+              resize: false, // 是否支持缩放
+              maximize: false, // 最大化窗口
+              isMultiWin: false, // 是否支持多开窗口
+              route: $path
+            }
+
+            window.v1.createWin(args)
+          } else {
+            const minWidth = maxWidth / 5.5 <= 480 ? 480 : maxWidth / 5.5;
+            const args = {
+              width: minWidth, // 窗口宽度
+              height: maxHeight - 50, // 窗口高度
+              minWidth: minWidth, // 窗口最小宽度
+              maxWidth: minWidth,
+              isMainWin: false,
+              resize: true, // 是否支持缩放
+              maximizable: false, // 最大化窗口
+              isMultiWin: true, // 是否支持多开窗口
+              route: $path,
+              data: {
+                tscode,
+              }
+            }
+            window.v1.createWin(args).then((response) => {
+            }).catch((error) => {
+              // 处理错误
+              console.error(error);
+            });
+          }
+        });
+      } else {
+        const href = this.$router.resolve({
+          path: $path
+        }).href;
+        window.open(href, "_blank");
+      }
     }
   },
   mounted() {
@@ -117,5 +175,15 @@ export default {
       }
     }
   }
+}
+
+.right_bar {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  line-height: 40px;
+  color: #fff;
+  text-align: center;
+  -webkit-app-region: no-drag;
 }
 </style>

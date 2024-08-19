@@ -178,3 +178,17 @@ export const groupArrayToMap = (arr, keyFn, valueFn = item => item) => {
   });
   return map;
 };
+
+export const getDatesInRange = (startDate, endDate, fmt) => {
+  const dateArray = [];
+  let currentDate = new Date(startDate);
+  // eslint-disable-next-line no-unmodified-loop-condition
+  while (currentDate <= endDate) {
+    // 将当前日期的副本添加到数组中
+    dateArray.push(moment(new Date(currentDate)).format(fmt));
+    // 将当前日期向前推进一天
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return dateArray;
+};

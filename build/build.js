@@ -12,6 +12,9 @@ if (process.env.NODE_ENV === 'testing') {
   console.log('正在编译 正式 环境')
 }
 
+const projectName = process.env.PROJECT_NAME
+console.log('客户端:', projectName)
+
 const ora = require('ora')
 const rm = require('rimraf')
 const path = require('path')

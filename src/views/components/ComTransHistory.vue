@@ -14,7 +14,7 @@
       <el-table v-swipe-copy v-loading="loading" :data="tableData" tooltip-effect="dark" style="width: 100%"
         show-summary :height="height" :header-row-style="{ height: '30px', lineHeight: '30px' }"
         header-cell-class-name="list-row" :header-cell-style="{ background: '#f8f8f8' }" :key="Math.random()"
-        highlight-current-row :cell-style="cellStyleUpdate" :row-class-name="tableRowFinishClassName">
+       :cell-style="cellStyleUpdate" :row-class-name="tableRowFinishClassName">
         <template v-for="itemHead in tableHead">
           <el-table-column v-if="itemHead.show" :sortable="itemHead.sortable" :key="itemHead.label"
             :align="itemHead.align" :prop="itemHead.prop" :formatter="itemHead.formatter

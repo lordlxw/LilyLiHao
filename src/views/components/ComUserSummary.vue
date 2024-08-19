@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import apiAdmin from "@/api/kk_power_admin";
 import { pageMixin } from "@/utils/pageMixin";
 import { commMixin } from "@/utils/commMixin";
@@ -67,6 +68,11 @@ export default {
       rewardFloatProfit: "",
       multipleSelection: []
     };
+  },
+  computed: {
+    ...mapGetters({
+      userInfo: "getUserInfo",
+    }),
   },
   watch: {
     'searchParam.date': {
@@ -130,6 +136,7 @@ export default {
       apiAdmin.getUserSummarys({
         dateStart: this.searchParam.date[0],
         dateEnd: this.searchParam.date[1],
+        userId: this.setAuth('system:alltrans:query') ? '' : this.userInfo.userId,
         roles: [3]
       }).then(response => {
         const { code, value } = response;
@@ -219,7 +226,7 @@ export default {
   // background-color: $body-main-box;
 
   .list {
-    padding: 0 10px;
+    padding: 10px 10px;
 
     .el-table {
       border-radius: 3px;

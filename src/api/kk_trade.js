@@ -362,6 +362,13 @@ export default {
       data: params
     });
   },
+  getSysChatMessagesByCondition(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/chatMessage/sys/findCondition`,
+      method: "post",
+      data: params
+    });
+  },
   sendChatMessages(data, key) {
     return request({
       url: `${Vue.prototype.$apiUrl}/chatMessage/${key}/send`,
@@ -372,6 +379,13 @@ export default {
   messageConsumed(data) {
     return request({
       url: `${Vue.prototype.$apiUrl}/qpinform/messageconsumed`,
+      method: "post",
+      data
+    });
+  },
+  getOperationTrack(data) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/operationTrack/findCondition`,
       method: "post",
       data
     });
