@@ -251,19 +251,20 @@ const store = new Vuex.Store({
       state.chatMessage = chatMessage;
     },
     SET_HOTS_LIST(state, hotsList) {
-      if (state.hotsList.length > 0 && hotsList.length < 30) {
-        const updatedArr = state.hotsList.map(obj => {
-          const item = hotsList.find(n => n.TsCode === obj.TsCode);
-          if (item) {
-            item.highlight = true;
-          } else {
-            obj.highlight = false;
-          }
-          return item || obj;
-        });
+      if (hotsList.length === 1 && state.hotsList.length > 0) {
+        let updatedArr = [...state.hotsList];
+        const hotsItem = hotsList[0];
+        const index = updatedArr.findIndex(n => n.TsCode === hotsItem.TsCode);
+        if (index >= 0) {
+          updatedArr[index] = hotsItem;
+        } else {
+          updatedArr.push(hotsItem);
+        }
         updatedArr.sort((a, b) => b.Volume - a.Volume);
         state.hotsList = updatedArr;
+        console.log("递增龙虎榜了！！！！！！！！！！！！", hotsItem.TsCode, hotsItem.Volume, state.hotsList.length, index);
       } else {
+        console.log("把龙虎榜替换了！！！！！！！！！！！！", hotsList, new Date());
         state.hotsList = hotsList;
       }
     },

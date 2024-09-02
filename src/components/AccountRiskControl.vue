@@ -1,13 +1,13 @@
 <template>
   <div class="risk-control">
     <el-row>
-      <el-col :span="4">
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           <span style="color: #0103ff">总允亏：{{ riskControlData["minProfitAlltime"] }}</span>
           万
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           总盈亏：<span :style="calcToColor(riskControlData['profitAlltime'])">{{
             riskControlData["profitAlltime"]
@@ -15,7 +15,7 @@
           万
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           <span style="color: #0103ff">
             日允亏：{{ riskControlData["minProfitDaily"] }}
@@ -24,7 +24,7 @@
         </div>
       </el-col>
 
-      <el-col :span="4">
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content ">
           日实盈：<span :style="calcToColor(riskControlData['solidProfit'])">{{
             riskControlData["solidProfit"]
@@ -32,7 +32,7 @@
           万
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content ">
           日浮盈：<span :style="calcToColor(riskControlData['floatProfit'])">{{
             riskControlData["floatProfit"]
@@ -40,15 +40,29 @@
           万
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
+        <div class="grid-content ">
+          费用：<span>{{
+            riskControlData["totalFee"]
+          }}</span>
+          万
+        </div>
+      </el-col>
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
+        <div class="grid-content">
+          <!-- <span style="color: #0103ff">日允撤：{{ riskControlData["minBackDaily"] }}</span>
+          万 -->
+        </div>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           <span style="color: #0103ff">日允撤：{{ riskControlData["minBackDaily"] }}</span>
           万
         </div>
       </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="4">
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           日回撤：<span :style="calcToColor(riskControlData['back'])">{{
             riskControlData["back"]
@@ -56,13 +70,13 @@
           万
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           <span style="color: #0103ff">加权限仓：{{ riskControlData["maxVolume"] }}</span>
           万
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           加权买仓：<span style="color: #4b6c19">{{
             riskControlData["currentBid"]
@@ -71,7 +85,7 @@
         </div>
       </el-col>
 
-      <el-col :span="4">
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content ">
           加权卖仓：<span style="color: #974f1a">{{
             riskControlData["currentOffer"]
@@ -79,7 +93,7 @@
           万
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content ">
           当前可买：<span style="color: #4b6c19">{{
             riskControlData["limitBid"]
@@ -87,7 +101,7 @@
           万
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           当前可卖：<span style="color: #974f1a">{{
             riskControlData["limitOffer"]
@@ -108,6 +122,7 @@ export default {
   },
   data() {
     return {
+      itemWidth: 3.4,
       riskControlData: {},
       timer: null,
       riskControlLabel: {
@@ -176,6 +191,7 @@ export default {
     padding: 0 10px;
     font-weight: bold;
     cursor: pointer;
+    // font-size: 14px;
   }
 
   &:last-child {
@@ -221,7 +237,7 @@ export default {
 
   span {
     color: #999999;
-    font-size: 14px;
+    // font-size: 14px;
   }
 }
 

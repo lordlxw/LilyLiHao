@@ -36,16 +36,28 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="8">
-          <div class="board-echats-box" v-if="setAuth('system:alltrans:query')">
-            <div ref="chartB" class="chart"></div>
-          </div>
-        </el-col>
-        <el-col :span="8">
-          <div class="board-echats-box" v-if="setAuth('system:alltrans:query')">
-            <div ref="chartC" class="chart"></div>
-          </div>
-        </el-col>
+        <template v-if="setAuth('system:alltrans:query')">
+          <el-col :span="8">
+            <div class="board-echats-box" v-if="setAuth('system:alltrans:query')">
+              <div ref="chartB" class="chart"></div>
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <div class="board-echats-box" v-if="setAuth('system:alltrans:query')">
+              <div ref="chartC" class="chart"></div>
+            </div>
+          </el-col>
+        </template>
+        <template v-else>
+          <el-col :span="16">
+            <div class="board-echats-box">
+              <div class="pd10">
+                <account-risk-control
+                  :userId="searchParam.userIds.length > 0 ? searchParam.userIds[0] : ''"></account-risk-control>
+              </div>
+            </div>
+          </el-col>
+        </template>
       </el-row>
       <el-row class="board-user">
         <el-col :span="24">
@@ -75,13 +87,15 @@ import * as echarts from 'echarts'
 import { commMixin } from '@/utils/commMixin'
 import ComUserSummary from '../components/ComUserSummary.vue'
 import ComTransHistory from '../components/ComTransHistory.vue'
+import AccountRiskControl from '@/components/AccountRiskControl.vue';
 import * as util from "@/utils/util";
 import { pageMixin } from '@/utils/pageMixin'
 export default {
   mixins: [commMixin, pageMixin],
   components: {
     ComUserSummary,
-    ComTransHistory
+    ComTransHistory,
+    AccountRiskControl
   },
   data() {
     return {
@@ -154,7 +168,10 @@ export default {
   methods: {
     userSummaryChange(rows) {
       // this.initChartB
-      this.searchParam.userIds = rows.map(n => n.userId)
+      const userIds = rows.map(n => n.userId);
+      if (JSON.stringify(this.searchParam.userIds) !== JSON.stringify(userIds)) {
+        this.searchParam.userIds = rows.map(n => n.userId)
+      }
     },
     initChartA(data) {
       console.log("init Chart A ============");
@@ -612,11 +629,11 @@ export default {
     this.searchParam.date = [start, end]
     this.initFrameH('userSummaryH', 700)
     this.$winResize(() => {
-      this.eChartA.resize()
-      this.eChartB.resize()
-      this.eChartC.resize()
-      this.eChartD.resize()
-      this.eChartE.resize()
+      this.eChartA && this.eChartA.resize()
+      this.eChartB && this.eChartB.resize()
+      this.eChartC && this.eChartC.resize()
+      this.eChartD && this.eChartD.resize()
+      this.eChartE && this.eChartE.resize()
       this.initFrameH('userSummaryH', 700)
     })
   },

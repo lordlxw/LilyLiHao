@@ -129,10 +129,7 @@ class MultiWindows {
     const win = new BrowserWindow({
       ...opt
     });
-    global.sharedObject.independentWindow.set(
-      options.id || args.route,
-      win.id
-    );
+    global.sharedObject.independentWindow.set(options.id || args.route, win.id);
     console.log(global.sharedObject.independentWindow);
     // 是否最大化
     if (args.maximize && args.resize && args.maximizable) {
@@ -286,30 +283,39 @@ class MultiWindows {
   makeSingleInstance() {
     if (process.mas) return;
 
-    if (!app.requestSingleInstanceLock()) {
+    const loginArg = {
+      width: 650, // 窗口宽度
+      height: 480, // 窗口高度
+      minWidth: 650, // 窗口最小宽度
+      minHeight: 480, // 窗口最小高度
+      resize: false, // 是否支持缩放
+      maximize: false, // 最大化窗口
+      isMultiWin: false, // 是否支持多开窗口
+      isMainWin: false, // 是否主窗口
+      alwaysOnTop: true, // 置顶窗口
+      route: "/login"
+    };
+    const sendData = { PROJECT_NAME: process.env.PROJECT_NAME };
+    const lock = true;
+    // const lock = app.requestSingleInstanceLock(sendData);
+    console.log("additionalData : ", sendData, lock);
+    if (!lock) {
       app.quit();
     } else {
-      app.on("second-instance", () => {
-        console.log("=============requestSingleInstanceLock===============");
-        const allWin = this.getAllWin();
-        if (allWin.length > 0) {
-          if (allWin[0].isMinimized()) allWin[0].restore();
-          allWin[0].focus();
+      app.on(
+        "second-instance",
+        (event, commandLine, workingDirectory, additionalData) => {
+          console.log("requestSingleInstanceLock", additionalData, sendData);
+          if (sendData.PROJECT_NAME === additionalData.PROJECT_NAME) {
+            const allWin = this.getAllWin();
+            if (allWin.length > 0) {
+              if (allWin[0].isMinimized()) allWin[0].restore();
+              allWin[0].focus();
+            }
+          }
         }
-      });
+      );
 
-      const loginArg = {
-        width: 650, // 窗口宽度
-        height: 480, // 窗口高度
-        minWidth: 650, // 窗口最小宽度
-        minHeight: 480, // 窗口最小高度
-        resize: false, // 是否支持缩放
-        maximize: false, // 最大化窗口
-        isMultiWin: false, // 是否支持多开窗口
-        isMainWin: false, // 是否主窗口
-        alwaysOnTop: true, // 置顶窗口
-        route: "/login"
-      };
       this.createWin(loginArg);
     }
   }
@@ -420,7 +426,9 @@ class MultiWindows {
         const wins = this.getAllWin();
         return wins.map(win => {
           const { x, y, width, height } = win.getBounds();
-          return { ...this.winLs[win.id], x: x + 1, y: y + 1, width, height };
+          let winParam = this.winLs[win.id]
+          delete winParam.win;
+          return { ...winParam, x: x + 1, y: y + 1, width, height };
         });
       }
     });

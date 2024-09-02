@@ -82,6 +82,13 @@ export default {
       },
       deep: true,
     },
+    'searchParam.userIds': {
+      immediate: true, // 将立即以表达式的当前值触发回调
+      handler: function (val, oldVal) {
+        // this.multipleSelection = val;
+      },
+      deep: true,
+    },
   },
   methods: {
     handleSelectionChange(val) {
@@ -103,7 +110,7 @@ export default {
           this.multipleSelection = [];
         }
       }
-
+      console.log(this.multipleSelection)
       this.$emit("handleSelectionChange", this.multipleSelection)
     },
     // 已平仓行样式
@@ -156,6 +163,13 @@ export default {
             return sum + item.limitOffer
           }, 0)
 
+          this.$nextTick(() => {
+            // this.multipleSelection = this.tableData.filter(n => searchParam.userIds.includes(n.userId));
+            this.tableData.filter(n => searchParam.userIds.includes(n.userId)).forEach(n => {
+              this.$refs.multipleTable.toggleRowSelection(n, true);
+            })
+          });
+          console.log(this.multipleSelection)
           this.$emit("init", this.tableData)
         } else {
           this.tableData = [];

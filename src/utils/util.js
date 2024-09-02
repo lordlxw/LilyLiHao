@@ -182,13 +182,13 @@ export const groupArrayToMap = (arr, keyFn, valueFn = item => item) => {
 export const getDatesInRange = (startDate, endDate, fmt) => {
   const dateArray = [];
   let currentDate = new Date(startDate);
+  const laseDate = new Date(endDate);
   // eslint-disable-next-line no-unmodified-loop-condition
-  while (currentDate <= endDate) {
+  while (currentDate <= laseDate) {
     // 将当前日期的副本添加到数组中
     dateArray.push(moment(new Date(currentDate)).format(fmt));
     // 将当前日期向前推进一天
     currentDate.setDate(currentDate.getDate() + 1);
   }
-
   return dateArray;
 };

@@ -189,9 +189,9 @@ export default {
     }),
   },
   watch: {
-    row: function () {
-      this.loadInitData()
-    },
+    // row: function () {
+    //   this.loadInitData()
+    // },
     occupyInfo() {
       this.getIntendComerList(this.occupyInfo)
     }
@@ -332,6 +332,7 @@ export default {
       this.coverForm.direction = this.row.direction === 'bond_1' ? 'bond_0' : (this.row.direction === 'bond_0' ? 'bond_1' : '')
       this.coverForm.tscode = this.row.tscode
       this.coverForm.price = this.row.price
+      console.log(this.coverForm.price)
       this.coverForm.volume = parseFloat(this.row.restVolume)
       this.coverForm.deliveryTime2 = this.row.deliveryTime
       if (moment(this.row.deliveryTime).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')) {

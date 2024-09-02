@@ -1,25 +1,58 @@
 const { app, BrowserWindow, ipcMain, globalShortcut } = require("electron");
 const { join } = require("path");
 const glob = require("glob");
-
+const fs = require("fs");
+const lockFilePath = join(__dirname, "../lockfile");
 const MultiWindows = require("./electron");
 
 // 屏蔽安全警告
 // ectron Security Warning (Insecure Content-Security-Policy)
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
-
+const hasLock = tryGetLock();
 const createWindow = () => {
-  let window = new MultiWindows();
-  // background.js
-  // 多窗口数据存储
-  global.sharedObject = {
-    independentWindow: new Map()
-  };
+  if (hasLock || true) {
+    const window = new MultiWindows();
+    // background.js
+    // 多窗口数据存储
+    global.sharedObject = {
+      independentWindow: new Map()
+    };
 
-  window.loadProcess();
-  window.makeSingleInstance();
-  window.ipcMainListen();
+    window.loadProcess();
+    window.makeSingleInstance();
+    window.ipcMainListen();
+  } else {
+    app.quit();
+  }
 };
+
+function tryGetLock() {
+  try {
+    // 尝试创建一个锁文件
+    fs.closeSync(fs.openSync(lockFilePath, "wx"));
+    console.log("Lock acquired");
+    return true;
+  } catch (e) {
+    // 如果文件已经存在，说明没有获取到锁
+    if (e.code === "EEXIST") {
+      console.log("Lock already held by another process");
+      return false;
+    }
+    // 其他错误处理
+    console.error("Unexpected error while trying to acquire lock:", e);
+    return false;
+  }
+}
+
+function releaseLock() {
+  try {
+    // 删除锁文件
+    fs.unlinkSync(lockFilePath);
+    console.log("Lock released");
+  } catch (e) {
+    console.error("Error while releasing lock:", e);
+  }
+}
 
 app.whenReady().then(() => {
   createWindow();
@@ -32,7 +65,6 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
-// app.on('will-quit', () => {
-//   // 注销所有快捷键
-//   globalShortcut.unregisterAll()
-// })
+app.on('will-quit', () => {
+  releaseLock();
+})

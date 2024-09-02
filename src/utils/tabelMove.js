@@ -7,10 +7,13 @@ Vue.directive("swipe-copy", {
   // 指令的定义
   bind: function(el, binding, vnode) {
     var odiv = el; // 获取当前表格元素
-    el.style.cursor = 'pointer'
+    el.style.cursor = "pointer";
+    const dom = el.querySelector(".el-table .el-table__body-wrapper");
 
-    el.querySelector(".el-table .el-table__body-wrapper").style.cursor =
-      "pointer";
+    if (dom === null) {
+      return;
+    }
+    dom.style.cursor = "pointer";
 
     var mouseDownAndUpTimer = null;
     var mouseOffset = 0;

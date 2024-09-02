@@ -1,8 +1,8 @@
 <!--登录页面-->
 <template>
   <transition appear name="fade" @before-enter="handleBeforeEnter" @enter="handleEnter" @after-enter="handleAfterEnter">
-    <div class="login-wrapper">
-      <title-bar v-if="isElectron" bgColor="#2cad98">
+    <div class="login-wrapper" :style="`background: ${$appType == 'server' ? 'linear-gradient(to bottom, #2cad98 30%, #5270bd 100%)' : 'linear-gradient(to bottom, #FF9800 30%, #4CAF50 100%)'}`">
+      <title-bar v-if="isElectron" :bgColor="$appType == 'server' ? '#2cad98' : '#FF9800'">
       </title-bar>
       <!-- <el-image
         class="logo"
@@ -23,7 +23,7 @@
                 @keyup.enter.native="submitForm('ruleForm')" size="medium">
               </el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item v-if="$appType == 'all'">
               <el-radio-group v-model="labelPosition" size="small">
                 <el-radio-button label="lily">管理</el-radio-button>
                 <el-radio-button label="Simulation">模拟</el-radio-button>
@@ -76,7 +76,8 @@ export default {
     if (window.v1) {
       this.isElectron = window.v1.isElectron();
     }
-    this.labelPosition = this.$appType === 'cli' ? 'Simulation' : 'lily';
+    console.log(this.$appType)
+    this.labelPosition = this.$appType === 'client' ? 'Simulation' : 'lily';
   },
   methods: {
     ...mapMutations(["SET_SOCKET_MAIN", "SET_SOCKET_KLINE"]),

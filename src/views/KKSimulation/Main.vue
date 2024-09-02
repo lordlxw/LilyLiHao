@@ -357,7 +357,7 @@
             </el-col>
           </el-row>
           <div style="margin-top: 40px;" v-if="hotsList.length > 0">
-            <el-row class="hot-item" v-for="item in hotsList" :key="item.TsCode"
+            <el-row class="hot-item" v-for="(item, index) in hotsList" :key="item.TsCode" v-if="index < 30"
               @dblclick.native="openMoreThis('/simulation/klinevertical', item.TsCode)">
               <el-col :span="3">
                 <div class="grid-content bg-purple">{{ item.TsCode }}</div>
@@ -463,7 +463,7 @@
         <enquiry-difficult :row="currentDifficultRow" @change="handleDialogDifficultVisible"></enquiry-difficult>
       </el-dialog>
 
-      <el-dialog title="订单异常处理" width="60%" :visible.sync="dialogOrderEdit.visible" append-to-body
+      <el-dialog title="订单详情" width="60%" :visible.sync="dialogOrderEdit.visible" append-to-body
         :destroy-on-close="true" :close-on-click-modal="false">
         <order-edit :currentRow="dialogOrderEdit.currentRow"></order-edit>
       </el-dialog>
@@ -636,15 +636,17 @@ export default {
     'searchParam.userIds': {
       immediate: true, // 将立即以表达式的当前值触发回调
       handler: function (val, oldVal) {
-        // this.loadInitData(this.searchParam)
-        this.currentUserId = this.searchParam.userIds[0];
-        this.tableData.forEach(n => {
-          if (this.currentUserId && n.createBy !== this.currentUserId) {
-            n.hidenRow = true;
-          } else {
-            n.hidenRow = false;
-          }
-        });
+        if (this.searchParam) {
+          // this.loadInitData(this.searchParam)
+          this.currentUserId = this.searchParam.userIds[0];
+          this.tableData.forEach(n => {
+            if (this.currentUserId && n.createBy !== this.currentUserId) {
+              n.hidenRow = true;
+            } else {
+              n.hidenRow = false;
+            }
+          });
+        }
       },
       deep: true,
     },
@@ -710,7 +712,7 @@ export default {
       }
       this.socketMain.send(JSON.stringify({ "dataKey": "", "dataType": "rank" }))
       hotsListTimer = setInterval(() => {
-        console.log("=============我正在订阅在龙虎榜")
+        console.log("=============我正在订阅在龙虎榜", new Date())
         this.socketMain.send(JSON.stringify({ "dataKey": "", "dataType": "rank" }))
       }, 60 * 1000 * 5)
     },

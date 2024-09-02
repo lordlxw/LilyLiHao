@@ -1,20 +1,21 @@
 {
   "name": "vue-kuanke",
-  "version": "1.1.1",
+  "version": "1.1.6",
   "description": "Lily管理系统",
   "author": "lihao",
   "private": true,
   "main": "background.js",
   "scripts": {
-    "sim": "cross-env NODE_ENV=simulation webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "ele": "wait-on tcp:8080 && cross-env NODE_ENV=development electron . --platform=win32",
-    "build:win": "cross-env PROJECT_NAME=simulation electron-builder --win",
-    "build": "cross-env NODE_ENV=production node build/build.js",
-    "build:dev:cli": "cross-env NODE_ENV=development PROJECT_NAME=cli node build/build.js",
-    "build:dev:ser": "cross-env NODE_ENV=development PROJECT_NAME=ser node build/build.js",
-    "build:sim:cli": "cross-env NODE_ENV=simulation PROJECT_NAME=cli node build/build.js",
-    "build:sim:ser": "cross-env NODE_ENV=simulation PROJECT_NAME=ser node build/build.js",
+    "sim": "cross-env NODE_ENV=simulation PROJECT_NAME=all webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "dev": "cross-env NODE_ENV=development PROJECT_NAME=all webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "ele": "wait-on tcp:8080 && cross-env NODE_ENV=development PROJECT_NAME=all electron . --platform=win32",
+    "ele:cli": "wait-on tcp:8080 && cross-env NODE_ENV=development PROJECT_NAME=client electron . --platform=win32",
+    "build:wsc": "cross-env NODE_ENV=simulation PROJECT_NAME=client node build/build.js && electron-builder --config build/electron-builder.wsc.json --win",
+    "build:wss": "cross-env NODE_ENV=simulation PROJECT_NAME=server node build/build.js && electron-builder --config build/electron-builder.wss.json --win",
+    "build:wds": "cross-env NODE_ENV=development PROJECT_NAME=server node build/build.js && electron-builder --config build/electron-builder.wds.json --win",
+    "build": "cross-env NODE_ENV=production PROJECT_NAME=all node build/build.js",
+    "build:dev": "cross-env NODE_ENV=development PROJECT_NAME=all node build/build.js",
+    "build:sim": "cross-env NODE_ENV=simulation PROJECT_NAME=all node build/build.js",
     "start": "npm run dev",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
@@ -123,30 +124,5 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ],
-  "build": {
-    "appId": "com.sim",
-    "productName": "Lily系统_TEST",
-    "copyright": "Copyright © 2024",
-    "mac": {
-      "category": "public.app-category.utilities",
-      "icon": "static/lily_orange.ico"
-    },
-    "win": {
-      "icon": "static/lily_orange.ico"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true
-    },
-    "files": [
-      "dist/**/*",
-      "electron/**/*",
-      "background.js"
-    ],
-    "directories": {
-      "buildResources": "assets",
-      "output": "dist_electron"
-    }
-  }
+  ]
 }

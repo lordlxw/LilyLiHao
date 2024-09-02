@@ -12,7 +12,7 @@
     <div class="mt30">
       <el-descriptions title="订单信息" direction="vertical" size="medium" :column="5" border>
         <template slot="extra" v-if="setAuth('system:order:edit')">
-          <el-button type="primary" size="small">操作</el-button>
+          <el-button type="primary" size="small" @click="handleInquiryDealConfirmClick">同意成交</el-button>
         </template>
         <el-descriptions-item label="研究员">{{ currentRow.createuser }}</el-descriptions-item>
         <el-descriptions-item label="询价单">{{ currentRow.sourceNum }}</el-descriptions-item>
@@ -38,6 +38,7 @@ import api from '@/api/kk_trade'
 import config from "@/utils/config";
 import moment from "moment";
 import { pageMixin } from "@/utils/pageMixin";
+import { debounce } from '@/utils/debounce'
 export default {
   props: {
     currentRow: {}
@@ -74,6 +75,23 @@ export default {
     funcFormat(val, key) {
       return config.funcKeyValue(val.toString(), key);
     },
+    handleInquiryDealConfirmClick: debounce(function () {
+      const { userTradeId } = this.currentRow;
+      api.inquiryDealConfirm({ userTradeId: userTradeId }).then(response => {
+        if (response && response.code === '00000') {
+          this.$message({
+            message: "已成交",
+            type: 'success'
+          })
+          // self.loadInitData()
+        } else {
+          this.$message({
+            message: response.message,
+            type: 'info'
+          })
+        }
+      })
+    }),
   },
   created() {
     this.initRowSteps()

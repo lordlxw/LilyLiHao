@@ -3,8 +3,17 @@
   <div class="content">
     <div class="list">
       <div class="do mb10">
-        <el-tag type="success" class="mr20">已处理: <b>{{ 11 }}</b></el-tag>
-        <el-tag type="danger" class="mr20">未处理: <b>{{ 25 }}</b></el-tag>
+        <el-row>
+          <el-col :span="12">
+            <el-tag type="success" class="mr20">已处理: <b>{{ 11 }}</b></el-tag>
+            <el-tag type="danger" class="mr20">未处理: <b>{{ 25 }}</b></el-tag>
+          </el-col>
+          <el-col :span="12" class="text-right">
+            <el-date-picker v-model="orderDate" type="date" placeholder="选择日期" :clearable="false"
+              value-format="yyyy-MM-dd" @change="loadInitData">
+            </el-date-picker>
+          </el-col>
+        </el-row>
         <!-- <el-tag :type="rewardFloatProfit.toString().indexOf('-') !== -1
           ? 'danger'
           : 'success'
@@ -136,24 +145,11 @@ export default {
       dialogOrderEdit: {
         visible: false,
         currentRow: {}
-      }
+      },
+      orderDate: ''
     };
   },
   watch: {
-    'searchParam.date': {
-      immediate: true, // 将立即以表达式的当前值触发回调
-      handler: function (val, oldVal) {
-        this.loadInitData(this.searchParam)
-      },
-      deep: true,
-    },
-    'searchParam.userIds': {
-      immediate: true, // 将立即以表达式的当前值触发回调
-      handler: function (val, oldVal) {
-        this.loadInitData(this.searchParam)
-      },
-      deep: true,
-    },
   },
   computed: {
     ...mapGetters({
@@ -239,12 +235,10 @@ export default {
       // this.loadInitData();
     },
     // 初始化数据
-    loadInitData(searchParam) {
-      if (!searchParam.date[0]) {
-        return
-      }
+    loadInitData() {
       this.loading = true;
-      apiAdmin.findWorkOrder({}).then(response => {
+      const createTime = this.orderDate ? this.orderDate + ' 00:00:00' : ''
+      apiAdmin.findWorkOrder({ createTime }).then(response => {
         const { code, value } = response;
         if (code === "00000" && value) {
           this.tableData = value.map(n => {
@@ -336,7 +330,7 @@ export default {
     receiveOrder(row, status) {
       apiAdmin.saveAndUpdateWorkOrder({ id: row.id, reviewedBy: this.userInfo.userId, status: status }).then(({ code }) => {
         if (code === "00000") {
-          this.loadInitData(this.searchParam)
+          this.loadInitData()
         }
       })
     },
@@ -358,6 +352,7 @@ export default {
   },
   mounted() {
     this.dispatchUserColumn();
+    this.loadInitData()
   }
 };
 </script>
