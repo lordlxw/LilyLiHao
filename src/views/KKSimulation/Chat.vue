@@ -5,9 +5,9 @@
                 <el-main class="chat-main">
                     <div class="chat-item">
                         <MChatBox :ref="'MChatBox'" :boxHeight="boxHeight" :config="config" :asideShow="true"
-                            @dateChange="dateChange" :asideItems="asideItems" :dialogChatBoxVisible="false"
-                            :userName="userInfo.userName" @changAsideItem="changAsideItem" @handleClose="() => { }"
-                            :mine="asideItem">
+                            :simulation="false" @dateChange="dateChange" :asideItems="asideItems"
+                            :dialogChatBoxVisible="false" :userName="userInfo.userName" @changAsideItem="changAsideItem"
+                            @handleClose="() => { }" :mine="asideItem">
                         </MChatBox>
                     </div>
                 </el-main>
@@ -44,6 +44,7 @@ export default {
         ...mapState({
             chatMessage: (state) => state.chatMessage,
             socketMain: (state) => state.socketMain,
+            occupyInfo: (state) => state.occupyInfo,
         }),
         brokerid() {
             return this.$route.query.brokerid;
@@ -62,6 +63,22 @@ export default {
                 this.initChatMessages();
             }
         },
+        occupyInfo() {
+            // this.getIntendComerList(this.occupyInfo)
+            console.log(this.occupyInfo)
+            if (this.asideItems.length) {
+                let asideItems = this.asideItems;
+                asideItems = asideItems.map(n => {
+                    const item = this.occupyInfo.find(o => o.brokerid === n.brokerid && o.channelId === n.channelId)
+                    return { ...n, ...item }
+                })
+                // this.asideItems = [];
+                this.asideItem = asideItems.find(o => o.brokerid === this.asideItem.brokerid && o.channelId === this.asideItem.channelId)
+                this.asideItems = [...asideItems]
+            } else {
+                this.getUserSummarys()
+            }
+        }
     },
     data() {
         return {
@@ -111,8 +128,14 @@ export default {
                 apiAdmin.chatReceiverList().then(async ({ code, value }) => {
                     if (code === '00000' && value) {
                         // eslint-disable-next-line eqeqeq
-                        this.asideItems = value;
-                        this.asideItem = this.brokerid ? value.filter(n => (n.brokerid === this.brokerid))[0] : value[0];
+                        let asideItems = value;
+                        asideItems = asideItems.map(n => {
+                            const item = this.occupyInfo.find(o => o.brokerid === n.brokerid && o.channelId === n.channelId)
+                            return { ...n, ...item }
+                        })
+                        // this.asideItems = [];
+                        this.asideItem = this.brokerid ? asideItems.find(o => o.brokerid === this.asideItem.brokerid && o.channelId === this.asideItem.channelId) : asideItems[0]
+                        this.asideItems = [...asideItems]
                         this.initChatMessages();
                     }
                 })
@@ -135,7 +158,7 @@ export default {
         },
         getUserSummarys() {
             apiAdmin.getUserSummarys({
-                roles: [3]
+                roles: []
             }).then(async ({ code, value }) => {
                 if (code === '00000') {
                     this.userInfos = value;
@@ -146,7 +169,6 @@ export default {
 
     },
     mounted() {
-        this.getUserSummarys()
         if (window.v1 && this.isElectron) {
             window.v1.getAllDisplays().then((response) => {
                 const maxHeight = Math.max(...response.map(display => display.bounds.height));

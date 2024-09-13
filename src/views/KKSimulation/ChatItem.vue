@@ -4,7 +4,7 @@
             <el-container class="chat-box">
                 <el-main class="chat-main">
                     <div class="chat-item">
-                        <MChatBox :ref="'MChatBox'" :boxHeight="boxHeight" :config="config"
+                        <MChatBox :ref="'MChatBox'" :boxHeight="boxHeight" :config="config" :simulation="true"
                             :dialogChatBoxVisible="false" :userName="userInfo.userName" @handleClose="() => { }"
                             :mine="mine">
                         </MChatBox>

@@ -1400,8 +1400,8 @@ export default {
               if (code === 200 && rows.length > 0) {
                 self.dialogVisible.title = "提醒"
                 // self.dialogVisible.message = `<div class='${rows[0].direction === 'bond_0' ? 'txt-green' : 'txt-red'}'> ${rows[0].tscode + " | " + (rows[0].direction === 'bond_0' ? '买入' : '卖出') + " | " + rows[0].price + " | " + rows[0].volume + " | " + util.dateFormat(rows[0].deliveryTime, "YYYY-MM-DD")}</div> <br/>是否立即撤销!`
-                const brokerItems = self.intendComerOption.filter(n => rows[0].brokerid === n.brokerid);
-                const brokerName = rows[0].brokerid ? brokerItems[0].company + '-' + brokerItems[0].target : '系统智能分配';
+                const brokerItems = self.intendComerOption.filter(n => rows[0].brokerId === n.brokerid);
+                const brokerName = rows[0].brokerId ? brokerItems[0].company + '-' + brokerItems[0].target : '系统智能分配';
                 self.dialogVisible.message = `<div class='el-row'>
                 <div class='el-col el-col-12' ><div class='dialog-text'>${brokerName}</div></div>
                 <div class='el-col el-col-12'><div class='text-right dialog-text'>${rows[0].price}</div></div>

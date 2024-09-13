@@ -1,8 +1,10 @@
 <!--登录页面-->
 <template>
   <transition appear name="fade" @before-enter="handleBeforeEnter" @enter="handleEnter" @after-enter="handleAfterEnter">
-    <div class="login-wrapper" :style="`background: ${$appType == 'server' ? 'linear-gradient(to bottom, #2cad98 30%, #5270bd 100%)' : 'linear-gradient(to bottom, #FF9800 30%, #4CAF50 100%)'}`">
+    <div class="login-wrapper"
+      :style="`background: ${$appType == 'server' ? 'linear-gradient(to bottom, #2cad98 30%, #5270bd 100%)' : 'linear-gradient(to bottom, #FF9800 30%, #4CAF50 100%)'}`">
       <title-bar v-if="isElectron" :bgColor="$appType == 'server' ? '#2cad98' : '#FF9800'">
+        <i slot="right_bar" @click="getNetworkDia()" class="el-icon-info noDrag txt-white right_bar"></i>
       </title-bar>
       <!-- <el-image
         class="logo"
@@ -49,6 +51,7 @@ import Velocity from 'velocity-animate'
 import api from '@/api/kk_login'
 import { debounce } from '@/utils/debounce'
 import configUtil from '@/utils/config.js'
+import * as util from '@/utils/util'
 export default {
   data() {
     return {
@@ -83,10 +86,8 @@ export default {
     ...mapMutations(["SET_SOCKET_MAIN", "SET_SOCKET_KLINE"]),
     submitForm: debounce(function (formName) {
       const { mac } = this.isElectron ? window.v1.getNetwork() : { mac: 'cc:5e:f8:f0:5f:85' }
-      console.log("mac:", mac);
+      console.log("mac:", mac)
       const hwinfo = this.$md5(mac.replace(/:/g, ""))
-      console.log("mac info:", hwinfo);
-      console.log("mac + username info:", this.$md5(hwinfo + this.ruleForm.username));
       this.$refs[formName].validate((valid) => {
         if (valid) {
           api.login({
@@ -95,7 +96,7 @@ export default {
             uuid: this.uuid,
             code: this.ruleForm.code,
             hwinfo: hwinfo
-          }, this.labelPosition === 'Simulation' ? 'BondHelper' : '', this.labelPosition === 'Simulation' ? 'sim' : 'admin').then(response => {
+          }, this.labelPosition === 'Simulation' ? 'BondHelper' : 'BondHelper', this.labelPosition === 'Simulation' ? 'sim' : 'admin').then(response => {
             if (response && response.code === 200) {
               // 保存token信息
               Promise.all([
@@ -242,6 +243,36 @@ export default {
         duration: 1000,
         complete: done
       })
+    },
+    getNetworkDia() {
+      if (this.ruleForm.username) {
+        const { mac, name } = this.isElectron ? window.v1.getNetwork() : { mac: 'cc:5e:f8:f0:5f:85', name: "测试机器" }
+        const hwinfo = this.$md5(this.$md5(mac.replace(/:/g, "")) + this.ruleForm.username)
+        // const confirmMsg = `机器名: ${name}, \r\n硬件信息: ${hwinfo}`;
+        const h = this.$createElement;
+        this.$msgbox({
+          title: '',
+          message: h('p', null, [
+            h('p', `机器名: ${name}`), h('p', `硬件信息: ${hwinfo}`)
+          ]),
+          confirmButtonText: '复制',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // 使用方法
+          util.copyTextToClipboard(hwinfo);
+          this.$message({
+            type: 'success',
+            message: '复制成功!'
+          });
+        }).catch(() => {
+        });
+      } else {
+        this.$message({
+          type: 'error',
+          message: '请输入您需要绑定用户名!'
+        });
+      }
     }
   },
   async mounted() {
@@ -350,5 +381,15 @@ export default {
   a:hover {
     color: rgb(240, 238, 238);
   }
+}
+
+.right_bar {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  line-height: 40px;
+  color: #fff;
+  text-align: center;
+  -webkit-app-region: no-drag;
 }
 </style>

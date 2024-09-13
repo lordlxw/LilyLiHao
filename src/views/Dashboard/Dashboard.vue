@@ -174,7 +174,6 @@ export default {
       }
     },
     initChartA(data) {
-      console.log("init Chart A ============");
       this.initChartDataA = data;
       const option = {
         title: {
@@ -273,7 +272,7 @@ export default {
           borderWidth: 0,
           y: 80,
           y2: 60,
-          x: 60
+          x: 70
         },
         xAxis: [
           {
@@ -337,15 +336,19 @@ export default {
       const optionData = data ? data.filter((n, i) => {
         return (n.limitBid + n.limitOffer) > 0;
       }) : []
-      option.series[0].data = optionData ? optionData.map((n, i) => {
-        return (n.limitBid + n.limitOffer)
-      }) : []
-      option.series[1].data = optionData ? optionData.map((n, i) => {
-        return n.solidProfit
-      }) : []
+
       option.xAxis[0].data = optionData ? optionData.map((n, i) => {
         return n.nickName
       }) : []
+
+      option.series[0].data = optionData ? optionData.map((n, i) => {
+        return (n.limitBid + n.limitOffer)
+      }) : []
+
+      const series1 = optionData ? optionData.map((n, i) => {
+        return n.solidProfit
+      }) : []
+      option.series[1].data = series1.map(n => parseFloat(n.replace(/,/g, '')))
       // option.series[0].markPoint.data = data ? data.map((n, i) => {
       //   return { xAxis: i, y: 350, name: n.nickName, symbolSize: 20 }
       // }) : []
@@ -484,22 +487,22 @@ export default {
         Array.from(groupByUser.entries()).forEach(([key, value]) => {
           let seriesData1 = [];
           const groupByDate = util.groupArrayToMap(value, item => item.date, item => parseFloat(item.profit || 0))
-
           xAxisData.forEach(n => {
             let val = groupByDate.get(n)
             if (val && val.length > 0) {
-              const sum = util.moneyFormat(val.reduce((sum, item) => {
+              const sum = val.reduce((sum, item) => {
                 return sum + parseFloat(item || 0) * 10000
-              }, 0) / 10000, 4)
-              seriesData1.push(util.moneyFormat(parseFloat(seriesData1.length > 0 ? seriesData1[seriesData1.length - 1] : 0) + parseFloat(sum || 0), 4))
+              }, 0) / 10000
+              seriesData1.push((seriesData1.length > 0 ? seriesData1[seriesData1.length - 1] : 0) + (sum || 0))
             } else {
-              seriesData1.push(util.moneyFormat(parseFloat(seriesData1.length > 0 ? seriesData1[seriesData1.length - 1] : 0) + parseFloat(0), 4))
+              seriesData1.push((seriesData1.length > 0 ? seriesData1[seriesData1.length - 1] : 0) + 0)
             }
           })
+
           // value.forEach(n => {
           //   seriesData1.push(util.moneyFormat(parseFloat(seriesData1.length > 0 ? seriesData1[seriesData1.length - 1] : 0) + parseFloat(n.profit || 0), 4))
           // })
-
+          seriesData1 = seriesData1.map(n => n.toFixed(4))
           const user = this.userSummarys.filter(n => n.userId === key);
           let series = {
             name: user[0].nickName + ': 截至盈亏',
@@ -510,27 +513,35 @@ export default {
             smooth: true,
             data: seriesData1
           }
-
           option.series.push(series)
           // console.log(key, series)
         })
       } else {
-        data.sort(function (a, b) {
-          return a.createTime < b.createTime ? -1 : 1
-        })
-
         data.forEach(n => {
-          xAxisData.push(n.createTime)
-          seriesData.push(util.moneyFormat(parseFloat(seriesData.length > 0 ? seriesData[seriesData.length - 1] : 0) + parseFloat(n.profit || 0), 4))
+          n.date = util.dateFormat(n.createTime, "YYYY-MM-DD")
         })
+        xAxisData = util.getDatesInRange(this.searchParam.date[0], this.searchParam.date[1], "YYYY-MM-DD");
+        const groupByDate = util.groupArrayToMap(data, item => item.date, item => parseFloat(item.profit || 0))
+        xAxisData.forEach(n => {
+          let val = groupByDate.get(n)
+          if (val && val.length > 0) {
+            const sum = val.reduce((sum, item) => {
+              return sum + parseFloat(item || 0) * 10000
+            }, 0) / 10000
+            seriesData.push((seriesData.length > 0 ? seriesData[seriesData.length - 1] : 0) + (sum || 0))
+          } else {
+            seriesData.push((seriesData.length > 0 ? seriesData[seriesData.length - 1] : 0) + 0)
+          }
+        })
+        const seriesDatas = seriesData.map(n => n.toFixed(4))
         option.series.push({
-          name: '今日盈亏',
+          name: '截至盈亏',
           type: 'line',
           // stack: '总量',
           yAxisIndex: 0,
           symbol: 'none',
           smooth: true,
-          data: seriesData
+          data: seriesDatas
         })
       }
 
@@ -616,7 +627,7 @@ export default {
     if (window.v1) {
       Promise.all([]).then(async () => {
         const response = await window.v1.getWinThis();
-        this.child = response.data.child
+        this.child = response.data && response.data.child
       })
     }
     setTimeout(() => {

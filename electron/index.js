@@ -455,7 +455,11 @@ class MultiWindows {
     });
 
     ipcMain.handle("sendWinMsg", (event, args) => {
-      this.getWin(args.id).send(args.fun, args.data);
+      this.getWin(args.id).webContents.send(args.fun, args.data);
+    });
+
+    ipcMain.handle("focusByID", (event, args) => {
+      this.getWin(args.id).focus();
     });
   }
 }

@@ -262,6 +262,18 @@ export default {
                 case 'chat_message':
                   self.$store.commit('SET_CHAT_MESSAGE', msgJson.data)
                   break
+                case 'chat_work_order':
+                  self.$store.commit('SET_CHAT_ORDER', msgJson.data)
+                  if (msgJson.actionType === 'refresh' || self.openPopUp()) {
+                    break
+                  }
+                  notify = self.$notify({
+                    title: '系统通知',
+                    message: '你收到了一笔新的工单，请及时查看！',
+                    type: 'warning',
+                    offset: 40
+                  });
+                  break
                 case 'rank':
                   self.$store.commit('SET_HOTS_LIST', msgJson.data)
                   break
@@ -851,7 +863,7 @@ export default {
                   break
                 case 'koutouweiyueconfirm_bond_0':
                 case 'koutouweiyueconfirm_bond_1':
-                if (self.openPopUp()) {
+                  if (self.openPopUp()) {
                     break;
                   }
                   self.$notify({
@@ -898,7 +910,7 @@ export default {
                   break
                 case 'koutouweiyuedeny_bond_0':
                 case 'koutouweiyuedeny_bond_1':
-                if (self.openPopUp()) {
+                  if (self.openPopUp()) {
                     break;
                   }
                   self.$notify({

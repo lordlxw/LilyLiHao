@@ -33,6 +33,7 @@ const store = new Vuex.Store({
     enquiryInfo: "",
     hotsList: [],
     chatMessage: null,
+    chatWorkOrder: null,
     socketMain: null,
     socketKLine: null
   },
@@ -249,6 +250,9 @@ const store = new Vuex.Store({
     },
     SET_CHAT_MESSAGE(state, chatMessage) {
       state.chatMessage = chatMessage;
+    },
+    SET_CHAT_ORDER(state, chatWorkOrder) {
+      state.chatWorkOrder = chatWorkOrder;
     },
     SET_HOTS_LIST(state, hotsList) {
       if (hotsList.length === 1 && state.hotsList.length > 0) {

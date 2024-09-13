@@ -1,17 +1,19 @@
 <template>
     <div class="chat_box" @click="() => { msgShow = false }" :class="msgShow ? 'message show' : ''">
-        <el-container>
+        <el-container v-loading="chatloads">
             <el-aside width="210px" v-if="asideShow">
                 <div class="aside_top">
 
                 </div>
                 <div v-infinite-scroll="load">
-                    <div v-for="(item) in asideItems" class="chat_item" :key="item.brokerid"
-                        @click="changAsideItem(item)">
+                    <div v-for="(item) in asideItems" class="chat_item"
+                        :style="(item.brokerid === mine.brokerid && item.channelId === mine.channelId) ? 'background-color: #cfcfcf;' : ''"
+                        :key="item.brokerid" @click="changAsideItem(item)">
                         <el-row>
                             <el-col :span="8">
                                 <div class="demo-basic--circle">
-                                    <div class="block"><el-avatar :size="50">{{ item.company.substr(0, 1)
+                                    <div class="block"><el-avatar :size="50" :class="item.occupy ? 'txt-red' : ''">{{
+                                        item.company.substr(0, 1)
                                             }}</el-avatar>
                                     </div>
                                 </div>
@@ -62,7 +64,8 @@
                         <el-row>
                             <el-col :span="asideShow ? 2 : 3" v-if="item.direction === 1">
                                 <div class="demo-basic--circle">
-                                    <div class="block"><el-avatar :size="40">{{ mine.company.substr(0, 1) }}</el-avatar>
+                                    <div class="block"><el-avatar :size="40">{{ mine.company && mine.company.substr(0,
+                                            1) }}</el-avatar>
                                     </div>
                                 </div>
                             </el-col>
@@ -90,30 +93,56 @@
 
                     </div>
                 </div>
-                <el-footer>
+                <el-footer :height="simulation ? '' : '190px'"
+                    v-if="setAuth('system:order:edit') && (mine.occupyier === userInfo.userId || simulation)">
+                    <div class="mt20" v-if="!simulation">
+                        <el-input type="textarea" placeholder="请输入内容" v-model="textarea" maxlength="300" :rows="5"
+                            show-word-limit resize="none" @keydown.enter.native.prevent="inputKeydown"
+                            @input="handleInput"></el-input>
+                    </div>
                     <div class="footer_send">
-                        <el-date-picker v-model="chatDate" align="right" type="date" placeholder="选择日期" v-if="asideShow"
-                            @change="dateChange" :picker-options="pickerOptions">
-                        </el-date-picker>
-
-                        <el-select v-model="value" placeholder="请选择">
+                        <el-select v-model="selectVal" placeholder="请选择"
+                            @change="() => { textarea = selectVal; sendChatMessages(simulation ? 0 : 1) }">
                             <el-option v-for="item in options" :key="item.value" :label="item.label"
                                 :value="item.value">
                             </el-option>
                         </el-select>
-
-                        <el-button type="success" plain>发送</el-button>
+                        <el-button type="success" plain @click="dateChange">刷新记录</el-button>
+                        <el-button type="success" plain @click="hijackChat(1)" v-if="!simulation">释放通道</el-button>
+                        <el-button type="success" plain @click="sendChatMessages">发送</el-button>
+                    </div>
+                </el-footer>
+                <el-footer v-else>
+                    <div class="footer_send">
+                        <el-date-picker v-model="chatDate" align="right" type="date" placeholder="选择日期" v-if="asideShow"
+                            @change="dateChange" :picker-options="pickerOptions">
+                        </el-date-picker>
+                        <el-button v-if="setAuth('system:order:edit')" type="success" plain
+                            @click="hijackChat(0)">劫持通道</el-button>
+                        <el-button type="success" plain @click="dateChange">刷新记录</el-button>
                     </div>
                 </el-footer>
             </el-container>
         </el-container>
+
+        <el-dialog :title="dialogVisible.title" :visible.sync="dialogVisible.show" width="300px" top="30vh"
+            custom-class="custom-dialog" :before-close="() => { dialogVisible.show = false }">
+            <div v-html="dialogVisible.message"></div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible.show = false">取 消</el-button>
+                <el-button :class="'bg-green'" @click="dialogVisible.fun">确
+                    定</el-button>
+            </span>
+        </el-dialog>
     </div>
 
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { pageMixin } from "@/utils/pageMixin";
 import moment from 'moment'
+import api from '@/api/kk_trade'
 import * as util from '@/utils/util'
 export default {
     name: "M-ChatBox",
@@ -121,6 +150,7 @@ export default {
     },
     mixins: [pageMixin],
     props: {
+        simulation: true,
         userName: '',
         asideShow: {
             type: Boolean,
@@ -167,7 +197,7 @@ export default {
             circleUrl: "image.png",
             count: 5,
             options: [{
-                value: '选项1',
+                value: '好的',
                 label: '好的'
             }],
             value: '',
@@ -201,20 +231,42 @@ export default {
                     }
                 }]
             },
-            highlight: ''
+            highlight: '',
+            dialogVisible: {
+                title: '提示',
+                show: false,
+                message: '',
+                fun: () => {
+
+                }
+            },
+            chatloads: false,
+            textarea: '',
+            selectVal: '',
         }
     },
     computed: {
         // list() {
         //     return JSON.parse(JSON.stringify(this.messages))
         // }
+        ...mapGetters({
+            userInfo: 'getUserInfo'
+        }),
+    },
+    asideItems() {
+        // this.getIntendComerList(this.occupyInfo)
+        console.log(this.asideItems)
     },
     methods: {
         load() {
             // this.count += 2
         },
         dateChange() {
-            this.$emit('changAsideItem', this.mine, this.chatDate)
+            this.chatloads = true;
+            this.$emit('changAsideItem', this.mine, this.chatDate);
+            setTimeout(() => {
+                this.chatloads = false;
+            }, 500)
         },
         changAsideItem(e) {
             this.$emit('changAsideItem', e, this.chatDate)
@@ -230,6 +282,44 @@ export default {
         scrollToBottom(height) {
             const container = this.$refs.scrollContainer;
             return container ? (container.scrollTop = height < 0 ? container.scrollHeight : height) : null;
+        },
+        handleInput(event) {
+            // 阻止换行
+            this.inputValue = event.replace(/\n/g, '');
+        },
+        inputKeydown(e) {
+            if (e.ctrlKey) {
+                // 换行
+                const { selectionStart, selectionEnd } = e.target;
+                const chars = this.textarea.split("");
+                chars.splice(selectionStart, selectionEnd - selectionStart, "\n");
+                this.textarea = chars.join("");
+            } else {
+                this.sendChatMessages(); // 提交方法
+            }
+        },
+        sendChatMessages(isProd = 1) {
+            Promise.all([
+                console.log("发送消息给中介")
+            ]).then(async () => {
+                if (this.textarea && this.textarea.trim() !== '') {
+                    const data = {
+                        chatId: this.userInfo.userId,
+                        message: this.textarea,
+                        brokerId: this.mine.brokerid,
+                        channelId: this.mine.channelId,
+                        direction: 0,
+                        isProd: isProd,
+                    }
+                    await api.sendChatMessages(data, 'sim')
+                    this.textarea = ''
+                } else {
+                    this.$message({
+                        message: `请输入你要发送的消息`,
+                        type: "warning"
+                    });
+                }
+            })
         },
         pushMsgs(items, refresh) {
             if (refresh) {
@@ -252,14 +342,78 @@ export default {
                 this.messages = this.messages.concat(items)
             }
             this.$nextTick(() => {
-                if (this.highlight) {
+                if (this.highlight && !this.scrollBottm) {
                     let index = this.messages.filter(item => item.brokerId === this.mine.brokerid && item.channelId === this.mine.channelId).findIndex(item => item.tradeId === this.highlight);
                     this.scrollToBottom(79 * index);
+                    this.scrollBottm = true;
                 } else {
                     this.scrollToBottom(-1);
                 }
             });
             window.v1 && window.v1.focus()
+        },
+        hijackChat(hijack) {
+            if (hijack === 1) {
+                const tradeDateStart = moment(new Date()).format("YYYY-MM-DD"); // 创建一个新的日期对象，以免修改原始日期
+                const tradeDateEnd = moment(new Date()).add(1, 'days').format("YYYY-MM-DD");
+                api.inquiryQuery({
+                    tradeDateStart: tradeDateStart,
+                    tradeDateEnd: tradeDateEnd,
+                }).then(({ code, rows }) => {
+                    const list = rows.filter(n => n.brokerId === this.mine.brokerid && n.channelId === this.mine.channelId && !([2, 3, 5, 6, 13].indexOf(n.status) > 0))
+                    console.log(this.mine)
+                    if (list.length > 0) {
+                        this.dialogVisible = {
+                            title: '提示',
+                            show: true,
+                            message: `当前还有 ${list.length} 单询价正在进行中，是否还原中介占用！`,
+                            fun: async () => {
+                                // const tradeNums = list.map(n => { return n.tradeNum });
+                                const tradeNums = [];
+                                const data = { brokerId: this.mine.brokerid, channelId: this.mine.channelId, release: hijack, tradeNums }
+                                const { code } = await api.hijackChat(data)
+                                if (code === '00000') {
+                                    this.dialogVisible.show = false;
+                                    this.chatDate = `${util.dateFormat(new Date(), "YYYY-MM-DD")} 00:00:00`;
+                                    this.dateChange()
+                                }
+                            }
+                        }
+                    } else {
+                        this.dialogVisible = {
+                            title: '提示',
+                            show: true,
+                            message: `是否确定释放中介通道！`,
+                            fun: async () => {
+                                const tradeNums = [];
+                                const data = { brokerId: this.mine.brokerid, channelId: this.mine.channelId, release: hijack, tradeNums }
+                                const { code } = await api.hijackChat(data)
+                                if (code === '00000') {
+                                    this.dialogVisible.show = false;
+                                    this.chatDate = `${util.dateFormat(new Date(), "YYYY-MM-DD")} 00:00:00`;
+                                    this.dateChange()
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                this.dialogVisible = {
+                    title: '提示',
+                    show: true,
+                    message: `您是否需要强行占用中介：${this.mine.company}, 当前中介状态${this.mine.occupyier == null ? '空闲中！' : '正在交易中，强行占用可能会影响交易！'}`,
+                    fun: async () => {
+                        const tradeNums = [];
+                        const data = { brokerId: this.mine.brokerid, channelId: this.mine.channelId, release: hijack, tradeNums }
+                        const { code } = await api.hijackChat(data)
+                        if (code === '00000') {
+                            this.dialogVisible.show = false;
+                            this.chatDate = `${util.dateFormat(new Date(), "YYYY-MM-DD")} 00:00:00`;
+                            this.dateChange()
+                        }
+                    }
+                }
+            }
         },
         dateFormat(date) {
             const padWithZero = (number) => {
@@ -275,14 +429,33 @@ export default {
     },
     mounted() {
         if (window.v1) {
-            console.log("111111111111111111")
+            console.log("=============================")
             window.v1.ipcRenderer().On("window-send", (event, data) => {
+                const { row, hijack } = data;
                 console.log(data)
-                this.highlight = data.userTradeId;
-                window.v1.focus()
-                const asideItem = this.asideItems.find(element => (element.brokerid === data.brokerId && element.channelId === data.channelId));
-                this.chatDate = `${util.dateFormat(data.createTime || new Date(), "YYYY-MM-DD")} 00:00:00`;
-                this.$emit('changAsideItem', asideItem, this.chatDate)
+                if (row) {
+                    this.highlight = row.userTradeId;
+                    this.scrollBottm = false;
+                    window.v1.focus()
+                    const asideItem = this.asideItems.find(element => (element.brokerid === row.brokerId && element.channelId === row.channelId));
+                    this.chatDate = `${util.dateFormat(row.createTime || new Date(), "YYYY-MM-DD")} 00:00:00`;
+                    this.$emit('changAsideItem', asideItem, this.chatDate)
+                } else if (hijack) {
+                    const { target, brokerId, channelId } = hijack;
+                    const asideItem = this.asideItems.find(n => n.brokerid === brokerId && n.channelId === channelId)
+                    this.chatDate = `${util.dateFormat(new Date(), "YYYY-MM-DD")} 00:00:00`;
+                    this.$emit('changAsideItem', asideItem, this.chatDate)
+                    if (asideItem.occupyier !== this.userInfo.userId) {
+                        this.dialogVisible = {
+                            title: '提示',
+                            show: true,
+                            message: `您是否需要强行占用中介：${target}, 当前中介状态${asideItem.occupyier == null ? '空闲中！' : '正在交易中，强行占用可能会影响交易！'}`,
+                            fun: () => {
+                                this.hijackChat(0)
+                            }
+                        }
+                    }
+                }
             })
         }
     }
@@ -498,7 +671,7 @@ export default {
                 background-color: #F5F5F5;
                 border: none;
                 color: #606060;
-                width: 80px;
+                min-width: 80px;
             }
 
             .el-select--small>>>.el-input__inner:hover,

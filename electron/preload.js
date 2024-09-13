@@ -29,6 +29,10 @@ contextBridge.exposeInMainWorld("v1", {
     const win = remote.getCurrentWindow();
     return win.focus();
   },
+  focusByID: args => {
+    const id = remote.getGlobal("sharedObject").independentWindow.get(args);
+    return ipcRenderer.invoke("focusByID", { id });
+  },
   isFocusedWindow: remote.getCurrentWindow().isFocused(),
   isAlwaysOnTop: remote.getCurrentWindow().isAlwaysOnTop(),
   quit: () => ipcRenderer.invoke("quit"),
@@ -57,17 +61,32 @@ contextBridge.exposeInMainWorld("v1", {
   },
   getNetwork: () => {
     var os = require("os");
-    if (os.networkInterfaces().WLAN) {
-      sessionStorage.mac = os.networkInterfaces().WLAN[0].mac;
-    } else {
-      sessionStorage.mac = os.networkInterfaces()["以太网"][0].mac;
+
+    var networkInterfaces = os.networkInterfaces();
+    for (var i in networkInterfaces) {
+      for (var j in networkInterfaces[i]) {
+        if (
+          networkInterfaces[i][j]["family"] === "IPv4" &&
+          networkInterfaces[i][j]["mac"] !== "00:00:00:00:00:00" &&
+          networkInterfaces[i][j]["address"] !== "127.0.0.1"
+        ) {
+          sessionStorage.mac = networkInterfaces[i][j]["mac"];
+        }
+      }
     }
+    // if (os.networkInterfaces().WLAN) {
+    //   sessionStorage.mac = os.networkInterfaces().WLAN[0].mac;
+    // } else {
+    //   sessionStorage.mac = os.networkInterfaces()["以太网"][0].mac;
+    // }
     sessionStorage.name = os.hostname();
-    return { mac: sessionStorage.getItem("mac"), name: os.hostname() };
+    return { mac: sessionStorage.mac, name: os.hostname() };
   },
   sendWinMsg: args => {
     const id = remote.getGlobal("sharedObject").independentWindow.get(args.id);
-    ipcRenderer.sendTo(id, args.fun, args.data);
+    console.log("sendTo : " + id);
+    // ipcRenderer.sendTo(id, args.fun, args.data);
+    ipcRenderer.invoke("sendWinMsg", { ...args, id });
   }
 });
 

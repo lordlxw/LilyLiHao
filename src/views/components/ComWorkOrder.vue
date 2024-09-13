@@ -5,13 +5,22 @@
       <div class="do mb10">
         <el-row>
           <el-col :span="12">
-            <el-tag type="success" class="mr20">已处理: <b>{{ 11 }}</b></el-tag>
-            <el-tag type="danger" class="mr20">未处理: <b>{{ 25 }}</b></el-tag>
+            <el-tag type="success" class="mr20">已处理: <b>{{ 0 }}</b></el-tag>
+            <el-tag type="danger" class="mr20">未处理: <b>{{ 0 }}</b></el-tag>
           </el-col>
           <el-col :span="12" class="text-right">
-            <el-date-picker v-model="orderDate" type="date" placeholder="选择日期" :clearable="false"
-              value-format="yyyy-MM-dd" @change="loadInitData">
-            </el-date-picker>
+            <template>
+              <el-tooltip :content="'只显示和我相关'" placement="top">
+                <el-switch v-model="showMyOrder" active-color="#009688" inactive-color="#ff4949" :active-value="1"
+                  :inactive-value="0">
+                </el-switch>
+              </el-tooltip>
+            </template>
+            <template>
+              <el-date-picker class="ml20" v-model="orderDate" type="date" placeholder="选择日期" :clearable="false"
+                value-format="yyyy-MM-dd" @change="loadInitData">
+              </el-date-picker>
+            </template>
           </el-col>
         </el-row>
         <!-- <el-tag :type="rewardFloatProfit.toString().indexOf('-') !== -1
@@ -35,7 +44,7 @@
           </el-table-column>
         </template>
         <el-table-column></el-table-column>
-        <el-table-column fixed="right" label="操作" algin="center" width="150px">
+        <el-table-column fixed="right" label="操作" algin="center" width="200px">
           <template slot-scope="scope">
             <el-button type="text" v-if="
               setAuth('system:order:edit') &&
@@ -45,10 +54,10 @@
               setAuth('system:order:edit') && scope.row.reviewedBy === userInfo.userId &&
               [1].indexOf(scope.row.status) !== -1
             " @click="inquiryQuery(scope.row)">去处理</el-button>
-            <!-- <el-button type="text" v-if="
+            <el-button type="text" v-if="
               setAuth('system:order:edit') && scope.row.reviewedBy === userInfo.userId &&
               [1].indexOf(scope.row.status) !== -1
-            " @click="receiveOrder(scope.row, 3)">无法处理</el-button> -->
+            " @click="receiveOrder(scope.row, 2)">处理完成</el-button>
 
             <el-popover v-if="
               setAuth('system:order:edit') && scope.row.reviewedBy === userInfo.userId &&
@@ -102,14 +111,14 @@
     </div>
     <el-dialog title="订单异常处理" width="500px;" :visible.sync="dialogOrderEdit.visible" append-to-body
       :destroy-on-close="true" :close-on-click-modal="false">
-      <order-edit :currentRow="dialogOrderEdit.currentRow"></order-edit>
+      <order-edit :currentRow="dialogOrderEdit.currentRow" @refreshData="inquiryQuery"></order-edit>
     </el-dialog>
-
+    <main-socket></main-socket>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import apiAdmin from "@/api/kk_power_admin";
 import api from "@/api/kk_trade";
 import { pageMixin } from "@/utils/pageMixin";
@@ -117,6 +126,7 @@ import { commMixin } from "@/utils/commMixin";
 import config from "@/utils/config";
 import * as util from "@/utils/util";
 import OrderEdit from '@/components/OrderEdit.vue'
+import MainSocket from '@/components/SocketElectron.vue'
 import moment from "moment";
 let tableFinishClassName = "";
 export default {
@@ -127,7 +137,7 @@ export default {
   },
   mixins: [pageMixin, commMixin],
   components: {
-    OrderEdit
+    OrderEdit, MainSocket
   },
   data() {
     return {
@@ -146,14 +156,36 @@ export default {
         visible: false,
         currentRow: {}
       },
-      orderDate: ''
+      orderDate: '',
+      showMyOrder: 1,
+      currentOrder: null
     };
   },
   watch: {
+    'showMyOrder': {
+      immediate: true, // 将立即以表达式的当前值触发回调
+      handler: function (val, oldVal) {
+        this.tableData.forEach(n => {
+          if (this.showMyOrder === 1 && n.reviewedBy !== this.userInfo.userId && n.status !== 0) {
+            n.hidenRow = true;
+          } else {
+            n.hidenRow = false;
+          }
+        });
+      },
+      deep: true,
+    },
+    chatWorkOrder() {
+      console.log(this.chatWorkOrder)
+      this.loadInitData();
+    }
   },
   computed: {
     ...mapGetters({
       userInfo: "getUserInfo",
+    }),
+    ...mapState({
+      chatWorkOrder: (state) => state.chatWorkOrder,
     }),
   },
   methods: {
@@ -171,21 +203,24 @@ export default {
       return tableFinishClassName + ' list-row';
     },
     tableRowFinishClassName({ row, rowIndex }) {
+      let tableRowClassName = 'list-row';
+      if (row.hidenRow) {
+        tableRowClassName += ' hiden-row'
+      }
       if (row.status === 0) {
-        return "gd-red-row list-row"
+        tableRowClassName += " gd-orange-row"
       }
-      if (row.solidProfit > 0) {
-        tableFinishClassName = "gd-green-row";
-      } else {
-        tableFinishClassName = "even-row";
+      if (row.status === 2) {
+        tableRowClassName += " gd-green-row"
       }
-      return tableFinishClassName + ' list-row';
+      return tableRowClassName;
     },
     viewChat(row) {
       if (window.v1) {
         window.v1.hasWinsById('chat').then((bool) => {
           if (bool) {
-            window.v1.sendWinMsg({ id: "chat", fun: 'window-send', data: row });
+            window.v1.focusByID('chat')
+            window.v1.sendWinMsg({ id: "chat", fun: 'window-send', data: { row } });
           } else {
             window.v1.getAllDisplays().then((response) => {
               console.log(response)
@@ -207,6 +242,9 @@ export default {
                 route: "/simulation/chat"
               }
               window.v1.createWin(args)
+              setTimeout(() => {
+                window.v1.sendWinMsg({ id: "chat", fun: 'window-send', data: { row } });
+              }, 1500)
             })
           }
         })
@@ -241,9 +279,16 @@ export default {
       apiAdmin.findWorkOrder({ createTime }).then(response => {
         const { code, value } = response;
         if (code === "00000" && value) {
-          this.tableData = value.map(n => {
+          let data = value.map(n => {
+            if (this.showMyOrder === 1 && n.reviewedBy !== this.userInfo.userId && n.status !== 0) {
+              n.hidenRow = true;
+            } else {
+              n.hidenRow = false;
+            }
             return { ...n }
           });
+          data.sort((a, b) => a.status - b.status)
+          this.tableData = data;
           this.$emit("init", value)
         } else {
           this.tableData = [];
@@ -328,6 +373,7 @@ export default {
       return row[column.property];
     },
     receiveOrder(row, status) {
+      this.enquiryOrderData = [];
       apiAdmin.saveAndUpdateWorkOrder({ id: row.id, reviewedBy: this.userInfo.userId, status: status }).then(({ code }) => {
         if (code === "00000") {
           this.loadInitData()
@@ -335,22 +381,29 @@ export default {
       })
     },
     inquiryQuery(row) {
-      console.log(row)
-      const tradeDateStart = moment(row.createTime).format("YYYY-MM-DD"); // 创建一个新的日期对象，以免修改原始日期
-      const tradeDateEnd = moment(row.createTime).add(1, 'days').format("YYYY-MM-DD");
+      // console.log(row)
+      this.currentOrder = row || this.currentOrder;
+      this.enquiryOrderData = []
+      const tradeDateStart = moment(this.currentOrder.createTime).format("YYYY-MM-DD"); // 创建一个新的日期对象，以免修改原始日期
+      const tradeDateEnd = moment(this.currentOrder.createTime).add(1, 'days').format("YYYY-MM-DD");
       api.inquiryQuery({
         tradeDateStart: tradeDateStart,
         tradeDateEnd: tradeDateEnd,
       }).then(({ code, rows }) => {
-        let list = rows.filter(n => n.createBy === row.createBy)
+        let list = rows.filter(n => n.createBy === this.currentOrder.createBy)
         list.forEach(n => {
-          n.handle = row.tradeIds.includes(n.userTradeId) ? true : false
+          n.handle = this.currentOrder.tradeIds.includes(n.userTradeId) ? true : false
         })
         this.enquiryOrderData = list
+
+        if (this.dialogOrderEdit.currentRow) {
+          this.dialogOrderEdit.currentRow = list.find(n => n.userTradeId === this.dialogOrderEdit.currentRow.userTradeId)
+        }
       });
     }
   },
   mounted() {
+    this.orderDate = moment(new Date()).format('YYYY-MM-DD')
     this.dispatchUserColumn();
     this.loadInitData()
   }
@@ -473,6 +526,12 @@ export default {
 
 .el-table tbody tr:hover>td {
   background-color: unset !important //修改成自己想要的颜色即可
+}
+
+.gd-green-row {
+  .el-button--text {
+    color: #fff;
+  }
 }
 
 // .el-table--enable-row-hover .el-table__body tr:hover>td {

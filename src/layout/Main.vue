@@ -2,7 +2,7 @@
   <div class="form-container height100percent">
     <div>
       <title-bar>
-        <i slot="right_bar" @click="openMoreThis(`/simulation/chat`)"
+        <i slot="right_bar" v-if="setAuth('system:order:edit')" @click="openMoreThis(`/simulation/chat`)"
           class="el-icon-chat-dot-round noDrag txt-white right_bar"></i>
       </title-bar>
     </div>
@@ -34,6 +34,8 @@
 import Topbar from './Topbar'
 import Sidebar from './Sidebar'
 import MainContent from './Content'
+import { commMixin } from "@/utils/commMixin";
+import { pageMixin } from "@/utils/pageMixin";
 import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'Layout',
@@ -42,6 +44,7 @@ export default {
     Sidebar,
     MainContent
   },
+  mixins: [pageMixin, commMixin],
   computed: {
     ...mapState({
       asideLeftWidth: state => state.asideLeftWidth,

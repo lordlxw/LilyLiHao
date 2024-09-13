@@ -192,3 +192,12 @@ export const getDatesInRange = (startDate, endDate, fmt) => {
   }
   return dateArray;
 };
+
+export const copyTextToClipboard = async text => {
+  try {
+    await navigator.clipboard.writeText(text);
+    console.log("Text copied to clipboard");
+  } catch (err) {
+    console.error("Failed to copy: ", err);
+  }
+};

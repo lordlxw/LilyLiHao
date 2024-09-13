@@ -132,6 +132,18 @@ export default {
       method: "post"
     });
   },
+  /**
+   * 成交单撤单
+   * @param {*} params
+   * @returns
+   */
+  cancelRealTrade(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/cancelRealTrade?usertradeId`,
+      data: params,
+      method: "post"
+    });
+  },
   inquiryCancelRequest(params) {
     return request({
       url: `${Vue.prototype.$apiUrl}/usertrade/cancelrequest?usertradeId=${params.usertradeId}`,
@@ -353,6 +365,27 @@ export default {
     return request({
       url: `${Vue.prototype.$apiUrl}/chatMessage`,
       method: "get"
+    });
+  },
+  hijackChat(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/chatMessage/hijackChat`,
+      method: "post",
+      data: params
+    });
+  },
+  lockUserTrade(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/lock`,
+      method: "post",
+      data: params
+    });
+  },
+  unlockUserTrade(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/usertrade/unlock`,
+      method: "post",
+      data: params
     });
   },
   getChatMessagesByCondition(params) {
