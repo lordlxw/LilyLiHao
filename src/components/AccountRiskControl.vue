@@ -3,14 +3,14 @@
     <el-row>
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
-          <span style="color: #0103ff">总允亏：{{ riskControlData["minProfitAlltime"] }}</span>
+          <span style="color: #0103ff">总允亏：{{ riskControlData["minProfitAlltime"] || '*' }}</span>
           万
         </div>
       </el-col>
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           总盈亏：<span :style="calcToColor(riskControlData['profitAlltime'])">{{
-            riskControlData["profitAlltime"]
+            riskControlData["profitAlltime"] || '-'
           }}</span>
           万
         </div>
@@ -18,7 +18,7 @@
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           <span style="color: #0103ff">
-            日允亏：{{ riskControlData["minProfitDaily"] }}
+            日允亏：{{ riskControlData["minProfitDaily"] || '-' }}
           </span>
           万
         </div>
@@ -27,7 +27,7 @@
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content ">
           日实盈：<span :style="calcToColor(riskControlData['solidProfit'])">{{
-            riskControlData["solidProfit"]
+            riskControlData["solidProfit"] || '-'
           }}</span>
           万
         </div>
@@ -35,7 +35,7 @@
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content ">
           日浮盈：<span :style="calcToColor(riskControlData['floatProfit'])">{{
-            riskControlData["floatProfit"]
+            riskControlData["floatProfit"] || '-'
           }}</span>
           万
         </div>
@@ -43,7 +43,7 @@
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content ">
           费用：<span>{{
-            riskControlData["totalFee"]
+            riskControlData["totalFee"] || '-'
           }}</span>
           万
         </div>
@@ -58,28 +58,28 @@
     <el-row>
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
-          <span style="color: #0103ff">日允撤：{{ riskControlData["minBackDaily"] }}</span>
+          <span style="color: #0103ff">日允撤：{{ riskControlData["minBackDaily"] || '-' }}</span>
           万
         </div>
       </el-col>
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           日回撤：<span :style="calcToColor(riskControlData['back'])">{{
-            riskControlData["back"]
+            riskControlData["back"] || '-'
           }}</span>
           万
         </div>
       </el-col>
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
-          <span style="color: #0103ff">加权限仓：{{ riskControlData["maxVolume"] }}</span>
+          <span style="color: #0103ff">加权限仓：{{ riskControlData["maxVolume"] || '-' }}</span>
           万
         </div>
       </el-col>
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           加权买仓：<span style="color: #4b6c19">{{
-            riskControlData["currentBid"]
+            riskControlData["currentBid"] || '-'
           }}</span>
           万
         </div>
@@ -88,7 +88,7 @@
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content ">
           加权卖仓：<span style="color: #974f1a">{{
-            riskControlData["currentOffer"]
+            riskControlData["currentOffer"] || '-'
           }}</span>
           万
         </div>
@@ -96,7 +96,7 @@
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content ">
           当前可买：<span style="color: #4b6c19">{{
-            riskControlData["limitBid"]
+            riskControlData["limitBid"] || '-'
           }}</span>
           万
         </div>
@@ -104,7 +104,7 @@
       <el-col :style="{ width: itemWidth / 24 * 100 + '%' }">
         <div class="grid-content">
           当前可卖：<span style="color: #974f1a">{{
-            riskControlData["limitOffer"]
+            riskControlData["limitOffer"] || '-'
           }}</span>
           万
         </div>
@@ -160,6 +160,9 @@ export default {
   },
   methods: {
     initRiskControlData() {
+      if (this.userInfo && ((this.userInfo.permissions && this.userInfo.permissions[0] === "*:*:*") || this.userInfo.permissions.indexOf('system:risk:edit') !== -1)) {
+        return
+      }
       api.accountRiskControl({ userId: this.userId || this.userInfo.userId }).then(res => {
         if (res && res.code === '00000' && res.value) {
           this.riskControlData = res.value

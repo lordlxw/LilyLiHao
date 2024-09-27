@@ -57,15 +57,16 @@
                     </div>
                     <el-divider></el-divider>
                 </el-header>
-                <div class="el-main" ref="scrollContainer">
+                <div class="el-main" ref="scrollContainer" id="scrollContainer">
                     <div v-for="(item, i) in messages" class="main_item"
-                        :class="item.tradeId == highlight ? 'main_item_highlight' : ''" :key="i"
-                        v-if="item.brokerId == mine.brokerid && item.channelId == mine.channelId">
+                        :class="(item.tradeId == highlight || item.id == highlight) ? 'main_item_highlight' : ''"
+                        :key="i" v-if="item.brokerId == mine.brokerid && item.channelId == mine.channelId"
+                        :id="'message_' + item.id">
                         <el-row>
                             <el-col :span="asideShow ? 2 : 3" v-if="item.direction === 1">
                                 <div class="demo-basic--circle">
                                     <div class="block"><el-avatar :size="40">{{ mine.company && mine.company.substr(0,
-                                            1) }}</el-avatar>
+                                        1) }}</el-avatar>
                                     </div>
                                 </div>
                             </el-col>
@@ -343,8 +344,15 @@ export default {
             }
             this.$nextTick(() => {
                 if (this.highlight && !this.scrollBottm) {
-                    let index = this.messages.filter(item => item.brokerId === this.mine.brokerid && item.channelId === this.mine.channelId).findIndex(item => item.tradeId === this.highlight);
-                    this.scrollToBottom(79 * index);
+                    const brokerMsgs = this.messages.filter(item => item.brokerId === this.mine.brokerid && item.channelId === this.mine.channelId)
+                    let index = brokerMsgs.findIndex(item => item.tradeId === this.highlight || item.id === this.highlight);
+                    const targetDom = document.getElementById('message_' + brokerMsgs[index].id)
+                    const container = document.getElementById('scrollContainer')
+                    // const container = this.$refs.scrollContainer;
+                    container.scrollTo(0, targetDom.offsetTop - container.offsetTop - 10);
+
+                    // let index = this.messages.filter(item => item.brokerId === this.mine.brokerid && item.channelId === this.mine.channelId).findIndex(item => item.tradeId === this.highlight);
+                    // this.scrollToBottom(79 * index);
                     this.scrollBottm = true;
                 } else {
                     this.scrollToBottom(-1);
@@ -361,7 +369,6 @@ export default {
                     tradeDateEnd: tradeDateEnd,
                 }).then(({ code, rows }) => {
                     const list = rows.filter(n => n.brokerId === this.mine.brokerid && n.channelId === this.mine.channelId && !([2, 3, 5, 6, 13].indexOf(n.status) > 0))
-                    console.log(this.mine)
                     if (list.length > 0) {
                         this.dialogVisible = {
                             title: '提示',
@@ -376,6 +383,8 @@ export default {
                                     this.dialogVisible.show = false;
                                     this.chatDate = `${util.dateFormat(new Date(), "YYYY-MM-DD")} 00:00:00`;
                                     this.dateChange()
+
+                                    window.v1.sendWinMsg({ id: "main", fun: 'window-send', data: { action: 'refreshData' } });
                                 }
                             }
                         }
@@ -392,6 +401,8 @@ export default {
                                     this.dialogVisible.show = false;
                                     this.chatDate = `${util.dateFormat(new Date(), "YYYY-MM-DD")} 00:00:00`;
                                     this.dateChange()
+
+                                    window.v1.sendWinMsg({ id: "main", fun: 'window-send', data: { action: 'refreshData' } });
                                 }
                             }
                         }
@@ -410,6 +421,8 @@ export default {
                             this.dialogVisible.show = false;
                             this.chatDate = `${util.dateFormat(new Date(), "YYYY-MM-DD")} 00:00:00`;
                             this.dateChange()
+
+                            window.v1.sendWinMsg({ id: "main", fun: 'window-send', data: { action: 'refreshData' } });
                         }
                     }
                 }
@@ -431,12 +444,11 @@ export default {
         if (window.v1) {
             console.log("=============================")
             window.v1.ipcRenderer().On("window-send", (event, data) => {
-                const { row, hijack } = data;
+                const { row, hijack, message } = data;
                 console.log(data)
                 if (row) {
                     this.highlight = row.userTradeId;
                     this.scrollBottm = false;
-                    window.v1.focus()
                     const asideItem = this.asideItems.find(element => (element.brokerid === row.brokerId && element.channelId === row.channelId));
                     this.chatDate = `${util.dateFormat(row.createTime || new Date(), "YYYY-MM-DD")} 00:00:00`;
                     this.$emit('changAsideItem', asideItem, this.chatDate)
@@ -455,6 +467,12 @@ export default {
                             }
                         }
                     }
+                } else if (message) {
+                    this.highlight = message.id;
+                    this.scrollBottm = false;
+                    const asideItem = this.asideItems.find(element => (element.brokerid === message.brokerId && element.channelId === message.channelId));
+                    this.chatDate = `${util.dateFormat(message.createTime || new Date(), "YYYY-MM-DD")} 00:00:00`;
+                    this.$emit('changAsideItem', asideItem, this.chatDate)
                 }
             })
         }

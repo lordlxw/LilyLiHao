@@ -271,7 +271,9 @@ export default {
                     title: '系统通知',
                     message: '你收到了一笔新的工单，请及时查看！',
                     type: 'warning',
-                    offset: 40
+                    position: 'top-right',
+                    offset: 35,
+                    customClass: 'custom-notify-class'
                   });
                   break
                 case 'rank':

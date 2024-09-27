@@ -150,7 +150,7 @@
                       : "复制"
                 }}</el-button>
               <el-popover v-if="
-                ['0', '1', '4', 23].indexOf(scope.row.status.toString()) !== -1 &&
+                [0, 1, 4, 8, 23].indexOf(scope.row.status) !== -1 &&
                 setAuth('inquiry:cancel')
               " placement="bottom-end" :ref="`popover-cancel-${scope.$index}`">
                 <p>

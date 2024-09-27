@@ -130,6 +130,7 @@ export default {
                       const minWidth = Math.ceil(maxWidth * 0.7);
                       const minHeight = Math.ceil(minWidth * 0.6);
                       const args = {
+                        id: 'main',
                         width: minWidth, // 窗口宽度
                         height: minHeight, // 窗口高度
                         isMainWin: true,

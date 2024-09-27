@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :inline="true" ref="coverForm" :model="coverForm" :rules="coverFormRules" label-width="100px">
+    <el-form :inline="true" ref="coverForm" :model="coverForm" :rules="coverFormRules" label-width="100px" v-loading="loading">
       <el-form-item label="方向" prop="direction">
         {{
           coverForm.direction === "bond_0"
@@ -177,7 +177,8 @@ export default {
           { required: true, message: '允许浮动必填', trigger: 'blur' },
           { validator: floatTest, trigger: 'blur' }
         ]
-      }
+      },
+      loading: false
     }
   },
   computed: {
@@ -189,9 +190,9 @@ export default {
     }),
   },
   watch: {
-    // row: function () {
-    //   this.loadInitData()
-    // },
+    row: function () {
+      this.loadInitData()
+    },
     occupyInfo() {
       this.getIntendComerList(this.occupyInfo)
     }
@@ -227,6 +228,7 @@ export default {
     submitForm: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          this.loading = true;
           api.bondsCover({
             // 交割速度
             deliverySpeed: this[formName].deliverySpeed,
@@ -253,6 +255,7 @@ export default {
             brokerid: this[formName].brokerid,
             relativeNum: this[formName].relativeNum
           }).then(res => {
+            this.loading = false;
             if (res && res.code === '00000' && res.value) {
               this.$message({
                 message: `平仓询价单创建成功`,
@@ -328,7 +331,7 @@ export default {
     },
     // 加载初始值
     loadInitData() {
-      console.log(this.row)
+      console.log(this.row.price)
       this.coverForm.direction = this.row.direction === 'bond_1' ? 'bond_0' : (this.row.direction === 'bond_0' ? 'bond_1' : '')
       this.coverForm.tscode = this.row.tscode
       this.coverForm.price = this.row.price

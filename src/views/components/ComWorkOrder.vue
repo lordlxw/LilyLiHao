@@ -1,7 +1,7 @@
 <!-- 用户汇总 -->
 <template>
   <div class="content">
-    <div class="list">
+    <div class="list" @dragover="dragOver" @drop="drop">
       <div class="do mb10">
         <el-row>
           <el-col :span="12">
@@ -83,7 +83,20 @@
     </div>
     <div class="list">
       <div class="do mb10">
-        <el-tag type="success" class="mr20">可能关联的订单</el-tag>
+        <el-row>
+          <el-col :span="12">
+            <el-tag type="success" class="mr20">可能关联的订单</el-tag>
+          </el-col>
+          <el-col :span="12" class="text-right">
+            <template>
+              <el-select v-model="brokerItem" placeholder="请选择" @change="brokerChange()">
+                <el-option v-for="item in userInfo.brokers" :key="item.brokerid" :label="item.company"
+                  :value="item.brokerid">
+                </el-option>
+              </el-select>
+            </template>
+          </el-col>
+        </el-row>
       </div>
       <el-table v-swipe-copy v-loading="loading" :data="enquiryOrderData" tooltip-effect="dark" style="width: 100%"
         :height="height * 0.4 - 40" :header-row-style="{ height: '30px', lineHeight: '30px' }"
@@ -110,7 +123,7 @@
       </el-table>
     </div>
     <el-dialog title="订单异常处理" width="500px;" :visible.sync="dialogOrderEdit.visible" append-to-body
-      :destroy-on-close="true" :close-on-click-modal="false">
+      :before-close="dialogOrderEditClose" :destroy-on-close="true" :close-on-click-modal="false">
       <order-edit :currentRow="dialogOrderEdit.currentRow" @refreshData="inquiryQuery"></order-edit>
     </el-dialog>
     <main-socket></main-socket>
@@ -128,12 +141,10 @@ import * as util from "@/utils/util";
 import OrderEdit from '@/components/OrderEdit.vue'
 import MainSocket from '@/components/SocketElectron.vue'
 import moment from "moment";
-let tableFinishClassName = "";
 export default {
   props: {
     height: Number,
     searchParam: Object,
-    userSummary: []
   },
   mixins: [pageMixin, commMixin],
   components: {
@@ -158,7 +169,9 @@ export default {
       },
       orderDate: '',
       showMyOrder: 1,
-      currentOrder: null
+      currentOrder: null,
+      userSummary: [],
+      brokerItem: 2
     };
   },
   watch: {
@@ -191,16 +204,16 @@ export default {
   methods: {
     // 已平仓行样式
     table1RowFinishClassName({ row, rowIndex }) {
-      if (row.handle) {
-        return "gd-green-row list-row"
+      let tableFinishClassName = 'list-row';
+      if (row.hidenRow) {
+        tableFinishClassName += ' hiden-row'
       }
-
-      if (row.solidProfit > 0) {
-        tableFinishClassName = "gd-green-row";
+      if (row.solidProfit > 0 || row.handle) {
+        tableFinishClassName += " gd-green-row";
       } else {
-        tableFinishClassName = "even-row";
+        tableFinishClassName += " even-row";
       }
-      return tableFinishClassName + ' list-row';
+      return tableFinishClassName;
     },
     tableRowFinishClassName({ row, rowIndex }) {
       let tableRowClassName = 'list-row';
@@ -250,6 +263,10 @@ export default {
         })
       }
     },
+    dialogOrderEditClose(done) {
+      const { lock } = this.dialogOrderEdit.currentRow;
+      lock ? this.$message.error('请解锁询价单后关闭！') : done()
+    },
     orderEdit(row) {
       this.dialogOrderEdit.visible = true;
       this.dialogOrderEdit.currentRow = row;
@@ -272,6 +289,25 @@ export default {
       });
       // this.loadInitData();
     },
+    getUserSummarys() {
+      apiAdmin.getUserSummarys({
+        userId: this.setAuth('system:alltrans:query') ? '' : this.userInfo.userId,
+        roles: []
+      }).then(response => {
+        const { code, value } = response;
+        if (code === "00000" && value) {
+          this.userSummary = response.value.map(n => {
+            return { ...n, solidProfit: util.moneyFormat(n.solidProfit, 4) }
+          });
+        } else {
+          this.tableData = [];
+          this.$message({
+            message: `${response.message}`,
+            type: "warning"
+          });
+        }
+      })
+    },
     // 初始化数据
     loadInitData() {
       this.loading = true;
@@ -279,7 +315,26 @@ export default {
       apiAdmin.findWorkOrder({ createTime }).then(response => {
         const { code, value } = response;
         if (code === "00000" && value) {
-          let data = value.map(n => {
+          let data = [];
+          // const groupBystatus = util.groupArrayToMap(value, item => item.status, item => item)
+          // Array.from(groupBystatus.entries()).forEach(([key, val]) => {
+          //   let vals = val.map(n => {
+          //     if (this.showMyOrder === 1 && n.reviewedBy !== this.userInfo.userId && n.status !== 0) {
+          //       n.hidenRow = true;
+          //     } else {
+          //       n.hidenRow = false;
+          //     }
+          //     return { ...n }
+          //   });
+          //   vals.sort((a, b) => {
+          //     const dateA = new Date(a.createTime);
+          //     const dateB = new Date(b.createTime);
+          //     return dateB - dateA;
+          //   })
+          //   data = [...data, ...vals]
+          // })
+
+          let vals = value.map(n => {
             if (this.showMyOrder === 1 && n.reviewedBy !== this.userInfo.userId && n.status !== 0) {
               n.hidenRow = true;
             } else {
@@ -287,9 +342,16 @@ export default {
             }
             return { ...n }
           });
-          data.sort((a, b) => a.status - b.status)
+          vals.sort((a, b) => {
+            const dateA = new Date(a.createTime);
+            const dateB = new Date(b.createTime);
+            return dateB - dateA;
+          })
+          data = [...data, ...vals]
           this.tableData = data;
           this.$emit("init", value)
+
+          this.inquiryQuery()
         } else {
           this.tableData = [];
           this.$message({
@@ -299,6 +361,27 @@ export default {
         }
         this.loading = false;
       })
+    },
+    dragOver(event) {
+      // 阻止浏览器默认操作，允许drop事件发生
+      event.preventDefault();
+    },
+    drop(event) {
+      // 阻止浏览器默认操作
+      event.preventDefault();
+      const data = event.dataTransfer.getData('text/plain');
+      console.log(JSON.parse(data))
+      const { id } = JSON.parse(data)
+      const param = {
+        status: 1,
+        messageId: id,
+        remarks: "管理员认定对话消息异常！",
+        type: 0,
+        tradeIds: "",
+        reviewedBy: this.userInfo.userId,
+        weight: 100
+      }
+      api.chatWorkOrderSave(param)
     },
     // 更新记录表
     cellStyleUpdate(row, column, rowIndex, columnIndex) {
@@ -339,9 +422,15 @@ export default {
         case "tscode":
           return row.tscode.replace(/.IB/, "");
         case "createBy":
-          return this.userSummary.lenght > 0 ? '666' : row.createBy;
-        case "minProfitAlltime":
-          return row.minProfitAlltime + 'w';
+          return this.userSummary.length > 0 ? this.userSummary.find(n => n.userId === row.createBy).nickName : '--';
+        case "reviewedBy":
+          return this.userSummary.find(n => n.userId === row.reviewedBy) ? this.userSummary.find(n => n.userId === row.reviewedBy).nickName : '--';
+        case "messageId":
+          return row.messageId || '--';
+        case "tradeIds":
+          return row.tradeIds || '--';
+        case "type":
+          return row.type === 0 ? '人工' : '系统';
       }
       return row[column.property];
     },
@@ -366,7 +455,7 @@ export default {
         case "tscode":
           return row.tscode.replace(/.IB/, "");
         case "createBy":
-          return this.userSummary.lenght > 0 ? '666' : row.createBy;
+          return this.userSummary.lenght > 0 ? '---' : row.createBy;
         case "minProfitAlltime":
           return row.minProfitAlltime + 'w';
       }
@@ -380,9 +469,18 @@ export default {
         }
       })
     },
+    brokerChange(tradeIds = '') {
+      console.log(this.brokerItem)
+      let list = this.enquiryOrderData
+      list.forEach(n => {
+        n.handle = this.currentOrder.tradeIds.includes(n.userTradeId) ? true : false
+        n.hidenRow = n.brokerId !== this.brokerItem ? true : false;
+      })
+      this.enquiryOrderData = [...list];
+    },
     inquiryQuery(row) {
       // console.log(row)
-      this.currentOrder = row || this.currentOrder;
+      this.currentOrder = row || { createTime: this.orderDate, tradeIds: [] };
       this.enquiryOrderData = []
       const tradeDateStart = moment(this.currentOrder.createTime).format("YYYY-MM-DD"); // 创建一个新的日期对象，以免修改原始日期
       const tradeDateEnd = moment(this.currentOrder.createTime).add(1, 'days').format("YYYY-MM-DD");
@@ -390,9 +488,11 @@ export default {
         tradeDateStart: tradeDateStart,
         tradeDateEnd: tradeDateEnd,
       }).then(({ code, rows }) => {
-        let list = rows.filter(n => n.createBy === this.currentOrder.createBy)
+        // let list = rows.filter(n => n.createBy === this.currentOrder.createBy)
+        let list = rows
         list.forEach(n => {
           n.handle = this.currentOrder.tradeIds.includes(n.userTradeId) ? true : false
+          n.hidenRow = n.brokerId !== this.brokerItem ? true : false;
         })
         this.enquiryOrderData = list
 
@@ -404,6 +504,7 @@ export default {
   },
   mounted() {
     this.orderDate = moment(new Date()).format('YYYY-MM-DD')
+    this.getUserSummarys()
     this.dispatchUserColumn();
     this.loadInitData()
   }

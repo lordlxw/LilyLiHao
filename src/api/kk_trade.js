@@ -409,6 +409,20 @@ export default {
       data
     });
   },
+  updateChatMessages(data, id) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/chatMessage/${id}`,
+      method: "put",
+      data
+    });
+  },
+  chatWorkOrderSave(data) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/chatWorkOrder`,
+      method: "post",
+      data
+    });
+  },
   messageConsumed(data) {
     return request({
       url: `${Vue.prototype.$apiUrl}/qpinform/messageconsumed`,

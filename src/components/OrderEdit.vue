@@ -185,7 +185,7 @@ export default {
       } else {
         const { code } = await api.lockUserTrade(param);
         if (code === '00000') {
-          this.resultDisplay = 1;
+          // this.resultDisplay = 1;
           this.$emit("refreshData")
         }
       }
@@ -206,7 +206,8 @@ export default {
         deliveryTime: util.dateFormat(this.currentRow.deliveryTime, "YYYY-MM-DD 00:00:00"),
         counterParty: this.currentRow.counterParty,
         contactPerson: this.currentRow.contactPerson,
-        contactType: this.currentRow.contactType
+        contactType: this.currentRow.contactType,
+        releaseChannel: true
       }
       param.volume = this.dataForm.volume
       console.log(param, this.currentRow)
@@ -228,6 +229,17 @@ export default {
         }
       })
     }),
+  },
+  mounted() {
+    if (window.v1) {
+      window.v1.ipcRenderer().On("window-send", (event, data) => {
+        const { action } = data;
+        console.log(data)
+        if (action === "refreshData") {
+          this.$emit(action)
+        }
+      })
+    }
   },
   created() {
     this.initRowSteps()

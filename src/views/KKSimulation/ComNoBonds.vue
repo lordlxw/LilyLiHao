@@ -750,16 +750,18 @@ export default {
       const self = this;
       apiBondPool.businessList(params).then(res => {
         if (res.code === "00000") {
+          var currentRow = this.currentRow;
           switch (params.bidtype) {
             case 1:
               self.businessOutList = res.value;
-              self.currentRow.price = self.funcGetBestPrice("max", res.value);
+              currentRow.price = self.funcGetBestPrice("max", res.value);
               break;
             case 0:
               self.businessInList = res.value;
-              self.currentRow.price = self.funcGetBestPrice("min", res.value);
+              currentRow.price = self.funcGetBestPrice("min", res.value);
               break;
           }
+          this.currentRow = { ...currentRow }
           self.dialogBondsCoverFormVisible = true;
         }
       });
