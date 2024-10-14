@@ -278,20 +278,21 @@ export default {
       this.totalFloatProfit = this.riskInfo.floatProfit;
     },
     userId() {
-      let tableDatas = this.tableData
-      tableDatas.forEach(n => {
-        n.children.forEach(c => {
-          console.log((this.userId && c.yanjiuyuanId === this.userId), c.yanjiuyuanId, this.userId)
-          if (this.userId && c.yanjiuyuanId !== this.userId) {
-            n.hidenRow = true;
-            c.hidenRow = true;
-          } else {
-            n.hidenRow = false;
-            c.hidenRow = false;
-          }
-        })
-      });
-      this.tableData = [...tableDatas];
+      this.loadInitData();
+      // let tableDatas = this.tableData
+      // tableDatas.forEach(n => {
+      //   n.children.forEach(c => {
+      //     console.log((this.userId && c.yanjiuyuanId === this.userId), c.yanjiuyuanId, this.userId)
+      //     if (this.userId && c.yanjiuyuanId !== this.userId) {
+      //       n.hidenRow = true;
+      //       c.hidenRow = true;
+      //     } else {
+      //       n.hidenRow = false;
+      //       c.hidenRow = false;
+      //     }
+      //   })
+      // });
+      // this.tableData = [...tableDatas];
     }
   },
   computed: {
@@ -516,6 +517,10 @@ export default {
     // 初始化数据（未平）
     loadInitData(sort) {
       this.loading = true;
+      this.totalFloatProfit = 0;
+      this.noBondsBuyVolumn = 0;
+      this.noBondsSaleVolumn = 0;
+
       api
         .get({
           deliveryDateEnd: null,
@@ -526,7 +531,8 @@ export default {
           userName: null,
           userTradeId: null,
           orderBy: sort ? sort.field : "create_time",
-          isAsc: sort ? sort.asc : false
+          isAsc: sort ? sort.asc : false,
+          userBy: this.userId
         })
         .then(response => {
           if (response && response.code === 200 && response.rows) {

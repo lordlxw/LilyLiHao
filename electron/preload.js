@@ -62,23 +62,36 @@ contextBridge.exposeInMainWorld("v1", {
   getNetwork: () => {
     var os = require("os");
 
-    var networkInterfaces = os.networkInterfaces();
-    for (var i in networkInterfaces) {
-      for (var j in networkInterfaces[i]) {
-        if (
-          networkInterfaces[i][j]["family"] === "IPv4" &&
-          networkInterfaces[i][j]["mac"] !== "00:00:00:00:00:00" &&
-          networkInterfaces[i][j]["address"] !== "127.0.0.1"
-        ) {
-          sessionStorage.mac = networkInterfaces[i][j]["mac"];
-        }
-      }
-    }
-    // if (os.networkInterfaces().WLAN) {
-    //   sessionStorage.mac = os.networkInterfaces().WLAN[0].mac;
-    // } else {
-    //   sessionStorage.mac = os.networkInterfaces()["以太网"][0].mac;
+    // var networkInterfaces = os.networkInterfaces();
+    // for (var i in networkInterfaces) {
+    //   for (var j in networkInterfaces[i]) {
+    //     if (
+    //       networkInterfaces[i][j]["family"] === "IPv4" &&
+    //       networkInterfaces[i][j]["mac"] !== "00:00:00:00:00:00" &&
+    //       networkInterfaces[i][j]["address"] !== "127.0.0.1"
+    //     ) {
+    //       sessionStorage.mac = networkInterfaces[i][j]["mac"];
+    //     }
+    //   }
     // }
+    const isZeroMac = mac => {
+      return /^(0{1,2}[:-]){5}0{1,2}$/.test(mac);
+    };
+    const getMac = (family = "IPv4") => {
+      const nif = os.networkInterfaces();
+      for (const list of Object.values(nif)) {
+        const item = list.find(
+          d =>
+            !d.internal &&
+            !isZeroMac(d.mac) &&
+            (!d.family || d.family === family)
+        );
+        if (item) return item.mac;
+      }
+
+      return "";
+    };
+    sessionStorage.mac = getMac()
     sessionStorage.name = os.hostname();
     return { mac: sessionStorage.mac, name: os.hostname() };
   },

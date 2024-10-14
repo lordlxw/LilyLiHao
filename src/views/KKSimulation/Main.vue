@@ -31,7 +31,7 @@
         </el-row>
       </div>
       <div class="mb10 risk-control">
-        <account-risk-control :userId="currentUserId"></account-risk-control>
+        <account-risk-control :userId="currentUserId" :child="child"></account-risk-control>
       </div>
       <div class="list mb10" :style="{ height: _itemStyle(0) + 'px' }" v-if="activeName == 0">
         <el-table v-swipe-copy="handleSwipeOrDblClick" v-loading="loading" ref="multipleTable" :data="tableData"
@@ -639,13 +639,14 @@ export default {
         if (this.searchParam) {
           // this.loadInitData(this.searchParam)
           this.currentUserId = this.searchParam.userIds[0];
-          this.tableData.forEach(n => {
-            if (this.currentUserId && n.createBy !== this.currentUserId) {
-              n.hidenRow = true;
-            } else {
-              n.hidenRow = false;
-            }
-          });
+          this.loadInitData(this.searchParam)
+          // this.tableData.forEach(n => {
+          //   if (this.currentUserId && n.createBy !== this.currentUserId) {
+          //     n.hidenRow = true;
+          //   } else {
+          //     n.hidenRow = false;
+          //   }
+          // });
         }
       },
       deep: true,
@@ -757,7 +758,8 @@ export default {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
         orderBy: sort ? sort.field : 'create_time',
-        isAsc: sort ? sort.asc : false
+        isAsc: sort ? sort.asc : false,
+        userBy: this.currentUserId
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
           this.tableData = response.rows;

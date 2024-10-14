@@ -121,6 +121,13 @@ export default {
       }
     });
   },
+  updateTradeState(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/chatWorkOrder/tradeState/modify`,
+      method: "post",
+      data: params
+    });
+  },
   /**
    * 撤单
    * @param {*} params
@@ -192,7 +199,8 @@ export default {
         // 交易ID
         userTradeId: params.userTradeId,
         orderBy: params.orderBy,
-        isAsc: params.isAsc
+        isAsc: params.isAsc,
+        userBy: params.userBy
         // 当前页
         // pageNum: params.pageNum,
         // 显示条数

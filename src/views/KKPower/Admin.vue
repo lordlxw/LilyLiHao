@@ -30,11 +30,11 @@
             <template slot-scope="scope">
               <el-button v-if="setAuth('system:user:edit')" type="text"
                 @click="handleEdit(scope.row, '/power/tablehead')">设置表头</el-button>
-              <el-popover v-if="setAuth('user:disable')" placement="bottom-end"
+              <el-popover v-if="setAuth('user:disable') && ['0', '1', '2', '3', '4'].includes(scope.row.status)" placement="bottom-end"
                 :ref="`popover-disabled-${scope.$index}`">
                 <p>
                   确认<span class="color-red">{{
-                    scope.row.disabled ? "启用" : "禁用"
+                    scope.row.status === 4 ? "启用" : "禁用"
                   }}</span>“<span class="color-main">{{ scope.row.userName }}</span>”？
                 </p>
                 <div style="text-align: right">
@@ -54,7 +54,7 @@
                 @click="handleResetPasswordDialog(scope)">重置密码</el-button>
               <el-button v-if="setAuth('system:user:edit')" type="text"
                 @click="handleEdit(scope.row, '/power/admin/edit')">修改</el-button>
-              <el-popover v-if="setAuth('system:user:remove')" placement="bottom-end"
+              <!-- <el-popover v-if="setAuth('system:user:remove') " placement="bottom-end"
                 :ref="`popover-delete-${scope.$index}`">
                 <p>
                   确认要<span class="color-red">删除</span>“<span class="color-main">{{ scope.row.userName }}</span>”？
@@ -69,7 +69,7 @@
                   <el-button type="text" @click="handleDelete(scope)">确认</el-button>
                 </div>
                 <el-button type="text" slot="reference">删除</el-button>
-              </el-popover>
+              </el-popover> -->
             </template>
           </el-table-column>
         </el-table>
@@ -187,7 +187,7 @@ export default {
     handleDisabling: debounce(function (scope) {
       api.updateStatus({
         userId: scope.row.userId,
-        status: scope.row.status === '1' ? '0' : '1',
+        status: scope.row.status === '4' ? '0' : '4',
       }).then((response) => {
         if (response && response.code === "00000") {
           this.$message({

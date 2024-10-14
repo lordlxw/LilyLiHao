@@ -17,7 +17,8 @@ export default {
         tradeNum: params.tradeNum,
         tscode: params.tscode,
         userName: params.userName,
-        userTradeId: params.userTradeId
+        userTradeId: params.userTradeId,
+        userBy: params.userBy
       }
     });
   },
@@ -36,7 +37,8 @@ export default {
         tradeNum: params.tradeNum,
         tscode: params.tscode,
         userName: params.userName,
-        userTradeId: params.userTradeId
+        userTradeId: params.userTradeId,
+        userBy: params.userBy
       }
     });
   },

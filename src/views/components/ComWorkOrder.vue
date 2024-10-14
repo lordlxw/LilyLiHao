@@ -117,14 +117,17 @@
         <el-table-column fixed="right" label="操作" algin="center" width="150px">
           <template slot-scope="scope">
             <el-button type="text" v-if="setAuth('system:order:edit')" @click="viewChat(scope.row)">查看会话</el-button>
+            <!-- && (!tradeIsLock || scope.row.lock) -->
             <el-button type="text" v-if="setAuth('system:order:edit')" @click="orderEdit(scope.row)">异常处理</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <el-dialog title="订单异常处理" width="500px;" :visible.sync="dialogOrderEdit.visible" append-to-body
-      :before-close="dialogOrderEditClose" :destroy-on-close="true" :close-on-click-modal="false">
-      <order-edit :currentRow="dialogOrderEdit.currentRow" @refreshData="inquiryQuery"></order-edit>
+      class="orderEditDialog " :before-close="dialogOrderEditClose" :destroy-on-close="true"
+      :close-on-click-modal="false">
+      <order-edit :currentRow="dialogOrderEdit.currentRow" @refreshData="inquiryQuery"
+        :userSummary="userSummary"></order-edit>
     </el-dialog>
     <main-socket></main-socket>
   </div>
@@ -171,7 +174,8 @@ export default {
       showMyOrder: 1,
       currentOrder: null,
       userSummary: [],
-      brokerItem: 2
+      brokerItem: 2,
+      tradeIsLock: false
     };
   },
   watch: {
@@ -208,7 +212,9 @@ export default {
       if (row.hidenRow) {
         tableFinishClassName += ' hiden-row'
       }
-      if (row.solidProfit > 0 || row.handle) {
+      if (row.lock) {
+        tableFinishClassName += " gd-red-row";
+      } else if (row.solidProfit > 0 || row.handle) {
         tableFinishClassName += " gd-green-row";
       } else {
         tableFinishClassName += " even-row";
@@ -430,7 +436,7 @@ export default {
         case "tradeIds":
           return row.tradeIds || '--';
         case "type":
-          return row.type === 0 ? '人工' : '系统';
+          return config.funcKeyValue(row.type.toString(), "orderTypes");
       }
       return row[column.property];
     },
@@ -490,9 +496,13 @@ export default {
       }).then(({ code, rows }) => {
         // let list = rows.filter(n => n.createBy === this.currentOrder.createBy)
         let list = rows
+        this.tradeIsLock = false;
         list.forEach(n => {
           n.handle = this.currentOrder.tradeIds.includes(n.userTradeId) ? true : false
           n.hidenRow = n.brokerId !== this.brokerItem ? true : false;
+          if (n.lock) {
+            this.tradeIsLock = true;
+          }
         })
         this.enquiryOrderData = list
 
@@ -513,8 +523,17 @@ export default {
 <style lang="scss" scoped>
 @import "@/assets/css/style.scss";
 
+.orderEditDialog {
+
+  >>>.el-dialog__body {
+    max-height: 68vh;
+    overflow-y: scroll;
+  }
+}
+
 .content {
   height: 100%;
+
   // background-color: $body-main-box;
 
   .list {

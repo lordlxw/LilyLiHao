@@ -348,16 +348,7 @@ export default {
       this.loadInitDataFinish()
     },
     userId() {
-      let tableData = this.tableDataFinish;
-      tableData.forEach(n => {
-        if (this.userId && n.yanjiuyuanId !== this.userId) {
-          n.hidenRow = true;
-        } else {
-          n.hidenRow = false;
-        }
-      });
-      this.tableDataFinish = [];
-      this.tableDataFinish = tableData;
+      this.loadInitDataFinish()
     }
   },
   computed: {
@@ -549,6 +540,9 @@ export default {
     // 初始化已平仓数据
     loadInitDataFinish(sort) {
       this.loading = true;
+      this.buyVolumn = 0;
+      this.saleVolumn = 0;
+      this.totalProfit = 0;
       api.getFinish({
         deliveryDateEnd: null,
         deliveryDateStart: null,
@@ -558,7 +552,8 @@ export default {
         userName: null,
         userTradeId: null,
         orderBy: sort ? sort.field : 'create_time',
-        isAsc: sort ? sort.asc : false
+        isAsc: sort ? sort.asc : false,
+        userBy: this.userId
       }).then((response) => {
         if (response && response.code === 200 && response.rows) {
           // 获取表格第一行汇总的数据字段

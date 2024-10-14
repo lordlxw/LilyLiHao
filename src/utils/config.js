@@ -44,6 +44,31 @@ export default {
     '22': '已关闭',
     '23': '修改中', // 询价单修改中
   },
+  updateUserTrade: [{
+    value: 3,
+    label: '已成交',
+    handle: [5, 4, 6, 1]
+  },
+  {
+    value: 1,
+    label: '已接收',
+    handle: [5, 4, 6, 3]
+  },
+  {
+    value: 4,
+    label: '部分成交',
+    handle: [5, 4, 6, 3, 1]
+  },
+  {
+    value: 6,
+    label: '部分撤单',
+    handle: [5, 4, 6, 3, 1]
+  },
+  {
+    value: 5,
+    label: '已撤单',
+    handle: [4, 6, 3, 1]
+  }],
   // 交易单交割状态
   bondStatus: {
     '0': '未交割',
@@ -83,7 +108,8 @@ export default {
     '1': '预警',
     '2': '锁定',
     '3': '冻结',
-    '4': '删除'
+    '4': '删除',
+    '5': '劫持'
   },
   // 工单状态
   orderStatus: {
@@ -91,6 +117,12 @@ export default {
     '1': '已接收',
     '2': '已处理',
     '3': '拒收',
+  },
+  // 工单类型
+  orderTypes: {
+    '0': '普通异常',
+    '1': '询价单异常',
+    '2': '成交单异常',
   },
   // 违约类型
   breakTypeOptions: {

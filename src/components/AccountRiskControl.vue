@@ -118,7 +118,8 @@ import { mapGetters, mapState } from 'vuex';
 import api from "@/api/kk_trade";
 export default {
   props: {
-    userId: null
+    userId: null,
+    child: true
   },
   data() {
     return {
@@ -155,15 +156,17 @@ export default {
       this.riskControlData = this.riskInfo
     },
     userId() {
+      console.log("account-risk-control :: ", this.userId)
       this.initRiskControlData()
     }
   },
   methods: {
     initRiskControlData() {
-      if (this.userInfo && ((this.userInfo.permissions && this.userInfo.permissions[0] === "*:*:*") || this.userInfo.permissions.indexOf('system:risk:edit') !== -1)) {
+      if (this.userInfo && ((this.userInfo.permissions && this.userInfo.permissions[0] === "*:*:*"))) {
         return
       }
-      api.accountRiskControl({ userId: this.userId || this.userInfo.userId }).then(res => {
+      let userId = this.child ? this.userId : this.userInfo.userId;
+      userId && api.accountRiskControl({ userId: userId }).then(res => {
         if (res && res.code === '00000' && res.value) {
           this.riskControlData = res.value
         }

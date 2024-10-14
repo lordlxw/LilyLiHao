@@ -575,6 +575,7 @@ a:hover {
 
 .custom-scrollbar::-webkit-scrollbar,
 .el-dialog__wrapper::-webkit-scrollbar,
+.el-dialog__body::-webkit-scrollbar,
 .el-scrollbar__wrap::-webkit-scrollbar,
 .el-table__body-wrapper::-webkit-scrollbar {
   width: 8px;
@@ -586,6 +587,7 @@ a:hover {
 /* 自定义滚动条的背景色 */
 .custom-scrollbar::-webkit-scrollbar-track,
 .el-dialog__wrapper::-webkit-scrollbar-track,
+.el-dialog__body::-webkit-scrollbar-track,
 .el-scrollbar__wrap::-webkit-scrollbar-track,
 .el-table__body-wrapper::-webkit-scrollbar-track {
   // background: #f1f1f1;
@@ -596,6 +598,7 @@ a:hover {
 /* 自定义滚动条的滑块颜色 */
 .custom-scrollbar::-webkit-scrollbar-thumb,
 .el-dialog__wrapper::-webkit-scrollbar-thumb,
+.el-dialog__body::-webkit-scrollbar-thumb,
 .el-scrollbar__wrap::-webkit-scrollbar-thumb,
 .el-table__body-wrapper::-webkit-scrollbar-thumb {
   background: #555 !important;
@@ -606,6 +609,7 @@ a:hover {
 /* 当鼠标悬停在滚动条上时，自定义滑块的颜色 */
 .custom-scrollbar::-webkit-scrollbar-thumb:hover,
 .el-dialog__wrapper::-webkit-scrollbar-thumb:hover,
+.el-dialog__body::-webkit-scrollbar-thumb:hover,
 .el-scrollbar__wrap::-webkit-scrollbar-thumb:hover,
 .el-table__body-wrapper::-webkit-scrollbar-thumb:hover {
   background: #888 !important;
@@ -615,6 +619,7 @@ a:hover {
 
 /** 设置表格内设的滚动条宽度，适应动态计算 */
 .el-dialog__wrapper,
+.el-dialog__body,
 .el-table__body-wrapper,
 .el-scrollbar__wrap {
   &::-webkit-scrollbar {
