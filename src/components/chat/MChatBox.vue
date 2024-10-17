@@ -453,25 +453,31 @@ export default {
                     this.chatDate = `${util.dateFormat(row.createTime || new Date(), "YYYY-MM-DD")} 00:00:00`;
                     this.$emit('changAsideItem', asideItem, this.chatDate)
                 } else if (hijack) {
-                    const { target, brokerId, channelId } = hijack;
+                    const { brokerId, channelId } = hijack;
                     const asideItem = this.asideItems.find(n => n.brokerid === brokerId && n.channelId === channelId)
                     this.chatDate = `${util.dateFormat(new Date(), "YYYY-MM-DD")} 00:00:00`;
                     this.$emit('changAsideItem', asideItem, this.chatDate)
                     if (asideItem.occupyier !== this.userInfo.userId) {
-                        this.dialogVisible = {
-                            title: '提示',
-                            show: true,
-                            message: `您是否需要强行占用中介：${target}, 当前中介状态${asideItem.occupyier == null ? '空闲中！' : '正在交易中，强行占用可能会影响交易！'}`,
-                            fun: () => {
-                                this.hijackChat(0)
-                            }
-                        }
+                        this.hijackChat(0)
+                        // this.dialogVisible = {
+                        //     title: '提示',
+                        //     show: true,
+                        //     message: `您是否需要强行占用中介：${target}, 当前中介状态${asideItem.occupyier == null ? '空闲中！' : '正在交易中，强行占用可能会影响交易！'}`,
+                        //     fun: () => {
+                        //         this.hijackChat(0)
+                        //     }
+                        // }
                     }
                 } else if (message) {
                     this.highlight = message.id;
                     this.scrollBottm = false;
                     const asideItem = this.asideItems.find(element => (element.brokerid === message.brokerId && element.channelId === message.channelId));
-                    this.chatDate = `${util.dateFormat(message.createTime || new Date(), "YYYY-MM-DD")} 00:00:00`;
+                    let date = new Date()
+                    if (message.createTime.year) {
+                        const { year, monthValue, dayOfMonth } = message.createTime;
+                        date = year + "-" + monthValue + "-" + dayOfMonth
+                    }
+                    this.chatDate = `${util.dateFormat(date, "YYYY-MM-DD")} 00:00:00`;
                     this.$emit('changAsideItem', asideItem, this.chatDate)
                 }
             })

@@ -5,8 +5,9 @@
       <div class="do mb10">
         <el-row>
           <el-col :span="12">
-            <el-tag type="success" class="mr20">已处理: <b>{{ 0 }}</b></el-tag>
-            <el-tag type="danger" class="mr20">未处理: <b>{{ 0 }}</b></el-tag>
+            <el-tag type="success" class="mr20">已处理: <b>{{ tableData.filter(n => n.status === 2 && n.reviewedBy ===
+              userInfo.userId).length }}</b></el-tag>
+            <el-tag type="danger" class="mr20">未处理: <b>{{ tableData.filter(n => n.status === 0).length }}</b></el-tag>
           </el-col>
           <el-col :span="12" class="text-right">
             <template>
@@ -30,8 +31,9 @@
       </div>
       <el-table v-swipe-copy v-loading="loading" :data="tableData" tooltip-effect="dark" style="width: 100%"
         :height="height * 0.6 - 88" :header-row-style="{ height: '30px', lineHeight: '30px' }"
-        header-cell-class-name="list-row" :header-cell-style="{ background: '#f8f8f8' }" :key="Math.random()"
-        :cell-style="cellStyleUpdate" :row-class-name="tableRowFinishClassName">
+        @cell-dblclick="handleCellDblClick" header-cell-class-name="list-row"
+        :header-cell-style="{ background: '#f8f8f8' }" :key="Math.random()" :cell-style="cellStyleUpdate"
+        :row-class-name="tableRowFinishClassName">
         <template v-for="itemHead in tableHead">
           <el-table-column v-if="itemHead.show" :sortable="itemHead.sortable" :key="itemHead.label"
             :align="itemHead.align" :prop="itemHead.prop" :formatter="itemHead.formatter
@@ -89,7 +91,7 @@
           </el-col>
           <el-col :span="12" class="text-right">
             <template>
-              <el-select v-model="brokerItem" placeholder="请选择" @change="brokerChange()">
+              <el-select v-model="brokerItem" placeholder="请选择" @change="brokerChange()" multiple collapse-tags>
                 <el-option v-for="item in userInfo.brokers" :key="item.brokerid" :label="item.company"
                   :value="item.brokerid">
                 </el-option>
@@ -174,7 +176,7 @@ export default {
       showMyOrder: 1,
       currentOrder: null,
       userSummary: [],
-      brokerItem: 2,
+      brokerItem: [],
       tradeIsLock: false
     };
   },
@@ -193,7 +195,6 @@ export default {
       deep: true,
     },
     chatWorkOrder() {
-      console.log(this.chatWorkOrder)
       this.loadInitData();
     }
   },
@@ -206,6 +207,42 @@ export default {
     }),
   },
   methods: {
+    handleCellDblClick(row, column, cell, event) {
+      if (column.property === 'messageId' && row.brokerId && window.v1) {
+        window.v1.hasWinsById('chat').then((bool) => {
+          const message = { ...row, id: row.messageId }
+          if (bool) {
+            window.v1.focusByID('chat')
+            window.v1.sendWinMsg({ id: "chat", fun: 'window-send', data: { message } });
+          } else {
+            window.v1.getAllDisplays().then((response) => {
+              console.log(response)
+              const maxWidth = Math.max(...response.map(display => display.bounds.width));
+              const maxHeight = Math.max(...response.map(display => display.bounds.height));
+
+              const minWidth = (maxWidth / 2) - 10 <= 500 ? 500 : (maxWidth / 2) - 300;
+              const minHeight = maxHeight / 3 + 300;
+              const args = {
+                id: 'chat',
+                width: minWidth, // 窗口宽度
+                height: minHeight, // 窗口高度
+                minWidth: minWidth, // 窗口最小宽度
+                minHeight: minHeight, // 窗口最小高度
+                isMainWin: false,
+                resize: false, // 是否支持缩放
+                maximize: false, // 最大化窗口
+                isMultiWin: false, // 是否支持多开窗口
+                route: "/simulation/chat"
+              }
+              window.v1.createWin(args)
+              setTimeout(() => {
+                window.v1.sendWinMsg({ id: "chat", fun: 'window-send', data: { message } });
+              }, 1500)
+            })
+          }
+        })
+      }
+    },
     // 已平仓行样式
     table1RowFinishClassName({ row, rowIndex }) {
       let tableFinishClassName = 'list-row';
@@ -377,7 +414,7 @@ export default {
       event.preventDefault();
       const data = event.dataTransfer.getData('text/plain');
       console.log(JSON.parse(data))
-      const { id } = JSON.parse(data)
+      const { id, brokerId, channelId } = JSON.parse(data)
       const param = {
         status: 1,
         messageId: id,
@@ -385,7 +422,9 @@ export default {
         type: 0,
         tradeIds: "",
         reviewedBy: this.userInfo.userId,
-        weight: 100
+        weight: 100,
+        brokerId,
+        channelId
       }
       api.chatWorkOrderSave(param)
     },
@@ -423,8 +462,8 @@ export default {
           return util.moneyFormat(row.price, 4);
         case "realPrice":
           return row.realPrice ? util.moneyFormat(row.realPrice, 4) : "--";
-        case "realVolume":
-          return row.realVolume ? row.realVolume : "--";
+        case "broker":
+          return row.brokerId ? this.userInfo.brokers.find(n => n.brokerid === row.brokerId && n.channelId === row.channelId).company : "--";
         case "tscode":
           return row.tscode.replace(/.IB/, "");
         case "createBy":
@@ -476,11 +515,12 @@ export default {
       })
     },
     brokerChange(tradeIds = '') {
-      console.log(this.brokerItem)
       let list = this.enquiryOrderData
       list.forEach(n => {
         n.handle = this.currentOrder.tradeIds.includes(n.userTradeId) ? true : false
-        n.hidenRow = n.brokerId !== this.brokerItem ? true : false;
+        if (this.brokerItem.length > 0) {
+          n.hidenRow = this.brokerItem.includes(n.brokerId) ? false : true;
+        }
       })
       this.enquiryOrderData = [...list];
     },
@@ -488,6 +528,13 @@ export default {
       // console.log(row)
       this.currentOrder = row || { createTime: this.orderDate, tradeIds: [] };
       this.enquiryOrderData = []
+
+      // if (this.currentOrder.type === 1) {
+
+      // } else {
+      //   this.brokerItem = this.currentOrder.brokerId || this.brokerItem
+      // }
+
       const tradeDateStart = moment(this.currentOrder.createTime).format("YYYY-MM-DD"); // 创建一个新的日期对象，以免修改原始日期
       const tradeDateEnd = moment(this.currentOrder.createTime).add(1, 'days').format("YYYY-MM-DD");
       api.inquiryQuery({
@@ -496,10 +543,14 @@ export default {
       }).then(({ code, rows }) => {
         // let list = rows.filter(n => n.createBy === this.currentOrder.createBy)
         let list = rows
+        this.brokerItem = this.currentOrder.brokerId ? [this.currentOrder.brokerId] : [];
+
         this.tradeIsLock = false;
         list.forEach(n => {
-          n.handle = this.currentOrder.tradeIds.includes(n.userTradeId) ? true : false
-          n.hidenRow = n.brokerId !== this.brokerItem ? true : false;
+          n.handle = this.currentOrder.tradeIds.includes(n.userTradeId) ? true : false;
+          if (this.brokerItem.length > 0) {
+            n.hidenRow = this.brokerItem.includes(n.brokerId) ? false : true;
+          }
           if (n.lock) {
             this.tradeIsLock = true;
           }

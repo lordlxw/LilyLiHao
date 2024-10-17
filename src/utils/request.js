@@ -69,7 +69,7 @@ service.interceptors.response.use(
       });
     } else if (error.toString().indexOf("500") !== -1) {
       Message({
-        message: "服务器异常（500）",
+        message: error.response.data.message || "服务器异常（500）",
         type: "warning",
         durations: 3 * 1000
       });

@@ -66,7 +66,7 @@
             {{ currentRow.price }}
           </template>
           <template v-if="viewWork == 1">
-            <el-input-number class="ipt-volume" v-model="dataForm.price" :precision="4" :step="0.001"
+            <el-input-number class="ipt-volume" v-model="dataForm.price" :precision="4" :step="0.0005"
               placeholder="请输入价格" step-strictly></el-input-number>
           </template>
         </el-descriptions-item>
@@ -78,15 +78,15 @@
           </template>
         </el-descriptions-item>
         <el-descriptions-item label="期望成交量" v-if="viewWork == 1">
-          <template v-if="turnoverInput">
+          <!-- <template v-if="turnoverInput">
             <el-input-number class="ipt-volume" v-model="dataForm.turnover" :step="1000" :min="0"
               :max="parseInt(currentRow.volume)" step-strictly></el-input-number>
-          </template>
+          </template> -->
         </el-descriptions-item>
         <el-descriptions-item label="是否强平">
           <el-tag size="small">{{ currentRow.qiangpingId ? '是' : '否' }}</el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="交割速度" :span="4">{{ dataForm.deliverySpeed }}</el-descriptions-item>
+        <el-descriptions-item label="交割速度" :span="4">{{ currentRow.deliverySpeed }}</el-descriptions-item>
 
       </el-descriptions>
       <el-descriptions v-if="![4, 6, 3].includes(dataForm.target) && currentRow.children.length > 0"
@@ -107,7 +107,7 @@
         <el-descriptions-item :label="'子成交单' + index">{{ chid.tradeNum || 'XJ_0000_00_00_0000@0'
           }}</el-descriptions-item>
         <el-descriptions-item label="成交价">
-          <el-input-number class="ipt-volume" v-model="chid.price" :precision="4" :step="0.001" placeholder="请输入价格"
+          <el-input-number class="ipt-volume" v-model="chid.price" :precision="4" :step="0.0005" placeholder="请输入价格"
             step-strictly></el-input-number>
         </el-descriptions-item>
         <el-descriptions-item label="成交量">
@@ -224,6 +224,12 @@ export default {
             value.sort(function (a, b) {
               return moment(a.createTime).diff(moment(b.createTime))
             })
+            // this.tradeSteps = value.map(n => {
+            //   console.log(this.userSummary.find(n => n.userId === n.createBy))
+            //   const nickName = this.userSummary ? this.userSummary.find(n => n.userId === n.createBy).nickName : n.createBy;
+            //   return { ...n, nickName }
+            // })
+
             this.tradeSteps = value
           }
         })
@@ -300,8 +306,8 @@ export default {
       this.dataForm.realTrades = []
     }),
     handleInquiryDealConfirmClick: debounce(function () {
-      let sum = this.currentRow.children.length > 0 ? this.currentRow.children.map(n => parseInt(n.volume)).reduce((a, b) => { return a + b; }) : 0;
-      sum = sum + (this.dataForm.realTrades.length > 0 ? this.dataForm.realTrades.map(n => n.volume).reduce((a, b) => { return a + b; }) : 0);
+      // let sum = this.currentRow.children.length > 0 ? this.currentRow.children.map(n => parseInt(n.volume)).reduce((a, b) => { return a + b; }) : 0;
+      let sum = (this.dataForm.realTrades.length > 0 ? this.dataForm.realTrades.map(n => n.turnover).reduce((a, b) => { return a + b; }) : 0);
       if (sum > this.currentRow.volume) {
         this.$message({
           message: "成交量异常",
@@ -326,7 +332,14 @@ export default {
           })
           this.viewWork = 0;
           this.resultDisplay = 1;
-          this.dataForm.target = null;
+          this.dataForm = {
+            turnover: 0,
+            target: null,
+            current: null,
+            price: 0,
+            userTradeId: null,
+            realTrades: []
+          };
           this.$emit("refreshData")
         } else {
           this.$message({
