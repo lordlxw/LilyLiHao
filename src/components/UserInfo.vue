@@ -47,7 +47,7 @@
                                 <span>{{ userInfo.createTime }}</span>
                             </el-col>
                             <el-col :span="6" class="detail-item">
-                                <el-link type="info" @click="openMoreThis(`/simulation/dashboard`)">查看更多信息</el-link>
+                                <el-link v-if="showInfo" type="info" @click="openMoreThis(`/simulation/dashboard`)">查看更多信息</el-link>
                             </el-col>
                         </el-row>
                     </div>
@@ -69,7 +69,8 @@ export default {
         userInfo: {
             type: Object,
             required: true
-        }
+        },
+        showInfo: true
     },
     methods: {
         getStatusStr(status) {

@@ -14,6 +14,8 @@
                 <div class="grid-content-r">
                     <slot name="right_bar" class="slot"></slot>
                     <i @click="minimize" class="el-icon-minus"></i>
+                    <i v-if="isMaximize" @click="maximize"
+                        :class="isMaximized ? 'el-icon-copy-document' : 'el-icon-full-screen'"></i>
                     <i @click="close" class="el-icon-close"></i>
                 </div>
             </el-col>
@@ -26,12 +28,14 @@ import apiLogin from '@/api/kk_login'
 export default {
     name: 'CustomTitleBar',
     props: {
-        bgColor: ''
+        bgColor: '',
+        isMaximize: false,
         // 其他自定义属性
     },
     data() {
         return {
-            backgroundColor: '#303133'
+            backgroundColor: '#303133',
+            isMaximized: false
         }
     },
     watch: {
@@ -39,6 +43,10 @@ export default {
     methods: {
         minimize() {
             window.v1.minimize()
+        },
+        maximize() {
+            window.v1.maximize();
+            this.isMaximized = window.v1.isMaximized()
         },
         close() {
             if (window.v1 && window.v1.isElectron()) {
@@ -69,6 +77,7 @@ export default {
     created() {
         console.log('页面显示或重新激活');
         if (window.v1) {
+            this.isMaximized = window.v1.isMaximized()
             if (window.v1.isFocusedWindow) {
                 if (this.$route.path.includes("klinevertical")) {
                     this.backgroundColor = "#bb9113"
@@ -84,6 +93,10 @@ export default {
             window.v1.ipcRenderer().On("window-blurred", () => {
                 this.backgroundColor = "#303133"
             })
+
+            window.v1.ipcRenderer().On('window-maximized', () => {
+                this.isMaximized = true;
+            });
         }
     }
 };

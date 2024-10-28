@@ -1,7 +1,15 @@
 <template>
   <div class="form-container height100percent">
     <div>
-      <title-bar>
+      <title-bar :isMaximize="true">
+        <div slot="left_bar">
+          <el-popover placement="bottom-end" width="500" trigger="hover">
+            <user-Info :showInfo="false" :userInfo="userInfo"></user-Info>
+            <i slot="reference" class="el-icon-user-solid noDrag txt-white left_bar"></i>
+          </el-popover>
+          <!-- <i class="el-icon-user-solid noDrag txt-white left_bar"></i> -->
+          <!-- <span class="left_span">{{ userInfo.userName }}</span> -->
+        </div>
         <i slot="right_bar" v-if="setAuth('system:order:edit')" @click="openMoreThis(`/simulation/chat`)"
           class="el-icon-chat-dot-round noDrag txt-white right_bar"></i>
       </title-bar>
@@ -36,20 +44,25 @@ import Sidebar from './Sidebar'
 import MainContent from './Content'
 import { commMixin } from "@/utils/commMixin";
 import { pageMixin } from "@/utils/pageMixin";
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapGetters } from 'vuex'
+import UserInfo from '@/components/UserInfo.vue'
 export default {
   name: 'Layout',
   components: {
     Topbar,
     Sidebar,
-    MainContent
+    MainContent,
+    UserInfo
   },
   mixins: [pageMixin, commMixin],
   computed: {
     ...mapState({
       asideLeftWidth: state => state.asideLeftWidth,
       isCollapse: state => state.isCollapse,
-    })
+    }),
+    ...mapGetters({
+      userInfo: "getUserInfo",
+    }),
   },
   data() {
     return {
@@ -180,7 +193,8 @@ export default {
   }
 }
 
-.right_bar {
+.right_bar,
+.left_bar {
   width: 40px;
   height: 40px;
   font-size: 18px;

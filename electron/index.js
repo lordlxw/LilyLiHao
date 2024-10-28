@@ -214,6 +214,9 @@ class MultiWindows {
     win.on("blur", () => {
       win.webContents.send("window-blurred");
     });
+    win.on('maximize', () => {
+      win.webContents.send('window-maximized');
+    });
     this.registerShortcut();
     remote.enable(win.webContents);
   }

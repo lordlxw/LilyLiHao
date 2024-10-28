@@ -472,10 +472,14 @@ export default {
                     this.highlight = message.id;
                     this.scrollBottm = false;
                     const asideItem = this.asideItems.find(element => (element.brokerid === message.brokerId && element.channelId === message.channelId));
-                    let date = new Date()
-                    if (message.createTime.year) {
-                        const { year, monthValue, dayOfMonth } = message.createTime;
-                        date = year + "-" + monthValue + "-" + dayOfMonth
+                    let date = new Date();
+                    if (message.createTime) {
+                        if (message.createTime.year) {
+                            const { year, monthValue, dayOfMonth } = message.createTime;
+                            date = year + "-" + monthValue + "-" + dayOfMonth
+                        } else {
+                            date = message.createTime
+                        }
                     }
                     this.chatDate = `${util.dateFormat(date, "YYYY-MM-DD")} 00:00:00`;
                     this.$emit('changAsideItem', asideItem, this.chatDate)

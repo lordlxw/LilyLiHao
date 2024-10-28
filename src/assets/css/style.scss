@@ -298,6 +298,10 @@ a:hover {
   padding-bottom: 10px;
 }
 
+.mr5 {
+  margin-right: 5px;
+}
+
 .mr10 {
   margin-right: 10px;
 }
@@ -692,6 +696,13 @@ a:hover {
   background-color: rgba(110, 110, 110, 0.62);
 }
 
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: normal;
+  max-width: 500px;
+}
 
 .text-center {
   text-align: center;
@@ -765,3 +776,7 @@ a:hover {
 //   color: white;
 //   border: 1px solid #00da3c;
 // }
+
+.el-tooltip__popper{
+  max-width: 80vw;
+}

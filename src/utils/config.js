@@ -47,27 +47,32 @@ export default {
   updateUserTrade: [{
     value: 3,
     label: '已成交',
-    handle: [5, 4, 6, 1]
+    handle: [5, 4, 6, 1, 23]
   },
   {
     value: 1,
     label: '已接收',
-    handle: [5, 4, 6, 3]
+    handle: [5, 4, 6, 3, 23]
   },
   {
     value: 4,
     label: '部分成交',
-    handle: [5, 4, 6, 3, 1]
+    handle: [5, 4, 6, 3, 1, 23]
   },
   {
     value: 6,
     label: '部分撤单',
-    handle: [5, 4, 6, 3, 1]
+    handle: [5, 4, 6, 3, 1, 23]
   },
   {
     value: 5,
     label: '已撤单',
-    handle: [4, 6, 3, 1]
+    handle: [4, 6, 3, 1, 23]
+  },
+  {
+    value: 23,
+    label: '改价中',
+    handle: []
   }],
   // 交易单交割状态
   bondStatus: {
@@ -344,6 +349,7 @@ export default {
     realVolume: { label: '成交量', prop: 'realVolume', width: '60', align: 'left', show: true },
     restVolume: { label: '剩余询量', prop: 'restVolume', width: '70', align: 'left', show: true },
     realDeliverySpeed: { label: '成清算速度', prop: 'realDeliverySpeed', width: '140', align: 'left', show: true },
+    createuser: { label: '研究员', prop: 'createuser', width: '140', align: 'left', show: true },
     xunjiaTime: { label: '询价时间', prop: 'xunjiaTime', width: '146', align: 'left', show: true },
     tradeTime2: { label: '成交时间2', prop: 'tradeTime2', width: '146', align: 'left', show: true },
     updateTime: { label: '修改时间', prop: 'updateTime', width: '146', align: 'left', show: true },

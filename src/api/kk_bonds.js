@@ -95,6 +95,26 @@ export default {
       }
     });
   },
+  bondsCoverAgain(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/realtrade/qiangping`,
+      method: "post",
+      data: {
+        // 交割速度
+        deliverySpeed: params.deliverySpeed,
+        // 交割日期
+        deliveryTime: params.deliveryTime,
+        // 方向
+        direction: params.direction,
+        // 债券编号
+        tscode: params.tscode,
+        // 交易员ID
+        userId: params.userId,
+        // 成交量
+        volume: params.volume,
+      }
+    });
+  },
   /**
    * 交易员列表查询
    * @param {*} params

@@ -25,6 +25,14 @@ contextBridge.exposeInMainWorld("v1", {
     const win = remote.getCurrentWindow();
     return win.minimize();
   },
+  maximize: () => {
+    const win = remote.getCurrentWindow();
+    return win.isMaximized() ? win.unmaximize() : win.maximize();
+  },
+  isMaximized: () => {
+    const win = remote.getCurrentWindow();
+    return win.isMaximized();
+  },
   focus: () => {
     const win = remote.getCurrentWindow();
     return win.focus();

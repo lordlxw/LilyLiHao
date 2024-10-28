@@ -5,12 +5,13 @@
         <el-step v-for="item in tradeSteps" :key="item.id" :title="`${item.operation}:${item.createBy}`"
           :description="item.createTime | dateFormat('YYYY-MM-DD HH:mm:ss')">
           <template slot="title">
-            <!-- <div class="ellipsis" :v-tooltip="`${item.operation}:${item.createBy}`"></div> -->
-            <el-tooltip class="item" effect="dark" :content="`${item.operation}:${item.createBy}`"
-              placement="bottom-start">
+            <el-tooltip v-if="userSummary" class="item" effect="dark" :content="`${item.operation}:${item.createBy === 0 ? '系统' : userSummary.find(n => n.userId ===
+              item.createBy).nickName}`" placement="bottom-start">
               <div>{{ item.operation }}:{{
-                item.createBy }}</div>
+                item.createBy === 0 ? '系统' : userSummary.find(n => n.userId ===
+                  item.createBy).nickName }}</div>
             </el-tooltip>
+            <div v-else class="ellipsis" :v-tooltip="`${item.operation}:${item.createBy}`">{{item.operation}}</div>
           </template>
         </el-step>
         <!-- <el-step title="步骤2" description="这是一段很长很长很长的描述性文字"></el-step>
@@ -45,9 +46,9 @@
             {{ funcFormat(currentRow.status.toString(),
               "inquiryStatus") }}
           </template>
-          <template v-if="viewWork == 1 && [5, 4, 6, 3, 1].includes(currentRow.status)">
+          <template v-if="viewWork == 1 && [5, 4, 6, 3, 1, 23].includes(currentRow.status)">
             {{ funcFormat(currentRow.status.toString(),
-              "inquiryStatus") }} ->
+              "inquiryStatus") }} <i class="el-icon-d-arrow-right mr5"></i>
             <el-select v-model="dataForm.target" placeholder="请选择" class="ipt-el-select">
               <el-option v-for="item in updateUserTrade" :key="item.value"
                 v-if="item.handle.includes(currentRow.status)" :label="item.label" :value="item.value">

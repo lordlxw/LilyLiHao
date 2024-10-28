@@ -1,7 +1,7 @@
 <!-- 用户汇总 -->
 <template>
   <div class="content">
-    <div class="list" @dragover="dragOver" @drop="drop">
+    <div class="list" v-if="pageOrder == 0" @dragover="dragOver" @drop="drop" v-loading="loading">
       <div class="do mb10">
         <el-row>
           <el-col :span="12">
@@ -29,11 +29,10 @@
           : 'success'
           " class="mr20" v-if="setAuth('reward:datatotal')">总盈亏：<b>{{ rewardFloatProfit }}</b></el-tag> -->
       </div>
-      <el-table v-swipe-copy v-loading="loading" :data="tableData" tooltip-effect="dark" style="width: 100%"
-        :height="height * 0.6 - 88" :header-row-style="{ height: '30px', lineHeight: '30px' }"
-        @cell-dblclick="handleCellDblClick" header-cell-class-name="list-row"
-        :header-cell-style="{ background: '#f8f8f8' }" :key="Math.random()" :cell-style="cellStyleUpdate"
-        :row-class-name="tableRowFinishClassName">
+      <el-table v-swipe-copy :data="tableData" tooltip-effect="dark" style="width: 100%" :height="height - 55"
+        :header-row-style="{ height: '30px', lineHeight: '30px' }" @cell-dblclick="handleCellDblClick"
+        header-cell-class-name="list-row" :header-cell-style="{ background: '#f8f8f8' }" :key="Math.random()"
+        :cell-style="cellStyleUpdate" :row-class-name="OrderTableRowClassName">
         <template v-for="itemHead in tableHead">
           <el-table-column v-if="itemHead.show" :sortable="itemHead.sortable" :key="itemHead.label"
             :align="itemHead.align" :prop="itemHead.prop" :formatter="itemHead.formatter
@@ -55,7 +54,7 @@
             <el-button type="text" v-if="
               setAuth('system:order:edit') && scope.row.reviewedBy === userInfo.userId &&
               [1].indexOf(scope.row.status) !== -1
-            " @click="inquiryQuery(scope.row)">去处理</el-button>
+            " @click="goHandleOrder(scope.row)">去处理</el-button>
             <el-button type="text" v-if="
               setAuth('system:order:edit') && scope.row.reviewedBy === userInfo.userId &&
               [1].indexOf(scope.row.status) !== -1
@@ -83,14 +82,19 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="list">
+    <div class="list" v-if="pageOrder == 1">
       <div class="do mb10">
         <el-row>
           <el-col :span="12">
-            <el-tag type="success" class="mr20">可能关联的订单</el-tag>
+            <el-tag type="success" class="mr20" @click="pageOrder = 0"><i class="el-icon-back"></i></el-tag>
+            <el-tag type="success" class="mr20">可能关联的{{ tableSwitch === 0 ? '询价单' : '成交单' }}</el-tag>
+            <!-- <el-radio-group v-model="tableSwitch" size="mini">
+              <el-radio-button :label="0">询价单</el-radio-button>
+              <el-radio-button :label="1">成交单</el-radio-button>
+            </el-radio-group> -->
           </el-col>
           <el-col :span="12" class="text-right">
-            <template>
+            <template v-if="tableSwitch === 0">
               <el-select v-model="brokerItem" placeholder="请选择" @change="brokerChange()" multiple collapse-tags>
                 <el-option v-for="item in userInfo.brokers" :key="item.brokerid" :label="item.company"
                   :value="item.brokerid">
@@ -100,10 +104,128 @@
           </el-col>
         </el-row>
       </div>
+      <div class="current_work mt10 mb10">
+        <el-descriptions class="margin-top" title="" :column="4" size="small" border>
+          <!-- <template slot="extra">
+            <el-button type="primary" size="small">操作</el-button>
+          </template> -->
+          <el-descriptions-item>
+            <template slot="label">
+              工单类型
+            </template>
+            {{ config.funcKeyValue(currentOrder.type.toString(), "orderTypes") }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              异常中介
+            </template>
+            {{ currentOrder.brokerId ? userInfo.brokers.find(n => n.brokerid === currentOrder.brokerId && n.channelId
+              ===
+              currentOrder.channelId).company : "--" }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              申请人
+            </template>
+            {{ userSummary.length > 0 ? userSummary.find(n => n.userId === currentOrder.createBy).nickName : '--' }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              处理人
+            </template>
+            {{ userSummary.length > 0 && currentOrder.status != 0 ? userSummary.find(n => n.userId ===
+              currentOrder.reviewedBy).nickName : '--' }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              当前状态
+            </template>
+            <el-tag size="small"> {{ config.funcKeyValue(currentOrder.status.toString(), "orderStatus") }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              申请时间
+            </template>
+            {{ currentOrder.createTime }}
+          </el-descriptions-item>
+          <el-descriptions-item v-if="currentOrder.messageId">
+            <template slot="label">
+              聊天消息
+            </template>
+            <el-button type="primary" size="small"
+              @click="handleCellDblClick(currentOrder, { property: 'messageId' })">查看</el-button>
+          </el-descriptions-item>
+          <el-descriptions-item>
+            <template slot="label">
+              工单备注
+            </template>
+            <el-tooltip class="item" effect="dark" :content="currentOrder.remarks" placement="top-start">
+              <div class="text-ellipsis">{{ currentOrder.remarks }}</div>
+            </el-tooltip>
+          </el-descriptions-item>
+        </el-descriptions>
+      </div>
+
+      <el-table v-if="tableSwitch === 1" ref="noBondsTable" class="mb10" v-swipe-copy v-loading="loading"
+        :data="noBondsData" tooltip-effect="dark" style="width: 100%" :height="250" row-key="rowId"
+        header-cell-class-name="list-row" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        :row-class-name="noBondsTableRowClassName" :cell-class-name="noBondsTableCellNoBondsClassName"
+        :cell-style="noBondsCellStyle" :default-expand-all="defaultExpandAll"
+        :header-row-style="{ height: '30px', lineHeight: '30px' }" :header-cell-style="{ background: '#f8f8f8' }"
+        highlight-current-row>
+        <!-- :default-sort="{ prop: 'createTime', order: 'descending' }" -->
+        <el-table-column width="30"></el-table-column>
+        <!-- <el-table-column v-if="setAuth('nobonds:break')" type="selection" align="center" width="40"></el-table-column> -->
+        <template v-for="itemHead in noBondsTable">
+          <template v-if="itemHead.show">
+            <el-table-column :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop" :sortable="[
+              'createTime',
+              'tscode',
+              'tradeNum',
+              'deliveryTime',
+              'updateTime',
+              'tradeTime',
+            ].indexOf(itemHead.prop) !== -1
+              ? 'custom'
+              : false
+              " :formatter="itemHead.formatter
+                ? itemHead.formatter
+                : (row, column, cellValue, index) => {
+                  return cellValue;
+                }
+                " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''" :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false
+                  ">
+            </el-table-column>
+          </template>
+        </template>
+        <el-table-column></el-table-column>
+        <el-table-column fixed="right" align="center" label="操作" width="150">
+          <template slot-scope="scope">
+
+            <el-popover v-if="setAuth('system:order:edit') && scope.row.realTradeId === null" placement="bottom-end"
+              :ref="`popover-qiangping-${scope.$index}`">
+              <p>
+                确认要重新强平吗？
+              </p>
+              <div style="text-align: right">
+                <el-button type="text" @click="
+                  handlePopoverClose(
+                    scope,
+                    `popover-qiangping-${scope.$index}`
+                  )
+                  ">取消</el-button>
+                <el-button type="text" @click="qiangPing(scope)">确认</el-button>
+              </div>
+              <el-button type="text" slot="reference">重新强平</el-button>
+            </el-popover>
+          </template>
+        </el-table-column>
+      </el-table>
       <el-table v-swipe-copy v-loading="loading" :data="enquiryOrderData" tooltip-effect="dark" style="width: 100%"
-        :height="height * 0.4 - 40" :header-row-style="{ height: '30px', lineHeight: '30px' }"
-        header-cell-class-name="list-row" :header-cell-style="{ background: '#f8f8f8' }" :key="Math.random()"
-        :cell-style="cellStyleUpdate" :row-class-name="table1RowFinishClassName">
+        :height="tableSwitch === 0 ? height - 145 : height - 400"
+        :header-row-style="{ height: '30px', lineHeight: '30px' }" header-cell-class-name="list-row"
+        :header-cell-style="{ background: '#f8f8f8' }" :key="Math.random()" :cell-style="cellStyleUpdate"
+        :row-class-name="tableRowClassName">
         <template v-for="itemHead in enquiryOrder">
           <el-table-column v-if="itemHead.show" :sortable="itemHead.sortable" :key="itemHead.label"
             :align="itemHead.align" :prop="itemHead.prop" :formatter="itemHead.formatter
@@ -120,7 +242,12 @@
           <template slot-scope="scope">
             <el-button type="text" v-if="setAuth('system:order:edit')" @click="viewChat(scope.row)">查看会话</el-button>
             <!-- && (!tradeIsLock || scope.row.lock) -->
-            <el-button type="text" v-if="setAuth('system:order:edit')" @click="orderEdit(scope.row)">异常处理</el-button>
+            <el-button type="text"
+              v-if="setAuth('system:order:edit') && !currentOrder.tradeIds.includes(scope.row.userTradeId) && tableSwitch === 0"
+              @click="orderBind(scope.row)">绑定工单</el-button>
+            <el-button type="text"
+              v-if="setAuth('system:order:edit') && currentOrder.tradeIds.includes(scope.row.userTradeId) && tableSwitch === 0"
+              @click="orderEdit(scope.row)">异常处理</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -128,7 +255,7 @@
     <el-dialog title="订单异常处理" width="500px;" :visible.sync="dialogOrderEdit.visible" append-to-body
       class="orderEditDialog " :before-close="dialogOrderEditClose" :destroy-on-close="true"
       :close-on-click-modal="false">
-      <order-edit :currentRow="dialogOrderEdit.currentRow" @refreshData="inquiryQuery"
+      <order-edit :currentRow="dialogOrderEdit.currentRow" @refreshData="inquiryQuery(currentOrder)"
         :userSummary="userSummary"></order-edit>
     </el-dialog>
     <main-socket></main-socket>
@@ -139,6 +266,7 @@
 import { mapGetters, mapState } from 'vuex'
 import apiAdmin from "@/api/kk_power_admin";
 import api from "@/api/kk_trade";
+import apiBonds from "@/api/kk_bonds";
 import { pageMixin } from "@/utils/pageMixin";
 import { commMixin } from "@/utils/commMixin";
 import config from "@/utils/config";
@@ -161,8 +289,11 @@ export default {
       loading: false,
       // 表头
       tableHead: [],
+      noBondsTable: [],
+      defaultExpandAll: true,
       enquiryOrder: [],
       tableData: [],
+      noBondsData: [],
       enquiryOrderData: [],
       errorMsg: "",
       rewardBuyVolume: "",
@@ -177,7 +308,9 @@ export default {
       currentOrder: null,
       userSummary: [],
       brokerItem: [],
-      tradeIsLock: false
+      tradeIsLock: false,
+      pageOrder: 0,
+      tableSwitch: 1,
     };
   },
   watch: {
@@ -243,13 +376,12 @@ export default {
         })
       }
     },
-    // 已平仓行样式
-    table1RowFinishClassName({ row, rowIndex }) {
+    tableRowClassName({ row, rowIndex }) {
       let tableFinishClassName = 'list-row';
       if (row.hidenRow) {
         tableFinishClassName += ' hiden-row'
       }
-      if (row.lock) {
+      if ((row.lock && this.currentOrder.tradeIds.includes(row.userTradeId)) || (row.qiangpingId && row.status === 1 && this.tableSwitch === 1)) {
         tableFinishClassName += " gd-red-row";
       } else if (row.solidProfit > 0 || row.handle) {
         tableFinishClassName += " gd-green-row";
@@ -258,7 +390,7 @@ export default {
       }
       return tableFinishClassName;
     },
-    tableRowFinishClassName({ row, rowIndex }) {
+    OrderTableRowClassName({ row, rowIndex }) {
       let tableRowClassName = 'list-row';
       if (row.hidenRow) {
         tableRowClassName += ' hiden-row'
@@ -270,6 +402,44 @@ export default {
         tableRowClassName += " gd-green-row"
       }
       return tableRowClassName;
+    },
+    noBondsTableRowClassName({ row, rowIndex }) {
+      let tableRowClassName = 'list-row';
+      if (row.children) {
+        if (
+          moment(moment(row.deliveryTime).format("YYYY-MM-DD")).isBefore(
+            moment(new Date()).format("YYYY-MM-DD")
+          )
+        ) {
+          tableRowClassName += " history-row";
+        } else if (
+          moment(moment(row.deliveryTime).format("YYYY-MM-DD")).isSame(
+            moment(new Date()).format("YYYY-MM-DD")
+          )
+        ) {
+          tableRowClassName += " warning-row";
+        } else {
+          tableRowClassName += " success-row";
+        }
+      }
+
+      return tableRowClassName;
+    },
+    noBondsCellStyle(row, column, rowIndex, columnIndex) {
+      if (row.column.label === "方向") {
+        switch (row.row.direction) {
+          case "bond_1": // 卖出
+            return "color:#e88585";
+          case "bond_0": // 买入
+            return "color:#00da3c";
+        }
+      }
+    },
+    noBondsTableCellNoBondsClassName(row) {
+      // 交易号为null或者不是已交割状态不显示复选框
+      if (row.row.realTradeId === null || row.row.jiaogeStatus !== 1) {
+        return "myCell";
+      }
     },
     viewChat(row) {
       if (window.v1) {
@@ -314,6 +484,17 @@ export default {
       this.dialogOrderEdit.visible = true;
       this.dialogOrderEdit.currentRow = row;
     },
+    orderBind(row) {
+      let tradeIds = this.currentOrder.tradeIds;
+      if (!tradeIds.includes(row.userTradeId)) {
+        tradeIds = tradeIds ? tradeIds + "," + row.userTradeId : row.userTradeId
+        apiAdmin.saveAndUpdateWorkOrder({ id: this.currentOrder.id, tradeIds }).then(({ code }) => {
+          if (code === "00000") {
+            this.loadInitData()
+          }
+        })
+      }
+    },
     // 导出
     handleExport() { },
     // 获取用户模版id下设置的column
@@ -331,6 +512,23 @@ export default {
         this.enquiryOrder.push(value);
       });
       // this.loadInitData();
+
+      apiAdmin
+        .getUserColumn({
+          templateId: 2,
+          userId: null
+        })
+        .then(response => {
+          if (response && response.code === "00000") {
+            const headContent = JSON.parse(response.value.headContent);
+            for (let i = 0; i < headContent.length; i++) {
+              if (config.bondsHead[headContent[i]]) {
+                config.bondsHead[headContent[i]].formatter = this.funcNoBondsFormat;
+                this.noBondsTable.push(config.bondsHead[headContent[i]]);
+              }
+            }
+          }
+        });
     },
     getUserSummarys() {
       apiAdmin.getUserSummarys({
@@ -359,24 +557,6 @@ export default {
         const { code, value } = response;
         if (code === "00000" && value) {
           let data = [];
-          // const groupBystatus = util.groupArrayToMap(value, item => item.status, item => item)
-          // Array.from(groupBystatus.entries()).forEach(([key, val]) => {
-          //   let vals = val.map(n => {
-          //     if (this.showMyOrder === 1 && n.reviewedBy !== this.userInfo.userId && n.status !== 0) {
-          //       n.hidenRow = true;
-          //     } else {
-          //       n.hidenRow = false;
-          //     }
-          //     return { ...n }
-          //   });
-          //   vals.sort((a, b) => {
-          //     const dateA = new Date(a.createTime);
-          //     const dateB = new Date(b.createTime);
-          //     return dateB - dateA;
-          //   })
-          //   data = [...data, ...vals]
-          // })
-
           let vals = value.map(n => {
             if (this.showMyOrder === 1 && n.reviewedBy !== this.userInfo.userId && n.status !== 0) {
               n.hidenRow = true;
@@ -391,10 +571,11 @@ export default {
             return dateB - dateA;
           })
           data = [...data, ...vals]
+          this.currentOrder = this.currentOrder ? data.find(n => n.id === this.currentOrder.id) : null
           this.tableData = data;
+          this.inquiryQuery(this.currentOrder)
+          this.noBondsQuery(this.currentOrder)
           this.$emit("init", value)
-
-          this.inquiryQuery()
         } else {
           this.tableData = [];
           this.$message({
@@ -445,19 +626,41 @@ export default {
         }
       }
     },
+    funcNoBondsFormat(row, column) {
+      switch (column.property) {
+        case "status":
+          return config.funcKeyValue(
+            row.status ? row.status.toString() : "",
+            "bondsCommonStatus"
+          );
+        case "direction":
+          return config.funcKeyValue(row.direction, "directionMeta");
+        case "deliveryTime":
+          return row.deliveryTime
+            ? moment(row.deliveryTime).format("YYYY-MM-DD")
+            : ""; // + `（T+${row.deliverySpeed}）`
+        case "realDeliveryTime":
+          return row.realDeliveryTime
+            ? moment(row.realDeliveryTime).format("YYYY-MM-DD")
+            : "--";
+        case "price":
+          return row.price ? util.moneyFormat(row.price, 4) : "";
+        case "realPrice":
+          return row.realPrice ? util.moneyFormat(row.realPrice, 4) : "--";
+        case "realVolume":
+          return row.realVolume ? row.realVolume : "--";
+        case "tscode":
+          return row.tscode ? row.tscode.replace(/.IB/, "") : "";
+        case "jiaogeStatus":
+          return config.bondStatus[row.jiaogeStatus];
+      }
+      return row[column.property];
+    },
     // 数据格式化
     funcFormat(row, column) {
       switch (column.property) {
         case "status":
           return config.funcKeyValue(row.status.toString(), "orderStatus");
-        case "direction":
-          return config.funcKeyValue(row.direction, "directionMeta");
-        case "deliveryTime":
-          return moment(row.deliveryTime).format("YYYY-MM-DD"); // + `（T+${row.deliverySpeed}）`
-        case "realDeliveryTime":
-          return row.realDeliveryTime
-            ? moment(row.realDeliveryTime).format("YYYY-MM-DD")
-            : "--";
         case "price":
           return util.moneyFormat(row.price, 4);
         case "realPrice":
@@ -467,7 +670,7 @@ export default {
         case "tscode":
           return row.tscode.replace(/.IB/, "");
         case "createBy":
-          return this.userSummary.length > 0 ? this.userSummary.find(n => n.userId === row.createBy).nickName : '--';
+          return this.userSummary.find(n => n.userId === row.createBy) ? this.userSummary.find(n => n.userId === row.createBy).nickName : '--';
         case "reviewedBy":
           return this.userSummary.find(n => n.userId === row.reviewedBy) ? this.userSummary.find(n => n.userId === row.reviewedBy).nickName : '--';
         case "messageId":
@@ -475,7 +678,7 @@ export default {
         case "tradeIds":
           return row.tradeIds || '--';
         case "type":
-          return config.funcKeyValue(row.type.toString(), "orderTypes");
+          return row.type ? config.funcKeyValue(row.type.toString(), "orderTypes") : "--";
       }
       return row[column.property];
     },
@@ -506,7 +709,69 @@ export default {
       }
       return row[column.property];
     },
-    receiveOrder(row, status) {
+    qiangPing(scope) {
+      let that = this;
+      that.loading = true;
+      const { deliverySpeed, deliveryTime, restVolume: volume, tscode, direction, children } = scope.row;
+
+      apiBonds.bondsCoverAgain({ deliverySpeed: deliverySpeed.includes("+1") ? 1 : 0, deliveryTime, volume, tscode, direction, userId: children[0].yanjiuyuanId })
+        .then(({ code }) => {
+          if (code === "00000") {
+            // that.$refs["popover-qiangping-" + scope.$index].doClose();
+            this.handlePopoverClose(scope, `popover-qiangping-${scope.$index}`);
+            that.inquiryQuery({ createTime: new Date(), tradeIds: [] }, this.currentOrder.createBy)
+            that.$message({
+              message: `强平发送成功!`,
+              type: "success"
+            });
+            that.loading = false;
+          } else {
+            that.$message({
+              message: `发起强平失败!`,
+              type: "error"
+            });
+            that.loading = false;
+          }
+        })
+    },
+    async receiveOrder(row, status) {
+      if (status === 2) {
+        if (row.tradeIds) {
+          if (row.type === 2) {
+            const { rows } = await apiBonds.get({
+              orderBy: "create_time",
+              isAsc: false,
+              userBy: row.createBy
+            })
+
+            const bool = rows.some(n => {
+              return n.children.some(obj => row.tradeIds.includes(obj.realTradeId))
+            })
+            if (bool) {
+              this.$message({
+                message: `当前工单还未处理完成，请检查平仓单是否完成!`,
+                type: "error"
+              });
+              return
+            }
+          } else {
+            const hasLock = this.enquiryOrderData.filter(n => row.tradeIds.includes(n.userTradeId) && n.lock).length > 0;
+            if (hasLock) {
+              this.$message({
+                message: `当前工单还未处理完成，请检查是否解锁询价单!`,
+                type: "error"
+              });
+              return
+            }
+          }
+        } else {
+          this.$message({
+            message: `无法处理订单未绑定的工单!`,
+            type: "error"
+          });
+          return
+        }
+      }
       this.enquiryOrderData = [];
       apiAdmin.saveAndUpdateWorkOrder({ id: row.id, reviewedBy: this.userInfo.userId, status: status }).then(({ code }) => {
         if (code === "00000") {
@@ -524,30 +789,74 @@ export default {
       })
       this.enquiryOrderData = [...list];
     },
-    inquiryQuery(row) {
-      // console.log(row)
-      this.currentOrder = row || { createTime: this.orderDate, tradeIds: [] };
+    goHandleOrder(row) {
+      this.currentOrder = row;
+      if (row.type === 2) {
+        this.tableSwitch = 1
+        this.noBondsQuery(row)
+        this.inquiryQuery({ createTime: new Date(), tradeIds: [] }, row.createBy)
+      } else {
+        this.tableSwitch = 0;
+        this.inquiryQuery(row)
+      }
+      this.loading = true;
+      setTimeout(() => {
+        this.pageOrder = 1
+        this.loading = false;
+      }, 500)
+    },
+    noBondsQuery(row) {
+      // const param = row || { createTime: this.orderDate, tradeIds: [] };
+      this.noBondsData = []
+      row && apiBonds.get({
+        orderBy: "create_time",
+        isAsc: false,
+        userBy: row.createBy
+      }).then(response => {
+        if (response && response.code === 200 && response.rows) {
+          let rowId = 0;
+          const rows = [];
+          response.rows.forEach(element => {
+            const firstRowId = ++rowId;
+            if (element.children && element.children.length > 0) {
+              const realTradeIdList = [];
+              element.children.forEach(element => {
+                rowId++;
+                realTradeIdList.push(element.realTradeId);
+                element.rowId = rowId;
+              });
+              rowId++;
+              element.realTradeIdList = realTradeIdList;
+              element.rowId = rowId;
+            }
+            element.rowId = firstRowId;
+            rows.push(element);
+          });
+          this.noBondsData = rows;
+        } else {
+          this.noBondsData = [];
+        }
+      });
+    },
+    inquiryQuery(row, userBy) {
+      const param = row || { createTime: this.orderDate, tradeIds: [] };
       this.enquiryOrderData = []
-
-      // if (this.currentOrder.type === 1) {
-
-      // } else {
-      //   this.brokerItem = this.currentOrder.brokerId || this.brokerItem
-      // }
-
-      const tradeDateStart = moment(this.currentOrder.createTime).format("YYYY-MM-DD"); // 创建一个新的日期对象，以免修改原始日期
-      const tradeDateEnd = moment(this.currentOrder.createTime).add(1, 'days').format("YYYY-MM-DD");
+      const tradeDateStart = moment(param.createTime).format("YYYY-MM-DD"); // 创建一个新的日期对象，以免修改原始日期
+      const tradeDateEnd = moment(param.createTime).add(1, 'days').format("YYYY-MM-DD");
       api.inquiryQuery({
         tradeDateStart: tradeDateStart,
         tradeDateEnd: tradeDateEnd,
+        userBy: userBy
       }).then(({ code, rows }) => {
         // let list = rows.filter(n => n.createBy === this.currentOrder.createBy)
         let list = rows
-        this.brokerItem = this.currentOrder.brokerId ? [this.currentOrder.brokerId] : [];
-
+        if (this.tableSwitch === 1) {
+          list = list.filter(n => n.qiangpingId)
+        }
+        this.brokerItem = param.brokerId ? [param.brokerId] : [];
         this.tradeIsLock = false;
         list.forEach(n => {
-          n.handle = this.currentOrder.tradeIds.includes(n.userTradeId) ? true : false;
+          n.handle = param.tradeIds.includes(n.userTradeId) ? true : false;
           if (this.brokerItem.length > 0) {
             n.hidenRow = this.brokerItem.includes(n.brokerId) ? false : true;
           }
@@ -555,8 +864,7 @@ export default {
             this.tradeIsLock = true;
           }
         })
-        this.enquiryOrderData = list
-
+        this.enquiryOrderData = [...list]
         if (this.dialogOrderEdit.currentRow) {
           this.dialogOrderEdit.currentRow = list.find(n => n.userTradeId === this.dialogOrderEdit.currentRow.userTradeId)
         }
@@ -604,6 +912,19 @@ export default {
       padding: 0 10px;
       // margin-top: 10px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+
+      .el-icon-back {
+        font-size: 18px;
+        vertical-align: middle;
+        cursor: pointer;
+      }
+    }
+
+    .current_work {
+      .el-descriptions {
+        border-radius: 3px;
+        overflow: hidden;
+      }
     }
 
     .table {
