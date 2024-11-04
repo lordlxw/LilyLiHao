@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <div class="do">
       <el-popover v-if="setAuth('bonds:break') && bondsIsSelection.length > 0" placement="bottom-start"
         ref="popover-deliveryback-bonds">
@@ -11,10 +11,10 @@
           <template v-for="itemHead in breakTableHead">
             <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
               :formatter="itemHead.formatter
-                  ? itemHead.formatter
-                  : (row, column, cellValue, index) => {
-                    return cellValue;
-                  }
+                ? itemHead.formatter
+                : (row, column, cellValue, index) => {
+                  return cellValue;
+                }
                 " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
             </el-table-column>
           </template>
@@ -73,77 +73,47 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <el-button style="float: right" v-if="
-        setAuth('bonds:delivery') &&
-        tableDataFinish.length > 0 &&
-        isShowDeliveryBtn
-      " type="primary" size="mini" @click="handleDeliveryClick">交割</el-button>
+      <div style="float: right" class="ml10">
+        <el-checkbox-group v-model="checkboxGroup" size="small" @change="changeFinishParam">
+          <el-checkbox-button label="Front">前台</el-checkbox-button>
+          <el-checkbox-button label="Middle">中台</el-checkbox-button>
+          <el-checkbox-button label="BackEnd">后台</el-checkbox-button>
+        </el-checkbox-group>
+      </div>
+
+      <div style="float: right">
+        <el-button v-if="
+          setAuth('bonds:delivery') && isShowDeliveryBtn" type="primary" size="mini"
+          @click="handleDeliveryClick">交割</el-button>
+      </div>
+
     </div>
     <div class="table mt10">
-      <el-table ref="bondsTable" v-loading="loading" :data="tableDataFinish" tooltip-effect="dark" style="width: 100%"
-        :height="height" row-key="rowId" :row-class-name="tableRowFinishClassName"
-        :cell-class-name="tableCellBondsClassName" :cell-style="finishCellStyle" :span-method="objectSpanMethod"
+      <el-table ref="bondsTable" v-swipe-copy v-loading="loading" header-cell-class-name="list-row"
+        :data="tableDataFinish" tooltip-effect="dark" style="width: 100%" :height="height" row-key="rowId"
+        :row-class-name="tableRowFinishClassName" :cell-class-name="tableCellBondsClassName"
+        :cell-style="finishCellStyle" :span-method="objectSpanMethod"
         :header-row-style="{ height: '30px', lineHeight: '30px' }" :header-cell-style="{ background: '#f8f8f8' }"
         highlight-current-row @selection-change="handleBondsSelectionChange" @sort-change="handleSortChangeBonds">
         <el-table-column v-if="setAuth('bonds:break')" type="selection" align="center" width="40"></el-table-column>
         <template v-for="itemHead in tableHeadFinish">
-          <!-- <template
-            v-if="['createTime'].indexOf(itemHead.prop) !== -1 && itemHead.show"
-          >
-            <el-table-column
-              :key="itemHead.label"
-              :align="itemHead.align"
-              :prop="itemHead.prop"
-              :label="
-                ['createTime'].indexOf(itemHead.prop) !== -1 ? '成交日期' : ''
-              "
-              :width="itemHead.width ? parseInt(itemHead.width * (3 / 5)) : ''"
-              :formatter="
-                (row, column, cellValue, index) => {
-                  return funcFormatDateTime(cellValue, 'YYYY-MM-DD');
-                }
-              "
-            >
-            </el-table-column>
-            <el-table-column
-              :key="itemHead.label + 1"
-              :align="itemHead.align"
-              :prop="itemHead.prop"
-              :sortable="
-                ['createTime'].indexOf(itemHead.prop) !== -1 &&
-                ['研究员'].indexOf(userInfo.roleName) === -1
-                  ? 'custom'
-                  : false
-              "
-              :label="
-                ['createTime'].indexOf(itemHead.prop) !== -1 ? '成交时间' : ''
-              "
-              :width="itemHead.width ? parseInt(itemHead.width * (2 / 3)) : ''"
-              :formatter="
-                (row, column, cellValue, index) => {
-                  return funcFormatDateTime(cellValue, 'HH:mm:ss');
-                }
-              "
-            >
-            </el-table-column>
-          </template> -->
           <el-table-column v-if="itemHead.show" :key="itemHead.prop" :align="itemHead.align" :prop="itemHead.prop"
             :sortable="[
-                'createTime',
-                'tscode',
-                'tradeNum',
-                'deliveryTime',
-                'updateTime',
-                'tradeTime'
-              ].indexOf(itemHead.prop) !== -1
-                ? 'custom'
-                : false
+              'createTime',
+              'tscode',
+              'tradeNum',
+              'deliveryTime',
+              'updateTime',
+              'tradeTime'
+            ].indexOf(itemHead.prop) !== -1
+              ? 'custom'
+              : false
               " :formatter="itemHead.formatter
                 ? itemHead.formatter
                 : (row, column, cellValue, index) => {
                   return cellValue;
                 }
-              " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''"
+                " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''"
             :show-overflow-tooltip="itemHead.showOverflowTooltip ? true : false">
           </el-table-column>
         </template>
@@ -169,10 +139,10 @@
                 <template v-for="itemHead in diffTableHead">
                   <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align"
                     :prop="itemHead.prop" :formatter="itemHead.formatter
-                        ? itemHead.formatter
-                        : (row, column, cellValue, index) => {
-                          return cellValue;
-                        }
+                      ? itemHead.formatter
+                      : (row, column, cellValue, index) => {
+                        return cellValue;
+                      }
                       " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
                   </el-table-column>
                 </template>
@@ -303,8 +273,8 @@ import config from '@/utils/config'
 import * as util from '@/utils/util'
 import { debounce } from '@/utils/debounce'
 import moment from 'moment'
-let tableFinishClassName = ''
 let currentFinishCode = ''
+let tableFinishClassName = ''
 // 合并单元格
 let finishCode = ''
 let finishCodeSameCount = 0
@@ -380,7 +350,8 @@ export default {
       breakTableData: [],
       doListOption: config.doBreakList,
       errorMsg: '',
-      isShowDeliveryBtn: false
+      isShowDeliveryBtn: false,
+      checkboxGroup: ['Front']
     }
   },
   watch: {
@@ -574,10 +545,13 @@ export default {
         }
       })
     },
+    changeFinishParam(e) {
+      this.loadInitDataFinish();
+    },
     // 初始化已平仓数据
-    loadInitDataFinish(sort) {
+    async loadInitDataFinish(sort) {
       this.loading = true;
-      api.getFinish({
+      const response = await api.getFinish({
         deliveryDateEnd: null,
         deliveryDateStart: null,
         realTradeId: null,
@@ -586,44 +560,48 @@ export default {
         userName: null,
         userTradeId: null,
         orderBy: sort ? sort.field : 'create_time',
-        isAsc: sort ? sort.asc : false
-      }).then((response) => {
-        if (response && response.code === 200 && response.rows) {
-          // 获取表格第一行汇总的数据字段
-          // let firstRow = {}
-          let totalProfit = 0
-          let buyVolumn = 0
-          let saleVolumn = 0
-          response.rows.forEach(element => {
-            // if (index === 0) {
-            //   firstRow = JSON.parse(JSON.stringify(element))
-            //   Object.keys(firstRow).forEach(key => {
-            //     firstRow[key] = ''
-            //   })
-            // }
-            if (!isNaN(element.profit)) {
-              totalProfit += element.profit
-            }
-            if (element.direction === 'bond_0' && !isNaN(element.volume)) {
-              buyVolumn += Number(element.volume)
-            }
-            if (element.direction === 'bond_1' && !isNaN(element.volume)) {
-              saleVolumn += Number(element.volume)
-            }
-          });
-          this.tableDataFinish = response.rows;
-          this.totalCount = response.total;
-          this.totalProfit = util.moneyFormat(totalProfit, 2)
-          this.buyVolumn = buyVolumn
-          this.saleVolumn = saleVolumn
-          // firstRow["profit"] = util.moneyFormat(totalProfit, 2)
-          // this.tableDataFinish.unshift(firstRow)
-        } else {
-          this.tableDataFinish = [];
-          this.totalCount = 0;
-        }
-        this.loading = false;
+        isAsc: sort ? sort.asc : false,
+        hasFront: this.checkboxGroup.includes('Front'),
+        hasMiddle: this.checkboxGroup.includes('Middle'),
+        hasBackEnd: this.checkboxGroup.includes('BackEnd')
       });
+
+      if (response && response.code === 200 && response.rows) {
+        // 获取表格第一行汇总的数据字段
+        // let firstRow = {}
+        let totalProfit = 0
+        let buyVolumn = 0
+        let saleVolumn = 0
+        response.rows.forEach(element => {
+          // if (index === 0) {
+          //   firstRow = JSON.parse(JSON.stringify(element))
+          //   Object.keys(firstRow).forEach(key => {
+          //     firstRow[key] = ''
+          //   })
+          // }
+          if (!isNaN(element.profit)) {
+            totalProfit += element.profit
+          }
+          if (element.direction === 'bond_0' && !isNaN(element.volume)) {
+            buyVolumn += Number(element.volume)
+          }
+          if (element.direction === 'bond_1' && !isNaN(element.volume)) {
+            saleVolumn += Number(element.volume)
+          }
+        });
+        this.tableDataFinish = response.rows;
+        this.totalCount = response.total;
+        this.totalProfit = util.moneyFormat(totalProfit, 2)
+        this.buyVolumn = buyVolumn
+        this.saleVolumn = saleVolumn
+        // firstRow["profit"] = util.moneyFormat(totalProfit, 2)
+        // this.tableDataFinish.unshift(firstRow)
+      } else {
+        this.tableDataFinish = [];
+        this.totalCount = 0;
+      }
+      this.loading = false;
+
       this.getIsShowDeliveryBtn()
     },
     getIsShowDeliveryBtn() {
@@ -759,7 +737,7 @@ export default {
           }
         }
       }
-      return tableFinishClassName
+      return tableFinishClassName + " list-row"
     },
     // 盒子样式
     cellStyle(row, column, rowIndex, columnIndex) {
@@ -903,8 +881,9 @@ export default {
       }
     },
     // 交割
-    handleDeliveryClick: debounce(function () {
-      this.loadInitDataFinish()
+    handleDeliveryClick: debounce(async function () {
+      this.checkboxGroup = ['BackEnd']
+      await this.loadInitDataFinish()
       let deliveryFinishData = []
       // 处理数据
       for (let i = 0; i < this.tableDataFinish.length; i++) {
@@ -1112,8 +1091,20 @@ export default {
       line-height: 40px;
 
       .el-button {
-        margin-top: 10px;
+        // margin-top: 5px;
+        height: 31px;
       }
+    }
+
+  }
+
+  .table {
+    //  box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+
+    >>>.list-row {
+      height: 40px;
+      line-height: 40px;
+      color: #000;
     }
   }
 
@@ -1149,6 +1140,10 @@ export default {
   .table-height {
     height: 800px !important;
   }
+}
+
+.el-dialog__body {
+  padding: 10px;
 }
 </style>
 <style>

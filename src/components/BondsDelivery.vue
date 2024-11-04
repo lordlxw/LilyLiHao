@@ -1,95 +1,53 @@
 <template>
   <div>
-    <el-table
-      v-loading="loading"
-      :data="deliveryFinishData"
-      tooltip-effect="dark"
-      style="width: 100%"
-      border
-      :key="Math.random()"
-      header-row-style="height:30px;line-height:30px;"
-      header-cell-style="background:#f8f8f8;"
-      :row-class-name="tableRowFinishClassName"
-      :cell-style="finishCellStyle"
-    >
+    <div class="text-right pb10">
+      <!-- <div class="errorMsg">{{ errorMsg }}</div> -->
+      <el-button type="primary" @click="handleSubmit">提交</el-button>
+    </div>
+    <el-table header-cell-class-name="list-row" :data="deliveryFinishData" tooltip-effect="dark" :height="550"
+      style="width: 100%" :key="Math.random()" :row-class-name="tableRowFinishClassName">
       <template v-for="itemHead in deliveryFinishDataHead">
-        <el-table-column
-          v-if="itemHead.show"
-          :key="itemHead.label"
-          :align="itemHead.align"
-          :prop="itemHead.prop"
-          :formatter="
-            itemHead.formatter
-              ? itemHead.formatter
-              : (row, column, cellValue, index) => {
-                  return cellValue;
-                }
-          "
-          :label="itemHead.label"
-          :width="itemHead.width ? returnFrameW(itemHead.width) : ''"
-        >
+        <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
+          :formatter="itemHead.formatter
+            ? itemHead.formatter
+            : (row, column, cellValue, index) => {
+              return cellValue;
+            }
+            " :label="itemHead.label" :width="itemHead.width ? returnFrameW(itemHead.width) : ''">
         </el-table-column>
       </template>
-      <el-table-column label="选择" :width="returnFrameW(300)">
+      <el-table-column label="选择" :width="returnFrameW(250)">
         <template slot-scope="scope">
-          <el-checkbox-group
-            v-model="scope.row.mySelected"
-            @input="handleDoCheck"
-            v-if="
-              scope.row.jiaogeStatus !== 1 &&
-              deliveryDayValid(scope.row.deliveryTime)
-            "
-          >
-            <el-checkbox
-              v-for="item in doListOption"
-              :label="item.value"
-              :key="item.value"
-              >{{ item.label }}</el-checkbox
-            >
+          <el-checkbox-group v-model="scope.row.mySelected" @input="handleDoCheck" v-if="
+            scope.row.jiaogeStatus !== 1 &&
+            deliveryDayValid(scope.row.deliveryTime)
+          ">
+            <el-checkbox v-for="item in doListOption" :label="item.value" :key="item.value">{{ item.label
+              }}</el-checkbox>
           </el-checkbox-group>
         </template>
       </el-table-column>
       <el-table-column label="违约方" :width="returnFrameW(150)">
         <template slot-scope="scope">
-          <el-select
-            v-model="scope.row.weiyuePerson"
-            v-if="scope.row.mySelected.length > 0"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="(value, key) in config.breakTypeOptions"
-              :key="key"
-              :label="value"
-              :value="key"
-            ></el-option>
+          <el-select v-model="scope.row.weiyuePerson" v-if="scope.row.mySelected.length > 0" placeholder="请选择">
+            <el-option v-for="(value, key) in config.breakTypeOptions" :key="key" :label="value"
+              :value="key"></el-option>
           </el-select>
         </template>
       </el-table-column>
       <el-table-column label="违约量" :width="returnFrameW(150)">
         <template slot-scope="scope">
-          <el-input
-            size="mini"
-            v-model="scope.row.weiyueAmount"
-            v-if="scope.row.mySelected.length > 0"
-            width="90"
-          ></el-input>
+          <el-input size="mini" v-model="scope.row.weiyueAmount" v-if="scope.row.mySelected.length > 0"
+            width="90"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="做市商" :width="returnFrameW(150)">
         <template slot-scope="scope">
-          <el-input
-            size="mini"
-            v-model="scope.row.marketMakerName"
-            v-if="scope.row.mySelected.length > 0"
-            width="90"
-          ></el-input>
+          <el-input size="mini" v-model="scope.row.marketMakerName" v-if="scope.row.mySelected.length > 0"
+            width="90"></el-input>
         </template>
       </el-table-column>
     </el-table>
-    <div style="text-align: center">
-      <div class="errorMsg">{{ errorMsg }}</div>
-      <el-button type="primary" @click="handleSubmit">提交</el-button>
-    </div>
   </div>
 </template>
 
@@ -110,8 +68,8 @@ const doList = [
     value: 1
   }
 ]
-let tableFinishClassName = ''
 let currentFinishCode = ''
+let tableFinishClassName = ''
 export default {
   props: ['deliveryFinishData'],
   mixins: [commMixin],
@@ -122,11 +80,14 @@ export default {
       errorMsg: '',
       deliveryFinishDataHead: [
         { label: '券码', prop: 'tscode', formatter: this.funcFormat, width: '90', align: 'left', show: true },
-        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '60', align: 'left', show: true },
-        { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '100', align: 'right', show: true },
-        { label: '持仓量', prop: 'volume', width: '100', align: 'right', show: true },
+        { label: '方向', prop: 'direction', formatter: this.funcFormat, width: '80', align: 'left', show: true },
+        { label: '成交价', prop: 'price', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '持仓量', prop: 'volume', width: '100', align: 'left', show: true },
         { label: '交割日期', prop: 'deliveryTime', formatter: this.funcFormat, width: '120', align: 'left', show: true },
-        { label: '交割状态', prop: 'jiaogeStatus', formatter: this.funcFormat, width: '100', align: 'left', show: true }
+        { label: '交割状态', prop: 'jiaogeStatus', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '研究员', prop: 'yanjiuyuanName', formatter: this.funcFormat, width: '100', align: 'left', show: true },
+        { label: '交易单号', prop: 'tradeNum', formatter: this.funcFormat, width: '180', align: 'left', show: true },
+        { label: '中介', prop: 'target', formatter: this.funcFormat, width: '180', align: 'left', show: true }
       ]
     }
   },
@@ -210,7 +171,7 @@ export default {
           }
         }
       }
-      return tableFinishClassName
+      return tableFinishClassName + ' list-row'
     },
     // 盒子样式
     cellStyle(row, column, rowIndex, columnIndex) {
@@ -249,5 +210,31 @@ export default {
   height: 40px;
   line-height: 40px;
   color: red;
+}
+
+.el-table {
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+
+  >>>.list-row {
+    height: 40px;
+    line-height: 40px;
+    color: #000;
+  }
+
+  >>>.el-checkbox {
+    color: #000;
+
+    .el-checkbox__label {
+      font-size: 12px;
+    }
+  }
+
+  >>>.el-input--small .el-input__inner {
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+  }
 }
 </style>

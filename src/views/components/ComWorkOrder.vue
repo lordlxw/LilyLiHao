@@ -678,7 +678,7 @@ export default {
         case "tradeIds":
           return row.tradeIds || '--';
         case "type":
-          return row.type ? config.funcKeyValue(row.type.toString(), "orderTypes") : "--";
+          return row.type !== undefined ? config.funcKeyValue(row.type.toString(), "orderTypes") : "--";
       }
       return row[column.property];
     },
@@ -775,7 +775,7 @@ export default {
       this.enquiryOrderData = [];
       apiAdmin.saveAndUpdateWorkOrder({ id: row.id, reviewedBy: this.userInfo.userId, status: status }).then(({ code }) => {
         if (code === "00000") {
-          this.loadInitData()
+          // this.loadInitData()
         }
       })
     },

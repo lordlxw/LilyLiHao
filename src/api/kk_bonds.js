@@ -18,7 +18,7 @@ export default {
         tscode: params.tscode,
         userName: params.userName,
         userTradeId: params.userTradeId,
-        userBy: params.userBy
+        userBy: params.userBy,
       }
     });
   },
@@ -38,7 +38,10 @@ export default {
         tscode: params.tscode,
         userName: params.userName,
         userTradeId: params.userTradeId,
-        userBy: params.userBy
+        userBy: params.userBy,
+        hasFront: params.hasFront,
+        hasMiddle: params.hasMiddle,
+        hasBackEnd: params.hasBackEnd
       }
     });
   },
