@@ -75,7 +75,7 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <el-button style="float: right" v-if="
+      <el-button style="float: right" v-if="false &&
         setAuth('bonds:delivery') &&
         tableDataFinish.length > 0 &&
         isShowDeliveryBtn
@@ -213,11 +213,11 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column fixed="right" align="center" label="交割操作" width="90" v-if="setAuth('bonds:delivery')">
+        <!-- <el-table-column fixed="right" align="center" label="交割操作" width="90" v-if="setAuth('bonds:delivery')">
           <template slot-scope="scope">
             <el-button type="text" @click="handleDeliveryClick(scope)">交割</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </div>
 

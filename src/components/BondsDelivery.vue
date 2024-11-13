@@ -43,8 +43,8 @@
       </el-table-column>
       <el-table-column label="做市商" :width="returnFrameW(150)">
         <template slot-scope="scope">
-          <el-input size="mini" v-model="scope.row.marketMakerName" v-if="scope.row.mySelected.length > 0"
-            width="90"></el-input>
+          <el-input size="mini" v-model="scope.row.marketMakerName"
+            v-if="scope.row.mySelected.length > 0 && !scope.row.mySelected.includes(1)" width="90"></el-input>
         </template>
       </el-table-column>
     </el-table>
@@ -104,6 +104,9 @@ export default {
     },
     // 提交事件
     handleSubmit: debounce(function () {
+      if (this.deliveryFinishData.length <= 0) {
+        return;
+      }
       const finishCodeList = [...new Set(this.deliveryFinishData.map(item => item.finishCode))]
       const wyList = []
       const len = this.deliveryFinishData.length
@@ -111,7 +114,7 @@ export default {
       for (let i = 0; i < len; i++) {
         if (this.deliveryFinishData[i].mySelected.length > 0) {
           wyList.push({
-            marketMakerName: this.deliveryFinishData[i].marketMakerName,
+            marketMakerName: this.deliveryFinishData[i].mySelected.includes(1) ? '' : this.deliveryFinishData[i].marketMakerName,
             realTradeId: this.deliveryFinishData[i].realTradeId,
             weiyueAmount: this.deliveryFinishData[i].weiyueAmount ? parseInt(this.deliveryFinishData[i].weiyueAmount) : '',
             weiyuePerson: this.deliveryFinishData[i].weiyuePerson,

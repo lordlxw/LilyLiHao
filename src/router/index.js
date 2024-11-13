@@ -125,6 +125,11 @@ const router = new Router({
           path: '/power/role/edit',
           component: () => import('@/views/KKPower/Role/Edit.vue')
         },
+        // 通道管理
+        {
+          path: '/power/channel',
+          component: () => import('@/views/KKPower/Channel.vue'),
+        },
         // 用户管理
         {
           path: '/power/admin',

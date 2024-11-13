@@ -53,8 +53,10 @@
             " @click="receiveOrder(scope.row, 1)">接收</el-button>
             <el-button type="text" v-if="
               setAuth('system:order:edit') && scope.row.reviewedBy === userInfo.userId &&
-              [1].indexOf(scope.row.status) !== -1
+              [1].indexOf(scope.row.status) !== -1 && scope.row.type !== 3
             " @click="goHandleOrder(scope.row)">去处理</el-button>
+            <el-button type="text" v-else-if="setAuth('system:order:edit') && scope.row.reviewedBy === userInfo.userId &&
+              [1].indexOf(scope.row.status) !== -1" @click="copyTextToClipboard(scope.row.remarks)">复制</el-button>
             <el-button type="text" v-if="
               setAuth('system:order:edit') && scope.row.reviewedBy === userInfo.userId &&
               [1].indexOf(scope.row.status) !== -1
@@ -375,6 +377,13 @@ export default {
           }
         })
       }
+    },
+    copyTextToClipboard(text) {
+      util.copyTextToClipboard(text);
+      this.$message({
+        type: 'success',
+        message: '复制成功!'
+      });
     },
     tableRowClassName({ row, rowIndex }) {
       let tableFinishClassName = 'list-row';

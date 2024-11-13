@@ -187,5 +187,35 @@ export default {
       method: "post",
       data: params
     });
+  },
+  findPageChannel(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/channel/page`,
+      method: "get",
+      params: {
+        pageNum: params.pageNum,
+        pageSize: params.pageSize
+      }
+    });
+  },
+  saveOrUpdateChannel(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/channel`,
+      method: "post",
+      data: params
+    });
+  },
+  saveOrUpdateReceiver(params) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/chatReceiver`,
+      method: "post",
+      data: params
+    });
+  },
+  findReceiverByChannel(channelId) {
+    return request({
+      url: `${Vue.prototype.$apiUrl}/chatReceiver/channelId/${channelId}`,
+      method: "get",
+    });
   }
 };

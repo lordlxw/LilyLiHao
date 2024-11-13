@@ -1,16 +1,16 @@
 <!--用户管理-->
 <template>
   <div class="content">
-    <div class="list">
+    <div class="list" v-if="pageName == 0">
       <div class="do">
-        <router-link v-if="setAuth('system:user:add')" to="/power/admin/add">
-          <el-button type="default">添加</el-button>
-        </router-link>
-        <div class="pagination mt10">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum"
-            :page-sizes="[15, 20, 50, 100]" :page-size="pageSize" layout="prev, next" :total="totalCount" background>
-          </el-pagination>
-        </div>
+        <el-row>
+          <el-col :span="12">
+            <el-tag type="success">通道管理</el-tag>
+          </el-col>
+          <el-col :span="12" class="text-right">
+            <el-button v-if="setAuth('system:channel:add')" type="primary" @click="channelEdit()">添加</el-button>
+          </el-col>
+        </el-row>
       </div>
       <div class="table mt10">
         <el-table v-loading="loading" ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
@@ -19,67 +19,71 @@
           <template v-for="itemHead in tableHead">
             <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
               :formatter="itemHead.formatter
-                  ? itemHead.formatter
-                  : (row, column, cellValue, index) => {
-                    return cellValue;
-                  }
+                ? itemHead.formatter
+                : (row, column, cellValue, index) => {
+                  return cellValue;
+                }
                 " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
             </el-table-column>
           </template>
           <el-table-column fixed="right" align="center" label="操作" width="230">
             <template slot-scope="scope">
-              <el-button v-if="setAuth('system:user:edit')" type="text"
-                @click="handleEdit(scope.row, '/power/tablehead')">设置表头</el-button>
-              <el-popover v-if="setAuth('user:disable') && ['0', '1', '2', '3', '4'].includes(scope.row.status)" placement="bottom-end"
-                :ref="`popover-disabled-${scope.$index}`">
-                <p>
-                  确认<span class="color-red">{{
-                    scope.row.status === 4 ? "启用" : "禁用"
-                  }}</span>“<span class="color-main">{{ scope.row.userName }}</span>”？
-                </p>
-                <div style="text-align: right">
-                  <el-button type="text" @click="
-                    handlePopoverClose(
-                      scope,
-                      `popover-disabled-${scope.$index}`
-                    )
-                    ">取消</el-button>
-                  <el-button type="text" @click="handleDisabling(scope)">确认</el-button>
-                </div>
-                <el-button type="text" slot="reference">{{
-                  scope.row.status === "1" ? "启用" : "禁用"
-                }}</el-button>
-              </el-popover>
-              <el-button v-if="setAuth('system:user:resetpass')" type="text"
-                @click="handleResetPasswordDialog(scope)">重置密码</el-button>
-              <el-button v-if="setAuth('system:user:edit')" type="text"
-                @click="handleEdit(scope.row, '/power/admin/edit')">修改</el-button>
-              <!-- <el-popover v-if="setAuth('system:user:remove') " placement="bottom-end"
-                :ref="`popover-delete-${scope.$index}`">
-                <p>
-                  确认要<span class="color-red">删除</span>“<span class="color-main">{{ scope.row.userName }}</span>”？
-                </p>
-                <div style="text-align: right">
-                  <el-button type="text" @click="
-                    handlePopoverClose(
-                      scope,
-                      `popover-delete-${scope.$index}`
-                    )
-                    ">取消</el-button>
-                  <el-button type="text" @click="handleDelete(scope)">确认</el-button>
-                </div>
-                <el-button type="text" slot="reference">删除</el-button>
-              </el-popover> -->
+              <el-button v-if="setAuth('system:channel:edit')" @click="findReceivers(scope.row)"
+                type="text">中介管理</el-button>
+              <el-button v-if="setAuth('system:channel:edit')" @click="channelEdit(scope.row)"
+                type="text">修改</el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
       <div class="pagination mt10">
         <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-          :current-page="page" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
+          :current-page="page" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" layout="total, prev, pager, next"
+          :total="totalCount">
         </el-pagination>
       </div>
+    </div>
+    <div class="list" v-if="pageName == 1">
+      <div class="do">
+        <el-row>
+          <el-col :span="12">
+            <el-tag type="success" class="mr10" @click="pageName = 0"><i class="el-icon-back"></i></el-tag>
+            <el-tag type="success" class="mr20">{{ pageItem.qtName }}</el-tag>
+          </el-col>
+          <el-col :span="12" class="text-right">
+            <el-button class="" v-if="setAuth('system:channel:add')" type="primary"
+              @click="receiverEdit()">添加</el-button>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="table mt10">
+        <el-table v-loading="loading" ref="multipleTable" :data="tableReceiverData" tooltip-effect="dark"
+          style="width: 100%" highlight-current-row>
+          <el-table-column fixed type="index" label="序号" align="center" width="50"></el-table-column>
+          <template v-for="itemHead in tableReceiverHead">
+            <el-table-column v-if="itemHead.show" :key="itemHead.label" :align="itemHead.align" :prop="itemHead.prop"
+              :formatter="itemHead.formatter
+                ? itemHead.formatter
+                : (row, column, cellValue, index) => {
+                  return cellValue;
+                }
+                " :label="itemHead.label" :width="itemHead.width ? itemHead.width : ''">
+            </el-table-column>
+          </template>
+          <el-table-column fixed="right" align="center" label="操作" width="230">
+            <template slot-scope="scope">
+              <el-button v-if="setAuth('system:channel:edit')" type="text"
+                @click="receiverEdit(scope.row)">修改</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <!-- <div class="pagination mt10">
+        <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+          :current-page="page" :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" layout="total, prev, pager, next"
+          :total="totalCount">
+        </el-pagination>
+      </div> -->
     </div>
     <el-dialog title="重置密码" :visible.sync="centerDialogResetPasswordVisible" width="30%" center
       :close-on-click-modal="false">
@@ -109,6 +113,15 @@
         <el-button type="primary" @click="submitForm('resetPassForm')">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog :title="channelEditDialog.title" width="500px;" :visible.sync="channelEditDialog.visible" append-to-body
+      class="channelEditDialog " :destroy-on-close="true" :close-on-click-modal="false">
+      <channel-edit :row="channelEditDialog.currentRow" @refreshData="loadInitData()"></channel-edit>
+    </el-dialog>
+    <el-dialog :title="receiverEditDialog.title" width="500px;" :visible.sync="receiverEditDialog.visible"
+      append-to-body class="receiverEditDialog " :destroy-on-close="true" :close-on-click-modal="false">
+      <receiver-edit :row="receiverEditDialog.currentRow" :channels="tableData"
+        @refreshData="findReceivers(pageItem)"></receiver-edit>
+    </el-dialog>
   </div>
 </template>
 
@@ -118,8 +131,14 @@ import { pageMixin } from "@/utils/pageMixin";
 import { commMixin } from "@/utils/commMixin";
 import config from "@/utils/config";
 import { debounce } from '@/utils/debounce'
+import ChannelEdit from './Channel/Edit.vue'
+import ReceiverEdit from './Channel/EditReceiver.vue'
+// import * as util from '@/utils/util'
 export default {
   mixins: [pageMixin, commMixin],
+  components: {
+    ChannelEdit, ReceiverEdit
+  },
   data() {
     var validatePass = (rule, value, callback) => {
       if (value === '') {
@@ -141,19 +160,42 @@ export default {
       }
     };
     return {
+      channelEditDialog: {
+        visible: false,
+        currentRow: null,
+        title: '新增通道'
+      },
+      receiverEditDialog: {
+        visible: false,
+        currentRow: null,
+        title: '新增中介'
+      },
       // 公共配置
       config,
       // 表头
       tableHead: [
-        { label: "userId", prop: "userId", width: "200", align: "left", show: false },
-        { label: "用户名", prop: "userName", width: "150", align: "left", show: true },
-        { label: "昵称", prop: "nickName", width: "120", align: "left", show: true },
-        { label: "手机号", prop: "phonenumber", width: "120", align: "left", show: true },
-        { label: "状态", prop: "status", formatter: this.funcFormat, width: "100", align: "left", show: true },
-        { label: "备注", prop: "remark", width: "auto", align: "left", show: false },
-        { label: "创建时间", prop: "createTime", width: "150", align: "left", show: true }
+        { label: "产品名", prop: "qtName", width: "120", align: "left", show: true },
+        { label: "Code", prop: "qtCode", width: "200", align: "left", show: false },
+        { label: "密钥", prop: "qtToken", width: "150", align: "left", show: true },
+        { label: "Ip", prop: "qtIp", width: "120", align: "left", show: true },
+        { label: "通道密钥", prop: "qtAction", width: "120", align: "left", show: true },
+        { label: "端口", prop: "qtPort", width: "100", align: "left", show: true },
+        { label: "状态", prop: "qtStatus", formatter: this.funcFormat, width: "150", align: "left", show: true },
+        { label: "创建时间", prop: "createTime", width: "200", align: "left", show: false },
+        { label: "修改时间", prop: "updateTime", width: "200", align: "left", show: true }
+      ],
+      tableReceiverHead: [
+        { label: "中介", prop: "company", width: "120", align: "left", show: true },
+        { label: "名字", prop: "target", width: "120", align: "left", show: true },
+        { label: "chatId", prop: "chatId", width: "200", align: "left", show: false },
+        { label: "状态", prop: "status", width: "150", formatter: this.funcReceiverFormat, align: "left", show: true },
+        { label: "券号", prop: "tscode", width: "120", align: "left", show: true },
+        { label: "开始时间", prop: "forbidStart", formatter: this.funcReceiverFormat, width: "150", align: "left", show: true },
+        { label: "结束时间", prop: "forbidEnd", formatter: this.funcReceiverFormat, width: "150", align: "left", show: true },
+        { label: "通道", prop: "channelId", formatter: this.funcReceiverFormat, width: "200", align: "left", show: true }
       ],
       tableData: [],
+      tableReceiverData: [],
       loading: true,
       centerDialogResetPasswordVisible: false,
       resetPassForm: {
@@ -176,7 +218,9 @@ export default {
       // 重置密码表单label宽度
       resetPassFormLabelWidth: 100,
       page: 1,
-      tableHeight: 0
+      tableHeight: 0,
+      pageName: 0,
+      pageItem: null
     };
   },
   created() {
@@ -251,22 +295,58 @@ export default {
         }
       });
     }),
+    channelEdit(row) {
+      this.channelEditDialog.title = row ? '修改通道' : '新增通道'
+      this.channelEditDialog.currentRow = row;
+      this.channelEditDialog.visible = true;
+    },
+    receiverEdit(row) {
+      this.receiverEditDialog.title = row ? '修改中介' : '新增中介'
+      this.receiverEditDialog.currentRow = row;
+      this.receiverEditDialog.visible = true;
+    },
+    findReceivers(row) {
+      this.loading = true;
+
+      api.findReceiverByChannel(row.id).then((response) => {
+        // this.funcPage(response, 'tableReceiverData');
+
+        this.tableReceiverData = response.value
+        this.loading = false;
+        this.pageItem = row || this.pageItem
+        this.pageName = 1
+        this.receiverEditDialog.visible = false;
+      });
+    },
     // 初始化数据
     loadInitData() {
       this.loading = true;
-      api.get({
+      api.findPageChannel({
         pageNum: this.pageNum,
         pageSize: this.pageSize
       }).then((response) => {
-        this.funcList(response);
+        this.funcPage(response);
         this.loading = false;
+        this.channelEditDialog.visible = false;
       });
     },
     // 格式化
     funcFormat(row, column) {
       switch (column.property) {
+        case "qtStatus":
+          return config.funcKeyValue(row.qtStatus.toString(), "channelStatus")
+      }
+    },
+    funcReceiverFormat(row, column) {
+      switch (column.property) {
+        case "channelId":
+          return this.tableData.find(n => n.id === row.channelId).qtName
+        case "forbidStart":
+          return row.forbidStart || '--'
+        case "forbidEnd":
+          return row.forbidEnd || '--'
         case "status":
-          return config.funcKeyValue(row.status.toString(), "userStatus")
+          return config.funcKeyValue(row.status.toString(), "channelStatus")
       }
     },
   },

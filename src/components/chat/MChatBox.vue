@@ -58,8 +58,8 @@
                     <el-divider></el-divider>
                 </el-header>
                 <div class="el-main" ref="scrollContainer" id="scrollContainer">
-                    <div v-for="(item, i) in messages" class="main_item"
-                        :class="(item.tradeId == highlight || item.id == highlight) ? 'main_item_highlight' : ''"
+                    <div v-for="(item, i) in messages" class="main_item" @dblclick="updateChatMessage(item)"
+                        :class="{ 'main_item_red': !item.tradeId, 'main_item_highlight': (item.tradeId == highlight || item.id == highlight) }"
                         :key="i" v-if="item.brokerId == mine.brokerid && item.channelId == mine.channelId"
                         :id="'message_' + item.id">
                         <el-row>
@@ -73,7 +73,7 @@
                             <el-col :span="21" :class="item.direction === 1 ? 'main_left' : 'main_right'">
                                 <div class="main_name" v-if="item.direction === 0">
                                     <span class="main-time mr10">{{ dateFormat(item.createTime) }}</span>
-                                    <span>{{ item.nickName || userName }}</span>
+                                    <span>{{ item.nickName || userName }}-{{item.tradeId}}</span>
                                 </div>
                                 <div class="main_name" v-else>
                                     <span>{{ mine.company }}</span>
@@ -81,6 +81,11 @@
                                 </div>
                                 <div class="main_content">
                                     {{ item.chatMessage }}
+                                </div>
+                                <div class="main_quote" v-if="item.quoteMessage">
+                                    <div class="text" :class="item.direction === 0 ? 'text-right' : 'text-left'">
+                                        {{ item.quoteDirection === 0 ? '研究员' : mine.company }}:{{ item.quoteMessage }}
+                                    </div>
                                 </div>
                             </el-col>
                             <el-col :span="asideShow ? 2 : 3" v-if="item.direction === 0">
@@ -118,7 +123,7 @@
                         <el-date-picker v-model="chatDate" align="right" type="date" placeholder="选择日期" v-if="asideShow"
                             @change="dateChange" :picker-options="pickerOptions">
                         </el-date-picker>
-                        <el-button v-if="setAuth('system:order:edit')" type="success" plain
+                        <el-button v-if="setAuth('system:order:edit')" type="success" plain :disabled="!mine.available"
                             @click="hijackChat(0)">劫持通道</el-button>
                         <el-button type="success" plain @click="dateChange">刷新记录</el-button>
                     </div>
@@ -288,6 +293,14 @@ export default {
             // 阻止换行
             this.inputValue = event.replace(/\n/g, '');
         },
+        async updateChatMessage(element) {
+            if (!element.tradeId) {
+                const { code } = await api.updateChatMessages({ tradeId: '1' }, element.id)
+                if (code === '00000') {
+                    element.tradeId = '0';
+                }
+            }
+        },
         inputKeydown(e) {
             if (e.ctrlKey) {
                 // 换行
@@ -414,6 +427,13 @@ export default {
                     show: true,
                     message: `您是否需要强行占用中介：${this.mine.company}, 当前中介状态${this.mine.occupyier == null ? '空闲中！' : '正在交易中，强行占用可能会影响交易！'}`,
                     fun: async () => {
+                        if (!this.mine.available) {
+                            this.$message({
+                                message: `中介状态已被禁用，无法占用通道`,
+                                type: "error"
+                            });
+                            return
+                        }
                         const tradeNums = [];
                         const data = { brokerId: this.mine.brokerid, channelId: this.mine.channelId, release: hijack, tradeNums }
                         const { code } = await api.hijackChat(data)
@@ -723,7 +743,11 @@ export default {
         text-align: center;
 
         .main_item_highlight {
-            background-color: antiquewhite;
+            background-color: antiquewhite !important;
+        }
+
+        .main_item_red {
+            background-color: #e3baba8c;
         }
 
         .main_item {
@@ -767,6 +791,21 @@ export default {
                 .main-time {
                     color: #8f8e8e;
                     font-size: 10px;
+                }
+            }
+
+            .main_quote {
+
+                .text {
+                    line-height: 20px;
+                    background-color: #e7e7e7a3;
+                    margin-top: 10px;
+                    color: gray;
+                    font-size: 10px;
+                    width: fit-content;
+                    padding: 5px 20px;
+                    border-radius: 3px;
+                    display: inline-block;
                 }
             }
 
