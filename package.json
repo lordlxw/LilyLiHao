@@ -17,6 +17,7 @@
     "build:dev": "cross-env NODE_ENV=development PROJECT_NAME=all node build/build.js",
     "build:sim": "cross-env NODE_ENV=simulation PROJECT_NAME=all node build/build.js",
     "start": "npm run dev",
+    "startElectron": "electron .",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
