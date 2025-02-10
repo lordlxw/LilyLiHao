@@ -194,4 +194,14 @@ const router = new Router({
   // 导航激活样式
   linkActiveClass: 'active-link'
 })
+
+// 使用 `beforeEach` 导航守卫进行日志记录
+router.beforeEach((to, from, next) => {
+  // 记录路由切换的信息
+  console.log(`从 ${from.path} 跳转到 ${to.path}`);
+  // 你可以在这里添加更多的日志记录或其他功能
+
+  // 继续路由导航
+  next();
+});
 export default router

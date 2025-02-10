@@ -39,6 +39,8 @@ const store = new Vuex.Store({
   },
   getters: {
     getMenus(state) {
+      console.log("getMenus");
+      console.log(state);
       if (state.menus.length > 0) {
         localStorage.setItem(config.keys.menusKey, state.menus);
       } else {
@@ -47,6 +49,8 @@ const store = new Vuex.Store({
       return JSON.parse(state.menus);
     },
     getRoleId(state) {
+      console.log("getRoleId");
+      console.log(state);
       if (state.roleId === "") {
         state.roleId = localStorage.getItem(config.keys.roleIdKey);
       }
@@ -73,6 +77,8 @@ const store = new Vuex.Store({
       return state.navigatorId;
     },
     getRouters(state) {
+      console.log("getRouters");
+      console.log(state);
       if (Object.keys(state.routers).length > 0) {
       } else {
         const routers = JSON.parse(

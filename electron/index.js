@@ -82,6 +82,7 @@ class MultiWindows {
 
   // 创建新窗口
   createWin(options) {
+    console.log('createWin');
     const args = Object.assign({}, defaultConfig, options);
     // console.log(args);
 
@@ -124,6 +125,7 @@ class MultiWindows {
     } else if (args.sharSession && allWin.length > 0) {
       opt.webPreferences.session = allWin[0].webContents.session;
     }
+    console.log('222333');
     // 创建窗口对象
     // Menu.setApplicationMenu(null);
     const win = new BrowserWindow({
@@ -140,6 +142,8 @@ class MultiWindows {
       : process.env.VITE_DEV_SERVER_URL
       ? process.env.VITE_DEV_SERVER_URL
       : winURL;
+    console.log("jjjjkkkkk");
+    console.log("url:"+$url);
     win.loadURL($url);
     win.once("ready-to-show", () => win.show());
     this.winLs[win.id] = {
@@ -148,9 +152,12 @@ class MultiWindows {
       win: win,
       ...options
     };
+    console.log("mmmmm");
+    return;
     // args.id = win.id;
     // console.log("current win ", this.winLs[options.id || win.id]);
     if (args.isMainWin) {
+    console.log("nnnnn");
       win.on("close", e => {
         this.winLs = {};
         e.preventDefault();
@@ -162,6 +169,7 @@ class MultiWindows {
         app.quit();
       });
     } else {
+      console.log("ooooo");
       win.on("close", () => {
         global.sharedObject.independentWindow.delete(options.id || win.id);
         delete this.winLs[win.id];

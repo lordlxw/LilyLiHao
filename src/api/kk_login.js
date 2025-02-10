@@ -22,6 +22,8 @@ export default {
   },
   // 权限
   auth() {
+    console.log("auth");
+    console.log(`${Vue.prototype.$apiUrl}`);
     return request({
       url: `${Vue.prototype.$apiUrl}/getUserInfo`,
       method: "get"
